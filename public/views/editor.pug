@@ -13,31 +13,52 @@ html(lang='en')
       top: 0;
       right: 0;
       bottom: 0;
-      left: 0;
+      left: 20px;
+      }
+      .card {
+      width: 650px;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      text-align: left;
+      left: 20px;
+      padding: 10px;
+      margin: 20px;
+      //- position: absolute;
+      }
+
+      .option-disp {
+        display: inline-block;
+        width: 100px;
+        position:relative;
+        left:20px;
       }
   body
-    h1 #{msg.question}
+    .card
+      p.
+        This is a question
+        and statement
+        aaaaaaa
     
-    select#lang(onchange='language()')
-      option(value='python34') Python
-      option(value='java26') Java
-      option(value='javascript29') Javascript
-      option(value='c_cpp') C
-      option(value='c_cpp10') C++
-      option(value='csharp16') C#
-    select#theme(onchange='theme()')
-      option(value='monokai') Monokai
-      option(value='chaos') Chaos
-      option(value='dracula') Dracula
-      option(value='cobalt') Cobalt
-      option(value='gob') Green on Black
-      option(value='xcode') XCode
-      option(value='chrome') Chrome
-      option(value='github') Github
-    div.editor#editor(style='height: 500px; width: 500px')
-    input#code(type='hidden', name='code', value='a')
-    input(type='button', value='Submit', onclick='readText()', style='position:relative; top:50px; left:200px')
-    textarea#output(name='text', rows='30', cols='65', wrap='soft', style='position:absolute; left:600px; top:100px;')  
+    .card
+      select.option-disp#lang(onchange='language()')
+        option(value='python34') Python
+        option(value='java26') Java
+        option(value='javascript29') Javascript
+        option(value='c_cpp') C
+        option(value='c_cpp10') C++
+        option(value='csharp16') C#
+      select.option-disp#theme(onchange='theme()')
+        option(value='monokai') Monokai
+        option(value='chaos') Chaos
+        option(value='dracula') Dracula
+        option(value='cobalt') Cobalt
+        option(value='gob') Green on Black
+        option(value='xcode') XCode
+        option(value='chrome') Chrome
+        option(value='github') Github
+      div.editor#editor(style='height: 500px; width: 500px')
+      input#code(type='hidden', name='code', value='a')
+      input(type='button', value='Submit', onclick='readText()',style={width: '100px', position:'relative', left:'20px'})
+      textarea#output(name='text', rows='30', cols='30', style='position:relative; left:600px; top:10px; display: inline-block;')  
    
     script.
       var editor = ace.edit("editor");

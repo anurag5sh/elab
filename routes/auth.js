@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt');
 //const _ = require('lodash');
 const {Student} = require('../models/student');
 const {Teacher} = require('../models/teacher')
-const {Practice} = require('../models/practice');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
@@ -24,11 +23,7 @@ router.get('/dashboard', authenticate,(req,res)=> {
     res.render('dashboard');
 });
 
-router.get('/practice', authenticate,async (req,res)=> {
-  const questions = await Practice.find().sort({date:-1});
-  
-  res.render('practice', {q:questions});
-});
+
 
 router.get('/editor', authenticate,(req,res)=> {
   res.render('editor',{msg:{question:"Question",input:"Input"}});

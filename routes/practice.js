@@ -6,6 +6,13 @@ const session = require('express-session');
 const authenticate = require('../middleware/auth');
 const {Practice,validatePractise} = require('../models/practice');
 
+
+router.get('/', authenticate,async (req,res)=> {
+    const questions = await Practice.find().sort({date:-1});
+    
+    res.render('practice', {q:questions});
+  });
+
 router.post('/',async (req,res)=>{
 
     const {error} = validatePractise(req.body);

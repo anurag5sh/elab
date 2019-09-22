@@ -3,9 +3,9 @@ html(lang='en')
   head
     title ELAB HKBK
     include navbar
-    script(src='ace-builds/src-noconflict/ace.js')
-    script(src='ace-builds/src-noconflict/ext-language_tools.js')
-    script(src='assets/js/jquery.min.js')
+    script(src='/ace-builds/src-noconflict/ace.js')
+    script(src='/ace-builds/src-noconflict/ext-language_tools.js')
+    script(src='/assets/js/jquery.min.js')
     
     style(type='text/css').
       #editor {
@@ -34,10 +34,26 @@ html(lang='en')
   body
     .card
       p.
-        This is a question
-        and statement
-        aaaaaaa
-    
+        #{question.statement}
+      - if(question.constraints) 
+          strong Constraints
+          p #{question.constraints}
+          |
+      strong Input Format
+      p #{question.input_format}
+      |
+      strong Output Format
+      p #{question.output_format}
+      |
+      -let sample_o = Array.from( question.sample_cases.values() );
+      -let sample_i = Array.from( question.sample_cases.keys() );
+      each i,j in sample_i
+        strong Sample Input #{j}
+        p #{i}
+        strong Sample Output #{j}
+        p #{sample_o[j]}
+
+      
     .card
       select.option-disp#lang(onchange='language()')
         option(value='python34') Python

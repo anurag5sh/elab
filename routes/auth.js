@@ -26,6 +26,7 @@ router.get('/dashboard', authenticate,(req,res)=> {
 
 
 router.get('/editor', authenticate,(req,res)=> {
+  
   res.render('editor',{msg:{question:"Question",input:"Input"}});
 });
 

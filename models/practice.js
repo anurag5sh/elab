@@ -1,10 +1,17 @@
 const Joi = require('@hapi/joi');
 const mongoose = require('mongoose');
+const moment = require('moment');
+
+
 
 const practiceSchema = new mongoose.Schema({
     name:{
         type: String,
         required:true
+    },
+    qid:{
+        type:String,
+        default: moment().format('DDMMYY')
     },
     statement:{
         type: String,
@@ -36,7 +43,7 @@ const practiceSchema = new mongoose.Schema({
     },
     date:{
         type: Date,
-        default: Date.now()
+        default: moment().format()
     }
     
 });
@@ -46,6 +53,7 @@ const Practice = mongoose.model('Practice',practiceSchema);
 function validatePractise(question)
 {
     const schema = Joi.object({
+        name: Joi.string().required(),
         statement:Joi.string().required(),
         constraints: Joi.string(),
         input_format: Joi.string().required(),

@@ -7,8 +7,8 @@ const register = require('./routes/register');
 const contest = require('./routes/contest');
 const practice = require('./routes/practice');
 const session = require('express-session');
-var MongoStore = require('connect-mongo')(session);
-
+const MongoStore = require('connect-mongo')(session);
+const moment = require('moment');
 
 const port = process.env.elab_port_no || 4000;
 

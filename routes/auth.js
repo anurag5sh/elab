@@ -94,6 +94,3 @@ function validate(req) {
 }
 
 module.exports = router; 
-
-
-//commit test

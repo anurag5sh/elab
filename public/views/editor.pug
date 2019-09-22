@@ -1,0 +1,84 @@
+doctype html
+html(lang='en')
+  head
+    title ELAB HKBK
+    include navbar
+    script(src='ace-builds/src-noconflict/ace.js')
+    script(src='ace-builds/src-noconflict/ext-language_tools.js')
+    script(src='assets/js/jquery.min.js')
+    
+    style(type='text/css').
+      #editor {
+      position: relative;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      }
+  body
+    h1 #{msg.question}
+    
+    select#lang(onchange='language()')
+      option(value='python34') Python
+      option(value='java26') Java
+      option(value='javascript29') Javascript
+      option(value='c_cpp') C
+      option(value='c_cpp10') C++
+      option(value='csharp16') C#
+    select#theme(onchange='theme()')
+      option(value='monokai') Monokai
+      option(value='chaos') Chaos
+      option(value='dracula') Dracula
+      option(value='cobalt') Cobalt
+      option(value='gob') Green on Black
+      option(value='xcode') XCode
+      option(value='chrome') Chrome
+      option(value='github') Github
+    div.editor#editor(style='height: 500px; width: 500px')
+    input#code(type='hidden', name='code', value='a')
+    input(type='button', value='Submit', onclick='readText()', style='position:relative; top:50px; left:200px')
+    textarea#output(name='text', rows='30', cols='65', wrap='soft', style='position:absolute; left:600px; top:100px;')  
+   
+    script.
+      var editor = ace.edit("editor");
+      editor.setTheme("ace/theme/monokai");
+      editor.session.setMode("ace/mode/python");
+      editor.setOptions({
+      enableBasicAutocompletion: true,
+      enableSnippets: true,
+      enableLiveAutocompletion: true
+      });
+      function theme(){
+      let t = document.getElementById("theme").value;
+      editor.setTheme("ace/theme/"+t);
+      }
+      function language(){
+      let l = document.getElementById("lang").value;
+      if(l=="c_cpp") ;
+      else l=l.slice(0,-2);
+      editor.session.setMode("ace/mode/"+l);
+      }
+      function readText () {
+      let l = document.getElementById("lang").value;
+      if(l=="c_cpp") l=4;
+      else l=l.slice(-2);
+      SourceCode =editor.getValue();
+      document.getElementById("code").value = SourceCode;
+      $(document).ready(function(){
+      $.post("/api",
+      {
+      source:editor.getValue(),
+      language: l
+      },
+      function(data,status){
+      document.getElementById("output").value = data;
+      });
+      });
+      }
+
+    
+  
+//- block script
+//-     script(src='ace-builds/src-noconflict/ace.js')
+//-     script(src='ace-builds/src-noconflict/ext-language_tools.js')
+//-     script(src='jquery.min.js')

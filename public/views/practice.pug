@@ -1,0 +1,19 @@
+doctype html
+html   
+    include navbar
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Noto+Sans+JP")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css")
+    script(src="assets/js/bs-animation.js")
+    body
+        .jumbotron.text-left.bg-info.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
+            h1 PRACTICE
+        |
+        a(class='button' href='/editor') Editor
+
+        
+        - let questions=q
+        each name in questions
+            .question(style='width: 1087px;')
+                .que
+                    h5(style='float:left;')=name.statement
+                    button.btn.btn-primary(data-bs-hover-animate='pulse', type='button', style='width: 73px;margin: 24px;padding: 3px;display: block;float: right;') SOLVE

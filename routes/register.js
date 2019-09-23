@@ -37,7 +37,7 @@ router.post('/', async (req, res) => {
   if (error) return res.status(400).send(error.details[0].message);
 
   let teacher = await Teacher.findOne({ email: req.body.email });
-  if (teacher) return res.status(400).send('Student already registered.');
+  if (teacher) return res.status(400).send('Teacher already registered.');
 
   teacher = new Teacher(_.pick(req.body, ['name', 'email', 'password']));
   const salt = await bcrypt.genSalt(10);

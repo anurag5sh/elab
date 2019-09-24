@@ -8,9 +8,11 @@ Server running on port 4000
 - public - this folder contains all the files that will be visible and accessible by the user.
 - routes - contains the various route handlers for the project
 
-/app.js - the actual file which will run the server
-/public/views/ - all pug files
-/public/ace-builds - do not touch this folder, editor files
+ /app.js - the actual file which will run the server
+ 
+ /public/views/ - all pug files 
+ 
+ /public/ace-builds - do not touch this folder, editor files
 
 
 # Modules

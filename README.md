@@ -55,3 +55,7 @@ Server running on port 4000
 - Practice
 - Manage Contest 
 - Create/Manage Assignment
+
+# Student
+- Making scrollable to display output after submit
+- profile page

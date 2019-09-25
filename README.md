@@ -39,3 +39,12 @@ Server running on port 4000
 
 # Middleware
 - auth.js - checks if the user is logged in, otherwise throw error
+
+
+
+# Admin
+- Add/Delete accounts
+- modify database
+- Add accounts through csv
+- Monitor student activity
+- Generate report

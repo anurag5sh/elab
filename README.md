@@ -50,7 +50,7 @@ Server running on port 4000
 - Generate report
 
 # Teacher
--Create contest
--Create questions/Assignment 
--Practice
--Manage Contest 
+- Create contest
+- Create questions/Assignment 
+- Practice
+- Manage Contest 

@@ -48,3 +48,9 @@ Server running on port 4000
 - Add accounts through csv
 - Monitor student activity
 - Generate report
+
+#Teacher
+-Create contest
+-Create questions/Assignment 
+-Practice
+-Manage Contest 

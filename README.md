@@ -49,7 +49,7 @@ Server running on port 4000
 - Monitor student activity
 - Generate report
 
-#Teacher
+# Teacher
 -Create contest
 -Create questions/Assignment 
 -Practice

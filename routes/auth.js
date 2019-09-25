@@ -8,7 +8,7 @@ const express = require('express');
 const router = express.Router();
 const authenticate = require('../middleware/auth');
 const session = require('express-session');
-
+const admin = require('../middleware/admin');
 
 router.get('/',(req,res,next)=>{  console.log(req.session.userId);
   if (req.session && req.session.userId) 
@@ -20,7 +20,7 @@ router.get('/',(req,res,next)=>{  console.log(req.session.userId);
 });
 
 router.get('/dashboard', authenticate,(req,res)=> {
-    res.render('dashboard');
+    res.render('dashboard',{name:req.session.name});
 });
 
 
@@ -56,6 +56,7 @@ router.post('/', async (req, res) => { console.log(req.body);
     if (!validPassword) return res.render('login',{login_error:"Invalid email or password"});
 
     req.session.userId = student._id;
+    req.session.name = student.name.toUpperCase(); 
     return res.redirect('/dashboard');
   }
 
@@ -68,6 +69,9 @@ router.post('/', async (req, res) => { console.log(req.body);
     if (!validPassword) return res.render('login',{login_error:"Invalid email or password"});
 
     req.session.userId = teacher._id;
+    req.session.name = teacher.name.toUpperCase();
+    if(teacher.isAdmin)
+      return res.redirect('/admin');
     return res.send('Teacher logged in');
   }
   

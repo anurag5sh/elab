@@ -6,13 +6,13 @@ const {Teacher} = require('../models/teacher');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
-
+const admin = require('../middleware/admin');
 // router.get('/me', auth, async (req, res) => {
 //   const Student = await Student.findById(req.Student._id).select('-password');
 //   res.send(Student);
 // });
 
-router.post('/', async (req, res) => {
+router.post('/',admin, async (req, res) => {
 
   if(req.body.type === "student"){
 

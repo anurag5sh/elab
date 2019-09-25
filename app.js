@@ -6,6 +6,7 @@ const login = require('./routes/auth');
 const register = require('./routes/register');
 const contest = require('./routes/contest');
 const practice = require('./routes/practice');
+const admin = require('./routes/admin');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const moment = require('moment');
@@ -43,6 +44,7 @@ app.use('/', login)
 app.use('/register', register);
 app.use('/contest', contest);
 app.use('/practice', practice);
+app.use('/admin', admin);
 
 
 

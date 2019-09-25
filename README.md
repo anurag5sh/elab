@@ -51,6 +51,7 @@ Server running on port 4000
 
 # Teacher
 - Create contest
-- Create questions/Assignment 
+- Create questions
 - Practice
 - Manage Contest 
+- Create/Manage Assignment

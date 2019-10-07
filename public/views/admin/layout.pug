@@ -5,6 +5,8 @@ doctype html
   scratch. This page gets rid of all links and provides the needed markup only.
 
 block code 
+  //  jQuery 
+  script(src='/adminLTE/plugins/jquery/jquery.min.js')
   - let active={dashboard:"",add:"",manage:""}
   - let menu={manage:""}
 
@@ -76,7 +78,7 @@ html(lang='en')
       //  Main Sidebar Container 
       aside.main-sidebar.sidebar-dark-primary.elevation-4
         //  Brand Logo 
-        a.brand-link(href='/')
+        a.brand-link(href='/admin')
           img.brand-image.img-circle.elevation-3(src='/adminLTE/dist/img/AdminLTELogo.png' alt='AdminLTE Logo' style='opacity: .8')
           span.brand-text.font-weight-light ELAB 
         //  Sidebar 
@@ -94,7 +96,7 @@ html(lang='en')
                  Add icons to the links using the .nav-icon class
                                with font-awesome or any other icon font library 
               li.nav-item.has-treeview
-                a.nav-link(href='/' class=active.dashboard)
+                a.nav-link(href='/admin' class=active.dashboard)
                   i.nav-icon.fas.fa-tachometer-alt
                   p Dashboard
               li.nav-item.has-treeview(class=menu.manage)
@@ -106,7 +108,7 @@ html(lang='en')
                     i.right.fas.fa-angle-left
                 ul.nav.nav-treeview
                   li.nav-item
-                    a.nav-link(href='/add' class=active.add)
+                    a.nav-link(href='/admin/add' class=active.add)
                       i.fas.fa-user-plus.nav-icon
                       p Add Account
                   li.nav-item
@@ -165,8 +167,7 @@ html(lang='en')
 
     //  ./wrapper 
     //  REQUIRED SCRIPTS 
-    //  jQuery 
-    script(src='/adminLTE/plugins/jquery/jquery.min.js')
+    
     //  Bootstrap 4 
     script(src='/adminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js')
     //  AdminLTE App 

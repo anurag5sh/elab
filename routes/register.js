@@ -17,7 +17,7 @@ router.post('/',admin, async (req, res) => {
   if(req.body.type === "student"){
 
   const { error } = validate(req.body); 
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) return res.status(400).send(error.message);
 
   let student = await Student.findOne({ email: req.body.email });
   if (student) return res.status(400).send('Student already registered.');
@@ -34,7 +34,7 @@ router.post('/',admin, async (req, res) => {
   else if(req.body.type === "teacher")
   {
     const { error } = validate(req.body); 
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) return res.status(400).send(error.message);
 
   let teacher = await Teacher.findOne({ email: req.body.email });
   if (teacher) return res.status(400).send('Teacher already registered.');

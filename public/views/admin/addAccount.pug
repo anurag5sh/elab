@@ -26,12 +26,25 @@ block append code
         });
 
         function submitForm(){
-            if(document.getElementById('type').value === "student")
-                $("#tf").remove();
-            else
-                $("#sf").remove();
 
-            $("#add").submit();
+            
+            if(document.getElementById('type').value === "student"){
+                //-$("#tf").remove();
+                $("#tf *").prop('disabled',true);}
+            else{
+                $("#sf *").prop('disabled',true);
+               }
+            const reg = $.post("/register", $("#add").serialize(), function(data,status) {
+
+            alert("Account added Successfully");
+            window.location.href = '/admin/add'
+            })
+                .fail(function(error){
+                    alert($("#add").serialize());
+                    $("#addForm *").prop('disabled',false);
+                    alert(error.responseText);
+                })
+            
         }
         
 block content
@@ -47,7 +60,7 @@ block content
                             option(value="student", data-show=".student") Student
                             option(value="teacher", data-show=".teacher") Teacher
 
-                .row.addForm
+                .row.addForm#addForm
                     .col-md-4.student.hide#sf
                         .form-group
                             label(for="name") Name

@@ -4,7 +4,7 @@ const admin = require('../middleware/admin');
 
 
 router.get('/', admin, (req,res)=> {
-    res.render('navbar',{name:req.session.name});
+    res.render('admin/admin',{name:req.session.name});
 });
 
 module.exports = router;

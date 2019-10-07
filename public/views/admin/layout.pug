@@ -1,0 +1,174 @@
+doctype html
+//
+  
+  This is a starter template page. Use this page to start your new project from
+  scratch. This page gets rid of all links and provides the needed markup only.
+
+block code 
+  - let active={dashboard:"",add:"",manage:""}
+  - let menu={manage:""}
+
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width,initial-scale=1')
+    meta(http-equiv='x-ua-compatible' content='ie=edge')
+    title ELAB Admin
+    //  Font Awesome Icons 
+    link(rel='stylesheet' href='/adminLTE/plugins/fontawesome-free/css/all.min.css')
+    //  Theme style 
+    link(rel='stylesheet' href='/adminLTE/dist/css/adminlte.min.css')
+    //  Google Font: Source Sans Pro 
+    link(href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700' rel='stylesheet')
+  body.hold-transition.sidebar-mini
+    .wrapper
+      //  Navbar 
+      nav.main-header.navbar.navbar-expand.navbar-white.navbar-light
+        //  Left navbar links 
+        ul.navbar-nav
+          li.nav-item
+            a.nav-link(data-widget='pushmenu' href='#')
+              i.fas.fa-bars
+          li.nav-item.d-none.d-sm-inline-block
+            a.nav-link(href='/') Home
+          li.nav-item.d-none.d-sm-inline-block
+            a.nav-link(href='#') Contact
+        //  SEARCH FORM 
+        form.form-inline.ml-3
+          .input-group.input-group-sm
+            input.form-control.form-control-navbar(type='search' placeholder='Search' aria-label='Search')
+            .input-group-append
+              button.btn.btn-navbar(type='submit')
+                i.fas.fa-search
+        //  Right navbar links 
+        ul.navbar-nav.ml-auto
+          //  Notifications Dropdown Menu 
+          li.nav-item.dropdown
+            a.nav-link(data-toggle='dropdown' href='#')
+              i.far.fa-bell
+              span.badge.badge-warning.navbar-badge 15
+            .dropdown-menu.dropdown-menu-lg.dropdown-menu-right
+              span.dropdown-header 15 Notifications
+              .dropdown-divider
+              a.dropdown-item(href='#')
+                i.fas.fa-envelope.mr-2
+                |  4 new messages
+
+                span.float-right.text-muted.text-sm 3 mins
+              .dropdown-divider
+              a.dropdown-item(href='#')
+                i.fas.fa-users.mr-2
+                |  8 friend requests
+
+                span.float-right.text-muted.text-sm 12 hours
+              .dropdown-divider
+              a.dropdown-item(href='#')
+                i.fas.fa-file.mr-2
+                |  3 new reports
+
+                span.float-right.text-muted.text-sm 2 days
+              .dropdown-divider
+              a.dropdown-item.dropdown-footer(href='#') See All Notifications
+          li.nav-item
+            a.nav-link(data-widget='control-sidebar' data-slide='true' href='#')
+              i.fas.fa-th-large
+      //  /.navbar 
+      //  Main Sidebar Container 
+      aside.main-sidebar.sidebar-dark-primary.elevation-4
+        //  Brand Logo 
+        a.brand-link(href='/')
+          img.brand-image.img-circle.elevation-3(src='/adminLTE/dist/img/AdminLTELogo.png' alt='AdminLTE Logo' style='opacity: .8')
+          span.brand-text.font-weight-light ELAB 
+        //  Sidebar 
+        .sidebar
+          //  Sidebar user panel (optional) 
+          .user-panel.mt-3.pb-3.mb-3.d-flex
+            .image
+              img.img-circle.elevation-2(src='/adminLTE/dist/img/avatar5.png' alt='User Image')
+            .info
+              a.d-block(href='#') Admin
+          //  Sidebar Menu 
+          nav.mt-2
+            ul.nav.nav-pills.nav-sidebar.flex-column(data-widget='treeview' role='menu' data-accordion='false')
+              //
+                 Add icons to the links using the .nav-icon class
+                               with font-awesome or any other icon font library 
+              li.nav-item.has-treeview
+                a.nav-link(href='/' class=active.dashboard)
+                  i.nav-icon.fas.fa-tachometer-alt
+                  p Dashboard
+              li.nav-item.has-treeview(class=menu.manage)
+                a.nav-link(href='#' class=active.manage)
+                  i.nav-icon.fas.fa-user-cog
+                  p
+                    | Manage Accounts
+
+                    i.right.fas.fa-angle-left
+                ul.nav.nav-treeview
+                  li.nav-item
+                    a.nav-link(href='/add' class=active.add)
+                      i.fas.fa-user-plus.nav-icon
+                      p Add Account
+                  li.nav-item
+                    a.nav-link(href='#')
+                      i.fas.fa-user-edit.nav-icon
+                      p Edit Account
+              li.nav-item
+                a.nav-link(href='#')
+                  i.nav-icon.fas.fa-th
+                  p
+                    | Simple Link
+
+                    span.right.badge.badge-danger New
+          //  /.sidebar-menu 
+        //  /.sidebar 
+      //  Content Wrapper. Contains page content 
+      .content-wrapper
+        //  Content Header (Page header) 
+        .content-header
+          .container-fluid
+            .row.mb-2
+              .col-sm-6
+                //-h1.m-0.text-dark Starter Page
+              //  /.col 
+              //-.col-sm-6
+                ol.breadcrumb.float-sm-right
+                  li.breadcrumb-item
+                    a(href='#') Home
+                  li.breadcrumb-item.active Starter Page
+              //  /.col 
+            //  /.row 
+          //  /.container-fluid 
+        //  /.content-header 
+        //  Main content 
+        .content
+          block content
+      aside.control-sidebar.control-sidebar-dark
+        //  Control sidebar content goes here 
+        .p-3
+          h5 Title
+          p Sidebar content
+      //  /.control-sidebar 
+      //  Main Footer 
+      footer.main-footer
+        //  To the right 
+        .float-right.d-none.d-sm-inline.
+          
+          Anything you want
+          
+        //  Default to the left 
+        strong
+          | Copyright © 2014-2019 
+          a(href='https://adminlte.io') AdminLTE.io
+          | .
+        |  All rights reserved.
+
+    //  ./wrapper 
+    //  REQUIRED SCRIPTS 
+    //  jQuery 
+    script(src='/adminLTE/plugins/jquery/jquery.min.js')
+    //  Bootstrap 4 
+    script(src='/adminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js')
+    //  AdminLTE App 
+    script(src='/adminLTE/dist/js/adminlte.min.js')
+    

@@ -1,0 +1,79 @@
+extends layout
+
+block append code
+    - active.add="active"
+    - active.manage="active"
+    - menu.manage="menu-open"
+    
+    style(type="text/css").
+        .hide{
+            display:none;
+        }
+    script(type='text/javascript').
+        $(document).on('change', '.type', function() {
+        let target = $(this).data('target');
+        let show = $("option:selected", this).data('show');
+        $(target).children().addClass('hide');
+        $(show).removeClass('hide');
+        let type=document.getElementById('type').value;
+        $("#add").trigger("reset");
+        document.getElementById('type').value=type;
+        
+        });
+        $(document).ready(function(){
+        $('.type').trigger('change');
+        
+        });
+
+        function submitForm(){
+            if(document.getElementById('type').value === "student")
+                $("#tf").remove();
+            else
+                $("#sf").remove();
+
+            $("#add").submit();
+        }
+        
+block content
+    form#add
+        .card.card-primary
+            .card-header 
+                h3.card-title Add an account
+            .card-body
+                .col-3(style="margin:auto;")
+                    .form-group
+                        select#type(name="type", data-target=".addForm").form-control.custom-select.type
+                            option(selected,disabled) Select Account Type
+                            option(value="student", data-show=".student") Student
+                            option(value="teacher", data-show=".teacher") Teacher
+
+                .row.addForm
+                    .col-md-4.student.hide#sf
+                        .form-group
+                            label(for="name") Name
+                            input#name.form-control(type="text",name="name")
+                        .form-group
+                            label(for="email") Email
+                            input#email.form-control(type="email",name="email")
+                        .form-group
+                            label(for="password") Password
+                            input#password.form-control(type="password",name="password")
+                        .col-12
+                        input(type="button",onclick="submitForm()", value="Create New Account").btn.btn-success.float-right
+                            
+                    .col-md-4.teacher.hide#tf
+                        .form-group
+                            label(for="name") Name
+                            input#name.form-control(type="text",name="name")
+                        .form-group
+                            label(for="email") Email
+                            input#email.form-control(type="email",name="email")
+                        .form-group
+                            label(for="password") Password
+                            input#password.form-control(type="password",name="password")
+                        .col-12
+                        input(type="button", onclick="submitForm()",value="Create New Account").btn.btn-success.float-right
+                    
+                    
+                    
+                    

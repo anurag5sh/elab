@@ -14,6 +14,7 @@ Server running on port 4000
  
  /public/ace-builds - do not touch this folder, editor files
 
+ /public/adminLTE - admin panel files
 
 # Modules
 - express - create a RESTful api
@@ -31,6 +32,7 @@ Server running on port 4000
 - contest.js - handles the contest page
 - practise.js - handles the practice page and the questions of practice page. Also adding of new questions for practice
 - register.js - handles the register route for students and teachers
+- admin.js - handles admin route
 
 # Models
 - practice.js - the db structure of questions belonging to practice section.
@@ -39,7 +41,7 @@ Server running on port 4000
 
 # Middleware
 - auth.js - checks if the user is logged in, otherwise throw error
-
+- admin.js - checks if admin
 
 
 # Admin
@@ -59,3 +61,4 @@ Server running on port 4000
 # Student
 - Making scrollable to display output after submit
 - profile page
+- result page

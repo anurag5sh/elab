@@ -34,6 +34,7 @@ Server running on port 4000
 - practise.js - handles the practice page and the questions of practice page. Also adding of new questions for practice
 - register.js - handles the register route for students and teachers
 - admin.js - handles admin route
+- api.js - handles the judge0 api 
 
 # Models
 - practice.js - the db structure of questions belonging to practice section.

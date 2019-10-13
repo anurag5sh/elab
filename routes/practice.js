@@ -7,6 +7,12 @@ const authenticate = require('../middleware/auth');
 const {Practice,validatePractise} = require('../models/practice');
 const moment = require('moment');
 
+//Saving name for pug to display name in navbar
+// router.use(function(req,res,next){
+//   res.locals.name = req.session.name;
+//   next();
+// });
+
 router.get('/', authenticate,async (req,res)=> {
     const questions = await Practice.find().sort({date:-1});
     

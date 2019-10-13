@@ -10,6 +10,12 @@ const authenticate = require('../middleware/auth');
 const session = require('express-session');
 const admin = require('../middleware/admin');
 
+// To display name in navbar.
+// Access in pug by #{name}
+function name(req,res){
+  res.app.locals.name = req.session.name;
+}
+
 router.get('/',(req,res,next)=>{  console.log(req.session.userId);
   if (req.session && req.session.userId) 
     return res.redirect('/dashboard');
@@ -20,7 +26,7 @@ router.get('/',(req,res,next)=>{  console.log(req.session.userId);
 });
 
 router.get('/dashboard', authenticate,(req,res)=> {
-    res.render('dashboard',{name:req.session.name});
+    res.render('dashboard');
 });
 
 
@@ -56,7 +62,8 @@ router.post('/', async (req, res) => { console.log(req.body);
     if (!validPassword) return res.render('login',{login_error:"Invalid email or password"});
 
     req.session.userId = student._id;
-    req.session.name = student.name.toUpperCase(); 
+    req.session.name = student.name; 
+    name(req,res); //saving name in locals
     return res.redirect('/dashboard');
   }
 
@@ -69,7 +76,8 @@ router.post('/', async (req, res) => { console.log(req.body);
     if (!validPassword) return res.render('login',{login_error:"Invalid email or password"});
 
     req.session.userId = teacher._id;
-    req.session.name = teacher.name.toUpperCase();
+    req.session.name = teacher.name;
+    name(req,res); //saving name in locals
     if(teacher.isAdmin)
       return res.redirect('/admin');
     return res.send('Teacher logged in');

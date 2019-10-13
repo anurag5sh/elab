@@ -26,6 +26,7 @@ Server running on port 4000
 - connect-mongo - connects the mongo db with the session
 - joi - data validation
 - bcrypt - used for hashing passwords
+-request-promise - used to make http request to a given url
 
 # Routes
 - auth.js - handles the login and logout routes (also dashboard,editor temporarily)

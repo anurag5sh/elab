@@ -22,13 +22,13 @@ html(lang='en')
       left: 20px;
       padding: 10px;
       margin: 20px;
-      //- position: absolute;
+      position: relative;
+      
       }
 
       .option-disp {
-        display: inline-block;
-        width: 100px;
         position:relative;
+        width: 150px;
         left:20px;
       }
   body
@@ -54,14 +54,16 @@ html(lang='en')
         p #{sample_o[j]}
 
       
-    .card
+    .card(style="width:90%; display:inline-block;")
+      label(for="lang") Language
       select.option-disp#lang(onchange='language()')
-        option(value='python34') Python
+        option(value='python45') Python
         option(value='java26') Java
         option(value='javascript29') Javascript
         option(value='c_cpp') C
         option(value='c_cpp10') C++
         option(value='csharp16') C#
+      label(for="theme") Theme
       select.option-disp#theme(onchange='theme()')
         option(value='monokai') Monokai
         option(value='chaos') Chaos
@@ -71,24 +73,40 @@ html(lang='en')
         option(value='xcode') XCode
         option(value='chrome') Chrome
         option(value='github') Github
+      label Font Size
+      select.option-disp#fontsize(onchange='fontSize()')
+        option(value='18') 18
+        option(value='24') 24
+        option(value='30') 30
+        option(value='36') 36
       
-      div#editor(style='height: 500px; width: 500px')
-      input#code(type='hidden', name='code', value='a')
+      div#editor(style='height: 500px; margin:10px; ')
       input(type='button', value='Submit', onclick='readText()',style={width: '100px', position:'relative', left:'20px'})
-      textarea#output(name='text', rows='30', cols='30', style='position:relative; left:600px; top:10px; display: inline-block;')  
+    
+    textarea#output(name='text', rows='30', cols='30', style='position:relative; left:20px;')  
    
     script.
       var editor = ace.edit("editor");
       editor.setTheme("ace/theme/monokai");
       editor.session.setMode("ace/mode/python");
+      editor.getSession().setUseWrapMode(true);
+
       editor.setOptions({
       enableBasicAutocompletion: true,
       enableSnippets: true,
-      enableLiveAutocompletion: true
+      enableLiveAutocompletion: true,
+      showPrintMargin: false,
+      fontSize:18,
+      indentedSoftWrap: false
+
       });
       function theme(){
       let t = document.getElementById("theme").value;
       editor.setTheme("ace/theme/"+t);
+      }
+      function fontSize() {
+        let s = document.getElementById("fontsize").value;
+        editor.setOption("fontSize",parseInt(s));
       }
       function language(){
       let l = document.getElementById("lang").value;
@@ -100,8 +118,6 @@ html(lang='en')
       let l = document.getElementById("lang").value;
       if(l=="c_cpp") l=4;
       else l=l.slice(-2);
-      SourceCode =editor.getValue();
-      document.getElementById("code").value = SourceCode;
       $(document).ready(function(){
       $.post("/api",
       {

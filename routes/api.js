@@ -24,7 +24,9 @@ router.post('/', (req,res)=>{
   
   request(options)
     .then((response) => { let output="";
+    
       const json_res = JSON.parse(JSON.stringify(response));
+      console.log(json_res);
       if(json_res.stdout!=null) output=json_res.stdout;
       else if(json_res.stderr!=null) output=json_res.stderr;
       else if(json_res.compile_output!=null) output=json_res.compile_output;

@@ -1,5 +1,5 @@
 const config = require('config');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 const {Student, validate} = require('../models/student');
 const {Teacher} = require('../models/teacher');

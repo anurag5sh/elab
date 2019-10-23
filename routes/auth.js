@@ -1,5 +1,5 @@
 const Joi = require('@hapi/joi');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 //const _ = require('lodash');
 const {Student} = require('../models/student');
 const {Teacher} = require('../models/teacher')

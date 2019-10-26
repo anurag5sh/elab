@@ -27,7 +27,7 @@ mongoose.connect('mongodb://localhost/elab').then(() => {
     
 
 app.set('view engine', 'pug');
-app.set('views',__dirname+"/public/views");
+app.set('views',__dirname+"/views");
 
 app.use(session({
     secret: 'elab',

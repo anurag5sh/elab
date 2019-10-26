@@ -10,7 +10,7 @@ Server running on port 4000
 
  /app.js - the actual file which will run the server
  
- /public/views/ - all pug files 
+ /views/ - all pug files 
  
  /public/ace-builds - do not touch this folder, editor files
 
@@ -25,7 +25,7 @@ Server running on port 4000
 - lodash - enables to pick some attributes from objects more easily
 - connect-mongo - connects the mongo db with the session
 - joi - data validation
-- bcrypt - used for hashing passwords
+- bcryptjs - used for hashing passwords
 -request-promise - used to make http request to a given url
 
 # Routes

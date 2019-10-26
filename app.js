@@ -31,7 +31,7 @@ app.set('views',__dirname+"/public/views");
 
 app.use(session({
     secret: 'elab',
-    cookie:{},
+    cookie:{sameSite:"strict"},
     resave: true,
     saveUninitialized: false,
     store: new MongoStore({

@@ -24,7 +24,9 @@ html
 							li.nav-item(role='presentation')
 								a.nav-link(href='#') LEADERBOARD
 							li.dropdown.nav-item
-								a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#') #{name.toUpperCase()}
+								a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#') 
+									script.
+										document.write(document.cookie.split("=")[1].toUpperCase());
 								.dropdown-menu(role='menu')
 									a.dropdown-item(role='presentation', href='/profile') PROFILE
 									a.dropdown-item(role='presentation', href='#') SUBMISSIONS

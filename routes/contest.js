@@ -4,7 +4,7 @@ const authenticate = require('../middleware/auth');
 
 
 router.get('/',authenticate, (req,res)=> {
-    res.render('example');
+    res.render('contest');
 });
 
 module.exports = router;

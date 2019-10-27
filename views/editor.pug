@@ -3,8 +3,8 @@ html(lang='en')
   head
     title ELAB HKBK
     include navbar
-    script(src='/ace-builds/src-noconflict/ace.js' charset='utf-8')
-    script(src='/ace-builds/src-noconflict/ext-language_tools.js')
+    script(src='/ace-builds/src-min/ace.js' charset='utf-8')
+    script(src='/ace-builds/src-min/ext-language_tools.js')
     script(src='/assets/js/jquery.min.js')
     
     style(type='text/css').
@@ -14,6 +14,8 @@ html(lang='en')
       right: 0;
       bottom: 0;
       left: 20px;
+      height: 500px; 
+      margin:10px;
       }
       .card {
       width: 650px;
@@ -33,8 +35,7 @@ html(lang='en')
       }
   body
     .card
-      p.
-        #{question.statement}
+      p #{question.statement}
       - if(question.constraints) 
           strong Constraints
           p #{question.constraints}
@@ -52,8 +53,8 @@ html(lang='en')
         p #{i}
         strong Sample Output #{j}
         p #{sample_o[j]}
-
-      
+   
+        
     .card(style="width:90%; display:inline-block;")
       label(for="lang") Language
       select.option-disp#lang(onchange='language()')
@@ -80,13 +81,15 @@ html(lang='en')
         option(value='30') 30
         option(value='36') 36
       
-      div#editor(style='height: 500px; margin:10px; ')
+      div#editor
       input(type='button', value='Submit', onclick='readText()',style={width: '100px', position:'relative', left:'20px'})
     
     textarea#output(name='text', rows='30', cols='30', style='position:relative; left:20px;')  
-   
+
+    
     script.
       var editor = ace.edit("editor");
+      ace.require("ace/ext/language_tools");
       editor.setTheme("ace/theme/monokai");
       editor.session.setMode("ace/mode/python");
       editor.getSession().setUseWrapMode(true);

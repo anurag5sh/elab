@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ELAB |CONTEST FORM</title>
+</head>
+<style>
+    * {
+  box-sizing: border-box;
+}
+    .contestform{
+        /*border: 2px solid black;*/
+        margin: 30px;
+        padding: 10px;
+      	margin-top: 110px;
+    }
+</style>
+<body>
+    <div class="contestform" >
+    <h2>Create Contest</h2>
+    <div>
+        <form action="/action_page.php">
+          <label for="Contest">Contest Name</label>
+          <input type="text" id="Contest" name="Contestname" placeholder="Contest" required="true"><br><br>
+          <label for="Start Time">Start Time</label>
+          <input type="date"> at <input type="time" required="true"><br><br>
+          <label for="End Time">End Time</label>
+          <input type="date"> at <input type="time" required="true"><br><br>
+          <label for="select ">For:</label><br><br>
+          <input type="checkbox" name="1st year" value="1" checked />
+          <label for="1st Year">1st Year</label><br><br> 
+          <input type="checkbox" name="2nd year" value="2" />
+          <label for="2nd Year">2nd Year</label><br><br>
+          <input type="checkbox" name="3rd year" value="3" />
+          <label for="3rd Year">3rd Year</label><br><br> 
+          <input type="checkbox" name="4th year" value="4" /> 
+          <label for="4th Year">4th Year</label><br><br>
+          <input type="submit" value="GET STARTED">
+        </form>
+    </div>
+</body>
+</html>

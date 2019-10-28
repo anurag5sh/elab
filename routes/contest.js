@@ -7,4 +7,26 @@ router.get('/',authenticate, (req,res)=> {
     res.render('contest');
 });
 
+//teacher creates contest 
+//auth : pending
+router.get('/create',(req,res) => {
+    res.render('createContest');
+});
+
+//teacher manage contest
+router.get('/manage/:id',(req,res) => {
+    res.render
+});
+
+//viewing list of question
+router.get('/:curl',(req,res) =>{
+
+});
+
+//viewing question
+router.get('/:curl/:id',(req,res)=>{
+
+});
+
+router.get('/')
 module.exports = router;

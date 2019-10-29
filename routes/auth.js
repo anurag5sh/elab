@@ -38,6 +38,10 @@ router.get('/logout', function(req, res, next) {
   }
 });
 
+router.get('/profile', function(req,res){
+  res.render('profile');
+});
+
 router.post('/', async (req, res) => { console.log(req.body);
   const { error } = validate(req.body); 
   if (error) return res.render('login',{login_error:error.message});

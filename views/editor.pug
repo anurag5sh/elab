@@ -45,6 +45,12 @@ html(lang='en')
       html {
         scroll-behavior: smooth;
       }
+      textarea {
+      border: none;
+      background-color: transparent;
+      resize: none;
+      outline: none;
+      }
   body
     .card
       p #{question.statement}
@@ -97,14 +103,12 @@ html(lang='en')
       button#button.btn(value='Run', onclick='readText()', style='margin-right:20px;border-color:black;width:100px;position:relative;left:20px;') 
         a(href='#opbox') Run
       button#button.btn(value='Submit', onclick='readText()', style='border-color:black;width:100px;position:relative;left:20px;') Submit
-      
-    //-textarea#output(name='text', rows='30', cols='30', style='position:relative; left:20px;')  
     
     #opbox.output_box(style="width:50%; display:inline-block;")
 
 
     script.
-      var editor = ace.edit("editor");
+      let editor = ace.edit("editor");
       ace.require("ace/ext/language_tools");
       editor.setTheme("ace/theme/monokai");
       editor.session.setMode("ace/mode/python");
@@ -147,6 +151,7 @@ html(lang='en')
       function(data,status){
       document.getElementById("output").value = data;
       });
+      window.location.href="#opbox";
       });
       }
 
@@ -161,13 +166,3 @@ html(lang='en')
           }
         });
         });
-
-        
-      
-
-    
-  
-//- block script
-//-     script(src='ace-builds/src-noconflict/ace.js')
-//-     script(src='ace-builds/src-noconflict/ext-language_tools.js')
-//-     script(src='jquery.min.js')

@@ -1,0 +1,50 @@
+doctype html
+include navbar
+head
+  title profile
+  style(type='text/css').
+    td{
+    vertical-align: middle;
+    padding: 2px;
+    margin:0;
+    }
+    .lbl{
+    width: 70px;
+    text-align: center;
+    color: black;
+    font-weight:600;
+    }
+body
+  .profile
+    table
+      tr
+        td.lbl
+          label.lbl
+            b Username
+        td
+          input#username(type='text' name='username')
+    table
+      tr
+        td.lbl
+          label
+            b Name
+        td
+          input#name(type='text' name='name')
+    table
+      tr
+        td.lbl
+          label
+            b USN
+        td
+          input#usn(type='text' name='usn')
+    table
+      tr
+        td.lbl
+          label
+            b Email
+        td
+          input#email(type='text' name='email')
+    table
+      tr
+        td
+          input.btn(type='button' name='password' value='Change password')

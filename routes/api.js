@@ -16,8 +16,10 @@ return b.toString();
 router.post('/', (req,res)=>{
   console.log(req.body);
 
+  if(req.body.source=='')
+    return res.send();
   let options = { method: 'POST',
-  url: 'http://localhost:3000/submissions?base64_encoded=true&wait=true',
+  url: 'http://127.0.0.1:3000/submissions?base64_encoded=true&wait=true',
   body: { "source_code": encode64(req.body.source), "language_id": req.body.language },
   json: true };
 

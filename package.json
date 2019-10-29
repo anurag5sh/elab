@@ -1,7 +1,7 @@
 {
   "name": "elab",
   "version": "1.0.0",
-  "description": "",
+  "description": "Server running on port 4000",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -22,5 +22,14 @@
     "pug": "^2.0.4",
     "request": "^2.88.0",
     "request-promise": "^4.2.4"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anurag5sh/elab.git"
+  },
+  "bugs": {
+    "url": "https://github.com/anurag5sh/elab/issues"
+  },
+  "homepage": "https://github.com/anurag5sh/elab#readme"
 }

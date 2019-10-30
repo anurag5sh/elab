@@ -21,7 +21,7 @@ router.post('/create', (req,res)=>{
 
 //teacher manage contest
 router.get('/manage/:id',(req,res) => {
-    res.render
+    res.render('manageContest');
 });
 
 //landing page for contest

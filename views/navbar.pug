@@ -7,6 +7,8 @@ html
 		link(rel='stylesheet', href='/assets/bootstrap/css/bootstrap.min.css')
 		link(rel='stylesheet', href='/assets/css/Navigation-Clean.css')
 		link(rel='stylesheet', href='/assets/css/styles.css')
+		script(src="/assets/js/jquery.min.js")
+		script(src="/assets/bootstrap/js/bootstrap.min.js")
 	body
 		div
 			nav.navbar.navbar-light.navbar-expand-md.navigation-clean
@@ -33,9 +35,6 @@ html
 									a.dropdown-item(role='presentation', href='/logout') LOG OUT
 									.dropdown-divider(role='presentation')
 					.clearfix
-		block contest
+		block content
 
-block script
-	script(src='/assets/js/jquery.min.js')
-	script(src='/assets/bootstrap/js/bootstrap.min.js')
 		

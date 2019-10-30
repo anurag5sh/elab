@@ -15,7 +15,7 @@ router.get('/create',(req,res) => {
 
 //teacher manage contest
 router.get('/manage/:id',(req,res) => {
-    res.render
+    res.render('manageContest');
 });
 
 //viewing list of question

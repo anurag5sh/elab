@@ -1,0 +1,49 @@
+include navbar
+html(lang='en')
+  head
+    title Bootstrap Example
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js')
+
+  html
+  head
+  body
+    br
+    .container
+      h2 #Contest name
+      br
+      // Nav tabs
+      ul.nav.nav-tabs(role='tablist')
+        li.nav-item
+          a.nav-link.active(data-toggle='tab', href='#home') DETAILS
+        li.nav-item
+          a.nav-link(data-toggle='tab', href='#menu1') QUESTIONS
+        li.nav-item
+          a.nav-link(data-toggle='tab', href='#menu2') STUDENTS
+        li.nav-item
+          a.nav-link(data-toggle='tab', href='#menu2') LEADERBOARD
+        li.nav-item
+          a.nav-link(data-toggle='tab', href='#menu2') STATISTICS
+        li.nav-item
+          a.nav-link(data-toggle='tab', href='#menu2') RULES
+      // Tab panes
+      .tab-content
+        #home.container.tab-pane.active
+          br
+          h3 DETAILS
+        #menu1.container.tab-pane.fade
+          br
+          h3 QUESTIONS
+        #menu2.container.tab-pane.fade
+          br
+          h3 STUDENTS
+        #menu2.container.tab-pane.fade
+          br
+          h3 LEADERBOARD
+        #menu2.container.tab-pane.fade
+          br
+          h3 STATISTICS
+        #menu2.container.tab-pane.fade
+          br
+          h3 RULES

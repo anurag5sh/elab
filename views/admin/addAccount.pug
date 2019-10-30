@@ -73,6 +73,7 @@ block content
                             input#password.form-control(type="password",name="password")
                         .col-12
                         input(type="button",onclick="submitForm()", value="Create New Account").btn.btn-success.float-right
+
                             
                     .col-md-4.teacher.hide#tf
                         .form-group
@@ -86,7 +87,25 @@ block content
                             input#password.form-control(type="password",name="password")
                         .col-12
                         input(type="button", onclick="submitForm()",value="Create New Account").btn.btn-success.float-right
-                    
+    form(enctype="multipart/form-data" ,method="POST")
+        .card.card-primary
+            .card-header
+                h3.card-title Add via CSV
+            .card-body
+                .col-3(style="margin:auto;")
+                    .form-group
+                        h6 Select account type
+                        select(name="type_csv", required).form-control.custom-select
+                            option(value="student") Student
+                            option(value="teacher") Teacher
+                .row
+                    .col-md-4
+                        .form-group
+                            p Upload a csv file with following attributes
+                        .form-group
+                            input(type="file", name="csv")
+                        .form-group
+                            input.btn.btn-success(type="submit", value="Upload")
                     
                     
                     

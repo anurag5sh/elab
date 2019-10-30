@@ -28,10 +28,28 @@ html(lang='en')
       
       }
 
+      
       .option-disp {
         position:relative;
         width: 150px;
         left:20px;
+      }
+
+      a:link,a:visited {
+        color: black;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+      }
+      
+      html {
+        scroll-behavior: smooth;
+      }
+      textarea {
+      border: none;
+      background-color: transparent;
+      resize: none;
+      outline: none;
       }
   body
     .card
@@ -82,13 +100,15 @@ html(lang='en')
         option(value='36') 36
       
       div#editor
-      input(type='button', value='Submit', onclick='readText()',style={width: '100px', position:'relative', left:'20px'})
+      button#button.btn(value='Run', onclick='readText()', style='margin-right:20px;border-color:black;width:100px;position:relative;left:20px;') 
+        a(href='#opbox') Run
+      button#button.btn(value='Submit', onclick='readText()', style='border-color:black;width:100px;position:relative;left:20px;') Submit
     
-    textarea#output(name='text', rows='30', cols='30', style='position:relative; left:20px;')  
+    #opbox.output_box(style="width:50%; display:inline-block;")
 
-    
+
     script.
-      var editor = ace.edit("editor");
+      let editor = ace.edit("editor");
       ace.require("ace/ext/language_tools");
       editor.setTheme("ace/theme/monokai");
       editor.session.setMode("ace/mode/python");
@@ -117,6 +137,7 @@ html(lang='en')
       else l=l.slice(0,-2);
       editor.session.setMode("ace/mode/"+l);
       }
+      
       function readText () {
       let l = document.getElementById("lang").value;
       if(l=="c_cpp") l=4;
@@ -130,12 +151,18 @@ html(lang='en')
       function(data,status){
       document.getElementById("output").value = data;
       });
+      window.location.href="#opbox";
       });
       }
 
-    
-  
-//- block script
-//-     script(src='ace-builds/src-noconflict/ace.js')
-//-     script(src='ace-builds/src-noconflict/ext-language_tools.js')
-//-     script(src='jquery.min.js')
+      $(document).ready(function() {
+        var count=0;
+        $('#button').click(function()
+        { 
+          if(count==0){
+            count=count+1;
+            $('#opbox').append('<div name="out" id="out" style="width: 650px;height:600px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);text-align: left;left: 20px;padding: 10px;margin: 20px;position: relative;"><label><u><b>Input</b></u></label><textarea id="" readonly="readonly" style="width:100%;border:none;"></textarea><label><u><b>Output</b></u></label><textarea id="output" readonly="readonly" style="width:100%;border:none;"></textarea><label><u><b>Expected Output</b></u></label><textarea id="" readonly="readonly" style="width:100%;border:none;"></textarea></div>');
+            
+          }
+        });
+        });

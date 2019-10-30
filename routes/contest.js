@@ -13,12 +13,18 @@ router.get('/create',(req,res) => {
     res.render('createContest');
 });
 
+//Saving the contest in db
+router.post('/create', (req,res)=>{
+
+});
+
+
 //teacher manage contest
 router.get('/manage/:id',(req,res) => {
     res.render
 });
 
-//viewing list of question
+//landing page for contest
 router.get('/:curl',(req,res) =>{
 
 });

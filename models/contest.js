@@ -7,7 +7,7 @@ const contestSchema = new mongoose.Schema({
     type:String
   },
   createdBy:{
-    type:Schema.Types.ObjectId
+    type:mongoose.Schema.Types.ObjectId
   },
   id:{
     type:Number
@@ -25,12 +25,12 @@ const contestSchema = new mongoose.Schema({
     starts:{type: Date},
     ends:{type:Date}
   },
-  year:{
+  year:[{
     type:String
-  },
+  }],
   isReady:{
     type: Boolean,
-    required:true,
+    default:false,
   },
   signedUp:{
     type:[String],
@@ -39,9 +39,9 @@ const contestSchema = new mongoose.Schema({
     type:[String]
   },
   submissions:{
-    qid:{type:String, required:true},
+    qid:{type:String},
     timestamp:{type:Date},
-    usn:{type:String, required:true},
+    usn:{type:String},
     sourceCode:{type:String},
     status:{type:String},
     points:{type: Number,default:0}
@@ -63,12 +63,9 @@ function validateContest(contest)
 {
     const schema = Joi.object({
         name: Joi.string().required(),
-        timings:Joi.object().keys({
-          created:Joi.date().required(),
-          starts: Joi.date().required(),
-          ends:Joi.date().required()
-        }),
-        year:Joi.string().required()
+        starts: Joi.date().required(),
+        ends:Joi.date().required(),
+        year:Joi.array().items(Joi.string().required())
     });
 
     return schema.validate(contest);

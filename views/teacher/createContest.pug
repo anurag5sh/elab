@@ -1,6 +1,6 @@
 doctype html
 html(lang='en')
-include navbar
+include ../navbar
 head
   meta(charset='UTF-8')
   meta(name='viewport', content='width=device-width, initial-scale=1.0')
@@ -20,40 +20,40 @@ body
   .contestform
     h2 Create Contest
     div
-      form(action='/action_page.php')
+      form(action='' method='POST')
         label(for='Contest') Contest Name
-        input#Contest(type='text', name='Contestname', placeholder='Contest', required='true')
+        input#Contest(type='text', name='name', placeholder='Contest', required='true')
         br
         br
         label(for='Start Time') Start Time
-        input(type='date')
+        input(type='date' name = 'starts')
         |  at 
-        input(type='time', required='true')
+        input(type='time', required='true' name = 'starts')
         br
         br
         label(for='End Time') End Time
-        input(type='date')
+        input(type='date' name= 'ends')
         |  at 
-        input(type='time', required='true')
+        input(type='time', required='true' name = 'ends')
         br
         br
         label(for='select ') For:
         br
         br
-        input(type='checkbox', name='1st year', value='1', checked='')
-        label(for='1st Year') 1st Year
+        input(type='checkbox', name='year', value='1')
+        label 1st Year
         br
         br
-        input(type='checkbox', name='2nd year', value='2')
-        label(for='2nd Year') 2nd Year
+        input(type='checkbox', name='year', value='2')
+        label 2nd Year
         br
         br
-        input(type='checkbox', name='3rd year', value='3')
-        label(for='3rd Year') 3rd Year
+        input(type='checkbox', name='year', value='3')
+        label 3rd Year
         br
         br
-        input(type='checkbox', name='4th year', value='4')
-        label(for='4th Year') 4th Year
+        input(type='checkbox', name='year', value='4')
+        label 4th Year
         br
         br
         input(type='submit', value='GET STARTED')

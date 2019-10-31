@@ -1,0 +1,52 @@
+html
+  head
+    style.
+      * {
+      box-sizing: border-box;
+      }
+      .contestform{
+      /*border: 2px solid black;*/
+      margin: 30px;
+      padding: 10px;
+      margin-top: 20px;
+      }
+  body
+    .contestform
+      div
+        form(action='/action_page.php')
+          label(for='Contest') Contest Name
+          input#Contest(type='text', name='Contestname', placeholder='Contest', required='true')
+          br
+          br
+          label(for='Start Time') Start Time: 
+          input(type='date')
+          |  at 
+          input(type='time', required='true')
+          br
+          br
+          label(for='End Time') End Time: 
+          input(type='date')
+          |  at 
+          input(type='time', required='true')
+          br
+          br
+          label(for='select ') For:
+          br
+          br
+          input(type='checkbox', name='1st year', value='1', checked='')
+          label(for='1st Year') 1st Year
+          br
+          br
+          input(type='checkbox', name='2nd year', value='2')
+          label(for='2nd Year') 2nd Year
+          br
+          br
+          input(type='checkbox', name='3rd year', value='3')
+          label(for='3rd Year') 3rd Year
+          br
+          br
+          input(type='checkbox', name='4th year', value='4')
+          label(for='4th Year') 4th Year
+          br
+          br
+          input(type='submit', value='SAVE SETTINGS')

@@ -10,12 +10,12 @@ router.get('/',authenticate, (req,res)=> {
 //teacher creates contest 
 //auth : pending
 router.get('/create',(req,res) => {
-    res.render('createContest');
+    res.render('teacher/createContest');
 });
 
 //teacher manage contest
-router.get('/manage/:id',(req,res) => {
-    res.render('manageContest');
+router.get('/manage',(req,res) => {
+    res.render('teacher/manageContest');
 });
 
 //viewing list of question

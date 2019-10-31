@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authenticate = require('../middleware/auth');
-
+const Contest = require('../models/contest');
 
 router.get('/',authenticate, (req,res)=> {
     res.render('contest');
@@ -13,12 +13,18 @@ router.get('/create',(req,res) => {
     res.render('teacher/createContest');
 });
 
+//Saving the contest in db
+router.post('/create', (req,res)=>{
+
+});
+
+
 //teacher manage contest
 router.get('/manage',(req,res) => {
     res.render('teacher/manageContest');
 });
 
-//viewing list of question
+//landing page for contest
 router.get('/:curl',(req,res) =>{
 
 });

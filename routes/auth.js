@@ -11,8 +11,13 @@ const session = require('express-session');
 const admin = require('../middleware/admin');
 
 
-router.get('/',(req,res,next)=>{  console.log(req.session.userId);
-  if (req.session && req.session.userId) 
+//filter teacher and student login
+//redirect to respective dashboard
+router.get('/',(req,res,next)=>{
+  if (req.session && req.session.userId)
+    if(req.session.name.endsWith(" ")) 
+      return res.render('teacher/trdashboard');
+    else
     return res.redirect('/dashboard');
   else  next();
 
@@ -20,11 +25,12 @@ router.get('/',(req,res,next)=>{  console.log(req.session.userId);
     res.render('login');
 });
 
+//student dashboard
 router.get('/dashboard', authenticate,(req,res)=> {
     res.render('dashboard');
 });
 
-
+//logout route
 router.get('/logout', function(req, res, next) {
   if (req.session) {
     // delete session object
@@ -38,10 +44,13 @@ router.get('/logout', function(req, res, next) {
   }
 });
 
+
+//profile
 router.get('/profile', function(req,res){
   res.render('profile');
 });
 
+//login validation
 router.post('/', async (req, res) => { console.log(req.body);
   const { error } = validate(req.body); 
   if (error) return res.render('login',{login_error:error.message});
@@ -55,7 +64,7 @@ router.post('/', async (req, res) => { console.log(req.body);
     if (!validPassword) return res.render('login',{login_error:"Invalid email or password"});
 
     req.session.userId = student._id;
-    req.session.name = student.name; 
+    req.session.name = student.name.trim(); 
     res.cookie("name", student.name,{sameSite:"strict"});
     return res.redirect('/dashboard');
   }
@@ -69,11 +78,11 @@ router.post('/', async (req, res) => { console.log(req.body);
     if (!validPassword) return res.render('login',{login_error:"Invalid email or password"});
 
     req.session.userId = teacher._id;
-    req.session.name = teacher.name;
+    req.session.name = teacher.name+" ";
     res.cookie("name", teacher.name,{sameSite:"strict"});
     if(teacher.isAdmin)
       return res.redirect('/admin');
-    return res.send('Teacher logged in');
+    return res.render('teacher/trdashboard');
   }
   
   else{
@@ -93,5 +102,12 @@ function validate(req) {
 
   return schema.validate(req);
 }
+
+
+/* TEACHER'S ACCOUNT ROUTES
+
+--------------------------------------------------------- */
+
+
 
 module.exports = router; 

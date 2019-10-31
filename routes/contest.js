@@ -23,6 +23,9 @@ function setDate(req,res,next){
 
 
 router.get('/',authenticate, (req,res)=> {
+    if(req.session.name.endsWith(" "))
+    res.render('teacher/trcontest');
+    else
     res.render('contest');
 });
 

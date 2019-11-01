@@ -38,14 +38,19 @@ router.get('/create',(req,res) => {
 //Saving the contest in db
 router.post('/create',setDate, async (req,res)=>{
     const { error } = validateContest(req.body);
-    if(error) return res.send(error.message); 
+    if(error) return res.status(400).send(error.message); 
+    if(req.body.starts>=req.body.ends)
+        return res.status(400).send("Incorrect timings");
     const secret = crypto.randomBytes(20).toString('hex');
     const createdBy = req.session.userId;
     let id = await Contest.countDocuments();
     id++;
-    const url = req.body.name.replace(/ /g,'-');
+    let url = req.body.name.replace(/ /g,'-');
+    let count  = await Contest.countDocuments({name:req.body.name.trim()});
+    if(count>0)
+        url = url+count;
     
-    let contest = new Contest({secret:secret,createdBy:createdBy,id:id,name:req.body.name,url:url,year:req.body.year});
+    let contest = new Contest({secret:secret,createdBy:createdBy,id:id,name:req.body.name.trim(),url:url,year:req.body.year});
     contest.timings.created= moment().format();
     contest.timings.starts = req.body.starts;
     contest.timings.ends = req.body.ends;
@@ -58,8 +63,15 @@ router.post('/create',setDate, async (req,res)=>{
 
 
 //teacher manage contest
-router.get('/manage',(req,res) => {
-    res.render('teacher/manageContest');
+router.get('/manage/:name',async (req,res) => {
+    let contest = await Contest.findOne({url:req.params.name});
+    if(!contest) return res.status(404).end();
+    res.render('teacher/manageContest',{contest:contest});
+});
+
+//teacher editing existing contest
+router.post('/manage/:name',async (req,res) =>{
+    res.send("Saved");
 });
 
 //landing page for contest

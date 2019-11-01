@@ -10,43 +10,59 @@ html
       padding: 10px;
       margin-top: 20px;
       }
+    script.
+      function submitForm(){
+      const con = $.post("", $("#con").serialize(), function(data,status) {
+          document.getElementById('alertForm').innerHTML += '<div class="alert alert-success alert-dismissible fade show"><button type="button" class="close" data-dismiss="alert">&times;</button><strong>Success! </strong>Changes Saved.</div>';
+              })
+                  .fail(function(error){
+                      document.getElementById('alertForm').innerHTML += '<div class="alert alert-danger alert-dismissible fade show"><button type="button" class="close" data-dismiss="alert">&times;</button><strong>Error! </strong>'+(error.responseText)+'</div>';
+                  })}
   body
     .contestform
       div
-        form(action='/action_page.php')
+        form#con
           label(for='Contest') Contest Name
-          input#Contest(type='text', name='Contestname', placeholder='Contest', required='true')
+          input#Contest(type='text', name='Contestname', placeholder='Contest', required='true',value=contest.name)
           br
           br
           label(for='Start Time') Start Time: 
-          input(type='date')
+          - let sdate = contest.timings.starts.getFullYear() + "-" + ("0"+contest.timings.starts.getMonth()).slice(-2) +"-"+("0"+contest.timings.starts.getDate()).slice(-2);
+          input(type='date' value=sdate)
           |  at 
-          input(type='time', required='true')
+          - let stime = ("0"+contest.timings.starts.getHours()).slice(-2) +":"+ ("0"+contest.timings.starts.getMinutes()).slice(-2);
+          input(type='time', required='true', value=stime)
           br
           br
-          label(for='End Time') End Time: 
-          input(type='date')
+          label(for='End Time') End Time:
+          - let edate = contest.timings.ends.getFullYear() + "-" + ("0"+contest.timings.ends.getMonth()).slice(-2) +"-"+("0"+contest.timings.ends.getDate()).slice(-2); 
+          input(type='date' value=edate)
           |  at 
-          input(type='time', required='true')
+          - let etime = ("0"+contest.timings.ends.getHours()).slice(-2) +":"+ ("0"+contest.timings.ends.getMinutes()).slice(-2);
+          input(type='time', required='true',value=etime)
           br
           br
           label(for='select ') For:
           br
           br
-          input(type='checkbox', name='1st year', value='1', checked='')
+          - let y = [false,false,false,false];
+          - for(i=1;i<=contest.year.length;i++) y[contest.year[i]]=true;
+          
+              
+          input(type='checkbox', name='1st year', value='1', checked=y[1])
           label(for='1st Year') 1st Year
           br
           br
-          input(type='checkbox', name='2nd year', value='2')
+          input(type='checkbox', name='2nd year', value='2', checked=y[2])
           label(for='2nd Year') 2nd Year
           br
           br
-          input(type='checkbox', name='3rd year', value='3')
+          input(type='checkbox', name='3rd year', value='3', checked=y[3])
           label(for='3rd Year') 3rd Year
           br
           br
-          input(type='checkbox', name='4th year', value='4')
+          input(type='checkbox', name='4th year', value='4', checked=y[4])
           label(for='4th Year') 4th Year
           br
           br
-          input(type='submit', value='SAVE SETTINGS')
+          input(type='button', value='SAVE SETTINGS', onclick="submitForm()")

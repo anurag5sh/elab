@@ -1,59 +1,86 @@
 doctype html
-html(lang='en')
 include ../navbar
-head
-  meta(charset='UTF-8')
-  meta(name='viewport', content='width=device-width, initial-scale=1.0')
-  meta(http-equiv='X-UA-Compatible', content='ie=edge')
-  title ELAB |CONTEST FORM
-  style.
-    * {
-    box-sizing: border-box;
-    }
-    .contestform{
-    /*border: 2px solid black;*/
-    margin: 30px;
-    padding: 10px;
-    margin-top: 110px;
-    }
-body
-  .contestform
-    h2 Create Contest
-    div
-      form(action='' method='POST')
-        label(for='Contest') Contest Name
-        input#Contest(type='text', name='name', placeholder='Contest', required='true')
-        br
-        br
-        label(for='Start Time') Start Time
-        input(type='date' name = 'starts')
-        |  at 
-        input(type='time', required='true' name = 'starts')
-        br
-        br
-        label(for='End Time') End Time
-        input(type='date' name= 'ends')
-        |  at 
-        input(type='time', required='true' name = 'ends')
-        br
-        br
-        label(for='select ') For:
-        br
-        br
-        input(type='checkbox', name='year', value='1')
-        label 1st Year
-        br
-        br
-        input(type='checkbox', name='year', value='2')
-        label 2nd Year
-        br
-        br
-        input(type='checkbox', name='year', value='3')
-        label 3rd Year
-        br
-        br
-        input(type='checkbox', name='year', value='4')
-        label 4th Year
-        br
-        br
-        input(type='submit', value='GET STARTED')
+html(lang='en')
+
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(http-equiv='X-UA-Compatible', content='ie=edge')
+    title ELAB |CONTEST FORM
+    style.
+      * {
+      box-sizing: border-box;
+      }
+      .contestform{
+      /*border: 2px solid black;*/
+      margin: 30px;
+      padding: 10px;
+      margin-top: 110px;
+      }
+    script.
+      let u ="";
+      function submitForm(){
+      const con = $.post("", $("#con").serialize(), function(data,status) {
+              u = data.url;
+              $('#manageModal').modal('show');
+              })
+                  .fail(function(error){
+                      document.getElementById('errorForm').innerHTML += '<div class="alert alert-danger alert-dismissible fade show"><button type="button" class="close" data-dismiss="alert">&times;</button><strong>Error! </strong>'+(error.responseText)+'</div>';
+                  })}
+  body
+    .contestform
+      div#errorForm
+      // The Modal
+      #manageModal.modal.fade
+        .modal-dialog.modal-dialog-centered
+          .modal-content
+            // Modal Header
+            .modal-header
+              h4.modal-title Contest Created
+              button.close(type='button', data-dismiss='modal') ×
+            // Modal body
+            .modal-body
+              | Click on Next to manage your contest
+            // Modal footer
+            .modal-footer
+              button.btn.btn-secondary(type='button' , onclick="location.href='./manage/'+u") Next
+
+      h2 Create Contest
+      div
+        form#con
+          label(for='Contest') Contest Name
+          input#Contest(type='text', name='name', placeholder='Contest', required='true')
+          br
+          br
+          label(for='Start Time') Start Time
+          input(type='date' name = 'starts')
+          |  at 
+          input(type='time', required='true' name = 'starts')
+          br
+          br
+          label(for='End Time') End Time
+          input(type='date' name= 'ends')
+          |  at 
+          input(type='time', required='true' name = 'ends')
+          br
+          br
+          label(for='select ') For:
+          br
+          br
+          input(type='checkbox', name='year', value='1')
+          label 1st Year
+          br
+          br
+          input(type='checkbox', name='year', value='2')
+          label 2nd Year
+          br
+          br
+          input(type='checkbox', name='year', value='3')
+          label 3rd Year
+          br
+          br
+          input(type='checkbox', name='year', value='4')
+          label 4th Year
+          br
+          br
+          input(type='button', value='GET STARTED', onclick="submitForm()")

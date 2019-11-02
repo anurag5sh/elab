@@ -1,20 +1,28 @@
 doctype html
-html   
-    include navbar
-    link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Noto+Sans+JP")
-    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css")
-    script(src="/assets/js/bs-animation.js")
+include navbar
+html
+    head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0, shrink-to-fit=no')
+    title Projects - Brand
+    link(rel='stylesheet' href='list_style/bootstrap/css/bootstrap.min.css')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,400,700')
+    link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css')
     body
         .jumbotron.text-left.bg-info.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
             h1 PRACTICE
-        |
-        
-
-
-        - let questions=q
-        each i in questions
-            .question(style='width: 1087px;')
-                .que
-                    h5(style='float:left;')=i.name
-                     //-button.btn.btn-primary(data-bs-hover-animate='pulse', type='button', onclick=href='/'+ i.qid,style='width: 73px;margin: 24px;padding: 3px;display: block;float: right;') SOLVE
-                    a.btn.btn-primary(data-bs-hover-animate='pulse', type='button',href='/practice/'+i.qid,style='width: 73px;margin: 24px;padding: 3px;display: block;float: right;') SOLVE
+        main.page.projets-page
+            section.portfolio-block.project-no-images
+                .container
+                    .row
+                        - let questions=q
+                        each i in questions
+                            .col-md-6.col-lg-4
+                                .project-card-no-image
+                                    h5()=i.name
+                                    a.btn.btn-outline-primary.btn-sm(role='button' href='#') SOLVE
+                        
+        script(src='list_style/js/jquery.min.js')
+        script(src='list_style/bootstrap/js/bootstrap.min.js')
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js')
+        script(src='list_style/js/theme.js')

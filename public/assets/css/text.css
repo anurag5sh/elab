@@ -1,0 +1,55 @@
+td{
+	vertical-align: middle;
+	padding: 2px;
+	margin:0;
+}
+
+.lbl{
+
+width: 137px;
+text-align: center;
+color: black;
+font-weight:600;
+}
+
+textarea,input[type="text"],label{
+	border-radius: 5px;
+	border-color: black;
+}
+
+input[type="submit"]{
+	width: 100px;
+	font-size: 15px;
+	border-radius: 3px;
+	height: 25px;
+	margin:-20px -50px;
+	position: relative;
+	left: 50%;
+	font-weight: bold;
+}
+
+.box{
+	width: 80%;
+	margin-top: 50px;
+}
+
+.input{
+	margin-right: 20px;
+}
+
+.testcase,.samplecase{
+	width: 80%;
+}
+
+.tc{
+	font-weight: bold;
+}
+
+.t_case{
+	padding: 5px;
+	margin:20px;
+}
+
+.question{
+	margin-top: 10%;
+}

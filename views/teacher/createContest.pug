@@ -31,19 +31,18 @@ html(lang='en')
     .contestform
       div#errorForm
       // The Modal
-      #manageModal.modal.fade
+      #manageModal.modal.fade(data-backdrop="static", data-keyboard="false")
         .modal-dialog.modal-dialog-centered
           .modal-content
             // Modal Header
             .modal-header
               h4.modal-title Contest Created
-              button.close(type='button', data-dismiss='modal') ×
             // Modal body
             .modal-body
               | Click on Next to manage your contest
             // Modal footer
             .modal-footer
-              button.btn.btn-secondary(type='button' , onclick="location.href='./manage/'+u") Next
+              button.btn.btn-success(type='button' , onclick="location.href='./manage/'+u") Next
 
       h2 Create Contest
       div

@@ -65,7 +65,7 @@ function validateContest(contest)
         name: Joi.string().required(),
         starts: Joi.date().required(),
         ends:Joi.date().required(),
-        year:Joi.array().items(Joi.string().required())
+        year:[Joi.string(),Joi.array().items(Joi.string().required())]
     });
 
     return schema.validate(contest);

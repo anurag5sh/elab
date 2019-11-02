@@ -22,6 +22,7 @@ function setDate(req,res,next){
 }
 
 
+
 router.get('/',authenticate, (req,res)=> {
     if(req.session.name.endsWith(" "))
     res.render('teacher/trcontest');
@@ -63,10 +64,18 @@ router.post('/create',setDate, async (req,res)=>{
 
 
 //teacher manage contest
-router.get('/manage/:name',async (req,res) => {
+router.get('/manage/:name', async (req,res) => {
+    if(!req.session.name.endsWith(" ")) return res.status(404).end();
+
     let contest = await Contest.findOne({url:req.params.name});
     if(!contest) return res.status(404).end();
-    res.render('teacher/manageContest',{contest:contest});
+
+    if(contest.createdBy == req.session.userId)
+       return res.render('teacher/manageContest',{contest:contest});
+    else
+        return res.status(404).end();
+    
+    
 });
 
 //teacher editing existing contest

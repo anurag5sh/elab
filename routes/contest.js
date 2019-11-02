@@ -66,6 +66,17 @@ router.post('/create',setDate, async (req,res)=>{
 });
 
 
+// list the contest made by teacher 
+router.get('/manage',authenticate, async (req,res) => {
+    console.log("working");
+    let trcontest = await Contest.findOne({createdBy:req.session.userId}); 
+    console.log(trcontest);
+    if(!trcontest) res.send.status(404).end();
+    res.send(trcontest); 
+    
+
+});
+
 //teacher manage contest
 router.get('/manage/:name', async (req,res) => {
     if(!req.session.name.endsWith(" ")) return res.status(404).end();
@@ -96,12 +107,6 @@ router.get('/:curl/:id',(req,res)=>{
 
 });
 
-// list the contest made by teacher 
-router.get('/manage',authenticate, async (req,res) => {
-        let trcontest = await Contest.findOne({createdBy:req.session.userId}); 
-        if(!trcontest) res.send.status(404).end();
-        res.json(trcontest); 
-        
 
-});
+
 module.exports = router;

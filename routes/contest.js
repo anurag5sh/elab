@@ -68,11 +68,10 @@ router.post('/create',setDate, async (req,res)=>{
 
 // list the contest made by teacher 
 router.get('/manage',authenticate, async (req,res) => {
-    console.log("working");
-    let trcontest = await Contest.findOne({createdBy:req.session.userId}); 
-    console.log(trcontest);
+    let trcontest = await Contest.find({createdBy:req.session.userId}); 
     if(!trcontest) res.send.status(404).end();
-    res.send(trcontest); 
+    console.log(trcontest);
+    res.render('teacher/manage',{q:trcontest}); 
     
 
 });

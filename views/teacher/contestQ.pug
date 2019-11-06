@@ -1,0 +1,123 @@
+doctype html
+html
+  head
+    link(rel='stylesheet', href='assets/css/text.css')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js')
+    script(src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js')
+  body
+    .question
+      form
+        .box
+          table
+            tbody
+              tr
+                td.lbl
+                  label.lbl Question name:
+                td
+                  input#name(type='text', name='name', required='')
+          table
+            tbody
+              tr
+                td.lbl
+                  label Problem Statement:
+                td
+                  textarea#statement(rows='5', name='statement', cols='50', required='')
+          table
+            tbody
+              tr
+                td.lbl
+                  label Constraints:
+                td
+                  textarea#constraints(rows='5', name='constraints', cols='50')
+          table
+            tbody
+              tr
+                td.lbl
+                  label Input format:
+                td
+                  textarea#i_format(rows='5', name='i_format', cols='50', required='')
+          table
+            tbody
+              tr
+                td.lbl
+                  label Output format:
+                td
+                  textarea#o_format(rows='5', name='o_format', cols='50', required='')
+          br
+          #samplecase
+            label.tc Sample Testcases:
+            input#btSampleAdd.bt(type='button', value='Add Sample Case')
+            input#btSampleRemove.bt(type='button', value='Remove Field')
+            .t_case
+              p Sample Testcase 0
+              textarea#i_sample1.input(rows='5', name='i_sample1', cols='50', required='', placeholder='Input')
+              textarea#o_sample1.input(rows='5', name='o_sample1', cols='50', required='', placeholder='Output')
+              p Explaination
+              textarea#explaination.ex_box(name='explaination', rows='5', cols='107', required='')
+          #testcase
+            label.tc Testcases:
+            input#btAdd.bt(type='button', value='Add Test Case')
+            input#btRemove.bt(type='button', value='Remove Field')
+            br
+            .t_case
+              p Testcase 0
+              textarea#i_testcase1.input(rows='5', name='i_testcase1', cols='50', required='', placeholder='Input')
+              textarea#o_testcase1.input(rows='5', name='o_testcase1', cols='50', required='', placeholder='Output')
+          input(type='submit', name='submit', value='Submit')
+    script.
+      $(document).ready(function() {
+      var iCnt = 0;
+      var count = 0;
+      // CREATE A "DIV" ELEMENT AND DESIGN IT USING jQuery ".css()" CLASS.
+      var container = $(document.createElement('div')).css({
+      padding: '5px',margin: '20px'
+      });
+      $('#btSampleAdd').click(function() {
+      iCnt = iCnt + 1;
+      count = count +1;
+      // ADD TEXTBOX.
+      $(container).append('<p id=p' + count +'>Sample Testcase ' + count + '</p>');
+      $(container).append('<textarea rows="5" cols="50"  class="input" id=tb' + iCnt + ' placeholder="Input" ></textarea>');
+      iCnt = iCnt + 1;
+      $(container).append('<textarea rows="5" cols="50"  class="input" id=tb' + iCnt + ' placeholder="Output" ></textarea>');
+      // ADD BOTH THE DIV ELEMENTS TO THE "main" CONTAINER.
+      $('#samplecase').after(container);
+      });
+      // REMOVE ONE ELEMENT PER CLICK.
+      $('#btSampleRemove').click(function() {
+      if (iCnt != 0)
+      {
+      $('#tb' + iCnt).remove(); iCnt = iCnt - 1;
+      $('#tb' + iCnt).remove(); iCnt = iCnt - 1;
+      $('#p' + count).remove();count = count -1;
+      }
+      });
+      });
+      $(document).ready(function() {
+      var iCnt = 0;
+      var count = 0;
+      // CREATE A "DIV" ELEMENT AND DESIGN IT USING jQuery ".css()" CLASS.
+      var container = $(document.createElement('div')).css({
+      padding: '5px', margin: '20px'
+      });
+      $('#btAdd').click(function() {
+      iCnt = iCnt + 1;
+      count = count +1;
+      // ADD TEXTBOX.
+      $(container).append('<p id=p' + count +'>Testcase ' + count + '</p>');
+      $(container).append('<textarea rows="5" cols="50"  class="input" id=tb' + iCnt + ' placeholder="Input" ></textarea>');
+      iCnt = iCnt + 1;
+      $(container).append('<textarea rows="5" cols="50"  class="input" id=tb' + iCnt + ' placeholder="Output" ></textarea>');
+      // ADD BOTH THE DIV ELEMENTS TO THE "main" CONTAINER.
+      $('#testcase').after(container);
+      });
+      // REMOVE ONE ELEMENT PER CLICK.
+      $('#btRemove').click(function() {
+      if (iCnt != 0)
+      {
+      $('#tb' + iCnt).remove(); iCnt = iCnt - 1;
+      $('#tb' + iCnt).remove(); iCnt = iCnt - 1;
+      $('#p' + count).remove();count = count -1;
+      }
+      });
+      });

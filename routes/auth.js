@@ -9,7 +9,7 @@ const router = express.Router();
 const authenticate = require('../middleware/auth');
 const session = require('express-session');
 const admin = require('../middleware/admin');
-
+const {Practice} = require('../models/practice');
 
 //filter teacher and student login
 //redirect to respective dashboard
@@ -26,8 +26,9 @@ router.get('/',(req,res,next)=>{
 });
 
 //student dashboard
-router.get('/dashboard', authenticate,(req,res)=> {
-    res.render('dashboard');
+router.get('/dashboard', authenticate,async (req,res)=> {
+    const q = await Practice.find().sort({date:-1}).limit(5);
+    res.render('dashboard', {q:q});
 });
 
 //logout route

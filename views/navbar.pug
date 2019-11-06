@@ -3,15 +3,13 @@ html
 	head
 		meta(charset='utf-8')
 		meta(name='viewport', content='width=device-width, initial-scale=1.0, shrink-to-fit=no')
-		title DASHBOARD
 		link(rel='stylesheet', href='/assets/bootstrap/css/bootstrap.min.css')
 		link(rel='stylesheet', href='/assets/css/Navigation-Clean.css')
 		link(rel='stylesheet', href='/assets/css/styles.css')
 		script(src="/assets/js/jquery.min.js")
 		script(src="/assets/bootstrap/js/popper.min.js")
 		script(src="/assets/bootstrap/js/bootstrap.min.js")
-		style.
-			
+		block head
 	body
 		div
 			nav.navbar.navbar-light.navbar-expand-md.navigation-clean
@@ -27,7 +25,7 @@ html
 							li.nav-item(role='presentation')
 								a.nav-link.text-secondary(href='/contest') CONTEST
 							li.nav-item(role='presentation')
-								a.nav-link(href='#') LEADERBOARD
+								a.nav-link(href='#') ASSIGNMENT
 							li.dropdown.nav-item
 								a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#') 
 									script.

@@ -32,8 +32,11 @@ router.get('/',authenticate, (req,res)=> {
 
 //teacher creates contest 
 //auth : pending
-router.get('/create',(req,res) => {
+router.get('/create',authenticate, (req,res) => {
+    if(req.session.name.endsWith(" "))
     res.render('teacher/createContest');
+    else
+    res.status(404).end
 });
 
 //Saving the contest in db
@@ -62,6 +65,16 @@ router.post('/create',setDate, async (req,res)=>{
 
 });
 
+
+// list the contest made by teacher 
+router.get('/manage',authenticate, async (req,res) => {
+    let trcontest = await Contest.find({createdBy:req.session.userId}); 
+    if(!trcontest) res.send.status(404).end();
+    console.log(trcontest);
+    res.render('teacher/manage',{q:trcontest}); 
+    
+
+});
 
 //teacher manage contest
 router.get('/manage/:name', async (req,res) => {
@@ -93,5 +106,6 @@ router.get('/:curl/:id',(req,res)=>{
 
 });
 
-router.get('/')
+
+
 module.exports = router;

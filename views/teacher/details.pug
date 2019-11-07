@@ -46,7 +46,7 @@ html
           br
           br
           - let y = [false,false,false,false,false];
-          - for(i=1;i<=contest.year.length;i++) y[contest.year[i]]=true;
+          - for(i=1;i<=contest.year.length;i++) y[contest.year[i-1]]=true;
           
               
           input(type='checkbox', name='1st year', value='1', checked=y[1])

@@ -1,0 +1,166 @@
+.container
+  //  Button to Open the Modal 
+  button.btn.btn-primary(type='button' data-toggle='modal' data-target='#myModal').
+    
+    Add Question
+    
+  //  The Modal 
+  .modal#myModal
+    .modal-dialog.modal-xl
+      .modal-content
+        //  Modal Header 
+        .modal-header
+          h4.modal-title Question format 
+          button.close(type='button' data-dismiss='modal') ×
+        //  Modal body 
+        .modal-body
+            form
+              .box
+                table.table
+                  tbody
+                    tr
+                      td.lbl
+                        label.lbl Question name:
+                      td
+                        input#name(type='text' name='name' required)
+                table.table
+                  tbody
+                    tr
+                      td.lbl
+                        label Problem Statement:
+                      td
+                        textarea.form-control#statement(rows='5' name='statement' cols='30' required)
+                table
+                  tbody
+                    tr
+                      td.lbl
+                        label Constraints:
+                      td
+                        textarea.form-control#constraints(rows='5' name='constraints' cols='20')
+                table
+                  tbody
+                    tr
+                      td.lbl
+                        label Input format:
+                      td
+                        textarea.form-control#i_format(rows='5' name='i_format' cols='50' required)
+                table
+                  tbody
+                    tr
+                      td.lbl
+                        label Output format:
+                      td
+                        textarea.form-control#o_format(rows='5' name='o_format' cols='50' required)
+                br
+                #samplecase
+                  label.tc Sample Testcases:
+                  input#btSampleAdd.bt(type='button' value='Add Sample Case')
+                  input#btSampleRemove.bt(type='button' value='Remove Field')
+                  .t_case
+                    p Sample Testcase 0
+                    textarea.form-control.input#i_sample1(rows='5' name='i_sample1' cols='50' required placeholder='Input')
+                    textarea.form-control.input#o_sample1(rows='5' name='o_sample1' cols='50' required placeholder='Output')
+                    p Explaination
+                    textarea.form-control.ex_box#explaination(name='explaination' rows='5' cols='107' required)
+                #testcase
+                  label.tc Testcases:
+                  input#btAdd.bt(type='button' value='Add Test Case')
+                  input#btRemove.bt(type='button' value='Remove Field')
+                  br
+                  .t_case
+                    p Testcase 0
+                    textarea.form-control.input#i_testcase1(rows='5' name='i_testcase1' cols='50' required placeholder='Input')
+                    textarea.form-control.input#o_testcase1(rows='5' name='o_testcase1' cols='50' required placeholder='Output')
+                
+        //  Modal footer 
+        .modal-footer
+          button.btn.btn-success(type='submit') ADD
+          button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+script.
+  
+  $(document).ready(function() {
+  
+    var iCnt = 0;
+    var count = 0;
+    // CREATE A "DIV" ELEMENT AND DESIGN IT USING jQuery ".css()" CLASS.
+    var container = $(document.createElement('div')).css({
+        padding: '5px',margin: '20px'
+        
+    });
+  
+    $('#btSampleAdd').click(function() {
+  
+            iCnt = iCnt + 1;
+  
+            count = count +1;
+  
+  
+            // ADD TEXTBOX.
+            $(container).append('<p id=p' + count +'>Sample Testcase ' + count + '</p>');
+            $(container).append('<textarea rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Input" ></textarea>');
+    iCnt = iCnt + 1;
+    $(container).append('<textarea rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Output" ></textarea>');
+  
+            // ADD BOTH THE DIV ELEMENTS TO THE "main" CONTAINER.
+            $('#samplecase').after(container);
+        
+    });
+  
+    // REMOVE ONE ELEMENT PER CLICK.
+    $('#btSampleRemove').click(function() {
+        if (iCnt != 0) 
+  {
+  $('#tb' + iCnt).remove(); iCnt = iCnt - 1; 
+  $('#tb' + iCnt).remove(); iCnt = iCnt - 1;
+        $('#p' + count).remove();count = count -1;
+  }
+    
+        
+    });
+  
+    
+  });
+  
+  $(document).ready(function() {
+  
+    var iCnt = 0;
+    var count = 0;
+    // CREATE A "DIV" ELEMENT AND DESIGN IT USING jQuery ".css()" CLASS.
+    var container = $(document.createElement('div')).css({
+        padding: '5px', margin: '20px'
+        
+    });
+  
+    $('#btAdd').click(function() {
+  
+            iCnt = iCnt + 1;
+  
+            count = count +1;
+  
+  
+            // ADD TEXTBOX.
+            $(container).append('<p id=p' + count +'>Testcase ' + count + '</p>');
+            $(container).append('<textarea rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Input" ></textarea>');
+            iCnt = iCnt + 1;
+            $(container).append('<textarea rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Output" ></textarea>');
+  
+            // ADD BOTH THE DIV ELEMENTS TO THE "main" CONTAINER.
+            $('#testcase').after(container);
+        
+    });
+  
+    // REMOVE ONE ELEMENT PER CLICK.
+    $('#btRemove').click(function() {
+        if (iCnt != 0) 
+        {
+        $('#tb' + iCnt).remove(); iCnt = iCnt - 1; 
+        $('#tb' + iCnt).remove(); iCnt = iCnt - 1;
+        $('#p' + count).remove();count = count -1;
+        }
+    
+    
+    });
+  
+    
+  });
+  

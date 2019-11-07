@@ -1,5 +1,5 @@
 doctype html
-include ../navbar
+include nav
 html(lang='en')
 
   head
@@ -17,6 +17,18 @@ html(lang='en')
       padding: 10px;
       margin-top: 110px;
       }
+      .mwidth{
+        width:400px;
+
+      }
+      .Date{
+        width:175px;
+
+      }
+      .at{
+        width:100px;
+      }
+      
     script.
       let u ="";
       function submitForm(){
@@ -47,20 +59,20 @@ html(lang='en')
       h2 Create Contest
       div
         form#con
-          label(for='Contest') Contest Name
-          input#Contest(type='text', name='name', placeholder='Contest', required='true')
+          label(for='Contest') Contest Name 
+          input.form-control.mwidth#Contest(type='text', name='name', placeholder='Contest', required='true')
           br
           br
-          label(for='Start Time') Start Time
-          input(type='date' name = 'starts')
+          label(for='Start Time') Start Time 
+          input.form-control.Date(type='date'  class='d-inline'  name = 'starts')
           |  at 
-          input(type='time', required='true' name = 'starts')
+          input.form-control.at(type='time',  class='d-inline' required='true' name = 'starts')
           br
           br
-          label(for='End Time') End Time
-          input(type='date' name= 'ends')
+          label(for='End Time') End Time 
+          input.form-control.Date(type='date' class='d-inline' name= 'ends')
           |  at 
-          input(type='time', required='true' name = 'ends')
+          input.form-control.at(type='time', class ='d-inline' required='true' name = 'ends')
           br
           br
           label(for='select ') For:
@@ -82,4 +94,4 @@ html(lang='en')
           label 4th Year
           br
           br
-          input(type='button', value='GET STARTED', onclick="submitForm()")
+          input.btn.btn-outline-primary.btn-sm(type='button', value='GET STARTED', onclick="submitForm()")

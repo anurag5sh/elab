@@ -22,10 +22,7 @@ const studentSchema = new mongoose.Schema({
     minlength: 5,
     maxlength: 1024
   },
-  isStudent: {
-    type:Boolean,
-    default: true
-  }
+
   
 });
 
@@ -37,7 +34,7 @@ function validateUser(user) {
     name: Joi.string().min(3).max(50).required(),
     email: Joi.string().min(3).max(255).required().email(),
     password: Joi.string().min(5).max(255).required(),
-    type: Joi.string().required()
+    type: Joi.string()
   });
 
   return schema.validate(user);

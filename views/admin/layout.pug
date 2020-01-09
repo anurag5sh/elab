@@ -7,7 +7,7 @@ doctype html
 block code 
   //  jQuery 
   script(src='/adminLTE/plugins/jquery/jquery.min.js')
-  - let active={dashboard:"",add:"",manage:""}
+  - let active={dashboard:"",add:"",manage:"",edit:""}
   - let menu={manage:""}
 
 html(lang='en')
@@ -112,7 +112,7 @@ html(lang='en')
                       i.fas.fa-user-plus.nav-icon
                       p Add Account
                   li.nav-item
-                    a.nav-link(href='#')
+                    a.nav-link(href='/admin/edit' class=active.edit)
                       i.fas.fa-user-edit.nav-icon
                       p Edit Account
               li.nav-item

@@ -30,22 +30,25 @@ const contestQSchema = new mongoose.Schema({
         type: String,
         required:true,
     },
-    test_cases:[{
+    test_cases:{
       input:{
-          type:String
+          type:[String]
       },
       output:{
-          type:String
+          type:[String]
       }  
-    }],
-    sample_cases:[{
+    },
+    sample_cases:{
         input:{
-            type:String
+            type:[String]
         },
         output:{
-            type:String
+            type:[String]
         }  
-      }],
+      },
+    explanation:{
+        type:String
+    },
     date:{
         type: Date,
         default: moment().format()
@@ -61,16 +64,14 @@ function validateCQ(question)
         name: Joi.string().required(),
         statement:Joi.string().required(),
         constraints: Joi.string(),
-        input_format: Joi.string().required(),
-        output_format: Joi.string().required(),
-        test_cases:Joi.array().items(Joi.object().keys({
-            input:Joi.string().required(),
-            output:Joi.string().required()
-        })),
-        sample_cases: Joi.array().items(Joi.object().keys({
-            input:Joi.string().required(),
-            output:Joi.string().required()
-        }))
+        i_format: Joi.string().required(),
+        o_format: Joi.string().required(),
+        i_sample1: Joi.required(),
+        o_sample1: Joi.required(),
+        i_testcase1: Joi.required(),
+        o_testcase1: Joi.required(),
+        explanation: Joi.string().required()
+        
     });
 
     return schema.validate(question);

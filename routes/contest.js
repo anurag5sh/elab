@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authenticate = require('../middleware/auth');
 const {Contest,validateContest} = require('../models/contest');
+const {ContestQ} = require('../models/contestQ');
 const crypto = require("crypto");
 const moment = require('moment');
 
@@ -83,8 +84,12 @@ router.get('/manage/:name', async (req,res) => {
     let contest = await Contest.findOne({url:req.params.name});
     if(!contest) return res.status(404).end();
 
+    let questions = [];
+    for(i of contest.questions){
+        questions.push(await ContestQ.findOne({qid:i}));
+    }
     if(contest.createdBy == req.session.userId)
-       return res.render('teacher/manageContest',{contest:contest});
+       return res.render('teacher/manageContest',{contest:contest, questions:questions});
     else
         return res.status(404).end();
     

@@ -14,7 +14,7 @@
           button.close(type='button' data-dismiss='modal') ×
         //  Modal body 
         .modal-body
-            form
+            form#ques
               .box
                 table.table
                   tbody
@@ -60,8 +60,8 @@
                     p Sample Testcase 0
                     textarea.form-control.input#i_sample1(rows='5' name='i_sample1' cols='50' required placeholder='Input')
                     textarea.form-control.input#o_sample1(rows='5' name='o_sample1' cols='50' required placeholder='Output')
-                    p Explaination
-                    textarea.form-control.ex_box#explaination(name='explaination' rows='5' cols='107' required)
+                    p Explanation
+                    textarea.form-control.ex_box#explaination(name='explanation' rows='5' cols='107' required)
                 #testcase
                   label.tc Testcases:
                   input#btAdd.bt(type='button' value='Add Test Case')
@@ -74,8 +74,14 @@
                 
         //  Modal footer 
         .modal-footer
-          button.btn.btn-success(type='submit') ADD
+          button.btn.btn-success(type='button' onclick="submitForm()") ADD
           button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+
+
+- const ques=questions;
+each i in ques
+  p()=i.name
+
 script.
   
   $(document).ready(function() {
@@ -163,4 +169,27 @@ script.
   
     
   });
+
+  function submitForm(){ let u;
+      const url = window.location.href.split('/');
+      u=url.pop();
+      if(u == "")  u=url.pop();
+
+      $.ajax({
+            type: "POST",
+            url: "/add/"+u,
+            data: $("#ques").serialize(),
+            success: function (data) {
+ 
+              alert(JSON.stringify(data));
+              location.reload();
+ 
+            },
+            error: function (e) {
+ 
+                alert(e.responseText);
+ 
+            }
+        });
+  }
   

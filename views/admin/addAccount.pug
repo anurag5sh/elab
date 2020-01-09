@@ -40,11 +40,27 @@ block append code
             window.location.href = '/admin/add'
             })
                 .fail(function(error){
-                    alert($("#add").serialize());
+                   
                     $("#addForm *").prop('disabled',false);
                     alert(error.responseText);
                 })
             
+        }
+        function submitCSV(){
+             $.ajax({
+                url: '/admin/add',
+                type: 'post',
+                data: new FormData($('#csv')[0]),
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function( data, textStatus, jQxhr ){
+                    alert(data);
+                },
+                error: function( jqXhr, textStatus, errorThrown ){
+                    alert(errorThrown);
+                }
+            });
         }
         
 block content
@@ -87,7 +103,7 @@ block content
                             input#password.form-control(type="password",name="password")
                         .col-12
                         input(type="button", onclick="submitForm()",value="Create New Account").btn.btn-success.float-right
-    form(enctype="multipart/form-data" ,method="POST")
+    form(enctype="multipart/form-data" ,method="POST")#csv
         .card.card-primary
             .card-header
                 h3.card-title Add via CSV
@@ -105,7 +121,7 @@ block content
                         .form-group
                             input(type="file", name="csv")
                         .form-group
-                            input.btn.btn-success(type="submit", value="Upload")
+                            input.btn.btn-success(type="button", value="Upload", onclick="submitCSV()")
                     
                     
                     

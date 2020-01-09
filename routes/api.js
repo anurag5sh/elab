@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const request = require("request-promise");
+const {Practice,validatePractise} = require('../models/practice');
 
 
 function encode64(string){ //encoding to base64
@@ -13,14 +14,21 @@ function decode64(string64){//decode to utf8
 return b.toString();
 }
 
-router.post('/', (req,res)=>{
-  console.log(req.body);
+router.post('/', async (req,res)=>{
+  let q = req.body.qid.split("/")[2];
+  const question = await Practice.findOne({qid:q });
+  if(!question) return res.send("Question not found!!");
+
+  let sample_o = Array.from( question.sample_cases.values() );
+  let sample_i = Array.from( question.sample_cases.keys() );
 
   if(req.body.source=='')
     return res.send();
   let options = { method: 'POST',
   url: 'http://127.0.0.1:3000/submissions?base64_encoded=true&wait=true',
-  body: { "source_code": encode64(req.body.source), "language_id": req.body.language },
+  body: { "source_code": encode64(req.body.source), "language_id": req.body.language ,"stdin":encode64(sample_i[0]),
+      "expected_output":encode64(sample_o[0])},
+
   json: true };
 
   

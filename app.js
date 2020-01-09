@@ -7,6 +7,7 @@ const register = require('./routes/register');
 const contest = require('./routes/contest');
 const practice = require('./routes/practice');
 const admin = require('./routes/admin');
+const question = require('./routes/question');
 const api = require('./routes/api');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
@@ -47,6 +48,7 @@ app.use('/contest', contest);
 app.use('/practice', practice);
 app.use('/admin', admin);
 app.use('/api',api);
+app.use('/add', question);
 
 
 

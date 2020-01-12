@@ -1,7 +1,7 @@
 doctype html
 html(lang='en')
   head
-    title ELAB HKBK
+    title=question.name
     include navbar
     script(src='/ace-builds/src-min/ace.js' charset='utf-8')
     script(src='/ace-builds/src-min/ext-language_tools.js')
@@ -146,7 +146,7 @@ html(lang='en')
       qid: window.location.pathname
       },
       function(data,status){
-      document.getElementById("output").value = data[0].output;
+      document.getElementById("output").value = data;
       document.getElementById("input").value = document.getElementById("sam_i0").innerHTML;
       document.getElementById("expectedOutput").value = document.getElementById("sam_o0").innerHTML;
       });

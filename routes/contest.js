@@ -7,6 +7,8 @@ const {ContestQ} = require('../models/contestQ');
 const crypto = require("crypto");
 const moment = require('moment');
 const _ = require('lodash');
+const request = require("request-promise");
+
 
 function setDate(req,res,next){
     let date = req.body.starts[0];
@@ -24,6 +26,17 @@ function setDate(req,res,next){
 
     next();
 }
+
+
+function encode64(string){ //encoding to base64
+    const b = new Buffer.from(string);
+  return b.toString('base64');
+  }
+  
+  function decode64(string64){//decode to utf8
+    const b = new Buffer.from(string64, 'base64')
+  return b.toString();
+  }
 
 
 
@@ -153,7 +166,56 @@ router.get('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
         return res.status(404).end();
     });
     
-    return res.render('editor',{question : _.pick(question,['statement','constraints', 'input_format','output_format','sample_cases','explanation'])})
+    return res.render('editorContest',{question : _.pick(question,['name','statement','constraints', 'input_format','output_format','sample_cases','explanation'])})
+
+
+});
+
+router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
+    let contest = await Contest.findOne({url:req.params.curl}).lean().select('questions');
+    if(!contest) return res.status(404).end();
+
+    if(!contest.questions.includes(req.params.qid)){
+        return res.status(404).end();
+    }
+
+    const question = await ContestQ.findOne({qid:req.params.qid}).select('test_cases').lean().catch(err => {
+        res.status(404).end();
+    });
+  const testcase = question.test_cases;
+
+
+  if(req.body.source=='')
+  return res.send();
+
+  let result = [];
+
+  for(let i=0;i<testcase.length;i++){
+  let options = { method: 'POST',
+  url: 'http://127.0.0.1:3000/submissions?base64_encoded=true&wait=true',
+  body: { "source_code": encode64(req.body.source), "language_id": req.body.language, "stdin":encode64(testcase[i].input),
+          "expected_output":encode64(testcase[i].output) },
+  json: true };
+
+  result.push(request(options));
+
+  }
+
+  Promise.all(result)
+    .then(data => {
+      let desc= [];
+      
+      data.forEach(store);
+      function store(data){
+        desc.push(data.status.description); 
+      }
+      
+      res.send(desc);
+
+    }).catch(err => {
+      res.send(err);
+    });
+
 
 
 });

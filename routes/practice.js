@@ -63,7 +63,7 @@ router.post('/:qid',authenticate,async (req,res) => {
       
       data.forEach(store);
       function store(data){
-        desc.push(data.status.description); 
+        desc.push({id:data.status.id,description:data.status.description}); 
       }
       
       res.send(desc);

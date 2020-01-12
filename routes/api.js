@@ -33,34 +33,45 @@ router.post('/', authenticate,async (req,res)=>{
   if (error) return res.status(400).send(error.message);
 
   let q = req.body.qid.split("/")[2];
-  const question = await Practice.findOne({qid:q });
+  const question = await Practice.findOne({qid:q }).lean();
   if(!question) return res.send("Question not found!!");
 
   let sample = question.sample_cases;
   if(req.body.source=='')
     return res.send();
+
+  let result = [];
+
+  for(let i=0;i<sample.length;i++){
   let options = { method: 'POST',
   url: 'http://127.0.0.1:3000/submissions?base64_encoded=true&wait=true',
-  body: { "source_code": encode64(req.body.source), "language_id": req.body.language ,"stdin":encode64(sample[0].input),
-      "expected_output":encode64(sample[0].output)},
+  body: { "source_code": encode64(req.body.source), "language_id": req.body.language ,"stdin":encode64(sample[i].input),
+      "expected_output":encode64(sample[i].output)},
 
   json: true };
 
-  
-  request(options)
-    .then((response) => { let output="";
-    
-      const json_res = JSON.parse(JSON.stringify(response));
-      console.log(json_res);
+  result.push(request(options));
+  }
+    Promise.all(result)
+    .then((response) => { 
+      let r=[];
+      for(let i=0;i<response.length;i++){
+        let output="";
+      const json_res = JSON.parse(JSON.stringify(response[i]));
+      //console.log(json_res);
       if(json_res.stdout!=null) output=json_res.stdout;
       else if(json_res.stderr!=null) output=json_res.stderr;
       else if(json_res.compile_output!=null) output=json_res.compile_output;
-      res.send(decode64(output));
+      r.push({output:decode64(output),id:response[i].status.id,description:response[i].status.description})
+      }
+      console.log(r);
+      res.send(r);
       
     })
     .catch((err) => {
       res.send(err);
     });
+  
  
   
 }); 

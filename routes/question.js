@@ -6,7 +6,7 @@ const {ContestQ,validateCQ} = require('../models/contestQ');
 const crypto = require("crypto");
 const moment = require('moment');
 
-router.post('/:cname',async (req,res) => {
+router.post('/:cname',authenticate,async (req,res) => {
     const contest = await Contest.findOne({url:req.params.cname});
     if(!contest) return res.status(404);
 
@@ -22,10 +22,17 @@ router.post('/:cname',async (req,res) => {
     question.constraints = req.body.constraints;
     question.input_format = req.body.i_format;
     question.output_format = req.body.o_format;
-    question.sample_cases.input = req.body.i_sample1;
-    question.sample_cases.output = req.body.o_sample1;
-    question.test_cases.input = req.body.i_testcase1;
-    question.test_cases.output = req.body.o_testcase1;
+
+    console.log(req.body.i_sample1);
+
+    for(let i=0;i<req.body.i_sample1.length;i++){
+        question.sample_cases.push({input:req.body.i_sample1[i], output:req.body.o_sample1[i]});
+    }
+
+    for(let i=0;i<req.body.i_testcase1.length;i++){
+        question.test_cases.push({input:req.body.i_testcase1[i], output:req.body.o_testcase1[i]});
+    }
+ 
     question.explanation= req.body.explanation;
     question.qid+= ++count;
     await question.save();

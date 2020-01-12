@@ -22,6 +22,20 @@ const studentSchema = new mongoose.Schema({
     minlength: 5,
     maxlength: 1024
   },
+  year : {
+    type: Number,
+    required : true,
+  },
+  usn : {
+    type: String,
+    required : true,
+    unique : true,
+    uppercase : true
+  },
+  recovery_email : {
+    type: String,
+  },
+
 
   
 });
@@ -34,7 +48,10 @@ function validateUser(user) {
     name: Joi.string().min(3).max(50).required(),
     email: Joi.string().min(3).max(255).required().email(),
     password: Joi.string().min(5).max(255).required(),
-    type: Joi.string()
+    type: Joi.string(),
+    year: Joi.number().required().integer().max(4).positive(),
+    usn:Joi.string().required(),
+
   });
 
   return schema.validate(user);

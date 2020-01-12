@@ -38,8 +38,7 @@ router.post('/:qid',authenticate,async (req,res) => {
   const question = await Practice.findOne({qid: req.params.qid});
   if(!question) return res.send("Question not found!!");
   
-  let test_o = Array.from( question.test_cases.values() );
-  let test_i = Array.from( question.test_cases.keys() );
+  const testcase = question.test_cases;
 
 
   if(req.body.source=='')
@@ -47,11 +46,11 @@ router.post('/:qid',authenticate,async (req,res) => {
 
   let result = [];
 
-  for(let i=0;i<test_i.length;i++){
+  for(let i=0;i<testcase.length;i++){
   let options = { method: 'POST',
   url: 'http://127.0.0.1:3000/submissions?base64_encoded=true&wait=true',
-  body: { "source_code": encode64(req.body.source), "language_id": req.body.language, "stdin":encode64(test_i[i]),
-          "expected_output":encode64(test_o[i]) },
+  body: { "source_code": encode64(req.body.source), "language_id": req.body.language, "stdin":encode64(testcase[i].input),
+          "expected_output":encode64(testcase[i].output) },
   json: true };
 
   result.push(request(options));
@@ -82,8 +81,16 @@ router.post('/',async (req,res)=>{
     const date = moment().format('DDMMYY');
     let count = await Practice.countDocuments({qid: new RegExp("^"+date)});
 
-    let question = new Practice(_.pick(req.body, ['qid','name','statement', 'constraints', 'input_format','output_format','test_cases','sample_cases']));
+    let question = new Practice(_.pick(req.body, ['qid','name','statement', 'constraints', 'input_format','output_format']));
     question.qid+= ++count;
+    for(let i=0;i<req.body.i_sample.length;i++){
+      question.sample_cases.push({input:req.body.i_sample[i], output:req.body.o_sample[i]});
+    }
+
+    for(let i=0;i<req.body.i_testcase.length;i++){
+        question.test_cases.push({input:req.body.i_testcase[i], output:req.body.o_testcase[i]});
+    }
+
     await question.save();
 
     res.send(question);

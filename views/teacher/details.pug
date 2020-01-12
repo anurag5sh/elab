@@ -13,10 +13,10 @@ html
     script.
       function submitForm(){
       const con = $.post("", $("#con").serialize(), function(data,status) {
-          document.getElementById('alertForm').innerHTML += '<div class="alert alert-success alert-dismissible fade show"><button type="button" class="close" data-dismiss="alert">&times;</button><strong>Success! </strong>Changes Saved.</div>';
+         alert(data);
               })
                   .fail(function(error){
-                      document.getElementById('alertForm').innerHTML += '<div class="alert alert-danger alert-dismissible fade show"><button type="button" class="close" data-dismiss="alert">&times;</button><strong>Error! </strong>'+(error.responseText)+'</div>';
+                        alert(error.responseText);
                   })}
   body
     .contestform
@@ -27,7 +27,7 @@ html
           br
           br
           label(for='Start Time') Start Time: 
-          - let sdate = contest.timings.starts.getFullYear() + "-" + ("0"+contest.timings.starts.getMonth()).slice(-2) +"-"+("0"+contest.timings.starts.getDate()).slice(-2);
+          - let sdate = contest.timings.starts.getFullYear() + "-" + ("0"+contest.timings.starts.getMonth()+1).slice(-2) +"-"+("0"+contest.timings.starts.getDate()).slice(-2);
           input(type='date' value=sdate)
           |  at 
           - let stime = ("0"+contest.timings.starts.getHours()).slice(-2) +":"+ ("0"+contest.timings.starts.getMinutes()).slice(-2);
@@ -35,7 +35,7 @@ html
           br
           br
           label(for='End Time') End Time:
-          - let edate = contest.timings.ends.getFullYear() + "-" + ("0"+contest.timings.ends.getMonth()).slice(-2) +"-"+("0"+contest.timings.ends.getDate()).slice(-2); 
+          - let edate = contest.timings.ends.getFullYear() + "-" + ("0"+contest.timings.ends.getMonth()+1).slice(-2) +"-"+("0"+contest.timings.ends.getDate()).slice(-2); 
           input(type='date' value=edate)
           |  at 
           - let etime = ("0"+contest.timings.ends.getHours()).slice(-2) +":"+ ("0"+contest.timings.ends.getMinutes()).slice(-2);

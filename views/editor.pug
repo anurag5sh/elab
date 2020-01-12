@@ -64,13 +64,11 @@ html(lang='en')
       strong Output Format
       p #{question.output_format}
       |
-      -let sample_o = Array.from( question.sample_cases.values() );
-      -let sample_i = Array.from( question.sample_cases.keys() );
-      each i,j in sample_i
+      each i,j in question.sample_cases
         strong Sample Input #{j+1}
-        p(id="sam_i"+j) #{i}
+        p(id="sam_i"+j) #{i.input}
         strong Sample Output #{j+1}
-        p(id="sam_o"+j) #{sample_o[j]}
+        p(id="sam_o"+j) #{i.output}
    
         
     .card(style="width:90%; display:inline-block;")

@@ -38,6 +38,7 @@ html(lang='en')
               })
                   .fail(function(error){
                       document.getElementById('errorForm').innerHTML += '<div class="alert alert-danger alert-dismissible fade show"><button type="button" class="close" data-dismiss="alert">&times;</button><strong>Error! </strong>'+(error.responseText)+'</div>';
+                      window.scrollTo(0,0);
                   })}
   body
     .contestform

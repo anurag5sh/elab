@@ -74,7 +74,7 @@
                 
         //  Modal footer 
         .modal-footer
-          button.btn.btn-success(type='button' onclick="submitForm()") ADD
+          button.btn.btn-success(type='button' onclick="submitFormAdd()") ADD
           button.btn.btn-secondary(type='button' data-dismiss='modal') Close
 
 
@@ -103,9 +103,9 @@ script.
   
             // ADD TEXTBOX.
             $(container).append('<p id=p' + count +'>Sample Testcase ' + count + '</p>');
-            $(container).append('<textarea rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Input" ></textarea>');
+            $(container).append('<textarea name="i_sample1" rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Input" ></textarea>');
     iCnt = iCnt + 1;
-    $(container).append('<textarea rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Output" ></textarea>');
+    $(container).append('<textarea name="o_sample1" rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Output" ></textarea>');
   
             // ADD BOTH THE DIV ELEMENTS TO THE "main" CONTAINER.
             $('#samplecase').after(container);
@@ -146,9 +146,9 @@ script.
   
             // ADD TEXTBOX.
             $(container).append('<p id=p' + count +'>Testcase ' + count + '</p>');
-            $(container).append('<textarea rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Input" ></textarea>');
+            $(container).append('<textarea name="i_testcase1" rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Input" ></textarea>');
             iCnt = iCnt + 1;
-            $(container).append('<textarea rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Output" ></textarea>');
+            $(container).append('<textarea name="o_testcase1" rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Output" ></textarea>');
   
             // ADD BOTH THE DIV ELEMENTS TO THE "main" CONTAINER.
             $('#testcase').after(container);
@@ -170,7 +170,7 @@ script.
     
   });
 
-  function submitForm(){ let u;
+  function submitFormAdd(){ let u;
       const url = window.location.href.split('/');
       u=url.pop();
       if(u == "")  u=url.pop();

@@ -26,15 +26,20 @@ const contestSchema = new mongoose.Schema({
     ends:{type:Date}
   },
   year:[{
-    type:String
+    type:Number
   }],
+  custom_usn : {
+    type:[String]
+  },
   isReady:{
     type: Boolean,
     default:false,
   },
-  signedUp:{
-    type:[String],
-  },
+  signedUp:[{
+    usn:{type : String},
+    time:{ type: Date, default:Date.now()},
+    _id : false
+  }],
   questions:{
     type:[String]
   },
@@ -44,14 +49,16 @@ const contestSchema = new mongoose.Schema({
     usn:{type:String},
     sourceCode:{type:String},
     status:{type:String},
-    points:{type: Number,default:0}
+    points:{type: Number,default:0},
+    _id : false
   },
   leaderboard:{
     position:{type:Number},
     name:{type:String},
     timestamp:{type:Date},
     year:{type:String},
-    points:{type:Number}
+    points:{type:Number},
+    _id : false
   }
   
 });
@@ -63,9 +70,9 @@ function validateContest(contest)
 {
     const schema = Joi.object({
         name: Joi.string().required(),
-        starts: Joi.date().required(),
-        ends:Joi.date().required(),
-        year:[Joi.string(),Joi.array().items(Joi.string().required())]
+        starts: Joi.date().required().timestamp(),
+        ends:Joi.date().required().greater(Joi.ref('starts')).timestamp().error(new Error("Invalid Date Selected!")),
+        year:[Joi.number(),Joi.array().items(Joi.number().required())]
     });
 
     return schema.validate(contest);

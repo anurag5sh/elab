@@ -66,6 +66,8 @@ router.post('/', async (req, res) => { console.log(req.body);
 
     req.session.userId = student._id;
     req.session.name = student.name.trim(); 
+    req.session.usn = student.usn;
+    req.session.year = student.year;
     res.cookie("name", student.name,{sameSite:"strict"});
     return res.redirect('/dashboard');
   }

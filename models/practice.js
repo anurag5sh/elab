@@ -30,17 +30,24 @@ const practiceSchema = new mongoose.Schema({
         type: String,
         required:true,
     },
-    test_cases:{
-        required:true,
-        type: Map,
-        of: String
-
-    },
-    sample_cases:{
-        required:true,
-        type: Map,
-        of: String
-    },
+    test_cases:[{
+        input:{
+            type:String
+        },
+        output:{
+            type:String
+        }  ,
+        _id : false
+      }],
+      sample_cases:[{
+          input:{
+              type:String
+          },
+          output:{
+              type:String
+          }  ,
+          _id : false
+        }],
     date:{
         type: Date,
         default: moment().format()
@@ -58,8 +65,10 @@ function validatePractise(question)
         constraints: Joi.string(),
         input_format: Joi.string().required(),
         output_format: Joi.string().required(),
-        test_cases:Joi.object().required(),
-        sample_cases: Joi.object().required()
+        i_sample: Joi.required(),
+        o_sample: Joi.required(),
+        i_testcase: Joi.required(),
+        o_testcase: Joi.required(),
     });
 
     return schema.validate(question);

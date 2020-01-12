@@ -30,7 +30,7 @@ router.get('/edit',admin, (req,res) => {
   res.render('admin/editAccount');
 });
 
-router.post('/add', upload.single('csv'), async (req, res, next) => {
+router.post('/add', upload.single('csv'), admin,async (req, res, next) => {
     const file = req.file;
     if (!file) {
       const error = new Error('Please upload a file');

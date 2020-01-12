@@ -20,6 +20,7 @@ const contestQSchema = new mongoose.Schema({
     },
     constraints:{
         type: String,
+        default : ""
         
     },
     input_format:{
@@ -30,22 +31,24 @@ const contestQSchema = new mongoose.Schema({
         type: String,
         required:true,
     },
-    test_cases:{
+    test_cases:[{
       input:{
-          type:[String]
+          type:String
       },
       output:{
-          type:[String]
-      }  
-    },
-    sample_cases:{
+          type:String
+      }  ,
+      _id : false
+    }],
+    sample_cases:[{
         input:{
-            type:[String]
+            type:String
         },
         output:{
-            type:[String]
-        }  
-      },
+            type:String
+        }  ,
+        _id : false
+      }],
     explanation:{
         type:String
     },
@@ -63,7 +66,7 @@ function validateCQ(question)
     const schema = Joi.object({
         name: Joi.string().required(),
         statement:Joi.string().required(),
-        constraints: Joi.string(),
+        constraints: Joi.string().allow(''),
         i_format: Joi.string().required(),
         o_format: Joi.string().required(),
         i_sample1: Joi.required(),

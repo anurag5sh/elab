@@ -189,11 +189,15 @@ html(lang='en')
       for(let i=0;i<data.length;i++)
       {
       if(data[i].id==3){
+        $('#color'+(i+1)+'').removeClass('red-cross');
         $('#color'+(i+1)+'').addClass('green-tick');
+        $('#icon'+(i+1)+'').removeClass('fa fa-close');
         $('#icon'+(i+1)+'').addClass('fa fa-check');
       }
       else{
+        $('#color'+(i+1)+'').removeClass('green-tick');
         $('#color'+(i+1)+'').addClass('red-cross');
+        $('#icon'+(i+1)+'').removeClass('fa fa-check');
         $('#icon'+(i+1)+'').addClass('fa fa-close');
       }
       }

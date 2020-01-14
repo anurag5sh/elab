@@ -1,32 +1,30 @@
-doctype html
-html(lang='en')
-  head
-    meta(charset='UTF-8')
-    meta(name='viewport', content='width=device-width, initial-scale=1.0')
-    meta(http-equiv='X-UA-Compatible', content='ie=edge')
-    title STUDENTLIST
-    style.
-      table {
-      font-family: arial, sans-serif;
-      border-collapse: collapse;
-      width: 100%;
-      }
-      td, th {
-      border: 1px solid #dddddd;
-      text-align: left;
-      padding: 8px;
-      }
-      tr:nth-child(even) {
-      background-color: #dddddd;
-      }
-  body
-    table
-      tbody
+head
+  title STUDENTLIST
+  style.
+    table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    }
+    td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    }
+    tr:nth-child(even) {
+    background-color: #dddddd;
+    }
+body
+  table
+    tbody
+      tr
+        th No
+        th NAME
+        th USN
+        th Timestamp
+      each i,j in contest.signedUp
         tr
-          th No
-          th NAME
-          th USERNAME
-        tr
-          td
-          td
-          td
+          td=j+1
+          td=i.name
+          td=i.usn
+          td=i.time.toString()

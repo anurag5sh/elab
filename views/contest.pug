@@ -6,7 +6,10 @@ block head
 block content
     .jumbotron.text-left.bg-info.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
       h1 CONTESTS
-      p
+    
+    each i in contest 
+      ul
+        a(href="/contest/"+i.url)=i.name
       
       
 

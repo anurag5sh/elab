@@ -40,11 +40,19 @@ function encode64(string){ //encoding to base64
 
 
 
-router.get('/',authenticate, (req,res)=> {
-    if(req.session.name.endsWith(" "))
-    res.render('teacher/trcontest');
-    else
-    res.render('contest');
+router.get('/',authenticate, async (req,res)=> {
+    if(req.session.name.endsWith(" ")){
+     const contest = await Contest.find().lean();
+     if(!contest) return res.render('teacher/trcontest',{contest:[]});
+
+    res.render('teacher/trcontest',{contest:contest});
+    }
+    else{
+    const contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn}]}).select('name url').lean();
+    if(!contest) return res.render('contest',{contest:[]});
+
+    res.render('contest',{contest:contest});
+    }
 });
 
 //teacher creates contest 
@@ -62,16 +70,20 @@ router.post('/create',authenticate,setDate, async (req,res)=>{
     if(error) return res.status(400).send(error.message); 
     if(req.body.starts>=req.body.ends)
         return res.status(400).send("Incorrect timings");
-    const secret = crypto.randomBytes(20).toString('hex');
     const createdBy = req.session.userId;
-    let id = await Contest.countDocuments();
+    lastInserted = await Contest.find({}).sort({_id:-1}).limit(1).lean().select('id');
+    let id = lastInserted[0].id;
     id++;
     let url = req.body.name.replace(/ /g,'-');
-    let count  = await Contest.countDocuments({name:req.body.name.trim()});
-    if(count>0)
-        url = url+count;
-    
-    let contest = new Contest({secret:secret,createdBy:createdBy,id:id,name:req.body.name.trim(),url:url,year:req.body.year});
+    let lastUrl  = await Contest.find({name:new RegExp('\^'+req.body.name.trim()+'\$','i')}).sort({_id:-1}).limit(1).lean().select('url');
+    if(lastUrl.length>0){
+    let count = lastUrl[0].url.replace(url,"");
+    if(count!="")
+        url = url+"1";
+    else
+        url = url + (++count);
+    }
+    let contest = new Contest({createdBy:createdBy,id:id,name:req.body.name.trim(),url:url,year:req.body.year});
     contest.timings.created= moment().format();
     contest.timings.starts = req.body.starts;
     contest.timings.ends = req.body.ends;
@@ -87,7 +99,6 @@ router.post('/create',authenticate,setDate, async (req,res)=>{
 router.get('/manage',authenticate, async (req,res) => {
     let trcontest = await Contest.find({createdBy:req.session.userId}); 
     if(!trcontest) res.send.status(404).end();
-    console.log(trcontest);
     res.render('teacher/manage',{q:trcontest}); 
     
 
@@ -97,12 +108,12 @@ router.get('/manage',authenticate, async (req,res) => {
 router.get('/manage/:name', async (req,res) => {
     if(!req.session.name.endsWith(" ")) return res.status(404).end();
 
-    let contest = await Contest.findOne({url:req.params.name});
+    let contest = await Contest.findOne({url:req.params.name}).lean();
     if(!contest) return res.status(404).end();
 
     let questions = [];
     for(i of contest.questions){
-        questions.push(await ContestQ.findOne({qid:i}));
+        questions.push(await ContestQ.findOne({qid:i}).lean());
     }
     if(contest.createdBy == req.session.userId)
        return res.render('teacher/manageContest',{contest:contest, questions:questions});
@@ -122,32 +133,73 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
     let contest = await Contest.findOne({url:req.params.curl}).lean().select('timings signedUp');
     if(!contest) return res.status(404).end();
 
-    if(Date.now()>=contest.timings.starts && Date.now()<=contest.timings.ends){
+    const now = new Date();
+    function two(x) {return ((x>9)?"":"0")+x}
+    function three(x) {return ((x>99)?"":"0")+((x>9)?"":"0")+x}
+
+    function time(ms) { //convert to dd:mm:hh:ss
+    var sec = Math.floor(ms/1000)
+    ms = ms % 1000
+    t = three(ms)
+
+    var min = Math.floor(sec/60)
+    sec = sec % 60
+    t = two(sec) + ":" + t
+
+    var hr = Math.floor(min/60)
+    min = min % 60
+    t = two(min) + ":" + t
+
+    var day = Math.floor(hr/60)
+    hr = hr % 60
+    t = two(hr) + ":" + t
+    t = day + ":" + t
+
+    return t
+    }
+
+    //teacher 
+    if(req.session.name.endsWith(" ") ){
+        if(now > contest.timings.starts)
+        return res.send("questions");
+        else{
+            const milli = contest.timings.starts - now;
+            return res.send("Timer" + time(milli));
+        }
+    }
+    
+    //student
+    else{ 
+        
+        if(now>=contest.timings.starts && now<=contest.timings.ends){
         if(!contest.signedUp.find(({usn}) => usn == req.session.usn)){
            return res.send("Attempt");
         }
 
-        res.send("questions");
-    }
+        return res.send("questions");
+        }
 
-    if(Date.now() < contest.timings.starts)
-    {
-        res.send("Timer");
-    }
+        if(now < contest.timings.starts)
+        {   const milli = contest.timings.starts - now; //stores milli seconds
+            
+            return res.send("Timer" + time(milli));
+        }
 
-    if(Date.now() > contest.timings.ends)
-    {
-        res.send("Ended");
+        if(now > contest.timings.ends)
+        {
+            return res.send("Ended");
+        }
     }
+    
 
 });
 
 //sign up for contest
 router.get('/sign/:curl',authenticate,contestAuth,async (req,res) => {
-   const con = await Contest.findOneAndUpdate({url:req.params.curl, 'signedUp.usn':{$ne : req.session.usn}},{$addToSet :{signedUp : {usn: req.session.usn,time:Date.now()}}},
+   const con = await Contest.findOneAndUpdate({url:req.params.curl, 'signedUp.usn':{$ne : req.session.usn},'timings.starts':{$lt:new Date()},'timings.ends':{$gt:new Date()}},{$addToSet :{signedUp : {usn: req.session.usn,name:req.session.name,time:new Date()}}},
    (err,doc) => {
-      if(err) 
-    res.status(404).send("Not Found");
+    if(err)
+    return res.status(404).send("Not Permitted");
    });
 
     return res.redirect('/contest/'+ req.params.curl);
@@ -171,6 +223,7 @@ router.get('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
 
 });
 
+//submission of contest
 router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
     let contest = await Contest.findOne({url:req.params.curl}).lean().select('questions');
     if(!contest) return res.status(404).end();
@@ -207,7 +260,7 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
       
       data.forEach(store);
       function store(data){
-        desc.push(data.status.description); 
+        desc.push({id:data.status.id,description:data.status.description}); 
       }
       
       res.send(desc);

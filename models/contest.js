@@ -3,9 +3,6 @@ const mongoose = require('mongoose');
 const moment = require('moment');
 
 const contestSchema = new mongoose.Schema({
-  secret:{
-    type:String
-  },
   createdBy:{
     type:mongoose.Schema.Types.ObjectId
   },
@@ -18,7 +15,8 @@ const contestSchema = new mongoose.Schema({
   }, 
   url:{
       type:String,
-      required:true
+      required:true,
+      unique:true
   },
   timings:{
     created:{type:Date},
@@ -37,7 +35,8 @@ const contestSchema = new mongoose.Schema({
   },
   signedUp:[{
     usn:{type : String},
-    time:{ type: Date, default:Date.now()},
+    name:{type:String},
+    time:{ type: Date, default:new Date()},
     _id : false
   }],
   questions:{

@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const request = require("request-promise");
 const {Practice,validatePractise} = require('../models/practice');
+const {ContestQ} = require('../models/contestQ');
 const Joi = require('@hapi/joi');
 const authenticate = require('../middleware/auth');
 
@@ -32,9 +33,19 @@ router.post('/', authenticate,async (req,res)=>{
   const { error } = validate(req.body); 
   if (error) return res.status(400).send(error.message);
 
-  let q = req.body.qid.split("/")[2];
-  const question = await Practice.findOne({qid:q }).lean();
-  if(!question) return res.send("Question not found!!");
+  let question = undefined;
+  if(req.body.qid.split("/")[1] == "practice"){
+    let q = req.body.qid.split("/")[2];
+    question = await Practice.findOne({qid:q }).lean().select('sample_cases');
+    if(!question) return res.send("Question not found!!");
+  }
+  else if(req.body.qid.split("/")[1] == "contest")
+  {
+    let c = req.body.qid.split("/")[3];
+    question = await ContestQ.findOne({qid:c}).lean().select('sample_cases');
+    if(!question) return res.send("Question not found!!");
+  }
+  
 
   let sample = question.sample_cases;
   if(req.body.source=='')

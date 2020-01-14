@@ -8,8 +8,14 @@ style.
 
 .jumbotron
   h1.text-center Contest
+  
 .admin
   h5 Administration
   a(href='/contest/create') Create Contest
   br
   a(href='/contest/manage') Manage Contest
+
+each i in contest 
+  ul
+    a(href="/contest/"+i.url)=i.name
+     

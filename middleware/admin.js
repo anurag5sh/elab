@@ -3,7 +3,7 @@ const {Teacher} = require('../models/teacher');
 module.exports= async function (req, res, next) {
     if (req.session && req.session.userId) {
         try{
-            const admin = await Teacher.findById(req.session.userId);
+            const admin = await Teacher.findById(req.session.userId).lean();
         if(admin.isAdmin)
         return next();
         else{

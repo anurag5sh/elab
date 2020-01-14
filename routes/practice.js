@@ -21,9 +21,11 @@ return b.toString();
 
 
 router.get('/', authenticate,async (req,res)=> {
-    const questions = await Practice.find().sort({date:-1});
-    
+    const questions = await Practice.find().sort({date:-1}).lean();
+    if(!req.session.name.endsWith(" "))
     res.render('practice', {q:questions});
+    else
+    res.render('teacher/practice',{q:questions});
   });
 
 

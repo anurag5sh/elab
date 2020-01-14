@@ -1,21 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const authenticate = require('../middleware/auth');
+const teacherAuth = require('../middleware/teacher');
 const {Contest,validateContest} = require('../models/contest');
 const {ContestQ,validateCQ} = require('../models/contestQ');
 const crypto = require("crypto");
 const moment = require('moment');
 
-router.post('/:cname',authenticate,async (req,res) => {
+router.post('/:cname',authenticate,teacherAuth,async (req,res) => {
     const contest = await Contest.findOne({url:req.params.cname});
     if(!contest) return res.status(404);
 
     const {error} = validateCQ(req.body);
     if(error) return res.status(400).send(error.message);
-
+    let count=0;
     const date = moment().format('DDMMYY');
-    let count = await ContestQ.countDocuments({qid: new RegExp("^"+date)});
-
+    let lastInserted = await ContestQ.find({qid:new RegExp('\^'+date)}).sort({_id:-1}).limit(1).lean().select('qid');
+    if(lastInserted.length>0){
+        count = lastInserted[0].qid.replace(date,"");
+    }
     let question = new ContestQ();
     question.name = req.body.name;
     question.statement= req.body.statement;
@@ -23,7 +26,7 @@ router.post('/:cname',authenticate,async (req,res) => {
     question.input_format = req.body.i_format;
     question.output_format = req.body.o_format;
 
-    console.log(req.body.i_sample1);
+    if(Array.isArray(req.body.i_sample1)){
 
     for(let i=0;i<req.body.i_sample1.length;i++){
         question.sample_cases.push({input:req.body.i_sample1[i], output:req.body.o_sample1[i]});
@@ -31,6 +34,11 @@ router.post('/:cname',authenticate,async (req,res) => {
 
     for(let i=0;i<req.body.i_testcase1.length;i++){
         question.test_cases.push({input:req.body.i_testcase1[i], output:req.body.o_testcase1[i]});
+    }
+    }
+    else{
+        question.sample_cases.push({input:req.body.i_sample1, output:req.body.o_sample1});
+        question.test_cases.push({input:req.body.i_testcase1, output:req.body.o_testcase1});
     }
  
     question.explanation= req.body.explanation;

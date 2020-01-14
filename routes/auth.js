@@ -27,8 +27,12 @@ router.get('/',(req,res,next)=>{
 
 //student dashboard
 router.get('/dashboard', authenticate,async (req,res)=> {
-    const q = await Practice.find().sort({date:-1}).limit(5);
+    const q = await Practice.find().sort({date:-1}).limit(5).lean().catch(err => res.send(err));
+    if(!req.session.name.endsWith(" "))
     res.render('dashboard', {q:q});
+    else
+    res.status(404).end();
+
 });
 
 //logout route

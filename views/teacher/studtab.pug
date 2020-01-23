@@ -1,27 +1,15 @@
 head
   title STUDENTLIST
-  style.
-    table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-    }
-    td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-    }
-    tr:nth-child(even) {
-    background-color: #dddddd;
-    }
+ 
 body
-  table
-    tbody
+  table.table.table-stripped
+    thead
       tr
         th No
         th NAME
         th USN
         th Timestamp
+    tbody
       each i,j in contest.signedUp
         tr
           td=j+1

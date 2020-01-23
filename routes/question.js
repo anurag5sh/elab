@@ -6,6 +6,7 @@ const {Contest,validateContest} = require('../models/contest');
 const {ContestQ,validateCQ} = require('../models/contestQ');
 const crypto = require("crypto");
 const moment = require('moment');
+const { convertDeltaToHtml } = require('node-quill-converter');
 
 router.post('/:cname',authenticate,teacherAuth,async (req,res) => {
     const contest = await Contest.findOne({url:req.params.cname});
@@ -21,7 +22,8 @@ router.post('/:cname',authenticate,teacherAuth,async (req,res) => {
     }
     let question = new ContestQ();
     question.name = req.body.name;
-    question.statement= req.body.statement;
+    
+    question.statement=decodeURIComponent(req.body.statement); 
     question.constraints = req.body.constraints;
     question.input_format = req.body.i_format;
     question.output_format = req.body.o_format;

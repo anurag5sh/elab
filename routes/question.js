@@ -7,6 +7,7 @@ const {ContestQ,validateCQ} = require('../models/contestQ');
 const crypto = require("crypto");
 const moment = require('moment');
 
+//adding a question to contest
 router.post('/:cname',authenticate,teacherAuth,async (req,res) => {
     const contest = await Contest.findOne({url:req.params.cname});
     if(!contest) return res.status(404);
@@ -33,12 +34,12 @@ router.post('/:cname',authenticate,teacherAuth,async (req,res) => {
     }
 
     for(let i=0;i<req.body.i_testcase1.length;i++){
-        question.test_cases.push({input:req.body.i_testcase1[i], output:req.body.o_testcase1[i]});
+        question.test_cases.push({input:req.body.i_testcase1[i], output:req.body.o_testcase1[i],points:req.body.points[i]});
     }
     }
     else{
         question.sample_cases.push({input:req.body.i_sample1, output:req.body.o_sample1});
-        question.test_cases.push({input:req.body.i_testcase1, output:req.body.o_testcase1});
+        question.test_cases.push({input:req.body.i_testcase1, output:req.body.o_testcase1,points:req.body.points});
     }
  
     question.explanation= req.body.explanation;

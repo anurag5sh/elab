@@ -54,6 +54,7 @@ const contestSchema = new mongoose.Schema({
   leaderboard:{
     position:{type:Number},
     name:{type:String},
+    usn:{type:String},
     timestamp:{type:Date},
     year:{type:String},
     points:{type:Number},

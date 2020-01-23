@@ -2,16 +2,18 @@ const Joi = require('@hapi/joi');
 const mongoose = require('mongoose');
 const moment = require('moment');
 
-
-
-const contestQSchema = new mongoose.Schema({
-    name:{
+const assignmentQSchema = new mongoose.Schema({
+    assignmentId : {
         type: String,
-        required:true
+        required : true
     },
     qid:{
         type:String,
         default: moment().format('DDMMYY')
+    },
+    name:{
+        type: String,
+        required:true
     },
     statement:{
         type: String,
@@ -38,8 +40,8 @@ const contestQSchema = new mongoose.Schema({
       output:{
           type:String
       }  ,
-      points:{
-        type:Number
+      points :{
+        type: Number
       },
       _id : false
     }],
@@ -62,11 +64,12 @@ const contestQSchema = new mongoose.Schema({
     
 });
 
-const ContestQ = mongoose.model('ContestQ',contestQSchema);
+const AssignmentQ = mongoose.model('AssignmentQ',assignmentQSchema);
 
-function validateCQ(question)
+function validateAQ(question)
 {
     const schema = Joi.object({
+        assignmentId : Joi.string().required(),
         name: Joi.string().required(),
         statement:Joi.string().required(),
         constraints: Joi.string().allow(''),
@@ -76,13 +79,14 @@ function validateCQ(question)
         o_sample1: Joi.required(),
         i_testcase1: Joi.required(),
         o_testcase1: Joi.required(),
-        explanation: Joi.string().required(),
-        points : Joi.required()
+        points:Joi.required(),
+        explanation: Joi.string().required()
         
     });
 
     return schema.validate(question);
 }
 
-exports.ContestQ = ContestQ;
-exports.validateCQ = validateCQ;
+
+exports.AssignmentQ = AssignmentQ;
+exports.validateAQ = validateAQ;

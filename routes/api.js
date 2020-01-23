@@ -69,13 +69,13 @@ router.post('/', authenticate,async (req,res)=>{
       for(let i=0;i<response.length;i++){
         let output="";
       const json_res = JSON.parse(JSON.stringify(response[i]));
-      //console.log(json_res);
+      
       if(json_res.stdout!=null) output=json_res.stdout;
       else if(json_res.stderr!=null) output=json_res.stderr;
       else if(json_res.compile_output!=null) output=json_res.compile_output;
       r.push({output:decode64(output),id:response[i].status.id,description:response[i].status.description})
       }
-      console.log(r);
+      
       res.send(r);
       
     })

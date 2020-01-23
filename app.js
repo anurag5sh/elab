@@ -9,6 +9,7 @@ const practice = require('./routes/practice');
 const admin = require('./routes/admin');
 const question = require('./routes/question');
 const api = require('./routes/api');
+const assignment = require('./routes/assignment');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const moment = require('moment');
@@ -43,12 +44,13 @@ app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 app.use(express.static('public'));
 app.use('/', login)
-app.use('/register', register);
+app.use('/assignment', assignment);
 app.use('/contest', contest);
 app.use('/practice', practice);
 app.use('/admin', admin);
 app.use('/api',api);
 app.use('/add', question);
+app.use('/register', register);
 
 
 

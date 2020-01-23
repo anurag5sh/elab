@@ -7,8 +7,8 @@ doctype html
 block code 
   //  jQuery 
   script(src='/adminLTE/plugins/jquery/jquery.min.js')
-  - let active={dashboard:"",add:"",manage:"",edit:""}
-  - let menu={manage:""}
+  - let active={dashboard:"",add:"",manage:"",edit:"",assignment:"",addAssignment:"",editAssignment:"",assignmentReports:""}
+  - let menu={manage:"",assignment:""}
 
 html(lang='en')
   head
@@ -115,6 +115,26 @@ html(lang='en')
                     a.nav-link(href='/admin/edit' class=active.edit)
                       i.fas.fa-user-edit.nav-icon
                       p Edit Account
+              li.nav-item.has-treeview(class=menu.assignment)
+                a.nav-link(href='#' class=active.assignment)
+                  i.nav-icon.fas.fa-book
+                  p
+                    | Assignments
+
+                    i.right.fas.fa-angle-left
+                ul.nav.nav-treeview
+                  li.nav-item
+                    a.nav-link(href='/admin/assignment/new' class=active.addAssignment)
+                      i.fas.fa-plus-square.nav-icon
+                      p Create New
+                  li.nav-item
+                    a.nav-link(href='/admin/assignment/edit' class=active.editAssignment)
+                      i.fas.fa-edit.nav-icon
+                      p Edit Assignment
+                  li.nav-item
+                    a.nav-link(href='/admin/assignment/reports' class=active.assignmentReports)
+                      i.fas.fa-chart-bar.nav-icon
+                      p Reports
               li.nav-item
                 a.nav-link(href='#')
                   i.nav-icon.fas.fa-th

@@ -1,0 +1,68 @@
+extends layout
+
+block append code
+    - active.editAssignment="active"
+    - active.assignment="active"
+    - menu.assignment="menu-open"
+    link(rel="stylesheet", href="/adminLTE/dist/css/daterangepicker.css")
+    script(src="/adminLTE/dist/js/moment.min.js")
+    script(src="/adminLTE/dist/js/daterangepicker.min.js")
+
+
+
+
+block content
+    #editAssignment
+        .card.card-primary
+                .card-header 
+                    h3.card-title Edit Assignment
+                .card-body
+                    .col-3(style="margin:auto;")
+                        select#sem(name="sem").form-control.custom-select.type
+                             option(selected,disabled) Select Semester
+                             each i in current
+                                option(value=i.id) #{i.sem}, Set #{i.id.substr(9)}
+                    br
+                    br
+                    form.form-horizontal
+                        #details
+        .card.card-primary
+                .card-header 
+                    h3.card-title Questions
+                .card-body.table-responsive.p-0
+                    table.table.table-hover
+                        thead
+                            tr
+                                th ID
+                                th Question Name
+                                th Points
+                              
+                        
+
+                        
+                
+                script.
+                    function setDateTime(s,e){
+                        $('input[name="duration"]').daterangepicker({
+                            timePicker: true,
+                            startDate: s,
+                            endDate: e,
+                            locale: {
+                            format: 'YYYY/MM/DD hh:mm A'
+                            }
+                        });
+                    }
+                    $('#sem').change(function (){
+
+                        $.get("/admin/assignment/"+document.getElementById("sem").value,function(data,status){
+                            
+                            $('#details').empty();
+                            const sem = '<div class="form-group row"><label class="col-sm-2">Semester &nbsp; : &nbsp;'+data.sem+'</label><label class="col-sm-2">Set &nbsp; : &nbsp;'+data.id.substr(9)+'</label></div>';
+                            const dateTime = '<div class="form-group row"><label class="col-sm-1">Duration</label><div class="col-sm-4"><input type="text" name="duration" class="form-control"></div></div>';
+                            const batch = '<div class="form-group row"><label class="col-sm-1">Batch</label><div class="col-sm-4"><input readonly type="text" value="'+data.id.substr(5,4)+'"class="form-control"></div></div>';
+                            const ready = '<div class="form-group row"><div class="custom-control custom-switch"><label for="customSwitch1" class="custom-control-label">Custom Switch</label><input class="custom-control-input" type="checkbox" id="customSwitch1" value="option1"></div></div>';
+                            const newQ = '<div class="form-group row"><div class="col-2"><button class="btn btn-primary">Add New Question</button></div><div class="col-2"><button class="btn btn-primary">Insert Old Question</button></div></div>';
+                            document.getElementById("details").innerHTML = sem + dateTime + batch +ready+newQ;
+                            setDateTime(data.duration.starts,data.duration.ends);
+                        });
+                    });

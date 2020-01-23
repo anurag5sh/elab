@@ -1,50 +1,91 @@
 doctype html
 include navbar
 head
+  link(rel='stylesheet' type='text/css' href='assets/css/light.css')
+
   title profile
-  style(type='text/css').
-    td{
-    vertical-align: middle;
-    padding: 2px;
-    margin:0;
-    }
-    .lbl{
-    width: 70px;
-    text-align: center;
-    color: black;
-    font-weight:600;
-    }
+  
 body
-  .profile
-    table
-      tr
-        td.lbl
-          label.lbl
-            b Username
-        td
-          input#username(type='text' name='username')
-    table
-      tr
-        td.lbl
-          label
-            b Name
-        td
-          input#name(type='text' name='name')
-    table
-      tr
-        td.lbl
-          label
-            b USN
-        td
-          input#usn(type='text' name='usn')
-    table
-      tr
-        td.lbl
-          label
-            b Email
-        td
-          input#email(type='text' name='email')
-    table
-      tr
-        td
-          input.btn(type='button' name='password' value='Change password')
+  br
+  .content
+    .container-fluid
+      .row
+        .col-md-8
+          .card
+            .header
+              h4.title Edit Profile
+            .content
+              form
+                .row
+                  .col-md-5
+                    .form-group
+                      label Company (disabled)
+                      input.form-control(type='text' disabled='' placeholder='Company' value='Creative Code Inc.')
+                  .col-md-3
+                    .form-group
+                      label Username
+                      input.form-control(type='text' placeholder='Username' value='michael23')
+                  .col-md-4
+                    .form-group
+                      label(for='exampleInputEmail1') Email address
+                      input.form-control(type='email' placeholder='Email')
+                .row
+                  .col-md-6
+                    .form-group
+                      label First Name
+                      input.form-control(type='text' placeholder='Company' value='Mike')
+                  .col-md-6
+                    .form-group
+                      label Last Name
+                      input.form-control(type='text' placeholder='Last Name' value='Andrew')
+                .row
+                  .col-md-12
+                    .form-group
+                      label Address
+                      input.form-control(type='text' placeholder='Home Address' value='Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09')
+                .row
+                  .col-md-4
+                    .form-group
+                      label City
+                      input.form-control(type='text' placeholder='City' value='Mike')
+                  .col-md-4
+                    .form-group
+                      label Country
+                      input.form-control(type='text' placeholder='Country' value='Andrew')
+                  .col-md-4
+                    .form-group
+                      label Postal Code
+                      input.form-control(type='number' placeholder='ZIP Code')
+                .row
+                  .col-md-12
+                    .form-group
+                      label About Me
+                      textarea.form-control(rows='5' placeholder='Here can be your description' value='Mike') Lamborghini Mercy, Your chick she so thirsty, I&apos;m in that two seat Lambo.
+                button.btn.btn-info.btn-fill.pull-right(type='submit') Update Profile
+                .clearfix
+        .col-md-4
+          .card.card-user
+            .image
+              img(src='https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400' alt='...')
+            .content
+              .author
+                a(href='#')
+                  img.avatar.border-gray(src='images/face-3.jpg' alt='...')
+              //-     h4.title
+              //-       | Mike Andrew
+              //-       br
+              //-       small michael24
+              //- p.description.text-center
+              //-   | &quot;Lamborghini Mercy 
+              //-   br
+              //-   |                                                     Your chick she so thirsty 
+              //-   br
+              //-   |                                                     I&apos;m in that two seat Lambo&quot;
+            hr
+            .text-center
+              button.btn.btn-simple(href='#')
+                i.fa.fa-facebook-square
+              button.btn.btn-simple(href='#')
+                i.fa.fa-twitter
+              button.btn.btn-simple(href='#')
+                i.fa.fa-google-plus-square

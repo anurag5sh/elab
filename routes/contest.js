@@ -71,9 +71,15 @@ router.post('/create',authenticate,setDate, async (req,res)=>{
     if(req.body.starts>=req.body.ends)
         return res.status(400).send("Incorrect timings");
     const createdBy = req.session.userId;
+    let id=null;
     let lastInserted = await Contest.find({}).sort({_id:-1}).limit(1).lean().select('id');
-    let id = lastInserted[0].id;
+    if(lastInserted[0]){
+    id = lastInserted[0].id;
     id++;
+    }
+    else{
+        id=1;
+    }
     let url = req.body.name.replace(/ /g,'-');
     let lastUrl  = await Contest.find({name:new RegExp('\^'+req.body.name.trim()+'\$','i')}).sort({_id:-1}).limit(1).lean().select('url');
     if(lastUrl.length>0){

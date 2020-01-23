@@ -7,6 +7,10 @@ html(lang='en')
     script(src='/ace-builds/src-min/ext-language_tools.js')
     script(src='/assets/js/jquery.min.js')
     link(rel='stylesheet' href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css')
+    link(rel="stylesheet", href="//cdn.quilljs.com/1.3.6/quill.bubble.css")
+    script(src="//cdn.quilljs.com/1.3.6/quill.js")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.js")
 
     
     style(type='text/css').
@@ -92,7 +96,7 @@ html(lang='en')
       
   body
     .card#card
-      p #{question.statement}
+      div#statement 
       - if(question.constraints) 
           strong Constraints
           p #{question.constraints}
@@ -144,8 +148,18 @@ html(lang='en')
     
     #opbox.output_box(style="width:50%; display:inline-block;")
 
-
+    
     script.
+
+      function statement(){
+        const quill = new Quill('#statement', {
+      theme: 'bubble' ,
+      readOnly: true  // Specify theme in configuration
+      });
+      const s = !{question.statement};
+      quill.setContents(s);
+      }
+      statement();
       let editor = ace.edit("editor");
       ace.require("ace/ext/language_tools");
       editor.setTheme("ace/theme/monokai");

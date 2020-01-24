@@ -33,7 +33,7 @@ router.get('/:qid', authenticate, async (req,res)=>{
   const question = await Practice.findOne({qid: req.params.qid});
   if(!question) return res.send("Question not found!!");
 
-  res.render('editor', {question : _.pick(question,['statement','constraints', 'input_format','output_format','sample_cases'])});
+  res.render('editor', {question : _.pick(question,['name','statement','constraints', 'input_format','output_format','sample_cases'])});
 });
 
 router.post('/:qid',authenticate,async (req,res) => {

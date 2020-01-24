@@ -1,4 +1,11 @@
 link(href="https://fonts.googleapis.com/css?family=Crimson+Text&display=swap" rel="stylesheet")
+link(rel="stylesheet", href="/css/dracula.css")
+
+script.  
+  hljs.configure({   
+      languages: ['javascript', 'python','c','c++','c#']
+  });
+
 style.
   label,p{
     font-family: 'Crimson Text', serif;
@@ -37,7 +44,9 @@ style.
                         div#statement-editor(style="height:120px;")
                         script.
                           const editor = new Quill('#statement-editor', {
-                          modules: { toolbar: [
+                          modules: { 
+                          syntax: true ,
+                          toolbar: [
                           [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
                           [{ 'header': [1, 2, 3, 4, 5, 6, false] }],    
                           ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
@@ -48,7 +57,7 @@ style.
                           [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
                           [{ 'direction': 'rtl' }],                         // text direction
                           [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-                          [{ 'font': [] }],
+                          //- [{ 'font': [] }],
                           [{ 'align': [] }],
                           ['clean'] 
                               ] },
@@ -79,22 +88,22 @@ style.
                   input#btSampleAdd.bt.btn.btn-info.btn-sm(type='button' value='Add Sample Case' style="margin-right:20px;margin-left:20px;")
                   input#btSampleRemove.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
                   .t_case
-                    p Sample Testcase 1
+                    p#s_no1 Sample Testcase 1
                     textarea.form-control.input#i_sample1(rows='5' name='i_sample1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
                     textarea.form-control.input#o_sample1(rows='5' name='o_sample1' cols='50' required placeholder='Output')
                     p Explanation
-                    textarea.form-control.ex_box#explaination(name='explanation' rows='5' cols='107' style="margin-bottom:10px" required)
+                    textarea.form-control.ex_box#explaination1(name='explanation' rows='5' cols='107' style="margin-bottom:10px" required)
                 #testcase
                   label.tc Testcases:
                   input#btAdd.bt.btn.btn-info.btn-sm(type='button' value='Add Testcase' style="margin-right:20px;margin-left:20px;")
                   input#btRemove.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
                   br
                   .t_case
-                    p Testcase 1
+                    p#t_no1 Testcase 1
                     textarea.form-control.input#i_testcase1(rows='5' name='i_testcase1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
                     textarea.form-control.input#o_testcase1(rows='5' name='o_testcase1' cols='50' required placeholder='Output')
-                    p Points
-                    input.form-control(style="width:15%;" name="points" id="points0" type="text" placeholder="Ex: 10")
+                    p#p_no1 Points
+                    input.form-control(style="width:15%;" name="points" id="points1" type="text" placeholder="Ex: 10")
                 textarea(name="statement" id="es" style="display:none;")
         //  Modal footer 
         .modal-footer
@@ -110,8 +119,7 @@ script.
   
   $(document).ready(function() {
   
-    var iCnt = 0;
-    var count = 0;
+    var count = 1;
     // CREATE A "DIV" ELEMENT AND DESIGN IT USING jQuery ".css()" CLASS.
     var container = $(document.createElement('div')).css({
         padding: '5px',margin: '20px'
@@ -120,16 +128,12 @@ script.
   
     $('#btSampleAdd').click(function() {
   
-            iCnt = iCnt + 1;
-  
             count = count +1;
-  
-  
+
             // ADD TEXTBOX.
-            $(container).append('<p id=p' + count +'>Sample Testcase ' + (count+1) + '</p>');
-            $(container).append('<textarea name="i_sample1" rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Input" style="margin-bottom:10px;" ></textarea>');
-            iCnt = iCnt + 1;
-            $(container).append('<textarea name="o_sample1" rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Output" ></textarea>');
+            $(container).append('<p id=s_no' + count +'>Sample Testcase ' + (count) + '</p>');
+            $(container).append('<textarea id=i_sample' + count + ' name="i_sample1" rows="5" cols="50"  class="input form-control" placeholder="Input" style="margin-bottom:10px;" ></textarea>');
+            $(container).append('<textarea id=o_sample' + count + ' name="o_sample1" rows="5" cols="50"  class="input form-control" placeholder="Output" ></textarea>');
             
             // ADD BOTH THE DIV ELEMENTS TO THE "main" CONTAINER.
             $('#samplecase').after(container);
@@ -138,12 +142,13 @@ script.
   
     // REMOVE ONE ELEMENT PER CLICK.
     $('#btSampleRemove').click(function() {
-        if (iCnt != 0) 
+
+        if (count != 1) 
         {
         
-        $('#tb' + iCnt).remove(); iCnt = iCnt - 1; 
-        $('#tb' + iCnt).remove(); iCnt = iCnt - 1;
-        $('#p' + count).remove();count = count -1;
+        $('#o_sample' + count).remove();  
+        $('#i_sample' + count).remove(); 
+        $('#s_no' + count).remove();count = count -1;
         
         }
     
@@ -155,8 +160,8 @@ script.
   
   $(document).ready(function() {
   
-    var iCnt = 0;
-    var count = 0;
+    
+    var count = 1;
     // CREATE A "DIV" ELEMENT AND DESIGN IT USING jQuery ".css()" CLASS.
     var container = $(document.createElement('div')).css({
         padding: '5px', margin: '20px'
@@ -165,20 +170,15 @@ script.
   
     $('#btAdd').click(function() {
   
-            iCnt = iCnt + 1;
-  
+            
             count = count +1;
   
-  
             // ADD TEXTBOX.
-            $(container).append('<p id=p' + count +'>Testcase ' + (count+1) + '</p>');
-            $(container).append('<textarea name="i_testcase1" rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Input" style="margin-bottom:10px;"></textarea>');
-            iCnt = iCnt + 1;
-            $(container).append('<textarea name="o_testcase1" rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Output" ></textarea>');
-            iCnt = iCnt + 1;
-            $(container).append('<p id=para' +iCnt+ '>Points</p>');
-            iCnt = iCnt + 1;
-            $(container).append('<input class="form-control" style="width:15%;" name="points" type="text" placeholder="Ex: 10" id="points'+ iCnt +'"/>');
+            $(container).append('<p id=t_no' + count +'>Testcase ' + (count) + '</p>');
+            $(container).append('<textarea id=i_testcase' + count + ' name="i_testcase1" rows="5" cols="50"  class="input form-control" placeholder="Input" style="margin-bottom:10px;"></textarea>');
+            $(container).append('<textarea id=o_testcase' + count + ' name="o_testcase1" rows="5" cols="50"  class="input form-control" placeholder="Output" ></textarea>');
+            $(container).append('<p id=p_no' + count + '>Points</p>');
+            $(container).append('<input id="points'+ count +'" class="form-control" style="width:15%;" name="points" type="text" placeholder="Ex: 10"/>');
             // ADD BOTH THE DIV ELEMENTS TO THE "main" CONTAINER.
             $('#testcase').after(container);
         
@@ -186,13 +186,13 @@ script.
   
     // REMOVE ONE ELEMENT PER CLICK.
     $('#btRemove').click(function() {
-        if (iCnt != 0) 
+        if (count != 1) 
         {
-        $('#points' + iCnt).remove(); iCnt = iCnt - 1;
-        $('#para' + iCnt).remove(); iCnt = iCnt - 1
-        $('#tb' + iCnt).remove(); iCnt = iCnt - 1; 
-        $('#tb' + iCnt).remove(); iCnt = iCnt - 1;
-        $('#p' + count).remove();count = count -1;
+        $('#points' + count).remove(); 
+        $('#p_no' + count).remove();
+        $('#o_testcase' + count).remove(); 
+        $('#i_testcase' + count).remove();
+        $('#t_no' + count).remove();count = count -1;
         }
     
     

@@ -7,60 +7,42 @@ head
   
 body
   br
-  .content
+  .content(style="color:#9A9A9A;")
     .container-fluid
       .row
         .col-md-8
           .card
             .header
-              h4.title Edit Profile
+              h4.title(style="margin-top:15px;margin-left:15px;margin-bottom:8px;") Edit Profile
             .content
               form
                 .row
-                  .col-md-5
-                    .form-group
-                      label Company (disabled)
-                      input.form-control(type='text' disabled='' placeholder='Company' value='Creative Code Inc.')
-                  .col-md-3
-                    .form-group
-                      label Username
-                      input.form-control(type='text' placeholder='Username' value='michael23')
                   .col-md-4
                     .form-group
-                      label(for='exampleInputEmail1') Email address
-                      input.form-control(type='email' placeholder='Email')
-                .row
-                  .col-md-6
+                      label USN
+                      input.form-control(type='text' readonly placeholder='' value=student.usn)
+                  .col-md-4
                     .form-group
                       label First Name
-                      input.form-control(type='text' placeholder='Company' value='Mike')
-                  .col-md-6
+                      input.form-control(type='text' readonly placeholder='First Name' value=student.name)    
+                  .col-md-4
                     .form-group
                       label Last Name
-                      input.form-control(type='text' placeholder='Last Name' value='Andrew')
+                      input.form-control(type='text' readonly placeholder='Last Name' value='') 
                 .row
-                  .col-md-12
+                  .col-md-6
                     .form-group
-                      label Address
-                      input.form-control(type='text' placeholder='Home Address' value='Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09')
-                .row
-                  .col-md-4
+                      label Priamry Email
+                      input.form-control(type='email' readonly placeholder='' value=student.email)
+                  .col-md-6
                     .form-group
-                      label City
-                      input.form-control(type='text' placeholder='City' value='Mike')
-                  .col-md-4
-                    .form-group
-                      label Country
-                      input.form-control(type='text' placeholder='Country' value='Andrew')
-                  .col-md-4
-                    .form-group
-                      label Postal Code
-                      input.form-control(type='number' placeholder='ZIP Code')
+                      label(for='exampleInputEmail1') Recovery Email
+                      input.form-control(type='email' placeholder='Email')
                 .row
                   .col-md-12
                     .form-group
                       label About Me
-                      textarea.form-control(rows='5' placeholder='Here can be your description' value='Mike') Lamborghini Mercy, Your chick she so thirsty, I&apos;m in that two seat Lambo.
+                      textarea.form-control(rows='5' placeholder='Here can be your description' value='')
                 button.btn.btn-info.btn-fill.pull-right(type='submit') Update Profile
                 .clearfix
         .col-md-4
@@ -71,21 +53,33 @@ body
               .author
                 a(href='#')
                   img.avatar.border-gray(src='images/face-3.jpg' alt='...')
-              //-     h4.title
-              //-       | Mike Andrew
-              //-       br
-              //-       small michael24
-              //- p.description.text-center
-              //-   | &quot;Lamborghini Mercy 
-              //-   br
-              //-   |                                                     Your chick she so thirsty 
-              //-   br
-              //-   |                                                     I&apos;m in that two seat Lambo&quot;
             hr
-            .text-center
-              button.btn.btn-simple(href='#')
-                i.fa.fa-facebook-square
-              button.btn.btn-simple(href='#')
-                i.fa.fa-twitter
-              button.btn.btn-simple(href='#')
-                i.fa.fa-google-plus-square
+            br
+
+  .content(style="color:#9A9A9A;")
+    .container-fluid
+      .row
+        .col-md-4
+          .card
+            .header
+              h4.title(style="margin-top:15px;margin-left:15px;margin-bottom:8px;") Update Password
+            .content
+              form
+                .row
+                  .col-md-8
+                    .form-group
+                      label Current Password
+                      input.form-control(type='password'  placeholder='' value="")
+                .row
+                  .col-md-8
+                    .form-group
+                      label New Password
+                      input.form-control(type='password'  placeholder='' value="")
+                .row
+                  .col-md-8
+                    .form-group
+                      label Re-enter New Password
+                      input.form-control(type='password'  placeholder='' value="")
+                button.btn.btn-info.btn-fill.pull-right(type='submit') Update Password
+                .clearfix
+

@@ -51,8 +51,12 @@ router.get('/logout', function(req, res, next) {
 
 
 //profile
-router.get('/profile', function(req,res){
-  res.render('profile');
+router.get('/profile', async function(req,res){
+  const student = await Student.findOne({ usn: req.session.usn }).lean().select('usn name email');
+  if(!student){
+    return res.status(400).end();
+  }
+  res.render('profile',{student:student});
 });
 
 //login validation

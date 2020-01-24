@@ -263,12 +263,14 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
   Promise.all(result)
     .then(data => {
       let desc= [];
-      
+      let i=0;
       data.forEach(store);
-      function store(data){
-        desc.push({id:data.status.id,description:data.status.description}); 
+      function store(data){ let points=0;
+          if(data.status.id == 3){
+            points = testcase[i++].points;
+          }
+        desc.push({id:data.status.id,description:data.status.description,points:points}); 
       }
-      
       res.send(desc);
 
     }).catch(err => {

@@ -11,6 +11,9 @@ const assignmentQSchema = new mongoose.Schema({
         type:String,
         default: moment().format('DDMMYY')
     },
+    teacherId:{
+        type:String
+    },
     name:{
         type: String,
         required:true
@@ -69,17 +72,17 @@ const AssignmentQ = mongoose.model('AssignmentQ',assignmentQSchema);
 function validateAQ(question)
 {
     const schema = Joi.object({
-        assignmentId : Joi.string().required(),
+        aId : Joi.string().required(),
         name: Joi.string().required(),
         statement:Joi.string().required(),
         constraints: Joi.string().allow(''),
         i_format: Joi.string().required(),
         o_format: Joi.string().required(),
-        i_sample1: Joi.required(),
-        o_sample1: Joi.required(),
-        i_testcase1: Joi.required(),
-        o_testcase1: Joi.required(),
-        points:Joi.required(),
+        i_sample1: [Joi.string(),Joi.array().items(Joi.string())],
+        o_sample1: [Joi.string(),Joi.array().items(Joi.string())],
+        i_testcase1: [Joi.string(),Joi.array().items(Joi.string())],
+        o_testcase1: [Joi.string(),Joi.array().items(Joi.string())],
+        points:[Joi.number(),Joi.array().items(Joi.number())],
         explanation: Joi.string().required()
         
     });

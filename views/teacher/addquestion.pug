@@ -14,92 +14,92 @@ style.
   //  The Modal 
   .modal#myModal
     .modal-dialog.modal-xl
-      .modal-content
-        //  Modal Header 
-        .modal-header
-          h4.modal-title New Question  
-          button.close(type='button' data-dismiss='modal') ×
-        //  Modal body 
-        .modal-body
-            form#ques
-              .box
-                table.table
-                  tbody
-                    tr
-                      td(style="width:150px;")
-                        label Question name:
-                      td
-                        input#name(type='text' name='name' required style="width:50%").form-control
-                    tr
-                      td(style="width:150px;")
-                        label Problem Statement:
-                      td
-                        div#statement-editor(style="height:120px;")
-                        script.
-                          const editor = new Quill('#statement-editor', {
-                          modules: { toolbar: [
-                          [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-                          [{ 'header': [1, 2, 3, 4, 5, 6, false] }],    
-                          ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-                          ['blockquote'],
-                          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                          [{ 'script': 'sub'}, { 'script': 'super' }], 
-                          ['image', 'code-block','formula'],     			                // superscript/subscript
-                          [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-                          [{ 'direction': 'rtl' }],                         // text direction
-                          [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-                          [{ 'font': [] }],
-                          [{ 'align': [] }],
-                          ['clean'] 
-                              ] },
-                              theme: 'snow'
-                            });
-                    
-                    tr
-                      td(style="width:150px;")
-                        label Constraints:
-                      td
-                        textarea.form-control#constraints(rows='5' name='constraints' cols='50')
+      form#ques(onsubmit="return submitFormAdd()")
+        .modal-content
+          //  Modal Header 
+          .modal-header
+            h4.modal-title New Question  
+            button.close(type='button' data-dismiss='modal') ×
+          //  Modal body 
+          .modal-body
+                .box
+                  table.table
+                    tbody
+                      tr
+                        td(style="width:150px;")
+                          label Question name:
+                        td
+                          input#name(type='text' name='name' required style="width:50%").form-control
+                      tr
+                        td(style="width:150px;")
+                          label Problem Statement:
+                        td
+                          div#statement-editor(style="height:120px;")
+                          script.
+                            const editor = new Quill('#statement-editor', {
+                            modules: { toolbar: [
+                            [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],    
+                            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                            ['blockquote'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            [{ 'script': 'sub'}, { 'script': 'super' }], 
+                            ['image', 'code-block','formula'],     			                // superscript/subscript
+                            [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+                            [{ 'direction': 'rtl' }],                         // text direction
+                            [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+                            [{ 'font': [] }],
+                            [{ 'align': [] }],
+                            ['clean'] 
+                                ] },
+                                theme: 'snow'
+                              });
+                      
+                      tr
+                        td(style="width:150px;")
+                          label Constraints:
+                        td
+                          textarea.form-control#constraints(rows='5' name='constraints' cols='50')
+                  
+                      tr
+                        td(style="width:150px;")
+                          label Input format:
+                        td
+                          textarea.form-control#i_format(rows='5' name='i_format' cols='50' required)
+            
+                      tr
+                        td(style="width:150px;")
+                          label Output format:
+                        td
+                          textarea.form-control#o_format(rows='5' name='o_format' cols='50' required)
+                  hr    
                 
-                    tr
-                      td(style="width:150px;")
-                        label Input format:
-                      td
-                        textarea.form-control#i_format(rows='5' name='i_format' cols='50' required)
-          
-                    tr
-                      td(style="width:150px;")
-                        label Output format:
-                      td
-                        textarea.form-control#o_format(rows='5' name='o_format' cols='50' required)
-                hr    
-              
-                #samplecase
-                  label.tc Sample Testcases:
-                  input#btSampleAdd.bt.btn.btn-info.btn-sm(type='button' value='Add Sample Case' style="margin-right:20px;margin-left:20px;")
-                  input#btSampleRemove.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
-                  .t_case
-                    p Sample Testcase 1
-                    textarea.form-control.input#i_sample1(rows='5' name='i_sample1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
-                    textarea.form-control.input#o_sample1(rows='5' name='o_sample1' cols='50' required placeholder='Output')
-                    p Explanation
-                    textarea.form-control.ex_box#explaination(name='explanation' rows='5' cols='107' style="margin-bottom:10px" required)
-                #testcase
-                  label.tc Testcases:
-                  input#btAdd.bt.btn.btn-info.btn-sm(type='button' value='Add Testcase' style="margin-right:20px;margin-left:20px;")
-                  input#btRemove.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
-                  br
-                  .t_case
-                    p Testcase 1
-                    textarea.form-control.input#i_testcase1(rows='5' name='i_testcase1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
-                    textarea.form-control.input#o_testcase1(rows='5' name='o_testcase1' cols='50' required placeholder='Output')
-                    p Points
-                    input.form-control(style="width:15%;" name="points" id="points0" type="text" placeholder="Ex: 10")
-                textarea(name="statement" id="es" style="display:none;")
-        //  Modal footer 
-        .modal-footer
-          button.btn.btn-success(type='button' onclick="submitFormAdd()") ADD
-          button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+                  #samplecase
+                    label.tc Sample Testcases:
+                    input#btSampleAdd.bt.btn.btn-info.btn-sm(type='button' value='Add Sample Case' style="margin-right:20px;margin-left:20px;")
+                    input#btSampleRemove.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
+                    .t_case
+                      p Sample Testcase 1
+                      textarea.form-control.input#i_sample1(rows='5' name='i_sample1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
+                      textarea.form-control.input#o_sample1(rows='5' name='o_sample1' cols='50' required placeholder='Output')
+                      p Explanation
+                      textarea.form-control.ex_box#explaination(name='explanation' rows='5' cols='107' style="margin-bottom:10px" required)
+                  #testcase
+                    label.tc Testcases:
+                    input#btAdd.bt.btn.btn-info.btn-sm(type='button' value='Add Testcase' style="margin-right:20px;margin-left:20px;")
+                    input#btRemove.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
+                    br
+                    .t_case
+                      p Testcase 1
+                      textarea.form-control.input#i_testcase1(rows='5' name='i_testcase1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
+                      textarea.form-control.input#o_testcase1(rows='5' name='o_testcase1' cols='50' required placeholder='Output')
+                      p Points
+                      input.form-control(style="width:15%;" required name="points" id="points0" type="text" placeholder="Ex: 10")
+                  textarea(name="statement" id="es" style="display:none;")
+          //  Modal footer 
+          .modal-footer
+            input.btn.btn-success(type='submit' value="ADD")
+            button.btn.btn-secondary(type='button' data-dismiss='modal') Close
 
 
 - const ques=questions;
@@ -127,9 +127,9 @@ script.
   
             // ADD TEXTBOX.
             $(container).append('<p id=p' + count +'>Sample Testcase ' + (count+1) + '</p>');
-            $(container).append('<textarea name="i_sample1" rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Input" style="margin-bottom:10px;" ></textarea>');
+            $(container).append('<textarea name="i_sample1" required rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Input" style="margin-bottom:10px;" ></textarea>');
             iCnt = iCnt + 1;
-            $(container).append('<textarea name="o_sample1" rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Output" ></textarea>');
+            $(container).append('<textarea name="o_sample1" required rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Output" ></textarea>');
             
             // ADD BOTH THE DIV ELEMENTS TO THE "main" CONTAINER.
             $('#samplecase').after(container);
@@ -172,13 +172,13 @@ script.
   
             // ADD TEXTBOX.
             $(container).append('<p id=p' + count +'>Testcase ' + (count+1) + '</p>');
-            $(container).append('<textarea name="i_testcase1" rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Input" style="margin-bottom:10px;"></textarea>');
+            $(container).append('<textarea name="i_testcase1" required rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Input" style="margin-bottom:10px;"></textarea>');
             iCnt = iCnt + 1;
-            $(container).append('<textarea name="o_testcase1" rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Output" ></textarea>');
+            $(container).append('<textarea name="o_testcase1" required rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Output" ></textarea>');
             iCnt = iCnt + 1;
             $(container).append('<p id=para' +iCnt+ '>Points</p>');
             iCnt = iCnt + 1;
-            $(container).append('<input class="form-control" style="width:15%;" name="points" type="text" placeholder="Ex: 10" id="points'+ iCnt +'"/>');
+            $(container).append('<input class="form-control" required style="width:15%;" name="points" type="text" placeholder="Ex: 10" id="points'+ iCnt +'"/>');
             // ADD BOTH THE DIV ELEMENTS TO THE "main" CONTAINER.
             $('#testcase').after(container);
         
@@ -201,14 +201,21 @@ script.
     
   });
 
-  function submitFormAdd(){ let u;
-      const url = window.location.href.split('/');
-      u=url.pop();
-      if(u == "")  u=url.pop();
+  function submitFormAdd(){ 
+      function isQuillEmpty(quill) {
+      if ((quill.getContents()['ops'] || []).length !== 1) { return false }
+      return quill.getText().trim().length === 0
+      }
+
+      if(isQuillEmpty(editor)){
+          alert("Problem Statement cannot be empty");
+          return false;
+      }
+
       document.getElementById('es').value=encodeURIComponent(JSON.stringify(editor.getContents()));
       $.ajax({
             type: "POST",
-            url: "/add/"+u,
+            url: "/add/#{contest.url}",
             data: $("#ques").serialize(),
             success: function (data) {
  
@@ -222,6 +229,6 @@ script.
  
             }
         });
-      
+      return false;
   }
   

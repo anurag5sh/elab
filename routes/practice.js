@@ -62,10 +62,13 @@ router.post('/:qid',authenticate,async (req,res) => {
   Promise.all(result)
     .then(data => {
       let desc= [];
-      
+      let i=0;
       data.forEach(store);
-      function store(data){
-        desc.push({id:data.status.id,description:data.status.description}); 
+      function store(data){let point=0;
+        if(data.status.id == 3){
+          point = testcase[i].points;
+        }
+        desc.push({id:data.status.id,description:data.status.description,points:point}); 
       }
       
       res.send(desc);

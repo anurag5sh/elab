@@ -181,8 +181,8 @@ html(lang='en')
       div#editor
       button#button_submit.btn.btn-success(value='Submit', onclick='submission()', style='float:right;width:100px;left:20px;') 
         a(href='#opbox' style="color:white;font-weight:bold") Submit
-      button#button.btn.btn-primary(value='Run', onclick='readText()', style='font-weight:bold;color:white;float:right;margin-right:20px;width:100px;') Run
-      
+      button#button.btn.btn-primary(value='Run', onclick='readText()', style='font-weight:bold;color:white;float:right;margin-right:20px;width:100px;')
+        a(href='#loader' style="color:white;font-weight:bold") Run
       
     
     #opbox.output_box(style="width:650px; display:inline-block;")
@@ -236,7 +236,11 @@ html(lang='en')
       language: l,
       qid: window.location.pathname
       },
-      function(data,status){
+      function(data,status){ if(!Array.isArray(data)){
+        toastr.warning(data);
+        document.getElementById("loader").style.display="none";
+        return;
+      }
       for(let i=0;i<data.length;i++)
       {
       if(data[i].id==3){
@@ -267,7 +271,7 @@ html(lang='en')
       });
       }
 
-      function submission(){
+      function submission(){ 
         let l = document.getElementById("lang").value;
         l=l.slice(-2);
         $(document).ready(function (){
@@ -277,9 +281,10 @@ html(lang='en')
         language: l
         },
         function(data,status){
-          //- document.getElementById("loader").style.height=""+(30*data.length)+"px";l
+          $(".points").remove();
           $(".green-tick-t").remove();
             $(".red-cross-t").remove();
+            let total =0;
           for(let i=0;i<data.length;i++){
             
             let node =document.createElement("P");
@@ -300,13 +305,16 @@ html(lang='en')
           node.appendChild(n1);
           n1=document.createTextNode(" "+data[i].description);
           node.appendChild(n1);
+          let points = document.createTextNode("  "+data[i].points);
+          total+=data[i].points;
+          node.appendChild(points);
           document.getElementById("TestCases").appendChild(node);
           }
+          $("#out").append('<p class="points"> Total Points = '+ total +'</p>');
           
-          document.getElementById("loader").style.display="none"
+          document.getElementById("loader").style.display="none";
           document.getElementById("out").style.display="block";
           
-          //-  alert(data);
         });
         });
       }

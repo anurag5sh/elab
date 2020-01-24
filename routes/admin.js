@@ -141,14 +141,6 @@ router.get('/assignment/edit', admin, async (req,res) => {
   res.render('admin/editAssignment',{current : current});
 });
 
-//get an assignment
-router.get('/assignment/:id',admin,async (req,res) => {
-  const assignment = await Assignment.findOne({id:req.params.id}).lean();
-  if(!assignment) return res.status(400).send("Not Found");
-
-  res.send(assignment);
-});
-
 router.get('/assignment/reports', admin, async (req,res) => {
   res.render('admin/assignmentReports');
 });

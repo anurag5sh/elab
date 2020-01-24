@@ -22,7 +22,7 @@ router.post('/', authenticate,async (req,res)=>{
   function validate(body)
   {
     const schema = Joi.object({
-        source : Joi.string().required(),
+        source : Joi.string().required().allow(''),
         language : Joi.number().required(),
         qid: Joi.string().required()
     });
@@ -48,8 +48,8 @@ router.post('/', authenticate,async (req,res)=>{
   
 
   let sample = question.sample_cases;
-  if(req.body.source=='')
-    return res.send();
+  if(req.body.source.trim()=='')
+    return res.send("Source Code cannot be empty!");
 
   let result = [];
 

@@ -3,19 +3,62 @@ include nav
 style.
   .admin{
   float: right;
-  margin-right: 10%;
+  margin-right: 20px;
+  }
+  body{
+  background-color:#f4f5fa;
   }
 
-.jumbotron
-  h1.text-center Contest
-  
-.admin
-  h5 Administration
-  a(href='/contest/create') Create Contest
-  br
-  a(href='/contest/manage') Manage Contest
+  .card{
+  border-radius:5px;
+  border:none;
+  webkit-box-shadow: 0 1px 15px 1px rgba(62,57,107,.07);
+  box-shadow: 0 1px 15px 1px rgba(62,57,107,.07);
+  border-left: 4px #17A2B8 solid;
+  }
 
-each i in contest 
-  ul
-    a(href="/contest/"+i.url)=i.name
-     
+
+
+  .box-shadow-3{
+  -webkit-box-shadow:0 14px 24px 0 rgba(62,57,107,.26);box-shadow:0 14px 24px 0 rgba(62,57,107,.26);
+  }
+  .round{
+  border-radius:1.5rem;
+  font-weight:bold;
+  font-size:16px;
+  }
+
+  .pull-right{
+  float:right;
+  }
+
+
+//- .jumbotron.bg-info
+//-   h1.text-center.text-light Contest
+br
+.row(style="width:100%")
+  
+  .col-lg-9.col-md-9  
+    .row(style="margin-left:20px;")
+      each i in contest 
+        //- ul
+        //-   a(href="/contest/"+i.url)=i.name
+          
+
+        .col-lg-4.col-md-4
+          .card(style="margin-bottom:20px;")
+            .card-body
+              h4.card-title.text-info #{i.name}
+              p.card-text Some example text.
+              a.btn.btn-sm.btn-info.round.box-shadow-3.pull-right(href='/contest/'+i.url ) Enter
+  .col-lg-3.col-md-3  
+    .card(style="width:100%;")
+      .card-body
+        h3.card-title.text-center Administration
+        .row
+          .col.text-center
+            a.btn.btn-info(href='/contest/create') Create Contest
+        br
+        .row
+          .col.text-center    
+            a.btn.btn-info(href='/contest/manage') Manage Contest

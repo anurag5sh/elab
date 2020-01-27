@@ -15,7 +15,7 @@ const {Practice} = require('../models/practice');
 //redirect to respective dashboard
 router.get('/',(req,res,next)=>{
   if (req.session && req.session.userId)
-    if(req.session.name.endsWith(" ")) 
+    if(req.session.staff_id) 
       return res.render('teacher/trdashboard');
     else
     return res.redirect('/dashboard');
@@ -28,7 +28,7 @@ router.get('/',(req,res,next)=>{
 //student dashboard
 router.get('/dashboard', authenticate,async (req,res)=> {
     const q = await Practice.find().sort({date:-1}).limit(5).lean().catch(err => res.send(err));
-    if(!req.session.name.endsWith(" "))
+    if(!req.session.name.staff_id)
     res.render('dashboard', {q:q});
     else
     res.status(404).end();
@@ -82,14 +82,15 @@ router.post('/', async (req, res) => { console.log(req.body);
 
   else if(req.body.type === "teacher")
   {
-    let teacher = await Teacher.findOne({ email: req.body.email });
+    let teacher = await Teacher.findOne({ email: req.body.email }).lean();
     if (!teacher) return res.render('login',{login_error:"Invalid email or password"});
 
     const validPassword = await bcrypt.compare(req.body.password, teacher.password);
     if (!validPassword) return res.render('login',{login_error:"Invalid email or password"});
 
     req.session.userId = teacher._id;
-    req.session.name = teacher.name+" ";
+    req.session.name = teacher.name;
+    req.session.staff_id = teacher.staff_id;
     res.cookie("name", teacher.name,{sameSite:"strict"});
     if(teacher.isAdmin)
       return res.redirect('/admin');

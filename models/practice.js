@@ -36,7 +36,10 @@ const practiceSchema = new mongoose.Schema({
         },
         output:{
             type:String
-        }  ,
+        } ,
+        points:{
+            type:Number
+        },
         _id : false
       }],
       sample_cases:[{
@@ -69,6 +72,7 @@ function validatePractise(question)
         o_sample: Joi.required(),
         i_testcase: Joi.required(),
         o_testcase: Joi.required(),
+        points:Joi.required()
     });
 
     return schema.validate(question);

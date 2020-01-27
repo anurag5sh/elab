@@ -16,6 +16,11 @@ const teacherSchema = new mongoose.Schema({
     maxlength: 255,
     unique: true
   },
+  staff_id:{
+    type:Number,
+    required:true,
+    unique:true
+  },
   password: {
     type: String,
     required: true,
@@ -35,4 +40,17 @@ const teacherSchema = new mongoose.Schema({
 
 const Teacher = mongoose.model('Teacher', teacherSchema);
 
+function validateTeacher(user) {
+  const schema = Joi.object({
+    name: Joi.string().min(3).max(50).required(),
+    email: Joi.string().min(3).max(255).required().email(),
+    password: Joi.string().min(5).max(255).required(),
+    type: Joi.string(),
+    staff_id:Joi.number().required()
+  });
+
+  return schema.validateTeacher(user);
+}
+
 exports.Teacher = Teacher;
+exports.validateTeacher = validateTeacher;

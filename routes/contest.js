@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authenticate = require('../middleware/auth');
+const teacher = require('../middleware/teacher');
 const contestAuth = require('../middleware/contestAuth');
 const {Contest,validateContest} = require('../models/contest');
 const {ContestQ} = require('../models/contestQ');
@@ -41,7 +42,7 @@ function encode64(string){ //encoding to base64
 
 
 router.get('/',authenticate, async (req,res)=> {
-    if(req.session.name.endsWith(" ")){
+    if(req.session.staff_id){
      const contest = await Contest.find().lean();
      if(!contest) return res.render('teacher/trcontest',{contest:[]});
 
@@ -58,7 +59,7 @@ router.get('/',authenticate, async (req,res)=> {
 //teacher creates contest 
 //auth : pending
 router.get('/create',authenticate, (req,res) => {
-    if(req.session.name.endsWith(" "))
+    if(req.session.staff_id)
     res.render('teacher/createContest');
     else
     res.status(404).end
@@ -111,8 +112,7 @@ router.get('/manage',authenticate, async (req,res) => {
 });
 
 //teacher manage contest
-router.get('/manage/:name', async (req,res) => {
-    if(!req.session.name.endsWith(" ")) return res.status(404).end();
+router.get('/manage/:name',authenticate,teacher, async (req,res) => {
 
     let contest = await Contest.findOne({url:req.params.name}).lean();
     if(!contest) return res.status(404).end();
@@ -165,7 +165,7 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
     }
 
     //teacher 
-    if(req.session.name.endsWith(" ") ){
+    if(req.session.staff_id){
         if(now > contest.timings.starts)
         return res.send("questions");
         else{
@@ -263,12 +263,14 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
   Promise.all(result)
     .then(data => {
       let desc= [];
-      
+      let i=0;
       data.forEach(store);
-      function store(data){
-        desc.push({id:data.status.id,description:data.status.description}); 
+      function store(data){ let points=0;
+          if(data.status.id == 3){
+            points = testcase[i++].points;
+          }
+        desc.push({id:data.status.id,description:data.status.description,points:points}); 
       }
-      
       res.send(desc);
 
     }).catch(err => {

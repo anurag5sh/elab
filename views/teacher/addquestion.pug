@@ -201,14 +201,21 @@ script.
     
   });
 
-  function submitFormAdd(){ let u;
-      const url = window.location.href.split('/');
-      u=url.pop();
-      if(u == "")  u=url.pop();
+  function submitFormAdd(){ 
+      function isQuillEmpty(quill) {
+      if ((quill.getContents()['ops'] || []).length !== 1) { return false }
+      return quill.getText().trim().length === 0
+      }
+
+      if(isQuillEmpty(editor)){
+          alert("Problem Statement cannot be empty");
+          return false;
+      }
+
       document.getElementById('es').value=encodeURIComponent(JSON.stringify(editor.getContents()));
       $.ajax({
             type: "POST",
-            url: "/add/"+u,
+            url: "/add/#{contest.url}",
             data: $("#ques").serialize(),
             success: function (data) {
  
@@ -222,6 +229,6 @@ script.
  
             }
         });
-      
+      return false;
   }
   

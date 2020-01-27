@@ -72,12 +72,12 @@ function validateCQ(question)
         constraints: Joi.string().allow(''),
         i_format: Joi.string().required(),
         o_format: Joi.string().required(),
-        i_sample1: Joi.required(),
-        o_sample1: Joi.required(),
-        i_testcase1: Joi.required(),
-        o_testcase1: Joi.required(),
+        i_sample1: [Joi.string(),Joi.array().items(Joi.string())],
+        o_sample1: [Joi.string(),Joi.array().items(Joi.string())],
+        i_testcase1: [Joi.string(),Joi.array().items(Joi.string())],
+        o_testcase1: [Joi.string(),Joi.array().items(Joi.string())],
         explanation: Joi.string().required(),
-        points : Joi.required()
+        points : [Joi.number(),Joi.array().items(Joi.number())]
         
     });
 

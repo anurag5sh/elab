@@ -6,7 +6,7 @@ const {Contest,validateContest} = require('../models/contest');
 const {ContestQ,validateCQ} = require('../models/contestQ');
 const crypto = require("crypto");
 const moment = require('moment');
-const { convertDeltaToHtml } = require('node-quill-converter');
+
 
 //adding a question to contest
 router.post('/:cname',authenticate,teacherAuth,async (req,res) => {
@@ -35,15 +35,24 @@ router.post('/:cname',authenticate,teacherAuth,async (req,res) => {
         question.sample_cases.push({input:req.body.i_sample1[i], output:req.body.o_sample1[i]});
     }
 
-    for(let i=0;i<req.body.i_testcase1.length;i++){
-        question.test_cases.push({input:req.body.i_testcase1[i], output:req.body.o_testcase1[i],points:req.body.points[i]});
-    }
+    
     }
     else{
         question.sample_cases.push({input:req.body.i_sample1, output:req.body.o_sample1});
+        
+    }
+    
+    if(Array.isArray(req.body.i_testcase1)){
+
+        for(let i=0;i<req.body.i_testcase1.length;i++){
+            question.test_cases.push({input:req.body.i_testcase1[i], output:req.body.o_testcase1[i],points:req.body.points[i]});
+        }
+    }
+    else
+    {
         question.test_cases.push({input:req.body.i_testcase1, output:req.body.o_testcase1,points:req.body.points});
     }
- 
+
     question.explanation= req.body.explanation;
     question.qid+= ++count;
     await question.save();

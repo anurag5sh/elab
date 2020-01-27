@@ -22,7 +22,7 @@ return b.toString();
 
 router.get('/', authenticate,async (req,res)=> {
     const questions = await Practice.find().sort({date:-1}).lean();
-    if(!req.session.name.endsWith(" "))
+    if(!req.session.staff_id)
     res.render('practice', {q:questions});
     else
     res.render('teacher/practice',{q:questions});
@@ -62,10 +62,13 @@ router.post('/:qid',authenticate,async (req,res) => {
   Promise.all(result)
     .then(data => {
       let desc= [];
-      
+      let i=0;
       data.forEach(store);
-      function store(data){
-        desc.push({id:data.status.id,description:data.status.description}); 
+      function store(data){let point=0;
+        if(data.status.id == 3){
+          point = testcase[i].points;
+        }
+        desc.push({id:data.status.id,description:data.status.description,points:point}); 
       }
       
       res.send(desc);

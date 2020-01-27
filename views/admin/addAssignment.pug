@@ -24,10 +24,10 @@ block append code
         function submitForm(){
             $.post("/admin/assignment/new", $("#newAssignment").serialize(), function(data,status) {
 
-            alert(data);
+            toastr.success(data);
             })
                 .fail(function(error){
-                    alert(error.responseText);
+                    toastr.error(error.responseText);
                 })
         }
 
@@ -41,6 +41,7 @@ block content
                 .card-body
                     .col-4(style="margin:auto;")
                         .form-group
+                            label Semester
                             select(name="sem").form-control.custom-select.type
                                 option(selected,disabled) Select Semester
                                 option(value=1) 1
@@ -53,7 +54,8 @@ block content
                                 option(value=8) 8
                    
                         .form-group
-                            input(type="text", name="duration").form-control
+                            label(for="duration") Duration
+                            input(type="text", name="duration" id="duration").form-control
 
                         .form-group
                              input(type="button", onclick="submitForm()",value="Create").btn.btn-success

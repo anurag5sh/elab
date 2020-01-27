@@ -7,6 +7,7 @@ const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 const {Student, validate} = require('../models/student');
 const {Assignment,validateAssignment} = require('../models/assignment');
+const {AssignmentQ,validateAQ} = require('../models/assignmentQ');
 
 //------------------Accounts routes start-----------------//
 let storage = multer.diskStorage({
@@ -141,10 +142,40 @@ router.get('/assignment/edit', admin, async (req,res) => {
   res.render('admin/editAssignment',{current : current});
 });
 
+//updating assignment
+router.post('/assignment/edit',admin,async (req,res) => {
+  let ready = false;
+  if(req.body.isReady) ready = true;
+  let starts,ends = null;
+    try{
+      starts = new Date(req.body.duration.split("-")[0]);
+      ends = new Date(req.body.duration.split("-")[1]);
+    }
+    catch(err){
+      return res.status(400).send("Wrong datetime format");
+    }
+  
+  let update = {'duration.starts' : starts,'duration.ends':ends,isReady:ready};
+
+  const assignment = await Assignment.findOneAndUpdate({id:req.body.aId},update);
+  if(!assignment) return res.status(400).send('Invalid ID');
+
+  res.status(200).send("Changes Saved.");
+});
+
 router.get('/assignment/reports', admin, async (req,res) => {
   res.render('admin/assignmentReports');
 });
 
+//deleting assignment
+router.get('/assignment/delete/:aId',admin,async (req,res) => {
+  const del = await Assignment.findOneAndDelete({id:req.params.aId},{'duration.ends' :{$gt : new Date()}});
+  if(!del) return res.status(400).send('Invalid ID');
+
+  await AssignmentQ.deleteMany({assignmentId:req.params.aId});
+
+  res.status(200).send('Assignment with ID : '+req.params.aId+' Deleted.');
+});
 
 
 

@@ -12,6 +12,9 @@ block append code
     link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.js")
     link(rel="stylesheet", href="https://cdn.quilljs.com/1.3.6/quill.snow.css")
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css")
+    script(src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js")
+    
     style.
         #myModal label,#myModal p{
             font-family: 'Crimson Text', serif;
@@ -37,7 +40,7 @@ block content
                                 option(value=i.id) #{i.sem}, Set #{i.id.substr(9)}
                     br
                     br
-                    form.form-horizontal
+                    form.form-horizontal#form_details(onsubmit="return saveDetails()")
                         #details
                     .container
                         .modal#myModal
@@ -121,7 +124,7 @@ block content
                                                             textarea.form-control.input#i_testcase1(rows='5' name='i_testcase1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
                                                             textarea.form-control.input#o_testcase1(rows='5' name='o_testcase1' cols='50' required placeholder='Output')
                                                             p Points
-                                                            input.form-control(style="width:15%;" name="points" id="points0" type="text" placeholder="Ex: 10" required)
+                                                            input.form-control(style="width:15%;" name="points" id="points1" type="text" placeholder="Ex: 10" required)
                                                     textarea(name="statement" id="es" style="display:none;")
                                             
                                         .modal-footer
@@ -206,13 +209,34 @@ block content
                                                 td
                                                     textarea.form-control#o_format-e(rows='5' name='o_format' cols='50' required)
                                     hr    
-                                
+                                    #samplecase-e
+                                        label.tc Sample Testcases:
+                                        input#btSampleAdd_e.bt.btn.btn-info.btn-sm(type='button' value='Add Sample Case' style="margin-right:20px;margin-left:20px;")
+                                        input#btSampleRemove_e.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
+                                        .t_case
+                                            p Sample Testcase 1
+                                            textarea.form-control.input#ei_sample1(rows='5' name='i_sample1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
+                                            textarea.form-control.input#eo_sample1(rows='5' name='o_sample1' cols='50' required placeholder='Output')
+                                            p Explanation
+                                            textarea.form-control.ex_box#explanation_edit(name='explanation' rows='5' cols='107' style="margin-bottom:10px" required)
+                                    #testcase-e
+                                        label.tc Testcases:
+                                        input#btAdd-e.bt.btn.btn-info.btn-sm(type='button' value='Add Testcase' style="margin-right:20px;margin-left:20px;")
+                                        input#btRemove-e.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
+                                        br
+                                        .t_case
+                                            p Testcase 1
+                                            textarea.form-control.input#ei_testcase1(rows='5' name='i_testcase1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
+                                            textarea.form-control.input#eo_testcase1(rows='5' name='o_testcase1' cols='50' required placeholder='Output')
+                                            p Points
+                                            input.form-control(style="width:15%;" name="points" id="epoints1" type="text" placeholder="Ex: 10" required)
                                     
-                                    textarea(name="statement" id="es" style="display:none;")
+                                    textarea(name="statement" id="es_edit" style="display:none;")
+                                    input#qid(type="text", style="display:none;" value="")
                             
                         .modal-footer
                             input.btn.btn-success(type='submit' value="SAVE")
-                            button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+                            button.btn.btn-secondary(type='button' data-dismiss='modal') Cancel
                             
 
     .modal.fade#delete(tabindex ="-1" role="dialog" )
@@ -226,211 +250,51 @@ block content
                 .modal-footer
                     button.btn.btn-danger(type='button' data-dismiss='modal' onclick="deleteQ()") Delete
                     button.btn.btn-secondary(type='button' data-dismiss='modal') Close
-
-
-                        
-                
-    script.
-        function setDateTime(s,e){
-            $('input[name="duration"]').daterangepicker({
-                timePicker: true,
-                startDate: s,
-                endDate: e,
-                locale: {
-                format: 'YYYY/MM/DD hh:mm A'
-                }
-            });
-        }
-        $('#sem').change(function (){
-
-            $.get("/assignment/"+document.getElementById("sem").value,function(data,status){
-                
-                $('#details').empty();
-                $('#qlist').empty();
-                const sem = '<div class="form-group row"><label class="col-sm-2">Semester &nbsp; : &nbsp;'+data.assignment.sem+'</label><label class="col-sm-2">Set &nbsp; : &nbsp;'+data.assignment.id.substr(9)+'</label></div>';
-                const dateTime = '<div class="form-group row"><label class="col-sm-1">Duration</label><div class="col-sm-4"><input type="text" name="duration" class="form-control"></div></div>';
-                const batch = '<div class="form-group row"><label class="col-sm-1">Batch</label><div class="col-sm-4"><input readonly type="text" value="'+data.assignment.id.substr(5,4)+'"class="form-control"></div></div>';
-                const ready = '<div class="form-group row"><div class="custom-control custom-switch"><label for="customSwitch1" class="custom-control-label">Custom Switch</label><input class="custom-control-input" type="checkbox" id="customSwitch1" value="option1"></div></div>';
-                const newQ = '<div class="form-group row"><div class="col-2"><button class="btn btn-primary" type="button" data-toggle="modal" data-target="#myModal">Add New Question</button></div><div class="col-2"><button class="btn btn-primary" type="button">Insert Old Question</button></div></div>';
-                document.getElementById("details").innerHTML = sem + dateTime + batch +ready+newQ;
-                setDateTime(data.assignment.duration.starts,data.assignment.duration.ends);
-                data.questions.forEach(insert);
-                function insert(item,index){
-                    $("#qlist").append('<tr><td>'+item.qid+'</td><td>'+item.name+'</td><td><a class="fas fa-edit" data-toggle="modal" data-target="#edit" data-id="'+item.qid+'" style="color:dimgrey;" href=""></a></td><td><a class="fas fa-trash" style="color:red;" data-toggle="modal" data-target="#delete" href="" data-id="'+item.qid+'" data-name="'+item.name+'"></a></td></tr>');
-                }
-                
-            });
-        });
-
-        
-
-        $(document).ready(function() {
-        
-            var iCnt = 0;
-            var count = 0;
-            // CREATE A "DIV" ELEMENT AND DESIGN IT USING jQuery ".css()" CLASS.
-            var container = $(document.createElement('div')).css({
-                padding: '5px',margin: '20px'
-                
-            });
-        
-            $('#btSampleAdd').click(function() {
-        
-                    iCnt = iCnt + 1;
-        
-                    count = count +1;
-        
-        
-                    // ADD TEXTBOX.
-                    $(container).append('<p id=p' + count +'>Sample Testcase ' + (count+1) + '</p>');
-                    $(container).append('<textarea name="i_sample1" required rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Input" style="margin-bottom:10px;" ></textarea>');
-                    iCnt = iCnt + 1;
-                    $(container).append('<textarea name="o_sample1" required rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Output" ></textarea>');
+    
+    .modal.fade#deleteAssignment(tabindex ="-1" role="dialog" )
+        .modal-dialog.modal-sm
+            .modal-content
+                .modal-header
+                    h4.modal-title Delete Assignment
+                .modal-body
+                    p All the questions in this assignment will be deleted.
+                    #dbody
+                .modal-footer
+                    button.btn.btn-danger(type='button' data-dismiss='modal' onclick="aDelete()") Delete
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+    
+    .modal.fade#oldQues(tabindex ="-1" role="dialog" )
+        .modal-dialog.modal-xl
+            .modal-content
+                .modal-header
+                    h4.modal-title Insert Old Questions
+                .modal-body
+                    .col-3(style="margin:auto;")
+                        label Select Semester
+                        select#oldSelect.custom-select
+                            option(selected,disabled) Select Semester
+                            option(value=1) 1
+                            option(value=2) 2
+                            option(value=3) 3
+                            option(value=4) 4
+                            option(value=5) 5
+                            option(value=6) 6
+                            option(value=7) 7
+                            option(value=8) 8
+                    br
+                    table.table.table-hover
+                        thead
+                            tr
+                                th Select
+                                th Batch
+                                th ID
+                                th Question Name
+                                th View
+                        tbody#oldQlist
                     
-                    // ADD BOTH THE DIV ELEMENTS TO THE "main" CONTAINER.
-                    $('#samplecase').after(container);
-                
-            });
-        
-            // REMOVE ONE ELEMENT PER CLICK.
-            $('#btSampleRemove').click(function() {
-                if (iCnt != 0) 
-                {
-                
-                $('#tb' + iCnt).remove(); iCnt = iCnt - 1; 
-                $('#tb' + iCnt).remove(); iCnt = iCnt - 1;
-                $('#p' + count).remove();count = count -1;
-                
-                }
-            
-                
-            });
-        
-            
-        });
-        
-        $(document).ready(function() {
-        
-            var iCnt = 0;
-            var count = 0;
-            // CREATE A "DIV" ELEMENT AND DESIGN IT USING jQuery ".css()" CLASS.
-            var container = $(document.createElement('div')).css({
-                padding: '5px', margin: '20px'
-                
-            });
-        
-            $('#btAdd').click(function() {
-        
-                    iCnt = iCnt + 1;
-        
-                    count = count +1;
-        
-        
-                    // ADD TEXTBOX.
-                    $(container).append('<p id=p' + count +'>Testcase ' + (count+1) + '</p>');
-                    $(container).append('<textarea name="i_testcase1" required rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Input" style="margin-bottom:10px;"></textarea>');
-                    iCnt = iCnt + 1;
-                    $(container).append('<textarea name="o_testcase1" required rows="5" cols="50"  class="input form-control" id=tb' + iCnt + ' placeholder="Output" ></textarea>');
-                    iCnt = iCnt + 1;
-                    $(container).append('<p id=para' +iCnt+ '>Points</p>');
-                    iCnt = iCnt + 1;
-                    $(container).append('<input class="form-control" required style="width:15%;" name="points" type="text" placeholder="Ex: 10" id="points'+ iCnt +'"/>');
-                    // ADD BOTH THE DIV ELEMENTS TO THE "main" CONTAINER.
-                    $('#testcase').after(container);
-                
-            });
-
-            // REMOVE ONE ELEMENT PER CLICK.
-            $('#btRemove').click(function() {
-                if (iCnt != 0) 
-                {
-                $('#points' + iCnt).remove(); iCnt = iCnt - 1;
-                $('#para' + iCnt).remove(); iCnt = iCnt - 1
-                $('#tb' + iCnt).remove(); iCnt = iCnt - 1; 
-                $('#tb' + iCnt).remove(); iCnt = iCnt - 1;
-                $('#p' + count).remove();count = count -1;
-                }
-            
-            
-            });
-        
-            
-        });
-        function closeModal() {
-            $('#loading').on('shown.bs.modal', function(e) {
-                $("#loading").modal("hide");
-            });
-        }
-
-        function submitFormAdd(){ 
-            
-            function isQuillEmpty(quill) {
-            if ((quill.getContents()['ops'] || []).length !== 1) { return false }
-            return quill.getText().trim().length === 0
-            }
-
-            if(isQuillEmpty(editor)){
-                alert("Problem Statement cannot be empty");
-                return false;
-            }
-            $('#myModal').modal('hide');
-            $("#loading").modal('show');
-            const aId = document.getElementById('sem').value;
-            
-            document.getElementById('es').value=encodeURIComponent(JSON.stringify(editor.getContents()));
-            $.ajax({
-                    type: "POST",
-                    url: "/assignment/add",
-                    data: $("#ques").serialize()+"&aId="+aId,
-                    success: function (data,status, jqXHR) {
-                    
-                     
-                    $("#sem").val(aId).change();
-                    closeModal();
-                    toastr.success("Question added successfully!");
-                    $("#ques")[0].reset();
-                    editor.setText("");
-                    },
-                    error: function (e) {
-        
-                        alert(e.responseText);
-        
-                    },
-                
-                });
-                
-                return false;
-            
-            }
-
-            $(document).ready(function() {
-                $("#edit").on('show.bs.modal', function(e){
-                $("#ques-edit")[0].reset();
-                editor_edit.setText("");
-                const aId = document.getElementById('sem').value;
-                const qid = e.relatedTarget.dataset.id;
-
-                $.get("/assignment/"+aId+"/"+qid,function(data,status){
-                    $("#name-e").val(data.name);
-                    editor_edit.setContents(JSON.parse(data.statement));
-                    $("#constraints-e").val(data.constraints);
-                    $("#i_format-e").val(data.input_format);
-                    $("#o_format-e").val(data.output_format);
-
-                });    
-
-
-                });
-
-                $("#delete").on('show.bs.modal', function(e){
-                    $("#dbody").empty();
-                    $("#dbody").append("<p>"+e.relatedTarget.dataset.name+"</p>");
-
-                });
-
-            });
-
-            function deleteQ(){
-                $("#loader").modal('show');
-
-            }
+                .modal-footer
+                    button.btn.btn-success(type='button' onclick="oldQuesInsert()") Insert
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+    
+    
+    script(src="/js/editAssignment.js")

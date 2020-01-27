@@ -2,7 +2,7 @@ const config = require('config');
 const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 const {Student, validate} = require('../models/student');
-const {Teacher} = require('../models/teacher');
+const {Teacher,validateTeacher} = require('../models/teacher');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
@@ -33,13 +33,13 @@ router.post('/',admin, async (req, res) => {
   }
   else if(req.body.type === "teacher")
   {
-    const { error } = validate(req.body); 
+    const { error } = validateTeacher(req.body); 
   if (error) return res.status(400).send(error.message);
 
   let teacher = await Teacher.findOne({ email: req.body.email });
   if (teacher) return res.status(400).send('Teacher already registered.');
 
-  teacher = new Teacher(_.pick(req.body, ['name', 'email', 'password']));
+  teacher = new Teacher(_.pick(req.body, ['name', 'email', 'password','staff_id']));
   const salt = await bcrypt.genSalt(10);
   teacher.password = await bcrypt.hash(teacher.password, salt);
   await teacher.save();

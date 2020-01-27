@@ -9,7 +9,6 @@ const assignmentQSchema = new mongoose.Schema({
     },
     qid:{
         type:String,
-        default: moment().format('DDMMYY')
     },
     teacherId:{
         type:String

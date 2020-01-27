@@ -7,7 +7,7 @@ module.exports = async function(req,res,next){
     if(contest.year.includes(req.session.year) || contest.custom_usn.includes(req.session.usn))
         return next();
 
-    else if(req.session.name.endsWith(" ") ) next();
+    else if(req.session.staff_id ) next();
     else
     return res.status(404).send("Not Found");
 

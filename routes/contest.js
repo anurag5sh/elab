@@ -136,7 +136,7 @@ router.post('/manage/:name',authenticate,async (req,res) =>{
 
 //landing page for contest
 router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
-    let contest = await Contest.findOne({url:req.params.curl}).lean().select('timings signedUp');
+    let contest = await Contest.findOne({url:req.params.curl}).lean().select('timings signedUp name');
     if(!contest) return res.status(404).end();
 
     const now = new Date();
@@ -170,7 +170,7 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
         return res.send("questions");
         else{
             const milli = contest.timings.starts - now;
-            return res.send("Timer" + time(milli));
+            return res.render("timer",{time:Date.now() + milli,name:contest.name,type: "teacher"} );
         }
     }
     
@@ -179,7 +179,7 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
         
         if(now>=contest.timings.starts && now<=contest.timings.ends){
         if(!contest.signedUp.find(({usn}) => usn == req.session.usn)){
-           return res.send("Attempt");
+           return res.render("timer" , {attempt:"/contest/sign/"+req.params.curl,time:false,type: "student"});
         }
 
         return res.send("questions");
@@ -188,7 +188,7 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
         if(now < contest.timings.starts)
         {   const milli = contest.timings.starts - now; //stores milli seconds
             
-            return res.send("Timer" + time(milli));
+            return res.render("timer",{time:Date.now() + milli,name:contest.name} );
         }
 
         if(now > contest.timings.ends)

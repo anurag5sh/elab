@@ -1,0 +1,80 @@
+:root {
+    font-size: 16px;
+  }
+  
+  .container_card {
+    /* margin: 30px auto; */
+    width: 300px;
+    height: 200px;
+    display: inline-block;
+    margin-top:50px;
+    margin-bottom: 50px;
+    /* align-items: left; */
+  }
+  
+  .c-card-block {
+    background: #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    height: 15rem;
+    text-align: center;
+    float: left;
+    transition: height 0.3s ease-in-out, box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+  }
+  .c-card-block cheader {
+    width: 30%;
+    height: 91px;
+  }
+  .c-card-block a {
+    padding: 3.5rem 2rem;
+    color: #777;
+    text-decoration: none;
+    display: block;
+    z-index: 2;
+  }
+  .c-card-block:before {
+    content: '';
+    width: 4rem;
+    height: 1rem;
+    border-radius: 50px;
+    right: 40%;
+    margin-top:30px;
+    background: #12aaeb;
+    position: absolute;
+  }
+  .c-card-block:after {
+    /* content: 'Learn More'; */
+    width: 100%;
+    background: #12aaeb;
+    color: #fff;
+    position: absolute; 
+    left: 0;
+    bottom: 0;
+    padding: 1.25rem;
+    z-index: 1;
+    transform: translateY(80%);
+    opacity: .5;
+    transition: transform .3s ease-in-out, opacity .3s ease-in-out;
+  }
+  .c-card-block:hover {
+    height: 18rem;
+    transform: translateY(-0.5em);
+    box-shadow: 0 2px 30px rgba(0, 0, 0, 0.3);  
+  }
+  .c-card-block:hover:after {
+    transform: translateY(0);
+  }
+  .attem{
+    display: none;
+  }
+  .c-card-block:hover .attem{ 
+    display:block;
+  }
+
+  .attem{
+    margin:auto;
+  }

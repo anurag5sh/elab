@@ -158,6 +158,7 @@ block content
                             button.close(type='button' data-dismiss='modal') ×
                             
                         .modal-body
+                                p#edit_info(style="float:center;")
                                 .box
                                     table.table
                                         tbody
@@ -251,6 +252,7 @@ block content
                     button.btn.btn-danger(type='button' data-dismiss='modal' onclick="deleteQ()") Delete
                     button.btn.btn-secondary(type='button' data-dismiss='modal') Close
     
+    
     .modal.fade#deleteAssignment(tabindex ="-1" role="dialog" )
         .modal-dialog.modal-sm
             .modal-content
@@ -269,19 +271,27 @@ block content
                 .modal-header
                     h4.modal-title Insert Old Questions
                 .modal-body
-                    .col-3(style="margin:auto;")
-                        label Select Semester
-                        select#oldSelect.custom-select
-                            option(selected,disabled) Select Semester
-                            option(value=1) 1
-                            option(value=2) 2
-                            option(value=3) 3
-                            option(value=4) 4
-                            option(value=5) 5
-                            option(value=6) 6
-                            option(value=7) 7
-                            option(value=8) 8
+                    .container
+                        .row.justify-content-md-center
+                            .col.col-md-2
+                                select#oldSelect.custom-select
+                                    option(selected,disabled,value=0) Select Semester
+                                    option(value=1) 1
+                                    option(value=2) 2
+                                    option(value=3) 3
+                                    option(value=4) 4
+                                    option(value=5) 5
+                                    option(value=6) 6
+                                    option(value=7) 7
+                                    option(value=8) 8
+                            .col.col-md-2
+                                .input-group.input-group(style="width:200px;")
+                                    input#oldSearch.form-control.float-right(type="text", name="old_search" , placeholder="Search a question") 
+                                    .input-group-append
+                                        button.btn.btn-default(onclick="javascript:$('#oldSearch').keyup()")
+                                            i.fas.fa-search
                     br
+                    
                     table.table.table-hover
                         thead
                             tr
@@ -291,10 +301,12 @@ block content
                                 th Question Name
                                 th View
                         tbody#oldQlist
+                    br
+                    #pagination
                     
                 .modal-footer
                     button.btn.btn-success(type='button' onclick="oldQuesInsert()") Insert
                     button.btn.btn-secondary(type='button' data-dismiss='modal') Close
     
-    
+
     script(src="/js/editAssignment.js")

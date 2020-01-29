@@ -31,10 +31,9 @@ const assignmentSchema = new mongoose.Schema({
     points:{type:Number},
     _id : false
   }],
-  questions:[{
-    assignmentId:{type:String},
-    qid:{type:String}
-  }],
+  questions:{
+    type:[String]
+  },
   submissions:[{
     qid:{type:String},
     timestamp:{type:Date},

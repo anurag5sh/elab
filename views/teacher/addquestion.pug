@@ -7,6 +7,25 @@ script.
   });
 
 style.
+  .card{
+        margin-top:10px;
+        box-sizing: border-box;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.13)
+      }
+      .card:hover .edit{
+        display: block;
+        content: "edit";
+      }
+      .edit{
+        display: none;
+      }
+      .text{
+        display: none;
+      }
+      .ed:hover .text{
+        content: "edit";
+        visibility: ;
+      }
   label,p{
     font-family: 'Crimson Text', serif;
     font-size:20px;
@@ -113,7 +132,18 @@ style.
 
 - const ques=questions;
 each i in ques
-  p()=i.name
+  .container
+  .card(style='background-color: rgba(171, 188, 219, 0.616);')
+    .card-body
+      .edit
+        a(href='#')
+          i.ed.fas.fa-times(style='font-size:15px;color:red;float: right;')
+      h4.card-title #{i.name}
+      p.card-text #{i.description}
+      .edit(style='float:right;')
+        a(href='#')
+          | EDIT
+          i.ed.fas.fa-edit(style='font-size:15px;color:rgb(0, 0, 255); ')
 
 script.
   

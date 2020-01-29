@@ -6,6 +6,10 @@ html(lang='en')
     meta(charset='UTF-8')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     meta(http-equiv='X-UA-Compatible', content='ie=edge')
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css")
+    
+    script(src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js")
+    script(src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js")
     title ELAB |CONTEST FORM
     style.
       * {
@@ -40,6 +44,8 @@ html(lang='en')
                       document.getElementById('errorForm').innerHTML += '<div class="alert alert-danger alert-dismissible fade show"><button type="button" class="close" data-dismiss="alert">&times;</button><strong>Error! </strong>'+(error.responseText)+'</div>';
                       window.scrollTo(0,0);
                   })}
+      
+
   body
     .contestform
       div#errorForm
@@ -64,35 +70,40 @@ html(lang='en')
           input.form-control.mwidth#Contest(type='text', name='name', placeholder='Contest', required='true')
           br
           br
-          label(for='Start Time') Start Time 
-          input.form-control.Date(type='date'  class='d-inline'  name = 'starts')
-          |  at 
-          input.form-control.at(type='time',  class='d-inline' required='true' name = 'starts')
+          label(for='descrip') Description
+          input.form-control.mwidth#Contest(type='text', name='description', placeholder='Description', required='true')
           br
           br
-          label(for='End Time') End Time 
-          input.form-control.Date(type='date' class='d-inline' name= 'ends')
-          |  at 
-          input.form-control.at(type='time', class ='d-inline' required='true' name = 'ends')
+          label(for='Start Time') Date
+          input#timings.form-control.mwidth(type='text' name='timings' )
+          
           br
           br
-          label(for='select ') For:
-          br
-          br
-          input(type='checkbox', name='year', value='1')
-          label 1st Year
-          br
-          br
-          input(type='checkbox', name='year', value='2')
-          label 2nd Year
-          br
-          br
-          input(type='checkbox', name='year', value='3')
-          label 3rd Year
-          br
-          br
-          input(type='checkbox', name='year', value='4')
-          label 4th Year
-          br
-          br
+          .row
+            label(for='select ') For:  
+            .col-1.custom-control.custom-checkbox
+              input(type='checkbox',class= "custom-control-input", name='year', id="1-year", value='1')
+              label(class="custom-control-label" for="1-year") 1st Year
+            .col-1.custom-control.custom-checkbox
+              input(type='checkbox', class= "custom-control-input",name='year',id="2-year" ,value='2')
+              label(class="custom-control-label" for="2-year") 2nd Year
+            .col-1.custom-control.custom-checkbox
+              input(type='checkbox', class= "custom-control-input",name='year',id="3-year", value='3')
+              label(class="custom-control-label" for="3-year") 3rd Year
+            .col-1.custom-control.custom-checkbox
+              input(type='checkbox', class= "custom-control-input",name='year',id="4-year", value='4')
+              label(class="custom-control-label" for="4-year") 4th Year
+          br  
           input.btn.btn-outline-primary.btn-sm(type='button', value='GET STARTED', onclick="submitForm()")
+
+        script.
+          $(function() {
+            $('#timings').daterangepicker({
+              timePicker: true,
+              startDate: moment().startOf('hour'),
+              endDate: moment().startOf('hour').add(32, 'hour'),
+              locale: {
+                format: 'YYYY/MM/DD hh:mm A'
+                } 
+              });
+            });

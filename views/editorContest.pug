@@ -7,25 +7,28 @@ html(lang='en')
     script(src='/ace-builds/src-min/ext-language_tools.js')
     script(src='/assets/js/jquery.min.js')
     link(rel='stylesheet' href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css')
+    link(rel="stylesheet", href="/css/nice-select.css")
+    script(src="/js/jquery.nice-select.min.js")
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap")
+    link(href="https://fonts.googleapis.com/css?family=Open+Sans:700&display=swap" rel="stylesheet")
     link(rel="stylesheet", href="//cdn.quilljs.com/1.3.6/quill.bubble.css")
     script(src="//cdn.quilljs.com/1.3.6/quill.js")
     link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.js")
-
+    link(href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap" rel="stylesheet")
     
     style(type='text/css').
       #editor {
       position: relative;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 20px;
+      border-radius:8px;
+      border:1px #ebebeb solid;
       height: 500px; 
       margin:10px;
       }
+
       .card {
-      width: 650px;
-      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      width: 65%;
+      box-shadow: 0 0.5px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
       text-align: left;
       left: 20px;
       padding: 10px;
@@ -33,16 +36,20 @@ html(lang='en')
       position: relative;
       
       }
-
+      body{
+        background-color:#f5f5f0;
+      }
+      
       
       .option-disp {
         position:relative;
-        width: 150px;
-        left:20px;
+        border-radius:20px;width:auto;height:35px;font-size:15px;
+        text-align:center;
+        left:5px;
       }
-
-      button a:link,a:visited {
-        color: black;
+      
+      a:link,a:visited {
+        
         text-align: center;
         text-decoration: none;
         display: inline-block;
@@ -59,7 +66,11 @@ html(lang='en')
       }
 
       .theme,.font_size{
-        margin-left:50px;
+        margin-left:30px;
+      }
+      .language{
+        margin:10px;
+        margin-right:0px;
       }
 
       .nav-tabs .nav-link.active.red-cross{
@@ -92,30 +103,88 @@ html(lang='en')
       background-color:#fff;
       border-color:#dee2e6 #dee2e6 #fff;
       }*/
+      .loader {
+    
+      margin:auto;
+      border: 16px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 16px solid #3498db;
+      width: 150px;
+      height: 150px;
+      -webkit-animation: spin 2s linear infinite; /* Safari */
+      animation: spin 2s linear infinite;
+      }
+      @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
       
+      textarea::-webkit-scrollbar {
+        width: 4px;
+        background-color: #F5F5F5; 
+      }
+
+      textarea::-webkit-scrollbar-thumb {
+        border-radius: 2px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+        background-color: grey; }
       
+      textarea{
+        cursor:default;
+      }
+
+      .bg-col{
+        background-color:#e0e0d1;
+        padding:5px;
+        border-radius:4px;
+        font-family: 'Source Code Pro', monospace;
+      }
+      .headings{
+        font-family: 'Open Sans', sans-serif;
+        margin-top:4px;
+        margin-bottom:0px;
+        font-size:18px;
+      }
+      .ql-editor{
+        padding:0px 0px;
+         
+      }
   body
-    .card#card
-      div#statement 
+    br
+    h1(style="margin-left:40px;") #{question.name}
+    .card#card(style="padding-left:25px;padding-right:25px;")
+      //- p #{question.name}
+      
+      p.headings Problem Statement
+      div#statement(style="font-family: 'Source Sans Pro', sans-serif;font-size:18px;margin-bottom:10px;")
+        //- p #{question.statement}
+      
+          
+      p.headings Input Format
+      p(style="font-family: 'Source Sans Pro', sans-serif;font-size:18px;") #{question.input_format}
+      |
+    
+      p.headings Output Format
+      p(style="font-family: 'Source Sans Pro', sans-serif;font-size:18px;") #{question.output_format}
+      |
       - if(question.constraints) 
-          strong Constraints
+          p.headings Constraints
           p #{question.constraints}
           |
-      strong Input Format
-      p #{question.input_format}
-      |
-      strong Output Format
-      p #{question.output_format}
-      |
       each i,j in question.sample_cases
-        strong Sample Input #{j+1}
-        p(class="sa" id="sam_i"+j) #{i.input}
-        strong Sample Output #{j+1}
-        p(id="sam_o"+j) #{i.output}
+        p.headings Sample Input #{j+1}
+        p.bg-col(class="sa" id="sam_i"+j) #{i.input}
+        p.headings Sample Output #{j+1}
+        p.bg-col(id="sam_o"+j) #{i.output}
    
         
     .card(style="width:90%; display:inline-block;")
-      label(for="lang") Language
+      label.language(for="lang") Language
       select.option-disp#lang(onchange='language()')
         option(value='python71') Python
         option(value='java62') Java
@@ -134,21 +203,25 @@ html(lang='en')
         option(value='chrome') Chrome
         option(value='github') Github
       label.font_size Font Size
-      select.option-disp#fontsize(onchange='fontSize()')
-        option(value='18') 18
-        option(value='24') 24
-        option(value='30') 30
-        option(value='36') 36
+      select.option-disp#fontsize( onchange='fontSize()')
+        option(value='18') &nbsp; &nbsp; 18 &nbsp; &nbsp;
+        option(value='24') &nbsp; &nbsp; 24 &nbsp; &nbsp;
+        option(value='30') &nbsp; &nbsp; 30 &nbsp; &nbsp;
+        option(value='36') &nbsp; &nbsp; 36 &nbsp; &nbsp;
       
       div#editor
-      button#button.btn(value='Run', onclick='readText()', style='margin-right:20px;border-color:black;width:100px;position:relative;left:20px;') 
-        a(href='#opbox') Run
-      button#button_submit.btn(value='Submit', onclick='submission()', style='border-color:black;width:100px;position:relative;left:20px;') 
-        a(href='#opbox') Submit
+      button#button_submit.btn.btn-success(value='Submit', onclick='submission()', style='float:right;width:100px;left:20px;') 
+        a(href='#opbox' style="color:white;font-weight:bold") Submit
+      button#button.btn.btn-primary(value='Run', onclick='readText()', style='font-weight:bold;color:white;float:right;margin-right:20px;width:100px;')
+        a(href='#loader' style="color:white;font-weight:bold") Run
+      
     
-    #opbox.output_box(style="width:50%; display:inline-block;")
+    #opbox.output_box(style="width:650px; display:inline-block;")
+    #loader(style="height:600px;display:none;")
+      .loader(style="")  
 
-    
+
+
     script.
 
       function statement(){
@@ -160,6 +233,7 @@ html(lang='en')
       quill.setContents(s);
       }
       statement();
+
       let editor = ace.edit("editor");
       ace.require("ace/ext/language_tools");
       editor.setTheme("ace/theme/monokai");
@@ -175,6 +249,11 @@ html(lang='en')
       indentedSoftWrap: false
 
       });
+
+      $(document).ready(function() {
+      $('select').niceSelect();
+      });
+
       function theme(){
       let t = document.getElementById("theme").value;
       editor.setTheme("ace/theme/"+t);
@@ -189,7 +268,7 @@ html(lang='en')
       editor.session.setMode("ace/mode/"+l);
       }
       
-      function readText () {
+      function readText () { window.location.href="#loader";
       let l = document.getElementById("lang").value;
       l=l.slice(-2);
       $(document).ready(function(){
@@ -199,7 +278,11 @@ html(lang='en')
       language: l,
       qid: window.location.pathname
       },
-      function(data,status){
+      function(data,status){ if(!Array.isArray(data)){
+        toastr.warning(data);
+        document.getElementById("loader").style.display="none";
+        return;
+      }
       for(let i=0;i<data.length;i++)
       {
       if(data[i].id==3){
@@ -216,16 +299,21 @@ html(lang='en')
       }
       }
       for(let i=0;i<$('#card .sa').length;i++){
+      document.getElementById("message"+(i+1)+"").innerHTML=data[i].description;
       document.getElementById("output"+(i+1)+"").value = data[i].output;
       document.getElementById("input"+(i+1)+"").value = document.getElementById("sam_i"+i+"").innerHTML;
       document.getElementById("expectedOutput"+(i+1)+"").value = document.getElementById("sam_o"+i+"").innerHTML;
       }
-      });
+
+      document.getElementById("loader").style.display="none";
+      document.getElementById("out").style.display="block";
       window.location.href="#opbox";
+      });
+      
       });
       }
 
-      function submission(){
+      function submission(){ 
         let l = document.getElementById("lang").value;
         l=l.slice(-2);
         $(document).ready(function (){
@@ -235,8 +323,11 @@ html(lang='en')
         language: l
         },
         function(data,status){
+          console.log(JSON.stringify(data));
+          $(".points").remove();
           $(".green-tick-t").remove();
             $(".red-cross-t").remove();
+            let total =0;
           for(let i=0;i<data.length;i++){
             
             let node =document.createElement("P");
@@ -257,9 +348,16 @@ html(lang='en')
           node.appendChild(n1);
           n1=document.createTextNode(" "+data[i].description);
           node.appendChild(n1);
+          let points = document.createTextNode("  "+data[i].points);
+          total+=data[i].points;
+          node.appendChild(points);
           document.getElementById("TestCases").appendChild(node);
           }
-          //-  alert(data);
+          $("#out").append('<p class="points"> Total Points = '+ total +'</p>');
+          
+          document.getElementById("loader").style.display="none";
+          document.getElementById("out").style.display="block";
+          
         });
         });
       }
@@ -273,18 +371,22 @@ html(lang='en')
           if(count==0){
             count=count+1;
             //$('#opbox').append('<div name="out" id="out" style="width: 650px;height:600px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);text-align: left;left: 20px;padding: 10px;margin: 20px;position: relative;"><label><u><b>Input</b></u></label><textarea id="input" readonly="readonly" style="width:100%;border:none;"></textarea><label><u><b>Output</b></u></label><textarea id="output" readonly="readonly" style="width:100%;border:none;"></textarea><label><u><b>Expected Output</b></u></label><textarea id="expectedOutput" readonly="readonly" style="width:100%;border:none;"></textarea></div>');
-            $('#opbox').append('<div name="out" id="out" class="container mt-3 OUTPUT" style="width: 650px;height:600px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);text-align: left;left: 20px;padding: 10px;margin: 20px;position: relative;"><ul class="nav nav-tabs" id="Output"></ul><div class="tab-content" id="tab-content"></div></div>');
+            $('#opbox').append('<div name="out" id="out" class="container mt-3 OUTPUT" style="background-color:white;width: 650px;height:auto;border-radius:4px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);text-align: left;left: 20px;padding: 10px;margin: 20px;position: relative;"><ul class="nav nav-tabs" id="Output"></ul><div class="tab-content" id="tab-content"></div></div>');
             for(var i=1;i<=$('#card .sa').length;i++){
               if(i==1){
               $('#Output').append('<li class="nav-item"><a class="nav-link active" id="color'+i+'" data-toggle="tab" href="#tab'+i+'">Sample '+i+'  <i id="icon'+i+'"></i></a></li>');
-              $('#tab-content').append('<div id="tab'+i+'" class="container tab-pane active"><br><label><u><b>Input</b></u></label><textarea id="input'+i+'" readonly="readonly" style="width:100%;border:none;"></textarea><label><u><b>Output</b></u></label><textarea id="output'+i+'" readonly="readonly" style="width:100%;border:none;"></textarea><label><u><b>Expected Output</b></u></label><textarea id="expectedOutput'+i+'" readonly="readonly" style="width:100%;border:none;"></textarea></div>');
+              $('#tab-content').append('<div id="tab'+i+'" class="container tab-pane active"><br><label><b>Message</b></label><br><p style="font-family: Source Sans Pro, sans-serif;font-size:18px;" id="message'+i+'"></p><label><b>Input</b></label><textarea class="bg-col" id="input'+i+'" readonly="readonly" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:auto;"></textarea><label><b>Output</b></label><textarea class="bg-col" id="output'+i+'" readonly="readonly" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:110px;"></textarea><label><b>Expected Output</b></label><textarea class="bg-col" id="expectedOutput'+i+'" readonly="readonly" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:auto;"></textarea></div>');
               }else{
               $('#Output').append('<li class="nav-item"><a class="nav-link" id="color'+i+'" data-toggle="tab" href="#tab'+i+'">Sample '+i+'  <i id="icon'+i+'"></i></a></li>');                
-              $('#tab-content').append('<div id="tab'+i+'" class="container tab-pane fade"><br><label><u><b>Input</b></u></label><textarea id="input'+i+'" readonly="readonly" style="width:100%;border:none;"></textarea><label><u><b>Output</b></u></label><textarea id="output'+i+'" readonly="readonly" style="width:100%;border:none;"></textarea><label><u><b>Expected Output</b></u></label><textarea id="expectedOutput'+i+'" readonly="readonly" style="width:100%;border:none;"></textarea></div>');
+              $('#tab-content').append('<div id="tab'+i+'" class="container tab-pane fade"><br><label><b>Message</b></label><br><p style="font-family: Source Sans Pro, sans-serif;font-size:18px;" id="message'+i+'"></p><label><b>Input</b></label><textarea class="bg-col" id="input'+i+'" readonly="readonly" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:auto;"></textarea><label><b>Output</b></label><textarea class="bg-col" id="output'+i+'" readonly="readonly" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:110px;"></textarea><label><b>Expected Output</b></label><textarea class="bg-col" id="expectedOutput'+i+'" readonly="readonly" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:auto;"></textarea></div>');
               }
             } 
 
           }
+          
+          document.getElementById("out").style.display="none";
+          document.getElementById("loader").style.display="block";
+          
         });
         $('#button_submit').click(function(){
         
@@ -296,6 +398,9 @@ html(lang='en')
         count1=count1+1;
         
         }
-        }
-        );
+        
+        document.getElementById("out").style.display="none";
+        document.getElementById("loader").style.display="block";
+        //- document.getElementById("loader").style.height="350px";
+        });
         });

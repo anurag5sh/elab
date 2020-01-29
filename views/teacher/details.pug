@@ -1,5 +1,8 @@
 html
   head
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css")
+    script(src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js")
+    script(src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js")
     style.
       * {
       box-sizing: border-box;
@@ -9,6 +12,9 @@ html
       margin: 30px;
       padding: 10px;
       margin-top: 20px;
+      }
+      .mwidth{
+        width:400px;
       }
     script.
       function submitForm(){
@@ -23,46 +29,44 @@ html
       div
         form#con
           label(for='Contest') Contest Name
-          input#Contest(type='text', name='Contestname', placeholder='Contest', required='true',value=contest.name)
+          input.form-control.mwidth#Contest(type='text', name='Contestname', placeholder='Contest', required='true',value=contest.name)
+          br
+          label(for='Start Time') Date
+          input#timings.form-control.mwidth(type='text' name='timings' )
+          br
+          label(for='descrip') Description
+          input.form-control.mwidth#Contest(type='text', name='description', placeholder='Description', required='true',value = contest.description)
           br
           br
-          label(for='Start Time') Start Time: 
-          - let sdate = contest.timings.starts.getFullYear() + "-" + ("0"+contest.timings.starts.getMonth()+1).slice(-2) +"-"+("0"+contest.timings.starts.getDate()).slice(-2);
-          input(type='date' value=sdate)
-          |  at 
-          - let stime = ("0"+contest.timings.starts.getHours()).slice(-2) +":"+ ("0"+contest.timings.starts.getMinutes()).slice(-2);
-          input(type='time', required='true', value=stime)
-          br
-          br
-          label(for='End Time') End Time:
-          - let edate = contest.timings.ends.getFullYear() + "-" + ("0"+contest.timings.ends.getMonth()+1).slice(-2) +"-"+("0"+contest.timings.ends.getDate()).slice(-2); 
-          input(type='date' value=edate)
-          |  at 
-          - let etime = ("0"+contest.timings.ends.getHours()).slice(-2) +":"+ ("0"+contest.timings.ends.getMinutes()).slice(-2);
-          input(type='time', required='true',value=etime)
-          br
-          br
-          label(for='select ') For:
-          br
-          br
-          - let y = [false,false,false,false,false];
-          - for(i=1;i<=contest.year.length;i++) y[contest.year[i-1]]=true;
-          
-              
-          input(type='checkbox', name='1st year', value='1', checked=y[1])
-          label(for='1st Year') 1st Year
-          br
-          br
-          input(type='checkbox', name='2nd year', value='2', checked=y[2])
-          label(for='2nd Year') 2nd Year
-          br
-          br
-          input(type='checkbox', name='3rd year', value='3', checked=y[3])
-          label(for='3rd Year') 3rd Year
-          br
-          br
-          input(type='checkbox', name='4th year', value='4', checked=y[4])
-          label(for='4th Year') 4th Year
+          .row
+            label(for='select ') For:
+            - let y = [false,false,false,false,false];
+            - for(i=1;i<=contest.year.length;i++) y[contest.year[i-1]]=true;
+            .col-1.custom-control.custom-checkbox
+              input(type='checkbox',class= "custom-control-input", name='year', id="1-year", value='1',checked=y[1])
+              label(class="custom-control-label" for="1-year") 1st Year
+            .col-1.custom-control.custom-checkbox
+              input(type='checkbox', class= "custom-control-input",name='year',id="2-year" ,value='2',checked=y[2])
+              label(class="custom-control-label" for="2-year") 2nd Year
+            .col-1.custom-control.custom-checkbox
+              input(type='checkbox', class= "custom-control-input",name='year',id="3-year", value='3',checked=y[3])
+              label(class="custom-control-label" for="3-year") 3rd Year
+            .col-1.custom-control.custom-checkbox
+              input(type='checkbox', class= "custom-control-input",name='year',id="4-year", value='4', checked=y[4])
+              label(class="custom-control-label" for="4-year") 4th Year
           br
           br
           input(type='button', value='SAVE SETTINGS', onclick="submitForm()")
+
+          script.
+            $(function() {
+              $('#timings').daterangepicker({
+                timePicker: true,
+                startDate:  new Date("#{contest.timings.starts}"),
+                endDate: new Date("#{contest.timings.ends}"),
+                locale: {
+                  format: 'YYYY/MM/DD hh:mm A'
+                  } 
+                });
+              });
+

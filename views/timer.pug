@@ -1,0 +1,67 @@
+if(type=="teacher")
+    include teacher/nav
+else
+    include navbar
+
+//- doctype html
+//- head
+//-   meta(charset='UTF-8')
+//-   meta(name='viewport' content='width=device-width, initial-scale=1.0')
+//-   meta(http-equiv='X-UA-Compatible' content='ie=edge')
+//-   link(rel='stylesheet' href='/css/timer.css')
+//-   title Coming Soon
+//- section.landing
+//-   .landing-inner
+//-     img(src='/images/photo_2019-10-09_20-39-00.jpg' style="border-radius:10px;width:200px;height:200px;")
+//-     h1  #{name}
+//-     if(attempt)
+//-         a.btn.btn-info(type="button" href=attempt) abc
+//-     else
+//-         .countdown   
+//- script.
+//-     let launchDate = new Date().getTime();
+//-     if(#{time})
+//-         launchDate = new Date(!{ time}).getTime();
+    
+//- if(time)
+//-     script(src='/js/timer.js')
+
+
+
+link(href='https://fonts.googleapis.com/css?family=Roboto:100,400,700,900' rel='stylesheet')
+link(rel='stylesheet' href='https://use.fontawesome.com/releases/v5.3.1/css/all.css' integrity='sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU' crossorigin='anonymous')
+link(rel='stylesheet' type='text/css' href='/css/flipdown.css')
+link(rel='stylesheet' type='text/css' href='/css/timer.css')
+script(type='text/javascript' src='/js/flipdown.js')
+
+script.
+    document.addEventListener('DOMContentLoaded', () => {
+    var Countdown = new FlipDown(#{time}/1000)
+
+        // Start the countdown
+        .start()
+
+        // Do something when the countdown ends
+        .ifEnded(() => {
+        location.reload();
+        });
+
+    // Toggle theme
+    var interval = setInterval(() => {
+        let body = document.body;
+        body.classList.toggle('light-theme');
+        body.querySelector('#flipdown').classList.toggle('flipdown__theme-dark');
+        body.querySelector('#flipdown').classList.toggle('flipdown__theme-light');
+        }, 5000);
+    });
+
+body
+    .box(style="text-align:center;")
+        img(src='/images/photo_2019-10-09_20-39-00.jpg' style="border-radius:10px;width:200px;height:200px;")
+        h1  #{name}
+        if(attempt)
+            a.btn.btn-info(type="button" href=attempt) Enter Contest
+        else
+            .example
+                div#flipdown.flipdown
+

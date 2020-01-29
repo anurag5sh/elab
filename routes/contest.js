@@ -5,28 +5,11 @@ const teacher = require('../middleware/teacher');
 const contestAuth = require('../middleware/contestAuth');
 const {Contest,validateContest} = require('../models/contest');
 const {ContestQ} = require('../models/contestQ');
+const {Submission} = require('../models/submission');
 const crypto = require("crypto");
 const moment = require('moment');
 const _ = require('lodash');
 const request = require("request-promise");
-
-
-function setDate(req,res,next){
-    let date = req.body.starts[0];
-    let time = req.body.starts[1];
-    date=date.split('-');
-    time=time.split(':');
-    req.body.starts = new Date(date[0],date[1]-1,date[2],time[0],time[1]);
-
-
-    date = req.body.ends[0];
-    time = req.body.ends[1];
-    date=date.split('-');
-    time=time.split(':');
-    req.body.ends = new Date(date[0],date[1]-1,date[2],time[0],time[1]);
-
-    next();
-}
 
 
 function encode64(string){ //encoding to base64
@@ -49,7 +32,7 @@ router.get('/',authenticate, async (req,res)=> {
     res.render('teacher/trcontest',{contest:contest});
     }
     else{
-    const contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn}]}).select('name url').lean();
+    const contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn}]}).select('name url description').lean();
     if(!contest) return res.render('contest',{contest:[]});
 
     res.render('contest',{contest:contest});
@@ -66,7 +49,7 @@ router.get('/create',authenticate, (req,res) => {
 });
 
 //Saving the contest in db
-router.post('/create',authenticate,setDate, async (req,res)=>{
+router.post('/create',authenticate, async (req,res)=>{
     const { error } = validateContest(req.body);
     if(error) return res.status(400).send(error.message); 
     if(req.body.starts>=req.body.ends)
@@ -92,8 +75,11 @@ router.post('/create',authenticate,setDate, async (req,res)=>{
     }
     let contest = new Contest({createdBy:createdBy,id:id,name:req.body.name.trim(),url:url,year:req.body.year});
     contest.timings.created= moment().format();
-    contest.timings.starts = req.body.starts;
-    contest.timings.ends = req.body.ends;
+    const starts = new Date(req.body.timings.split("-")[0]);
+    contest.timings.starts = starts;
+    const ends = new Date(req.body.timings.split("-")[1]);
+    contest.timings.ends = ends;
+    contest.description = req.body.description;
 
     await contest.save();
     res.send(contest);
@@ -136,7 +122,7 @@ router.post('/manage/:name',authenticate,async (req,res) =>{
 
 //landing page for contest
 router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
-    let contest = await Contest.findOne({url:req.params.curl}).lean().select('timings signedUp');
+    let contest = await Contest.findOne({url:req.params.curl}).lean().select('timings signedUp name');
     if(!contest) return res.status(404).end();
 
     const now = new Date();
@@ -170,7 +156,7 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
         return res.send("questions");
         else{
             const milli = contest.timings.starts - now;
-            return res.send("Timer" + time(milli));
+            return res.render("timer",{time:Date.now() + milli,name:contest.name,type: "teacher"} );
         }
     }
     
@@ -179,7 +165,7 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
         
         if(now>=contest.timings.starts && now<=contest.timings.ends){
         if(!contest.signedUp.find(({usn}) => usn == req.session.usn)){
-           return res.send("Attempt");
+           return res.render("timer" , {attempt:"/contest/sign/"+req.params.curl,time:false,type: "student"});
         }
 
         return res.send("questions");
@@ -188,7 +174,7 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
         if(now < contest.timings.starts)
         {   const milli = contest.timings.starts - now; //stores milli seconds
             
-            return res.send("Timer" + time(milli));
+            return res.render("timer",{time:Date.now() + milli,name:contest.name} );
         }
 
         if(now > contest.timings.ends)
@@ -231,7 +217,7 @@ router.get('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
 
 //submission of contest
 router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
-    let contest = await Contest.findOne({url:req.params.curl}).lean().select('questions');
+    let contest = await Contest.findOne({url:req.params.curl}).select('questions submissions');
     if(!contest) return res.status(404).end();
 
     if(!contest.questions.includes(req.params.qid)){
@@ -242,7 +228,10 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
         res.status(404).end();
     });
   const testcase = question.test_cases;
-
+  let contest_points = 0;
+  testcase.forEach((item,index) =>{
+    contest_points +=item.points;
+  });
 
   if(req.body.source=='')
   return res.send();
@@ -261,19 +250,141 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
   }
 
   Promise.all(result)
-    .then(data => {
+    .then(async (data) => {
       let desc= [];
-      let i=0;
+      
       data.forEach(store);
-      function store(data){ let points=0;
+      function store(data,index){ let points=0;
           if(data.status.id == 3){
-            points = testcase[i++].points;
+            points = testcase[index].points;
           }
         desc.push({id:data.status.id,description:data.status.description,points:points}); 
       }
-      res.send(desc);
+    
 
+    let total_points  = 0;
+    desc.forEach((item,index) =>{
+            total_points+= item.points;
+    });
+   
+
+    const user_submission = contest.submissions.find(i => i.usn === req.session.usn);
+
+    if(!user_submission){
+        
+        let obj ={};
+        obj.qid = req.params.qid;
+        obj.timestamp = new Date();
+        obj.usn = req.session.usn;
+        obj.sourceCode = req.body.source;
+        if(total_points == contest_points){
+            obj.status = "Accepted";
+        }
+        else if(total_points == 0 ){
+            obj.status = "Wrong Answer";
+        }
+        else{
+            obj.status = "Partially Accepted";
+        }
+        obj.points = total_points;
+        obj.language_id = req.body.language;
+        contest.submissions.push(obj);
+        await contest.save();
+        return res.send(desc);
+    }
+
+    let sub = new Submission();
+    if(total_points == contest_points && user_submission.status == "Accepted"){
+        
+        sub.qid = req.params.qid;
+        sub.timestamp = new Date();
+        sub.usn = req.session.usn;
+        sub.sourceCode = req.body.source;
+        sub.status = "Accepted";
+        sub.language_id = req.body.language;
+        sub.points = total_points;
+        await sub.save();
+        return res.send(desc);
+    }
+    else if (total_points == contest_points ){
+        let previous_sub =  new Submission();
+        const i= contest.submissions.indexOf(user_submission);
+        previous_sub = contest.submissions[i];
+        await previous_sub.save();
+        contest.submissions.splice(i,1);
+        let obj ={};
+        obj.qid = req.params.qid;
+        obj.timestamp = new Date();
+        obj.usn = req.session.usn;
+        obj.sourceCode = req.body.source;
+        obj.status = "Accepted";
+        obj.points = total_points;
+        obj.language_id = req.body.language;
+        contest.submissions.push(obj);
+        await contest.save();
+        return res.send(desc);
+    }
+    else if(total_points > user_submission.points){
+        let previous_sub =  new Submission();
+
+        const i= contest.submissions.indexOf(user_submission);
+        previous_sub= contest.submissions[i];
+        // previous_sub.timestamp = contest.submissions[i].timestamp;
+        // previous_sub.usn = contest.submissions[i].usn;
+        // previous_sub.sourceCode = contest.submissions[i].sourceCode;
+        // previous_sub.status = contest.submissions[i].status;
+        // previous_sub.language_id = contest.submissions[i].language_id;
+        // previous_sub.points = contest.submissions[i].points;
+        console.log(previous_sub);
+        await previous_sub.save();
+        contest.submissions.splice(i,1);
+        let obj ={};
+        obj.qid = req.params.qid;
+        obj.timestamp = new Date();
+        obj.usn = req.session.usn;
+        obj.sourceCode = req.body.source;
+        if(total_points == contest_points){
+            obj.status = "Accepted";
+        }
+        else if(total_points == 0 ){
+            obj.status = "Wrong Answer";
+        }
+        else{
+            obj.status = "Partially Accepted";
+        }
+        obj.language_id = req.body.language;
+        obj.points = total_points;
+        contest.submissions.push(obj);
+        await contest.save();
+        return res.send(desc);
+    }
+    else {
+   
+        sub.qid = req.params.qid;
+        sub.timestamp = new Date();
+        sub.usn = req.session.usn;
+        sub.sourceCode = req.body.source;
+        if(total_points == contest_points){
+            sub.status = "Accepted";
+        }
+        else if(total_points == 0 ){
+            sub.status = "Wrong Answer";
+        }
+        else{
+            sub.status = "Partially Accepted";
+        }
+        
+        sub.language_id = req.body.language;
+        sub.points = total_points;
+        await sub.save();
+        return res.send(desc);
+        
+
+    }
+    //   res.send(desc);
+    
     }).catch(err => {
+        
       res.send(err);
     });
 

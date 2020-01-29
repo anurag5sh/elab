@@ -12,7 +12,10 @@ const contestSchema = new mongoose.Schema({
   name:{
       type:String,
       required:true,
-  }, 
+  },
+  description:{
+      type:String
+  } ,
   url:{
       type:String,
       required:true,
@@ -42,15 +45,16 @@ const contestSchema = new mongoose.Schema({
   questions:{
     type:[String]
   },
-  submissions:{
+  submissions:[{
     qid:{type:String},
     timestamp:{type:Date},
+    language_id:{type:Number},
     usn:{type:String},
     sourceCode:{type:String},
     status:{type:String},
     points:{type: Number,default:0},
     _id : false
-  },
+  }],
   leaderboard:{
     position:{type:Number},
     name:{type:String},
@@ -70,9 +74,9 @@ function validateContest(contest)
 {
     const schema = Joi.object({
         name: Joi.string().required(),
-        starts: Joi.date().required().timestamp(),
-        ends:Joi.date().required().greater(Joi.ref('starts')).timestamp().error(new Error("Invalid Date Selected!")),
-        year:[Joi.number(),Joi.array().items(Joi.number().required())]
+        timings:Joi.string().required(),
+        year:[Joi.number(),Joi.array().items(Joi.number().required())],
+        description:Joi.string().allow('')
     });
 
     return schema.validate(contest);

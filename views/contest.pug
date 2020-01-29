@@ -1,15 +1,29 @@
 extends navbar
 
+
 block head
   title Contest
-
+  link(rel="stylesheet", href="/css/contest_card.css")
+  script(src="/js/contest_card.js")
+  style.
+    body{
+      
+    }
 block content
     .jumbotron.text-left.bg-info.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
       h1 CONTESTS
     
     each i in contest 
-      ul
-        a(href="/contest/"+i.url)=i.name
+      //- ul
+      //-   a(href="/contest/"+i.url)=i.name
+      .container_card
+        .c-card-block
+          a(href="/contest/"+i.url)
+            .cheader
+              h1 #{ i.name}
+            p=i.description
+            button.attem.btn.btn-info(type='button' onclick="location.href=/contest/"+i.url+"") Attempt
+
       
       
 

@@ -13,6 +13,7 @@ html
         script(src='/assets/bootstrap/js/bootstrap.min.js')
         script(src="/js/toastr.min.js")
         link(rel="stylesheet", href="/css/toastr.min.css")
+        block head
     body
         div
             nav.navbar.navbar-light.navbar-expand-md.navigation-clean
@@ -30,7 +31,7 @@ html
                                 a.nav-link(href='/contest')
                                     strong CONTEST
                             li.nav-item(role='presentation')
-                                a.nav-link(href='#')
+                                a.nav-link(href='/assignment')
                                     strong ASSIGNMENT
                             li.dropdown.nav-item
                                 a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#')
@@ -43,4 +44,5 @@ html
                                         strong SUBMISSION
                                     a.dropdown-item(role='presentation', href='/logout')
                                         strong LOGOUT
+        block content
 

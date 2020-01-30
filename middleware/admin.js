@@ -8,12 +8,12 @@ module.exports= async function (req, res, next) {
         return next();
         else{
             const err = new Error('Forbidden');
-            return res.send(err.message);
+            return res.status(403).send(err.message);
         }
         }
         catch{
             const err = new Error('Forbidden');
-            return res.send(err.message);
+            return res.status(403).send(err.message);
         }
     } 
     else {

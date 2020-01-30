@@ -43,8 +43,8 @@ router.post('/:qid',authenticate,async (req,res) => {
   const testcase = question.test_cases;
 
 
-  if(req.body.source=='')
-  return res.send();
+  if(req.body.source.trim()=='')
+  return res.send("Source Code cannot be empty!");
 
   let result = [];
 

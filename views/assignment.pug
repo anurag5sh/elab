@@ -4,25 +4,24 @@ html
     head
     meta(charset='utf-8')
     meta(name='viewport' content='width=device-width, initial-scale=1.0, shrink-to-fit=no')
-    title Projects - Brand
+    title Assignments
     link(rel='stylesheet' href='list_style/bootstrap/css/new.css')
     link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,400,700')
     link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css')
     body
         .jumbotron.text-left.bg-info.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
-            h1 PRACTICE
+            h1 ASSIGNMENT
         main.page.projets-page
             section.portfolio-block.project-no-images
                 .container1
                     .row1
-                        - let questions=q
                         each i in questions
                             .col-md-6.col-lg-4
                                 .project-card-no-image
                                     h5()=i.name
-                                    a.btn1.btn1-outline-primary.btn1-sm(role='button' href='#') SOLVE
+                                    a.btn1.btn1-outline-primary.btn1-sm(role='button' href='/assignment/'+i.qid) SOLVE
                         
         //- script(src='list_style/js/jquery.min.js')
         //- script(src='list_style/bootstrap/js/bootstrap.min.js')
-        //- script(src='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js')
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js')
         script(src='list_style/js/theme.js')

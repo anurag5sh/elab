@@ -395,8 +395,8 @@ function display(page){
     $("#oldQlist").empty();
     $.ajax({
         type: "POST",
-        url: "/assignment/old?page="+page,
-        data: "&sem="+$("#oldSelect").val(),
+        url: "/assignment/edit/old?page="+page,
+        data: {sem:$("#oldSelect").val()},
         success: function (data,status, jqXHR) {
         
             data.questions.forEach((item,index)=>{
@@ -432,7 +432,7 @@ function oldQuesInsert(){
     const aId = $("#sem").val();
     $.ajax({
         type: "POST",
-        url: "/assignment/oldAdd",
+        url: "/assignment/edit/oldAdd",
         data:{list:listArray,cur_aId:$("#sem").val()},
         success: function (data,status, jqXHR) {
             $("#oldQues").modal('hide');
@@ -475,9 +475,9 @@ $(function() {
         
       }
       else{
-          toastr.error("Query empty");
+        $("#oldQlist").empty();
       }
-      //$(".not-found").toggle($(".users").find("img").length==0);
+      
     });
   });
 

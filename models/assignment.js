@@ -41,6 +41,7 @@ const assignmentSchema = new mongoose.Schema({
     sourceCode:{type:String},
     status:{type:String},
     points:{type: Number,default:0},
+    language_id:{type:Number},
     _id : false
   }]
 

@@ -233,8 +233,8 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
     contest_points +=item.points;
   });
 
-  if(req.body.source=='')
-  return res.send();
+  if(req.body.source.trim()=='')
+  return res.send("Source Code cannot be empty!");
 
   let result = [];
 
@@ -307,8 +307,9 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
         return res.send(desc);
     }
     else if (total_points == contest_points ){
-        let previous_sub =  new Submission();
+        
         const i= contest.submissions.indexOf(user_submission);
+        let previous_sub =  new aSubmission(_.pick(assignment.submissions[i].toJSON(),['usn','sourceCode','status','timestamp','language_id','points']));
         previous_sub = contest.submissions[i];
         await previous_sub.save();
         contest.submissions.splice(i,1);
@@ -325,17 +326,8 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
         return res.send(desc);
     }
     else if(total_points > user_submission.points){
-        let previous_sub =  new Submission();
-
         const i= contest.submissions.indexOf(user_submission);
-        previous_sub= contest.submissions[i];
-        // previous_sub.timestamp = contest.submissions[i].timestamp;
-        // previous_sub.usn = contest.submissions[i].usn;
-        // previous_sub.sourceCode = contest.submissions[i].sourceCode;
-        // previous_sub.status = contest.submissions[i].status;
-        // previous_sub.language_id = contest.submissions[i].language_id;
-        // previous_sub.points = contest.submissions[i].points;
-        console.log(previous_sub);
+        let previous_sub =  new aSubmission(_.pick(assignment.submissions[i].toJSON(),['usn','sourceCode','status','timestamp','language_id','points']));
         await previous_sub.save();
         contest.submissions.splice(i,1);
         let obj ={};
@@ -381,7 +373,7 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
         
 
     }
-    //   res.send(desc);
+    
     
     }).catch(err => {
         

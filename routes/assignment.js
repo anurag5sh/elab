@@ -7,6 +7,7 @@ const _ = require('lodash');
 const request = require("request-promise");
 const {Assignment,validateAssignment} = require('../models/assignment');
 const {AssignmentQ,validateAQ} = require('../models/assignmentQ');
+const {aSubmission} = require('../models/assignmentSubmission');
 const moment = require('moment');
 
 function encode64(string){ //encoding to base64
@@ -19,18 +20,47 @@ function encode64(string){ //encoding to base64
   return b.toString();
   }
 
-//Load the current assignment questions for students
+//Load the current assignment questions for students and manage for teachers
 router.get('/',authenticate, async (req,res) => {
-    const assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).lean().select('id questions');
-    if(!assignment) return res.send("Try again later.");
 
-    let questions = await AssignmentQ.find({assignmentId:assignment.id}).lean().select({_id:0,test_cases:0});
-    if(!questions) questions = [];
+    if(req.session.staff_id){
+        const current = await Assignment.find({ 'duration.ends' :{$gt : new Date()} }).lean().select({id:1,sem:1,_id:0}).sort({id:1});
+        res.render('teacher/assignment',{current : current});
+    }
+    else{
+        const assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).lean().select('id questions');
+        if(!assignment) return res.send("Try again later.");
 
-    const old = await AssignmentQ.find({qid:{$in:assignment.questions}}).lean().select({_id:0,test_cases:0});
-    questions = questions.concat(old);
+        let questions = await AssignmentQ.find({assignmentId:assignment.id}).lean().select({_id:0,test_cases:0});
+        if(!questions) questions = [];
 
-    res.send(questions);
+        const old = await AssignmentQ.find({qid:{$in:assignment.questions}}).lean().select({_id:0,test_cases:0});
+        questions = questions.concat(old);
+
+        res.render('assignment',{questions:questions});
+    }
+    
+});
+
+//teacher editing details
+router.post('/',authenticate,async (req,res) => {
+    let ready = false;
+  if(req.body.isReady) ready = true;
+  let starts,ends = null;
+    try{
+      starts = new Date(req.body.duration.split("-")[0]);
+      ends = new Date(req.body.duration.split("-")[1]);
+    }
+    catch(err){
+      return res.status(400).send("Wrong datetime format");
+    }
+  
+  let update = {'duration.starts' : starts,'duration.ends':ends,isReady:ready};
+
+  const assignment = await Assignment.findOneAndUpdate({id:req.body.aId},update);
+  if(!assignment) return res.status(400).send('Invalid ID');
+
+  res.status(200).send("Changes Saved.");
 });
 
 //display single question for student
@@ -44,7 +74,7 @@ router.get('/:qid',authenticate,async (req,res) => {
         idArray.push(item);
     });
     const question = await AssignmentQ.findOne({assignmentId:{$in:idArray},qid:req.params.qid}).lean().select({_id:0,test_cases:0,date:0});
-    console.log(question);
+    
     if(!question) return res.send("Invalid ID");
     res.render('editorAssignment',{question:question});
 
@@ -53,7 +83,7 @@ router.get('/:qid',authenticate,async (req,res) => {
 //submission for assignment
 router.post('/:qid',authenticate,async (req,res)=>{
 
-    const assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).lean().select('id questions');
+    const assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).select('id questions submissions');
     if(!assignment) return res.status(400).end();
 
     let idArray = [];
@@ -65,6 +95,10 @@ router.post('/:qid',authenticate,async (req,res)=>{
     if(!question) return res.send("Invalid ID");
 
     const testcase = question.test_cases;
+    let contest_points = 0;
+  testcase.forEach((item,index) =>{
+    contest_points +=item.points;
+  });
 
     if(req.body.source.trim()=='')
     return res.send("Source Code cannot be empty!");
@@ -83,7 +117,7 @@ router.post('/:qid',authenticate,async (req,res)=>{
     }
 
     Promise.all(result)
-    .then(data => {
+    .then(async data => {
     let desc= [];
     data.forEach(store);
     function store(data,index){ let points=0;
@@ -92,9 +126,118 @@ router.post('/:qid',authenticate,async (req,res)=>{
         }
         desc.push({id:data.status.id,description:data.status.description,points:points}); 
     }
-    res.send(desc);
+        let total_points  = 0;
+        desc.forEach((item,index) =>{
+                total_points+= item.points;
+        });
 
-    }).catch(err => {
+        const user_submission = assignment.submissions.find(i => i.usn === req.session.usn);
+        if(!user_submission){
+        
+            let obj ={};
+            obj.qid = req.params.qid;
+            obj.timestamp = new Date();
+            obj.usn = req.session.usn;
+            obj.sourceCode = req.body.source;
+            if(total_points == contest_points){
+                obj.status = "Accepted";
+            }
+            else if(total_points == 0 ){
+                obj.status = "Wrong Answer";
+            }
+            else{
+                obj.status = "Partially Accepted";
+            }
+            obj.points = total_points;
+            obj.language_id = req.body.language;
+            assignment.submissions.push(obj);
+            await assignment.save();
+            return res.send(desc);
+        }
+    
+        let sub = new aSubmission();
+        if(total_points == contest_points && user_submission.status == "Accepted"){
+            
+            sub.qid = req.params.qid;
+            sub.timestamp = new Date();
+            sub.usn = req.session.usn;
+            sub.sourceCode = req.body.source;
+            sub.status = "Accepted";
+            sub.language_id = req.body.language;
+            sub.points = total_points;
+            await sub.save();
+            return res.send(desc);
+        }
+        else if (total_points == contest_points ){
+            
+            const i= assignment.submissions.indexOf(user_submission);
+            let previous_sub =  new aSubmission(_.pick(assignment.submissions[i].toJSON(),['usn','sourceCode','status','timestamp','language_id','points']));
+            await previous_sub.save();
+            assignment.submissions.splice(i,1);
+            let obj ={};
+            obj.qid = req.params.qid;
+            obj.timestamp = new Date();
+            obj.usn = req.session.usn;
+            obj.sourceCode = req.body.source;
+            obj.status = "Accepted";
+            obj.points = total_points;
+            obj.language_id = req.body.language;
+            assignment.submissions.push(obj);
+            await assignment.save();
+            return res.send(desc);
+        }
+        else if(total_points > user_submission.points){
+            
+            const i= assignment.submissions.indexOf(user_submission);
+            let previous_sub =  new aSubmission(_.pick(assignment.submissions[i].toJSON(),['usn','sourceCode','status','timestamp','language_id','points']));
+            await previous_sub.save();
+            assignment.submissions.splice(i,1);
+            let obj ={};
+            obj.qid = req.params.qid;
+            obj.timestamp = new Date();
+            obj.usn = req.session.usn;
+            obj.sourceCode = req.body.source;
+            if(total_points == contest_points){
+                obj.status = "Accepted";
+            }
+            else if(total_points == 0 ){
+                obj.status = "Wrong Answer";
+            }
+            else{
+                obj.status = "Partially Accepted";
+            }
+            obj.language_id = req.body.language;
+            obj.points = total_points;
+            assignment.submissions.push(obj);
+            await assignment.save();
+            return res.send(desc);
+        }
+        else {
+       
+            sub.qid = req.params.qid;
+            sub.timestamp = new Date();
+            sub.usn = req.session.usn;
+            sub.sourceCode = req.body.source;
+            if(total_points == contest_points){
+                sub.status = "Accepted";
+            }
+            else if(total_points == 0 ){
+                sub.status = "Wrong Answer";
+            }
+            else{
+                sub.status = "Partially Accepted";
+            }
+            
+            sub.language_id = req.body.language;
+            sub.points = total_points;
+            await sub.save();
+            return res.send(desc);
+            
+    
+        }
+
+    
+    }).catch(err => { console.log(err);
     res.send(err);
     });
 
@@ -257,29 +400,30 @@ router.get('/delete/:id/:qid',authenticate,teacher, async (req,res) => {
 
 
 //retrieve old questions
-router.post('/old',authenticate,teacher,async(req,res)=>{
+router.post('/edit/old',authenticate,teacher,async(req,res)=>{
 
     if(!req.query.page) req.query.page=1;
-
+    
     const assignment = await Assignment.find({sem:req.body.sem,'duration.ends':{$lt:new Date()}}).lean().select({id:1,_id:0});
+    
     if(!assignment) return res.status(400).send("Nothing Found.");
-
+    
     let asg= [];
     assignment.forEach((item,index)=>{
         asg.push(item.id);
     });
     const totalCount = await AssignmentQ.countDocuments({assignmentId:{$in:asg}}).lean();
     if(!totalCount) return res.status(400).send("Nothing Found");
-
+    
     let questions = await AssignmentQ.find({assignmentId:{$in:asg}}).sort({assignmentId:-1}).skip((req.query.page-1)*10).limit(10).lean();
     if(!questions) return res.status(400).send("Nothing Found");
-
+    
     res.send({questions:questions,total:totalCount});
 
 
 });
 
-router.post('/oldAdd',authenticate,teacher,async (req,res) =>{
+router.post('/edit/oldAdd',authenticate,teacher,async (req,res) =>{
     let qid,cur_aId=null;
     try{cur_aId = req.body.cur_aId;
         let assignment = await Assignment.findOne({id:cur_aId}).select('questions');

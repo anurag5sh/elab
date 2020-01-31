@@ -3,6 +3,7 @@ var router = express.Router();
 const request = require("request-promise");
 const {Practice,validatePractise} = require('../models/practice');
 const {ContestQ} = require('../models/contestQ');
+const {AssignmentQ} = require('../models/assignmentQ');
 const Joi = require('@hapi/joi');
 const authenticate = require('../middleware/auth');
 
@@ -38,14 +39,18 @@ router.post('/', authenticate,async (req,res)=>{
   if(req.body.qid.split("/")[1] == "practice"){
     let q = req.body.qid.split("/")[2];
     question = await Practice.findOne({qid:q }).lean().select('sample_cases');
-    
-    if(!question) return res.send("Question not found!!");
+    if(!question) return res.send("Question not found.");
   }
   else if(req.body.qid.split("/")[1] == "contest")
   {
     let c = req.body.qid.split("/")[3];
     question = await ContestQ.findOne({qid:c}).lean().select('sample_cases');
-    if(!question) return res.send("Question not found!!");
+    if(!question) return res.send("Question not found.");
+  }
+  else if(req.body.qid.split("/")[1] == "assignment"){
+    let a = req.body.qid.split("/")[2];
+    question = await AssignmentQ.findOne({qid:a}).lean().select('sample_cases');
+    if(!question) return res.send("Question not found.")
   }
   let sample = null;
   if(req.body.custom){

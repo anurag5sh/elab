@@ -21,8 +21,7 @@ block content
           a(href="/contest/"+i.url)
             .cheader
               h1 #{ i.name}
-            p
-              | Himanshu shekar
+            p=i.description
             button.attem.btn.btn-info(type='button' onclick="location.href=/contest/"+i.url+"") Attempt
 
       

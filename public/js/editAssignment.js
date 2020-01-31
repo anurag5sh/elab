@@ -10,7 +10,7 @@ function setDateTime(s,e){
 }
 $('#sem').change(function (){
 
-    $.get("/assignment/"+document.getElementById("sem").value,function(data,status){
+    $.get("/assignment/edit/"+document.getElementById("sem").value,function(data,status){
         $('#details').empty();
         $('#qlist').empty();
         const sem = '<div class="form-group row"><label class="col-sm-2">Semester &nbsp; : &nbsp;'+data.assignment.sem+'</label><label class="col-sm-2">Set &nbsp; : &nbsp;'+data.assignment.id.substr(9)+'</label></div>';
@@ -27,7 +27,10 @@ $('#sem').change(function (){
         if(data.assignment.isReady)  $("#isReady").bootstrapToggle('on');
         data.questions.forEach(insert);
         function insert(item,index){
+            if(item.assignmentId==data.assignment.id)
             $("#qlist").append('<tr><td>'+item.qid+'</td><td>'+item.name+'</td><td><a class="fas fa-edit" data-toggle="modal" data-target="#edit" data-id="'+item.qid+'" style="color:dimgrey;" href=""></a></td><td><a class="fas fa-trash" style="color:red;" data-toggle="modal" data-target="#delete" href="" data-id="'+item.qid+'" data-name="'+item.name+'"></a></td></tr>');
+            else
+            $("#qlist").append('<tr><td>'+item.qid+'(Batch '+item.assignmentId.substr(5,4)+') </td><td>'+item.name+'</td><td><a class="fas fa-eye" data-toggle="modal" data-target="#edit" data-id="'+item.qid+'" style="color:dimgrey;" href=""></a></td><td><a class="fas fa-trash" style="color:red;" data-toggle="modal" data-target="#delete" href=""  data-id="'+item.qid+'" data-name="'+item.name+'"></a></td></tr>');
         }
         
     });
@@ -303,7 +306,11 @@ function submitFormAdd(){
         const qid = e.relatedTarget.dataset.id;
         $("#qid").val(qid);
 
-        $.get("/assignment/"+aId+"/"+qid,function(data,status){
+        $.get("/assignment/edit/"+aId+"/"+qid,function(data,status){
+            if(data.assignmentId!=aId){
+                $("#edit_info").html("Cannot edit an old question");
+            }
+            else $("#edit_info").html("");
             $("#name-e").val(data.name);
             editor_edit.setContents(JSON.parse(data.statement));
             $("#constraints-e").val(data.constraints);
@@ -336,10 +343,11 @@ function submitFormAdd(){
 
         $("#delete").on('show.bs.modal', function(e){
             $("#dbody").empty();
-            $("#dbody").append("<p>"+e.relatedTarget.dataset.name+"</p><p style='display:none;' id='del_qid'>"+e.relatedTarget.dataset.name+"</p>");
+            $("#dbody").append("<p>"+e.relatedTarget.dataset.name+"</p><p style='display:none;' id='del_qid'>"+e.relatedTarget.dataset.id+"</p>");
 
         });
 
+        
     });
 function editForm(){
     
@@ -348,7 +356,7 @@ function editForm(){
     $("#es_edit").val(encodeURIComponent(JSON.stringify(editor_edit.getContents())));
     $.ajax({
         type: "POST",
-        url: "/assignment/"+aId+"/"+qid,
+        url: "/assignment/edit/"+aId+"/"+qid,
         data: $("#ques-edit").serialize()+"&aId="+aId,
         success: function (data,status, jqXHR) {
         $("#edit").modal('hide');
@@ -381,17 +389,59 @@ function deleteQ(){
 }
 
 
-$('#oldSelect').change(function (){
-
+function display(page){
+    if(!page) page=1;
+    $("#pagination").empty();
+    $("#oldQlist").empty();
     $.ajax({
         type: "POST",
-        url: "/assignment/old",
-        data: "&sem="+$("#oldSelect").val(),
+        url: "/assignment/edit/old?page="+page,
+        data: {sem:$("#oldSelect").val()},
         success: function (data,status, jqXHR) {
         
             data.questions.forEach((item,index)=>{
-                $("#oldQlist").append('<tr><td><input type="checkbox"></td><td>'+item.assignmentId.substr(5,4)+'</td><td>'+item.qid+'</td><td>'+item.name+'</td><td><a class="fas fa-eye"  style="color:dimgrey;" href=""></a></td></tr>');
+                    $("#oldQlist").append('<tr><td><input '+(listArray.includes(item.assignmentId+'#'+item.qid)?'checked':'')+' type="checkbox" id="aq" name="list" value="'+item.assignmentId+'#'+item.qid +'"></td><td>'+item.assignmentId.substr(5,4)+'</td><td>'+item.qid+'</td><td>'+item.name+'</td><td><a class="fas fa-eye"  style="color:dimgrey;" href=""></a></td></tr>');
             });
+            
+            let pagi = '<nav aria-label="..."><ul class="pagination pagination-sm justify-content-center"><li class="page-item '+(page==1?'disabled':'') +'"><a class="page-link" href="javascript:display('+(page-1)+')" '+(page==1?'aria-disabled="true"':'')+'>Previous</a></li>';
+            for(let i=1;i<=Math.ceil(data.total/10);i++){
+               pagi+='<li class="page-item '+(page==i?'active':'') +'"><a class="page-link " href="javascript:display('+i+')">'+i+" "+(page==i?'<span class="sr-only">(current)</span>':'')+'</a></li>';
+            }
+            pagi+='<li class="page-item '+(page==Math.ceil(data.total/10)?'disabled':'') +'"><a class="page-link" href="javascript:display('+(page+1)+')" '+(page==data.total?'aria-disabled="true"':'')+'>Next</a></li></ul></nav>';
+            $("#pagination").append(pagi);
+            
+            list();
+        },
+        error: function (e) {
+            toastr.error(e.responseText);
+
+        }
+    
+    });
+}
+
+$('#oldSelect').change(function (){
+    $("#oldQlist").empty();
+    $("#pagination").empty();
+
+    display(1);
+    
+});
+
+function oldQuesInsert(){
+    const aId = $("#sem").val();
+    $.ajax({
+        type: "POST",
+        url: "/assignment/edit/oldAdd",
+        data:{list:listArray,cur_aId:$("#sem").val()},
+        success: function (data,status, jqXHR) {
+            $("#oldQues").modal('hide');
+            $("#sem").val(aId).change();
+            toastr.success(data);  
+            $("#oldQlist").empty();
+            $("#pagination").empty();
+            $('#oldSelect').prop('selectedIndex',0);
+            listArray=[];        
             
         },
         error: function (e) {
@@ -400,4 +450,48 @@ $('#oldSelect').change(function (){
         }
     
     });
+
+}
+
+//searching
+$(function() {
+    $("#oldSearch").on("keyup", function() {
+      
+      const val = $.trim(this.value);
+      if (val) {$("#oldQlist").empty();
+        $.get('/assignment/old/search/'+$("#oldSelect").val()+'/'+val,function(data,status){
+            if(Array.isArray(data)){
+                $.each(data, function(_,obj) {
+                    $("#oldQlist").append('<tr><td><input '+(listArray.includes(obj.assignmentId+'#'+obj.qid)?'checked':'')+' type="checkbox" id="aq" name="list" value="'+obj.assignmentId+'#'+obj.qid +'"></td><td>'+obj.assignmentId.substr(5,4)+'</td><td>'+obj.qid+'</td><td>'+obj.name+'</td><td><a class="fas fa-eye"  style="color:dimgrey;" href=""></a></td></tr>');
+                   });
+                   list();
+            }
+            else
+            {
+                toastr.error(data);
+            }
+            
+        });
+        
+      }
+      else{
+        $("#oldQlist").empty();
+      }
+      
+    });
+  });
+
+  //selected questions
+  let listArray=[];
+function list(){
+$('input[name="list"]').click(function(){
+    if($(this).prop("checked") == true){
+        listArray.push($(this).val());
+        
+    }
+    else if($(this).prop("checked") == false){
+        listArray.splice(listArray.indexOf($(this).val()),1);
+    }
 });
+}
+

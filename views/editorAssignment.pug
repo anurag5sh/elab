@@ -323,7 +323,11 @@ html(lang='en')
         language: l
         },
         function(data,status){
-          console.log(JSON.stringify(data));
+          if(!Array.isArray(data)){
+        toastr.warning(data);
+        document.getElementById("loader").style.display="none";
+        return;
+      }
           $(".points").remove();
           $(".green-tick-t").remove();
             $(".red-cross-t").remove();

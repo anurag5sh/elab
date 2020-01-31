@@ -1,9 +1,6 @@
-extends layout
+extends nav
 
-block append code
-    - active.editAssignment="active"
-    - active.assignment="active"
-    - menu.assignment="menu-open"
+block head
     link(rel="stylesheet", href="/adminLTE/dist/css/daterangepicker.css")
     script(src="/adminLTE/dist/js/moment.min.js")
     script(src="/adminLTE/dist/js/daterangepicker.min.js")
@@ -14,18 +11,12 @@ block append code
     link(rel="stylesheet", href="https://cdn.quilljs.com/1.3.6/quill.snow.css")
     link(rel="stylesheet", href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css")
     script(src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js")
-    
     style.
         #myModal label,#myModal p{
             font-family: 'Crimson Text', serif;
             font-size:20px;
             font-weight:normal;
         }
-        
-  
-
-
-
 
 block content
     #editAssignment
@@ -133,8 +124,6 @@ block content
                     .modal.fade#loading(data-backdrop="static" role="dialog" tabindex="-1" data-keyboard="false")
                         .modal-dialog.modal-dialog-centered.text-center(role="document")
                             span.fas.fa-circle-notch.fa-spin.fa-3x.w-100
-                
-                            
         .card.card-primary
                 .card-header 
                     h3.card-title Questions
@@ -252,19 +241,6 @@ block content
                     button.btn.btn-danger(type='button' data-dismiss='modal' onclick="deleteQ()") Delete
                     button.btn.btn-secondary(type='button' data-dismiss='modal') Close
     
-    
-    .modal.fade#deleteAssignment(tabindex ="-1" role="dialog" )
-        .modal-dialog.modal-sm
-            .modal-content
-                .modal-header
-                    h4.modal-title Delete Assignment
-                .modal-body
-                    p All the questions in this assignment will be deleted.
-                    #dbody
-                .modal-footer
-                    button.btn.btn-danger(type='button' data-dismiss='modal' onclick="aDelete()") Delete
-                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
-    
     .modal.fade#oldQues(tabindex ="-1" role="dialog" )
         .modal-dialog.modal-xl
             .modal-content
@@ -309,4 +285,4 @@ block content
                     button.btn.btn-secondary(type='button' data-dismiss='modal') Close
     
 
-    script(src="/js/editAssignment.js")
+    script(src="/js/Tassignment.js")

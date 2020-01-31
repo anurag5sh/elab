@@ -30,9 +30,14 @@ html
                             li.nav-item(role='presentation')
                                 a.nav-link(href='/contest')
                                     strong CONTEST
-                            li.nav-item(role='presentation')
-                                a.nav-link(href='/assignment')
+                            li.dropdown.nav-item
+                                a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#')
                                     strong ASSIGNMENT
+                                .dropdown-menu(role='menu')
+                                    a.dropdown-item(role='presentation' href='/assignment')
+                                        strong VIEW ASSIGNMENT
+                                    a.dropdown-item(role='presentation' href='/assignment/manage')
+                                        strong MANAGE ASSIGNMENT
                             li.dropdown.nav-item
                                 a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#')
                                     script.

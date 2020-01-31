@@ -25,21 +25,41 @@ router.get('/',authenticate, async (req,res) => {
 
     if(req.session.staff_id){
         const current = await Assignment.find({ 'duration.ends' :{$gt : new Date()} }).lean().select({id:1,sem:1,_id:0}).sort({id:1});
-        res.render('teacher/assignment',{current : current});
+        res.render('teacher/assignment',{current:current});
     }
     else{
         const assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).lean().select('id questions');
         if(!assignment) return res.send("Try again later.");
 
-        let questions = await AssignmentQ.find({assignmentId:assignment.id}).lean().select({_id:0,test_cases:0});
+        let questions = await AssignmentQ.find({assignmentId:assignment.id}).lean().select({_id:0,name:1,qid:1});
         if(!questions) questions = [];
 
-        const old = await AssignmentQ.find({qid:{$in:assignment.questions}}).lean().select({_id:0,test_cases:0});
+        const old = await AssignmentQ.find({qid:{$in:assignment.questions}}).lean().select({_id:0,name:1,qid:1});
         questions = questions.concat(old);
 
         res.render('assignment',{questions:questions});
     }
     
+});
+
+router.get('/get/:id',authenticate,teacher,async (req,res) =>{
+
+    const assignment = await Assignment.findOne({id:req.params.id,'duration.ends' :{$gt : new Date()}}).lean().select('id questions');
+    if(!assignment) return res.send("Try again later.");
+
+    let questions = await AssignmentQ.find({assignmentId:assignment.id}).lean().select({_id:0,name:1,qid:1});
+    if(!questions) questions = [];
+
+    const old = await AssignmentQ.find({qid:{$in:assignment.questions}}).lean().select({_id:0,name:1,qid:1});
+    questions = questions.concat(old);
+
+    res.send(questions);
+
+});
+
+router.get('/manage',authenticate,teacher,async (req,res) => {
+    const current = await Assignment.find({ 'duration.ends' :{$gt : new Date()} }).lean().select({id:1,sem:1,_id:0}).sort({id:1});
+        res.render('teacher/manageAssignment',{current : current});
 });
 
 //teacher editing details

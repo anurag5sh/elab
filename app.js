@@ -7,7 +7,6 @@ const register = require('./routes/register');
 const contest = require('./routes/contest');
 const practice = require('./routes/practice');
 const admin = require('./routes/admin');
-const question = require('./routes/question');
 const api = require('./routes/api');
 const assignment = require('./routes/assignment');
 const session = require('express-session');
@@ -33,7 +32,7 @@ app.set('views',__dirname+"/views");
 
 app.use(session({
     secret: 'elab',
-    cookie:{sameSite:"strict",maxAge:2*60*60*1000},
+    cookie:{sameSite:"strict",maxAge:2*60*60*60*1000},
     resave: true,
     rolling:true,
     saveUninitialized: false,
@@ -50,7 +49,6 @@ app.use('/contest', contest);
 app.use('/practice', practice);
 app.use('/admin', admin);
 app.use('/api',api);
-app.use('/add', question);
 app.use('/register', register);
 
 

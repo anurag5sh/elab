@@ -71,16 +71,16 @@ html(lang='en')
           br
           br
           label(for='descrip') Description
-          input.form-control.mwidth#Contest(type='text', name='description', placeholder='Description', required='true')
+          input.form-control.mwidth#descrip(type='text', name='description', placeholder='Description', required='true')
           br
           br
-          label(for='Start Time') Date
+          label(for='timings') Date
           input#timings.form-control.mwidth(type='text' name='timings' )
           
           br
           br
           .row
-            label(for='select ') For:  
+            label For: &nbsp;
             .col-1.custom-control.custom-checkbox
               input(type='checkbox',class= "custom-control-input", name='year', id="1-year", value='1')
               label(class="custom-control-label" for="1-year") 1st Year

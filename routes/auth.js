@@ -166,7 +166,7 @@ router.post('/uploadImage', async (req,res,next)=>{
   }next();
 },upload.single('profile_image'), authenticate,async (req,res,next)=> {
   let student = await Student.findOne({usn: req.session.usn}).select('profile_image');
-  console.log(req.file);
+  
 if(req.file){
   
   const ext = req.file.originalname.split('.');
@@ -176,7 +176,7 @@ if(req.file){
     await student.save();
   
   // await student.save();
-  return res.send(["Profile Photo Updated",student.profile_image]);
+  return res.send("Profile Photo Updated");
 }
 else
 {

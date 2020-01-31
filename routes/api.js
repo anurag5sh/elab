@@ -24,7 +24,8 @@ router.post('/', authenticate,async (req,res)=>{
     const schema = Joi.object({
         source : Joi.string().required().allow(''),
         language : Joi.number().required(),
-        qid: Joi.string().required()
+        qid: Joi.string().required(),
+        custom: Joi.string().allow('')
     });
 
     return schema.validate(body);
@@ -37,6 +38,7 @@ router.post('/', authenticate,async (req,res)=>{
   if(req.body.qid.split("/")[1] == "practice"){
     let q = req.body.qid.split("/")[2];
     question = await Practice.findOne({qid:q }).lean().select('sample_cases');
+    
     if(!question) return res.send("Question not found!!");
   }
   else if(req.body.qid.split("/")[1] == "contest")
@@ -45,9 +47,13 @@ router.post('/', authenticate,async (req,res)=>{
     question = await ContestQ.findOne({qid:c}).lean().select('sample_cases');
     if(!question) return res.send("Question not found!!");
   }
-  
-
-  let sample = question.sample_cases;
+  let sample = null;
+  if(req.body.custom){
+  sample = [ { input: req.body.custom, output: "1" }];
+  }
+  else{
+  sample = question.sample_cases;
+  }
   if(req.body.source.trim()=='')
     return res.send("Source Code cannot be empty!");
 

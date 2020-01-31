@@ -4,6 +4,7 @@ html(lang='en')
     title Elab Login
     meta(charset='UTF-8')
     meta(name='viewport', content='width=device-width, initial-scale=1')
+    link(rel='stylesheet', href='/assets/bootstrap/css/bootstrap.min.css')
     // ===============================================================================================
     link(rel='icon', type='image/png', href='/images/icons/favicon.ico')
     // ===============================================================================================
@@ -21,6 +22,7 @@ html(lang='en')
     // ===============================================================================================
     link(rel='stylesheet', type='text/css', href='/css/util.css')
     link(rel='stylesheet', type='text/css', href='/css/main.css')
+    
     // ===============================================================================================
   body
     .limiter
@@ -41,10 +43,20 @@ html(lang='en')
               span.symbol-input100
                 
                 span.fa.fa-lock
-            input.form-radio(type='radio', name='type', value='student',checked="checked")
-            | Student
-            input.form-radio(type='radio', name='type', value='teacher')
-            | Teacher
+            //- input.form-radio(type='radio', name='type', value='student',checked="checked")
+            //- | Student
+            .row
+              .col-6  
+                .custom-control.custom-radio
+                  input#student.custom-control-input(type='radio', name='type', value='student', checked="checked")
+                  label.custom-control-label(for='student') Student
+              .col-6
+                .custom-control.custom-radio
+                  input#teacher.custom-control-input(type='radio', name='type', value='teacher')
+                  label.custom-control-label(for='teacher') Teacher
+
+            //- input.form-radio(type='radio', name='type', value='teacher')
+            //- | Teacher
           
             .container-login100-form-btn.p-t-25
               button.login100-form-btn

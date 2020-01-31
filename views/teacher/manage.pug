@@ -40,7 +40,7 @@ html
                         .c-card-block
                             a(href="manage/"+i.url)
                                 .cheader
-                                    h1 #{ i.name}
-                                p
-                                    | Himanshu shekar
+                                    h4 #{ i.name}
+                                    br
+                                p.block-with-text=i.description                                
                                 button.attem.btn.btn-info(type='button' onclick="location.href=manage/"+i.url+"") Manage

@@ -15,35 +15,35 @@ body
             .header
               h4.title(style="margin-top:15px;margin-left:15px;margin-bottom:8px;") Edit Profile
             .content
-              form
+              form#profile
                 .row
                   .col-md-4
                     .form-group
                       label USN
-                      input.form-control(type='text' readonly placeholder='' value=student.usn)
+                      input.form-control(type='text' disabled placeholder='' value=student.usn)
                   .col-md-4
                     .form-group
                       label First Name
-                      input.form-control(type='text' readonly placeholder='First Name' value=student.name)    
+                      input.form-control(type='text' disabled placeholder='First Name' value=student.name)    
                   .col-md-4
                     .form-group
                       label Last Name
-                      input.form-control(type='text' readonly placeholder='Last Name' value='') 
+                      input.form-control(type='text' disabled placeholder='Last Name' value='') 
                 .row
                   .col-md-6
                     .form-group
                       label Priamry Email
-                      input.form-control(type='email' readonly placeholder='' value=student.email)
+                      input.form-control(type='email' disabled placeholder='' value=student.email)
                   .col-md-6
                     .form-group
                       label(for='exampleInputEmail1') Recovery Email
-                      input.form-control(type='email' placeholder='Email')
+                      input.form-control(type='email' name="recovery_email" placeholder='Email' value=student.recovery_email)
                 .row
                   .col-md-12
                     .form-group
                       label About Me
-                      textarea.form-control(rows='5' placeholder='Here can be your description' value='')
-                button.btn.btn-info.btn-fill.pull-right(type='submit') Update Profile
+                      textarea#about_me.form-control(rows='5' name="about_me" placeholder='Here can be your description')
+                button.btn.btn-info.btn-fill.pull-right(type='button' id='update-profile') Update Profile
                 .clearfix
         .col-md-4
           .card.card-user
@@ -51,35 +51,97 @@ body
               img(src='https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400' alt='...')
             .content
               .author
-                a(href='#')
-                  img.avatar.border-gray(src='images/face-3.jpg' alt='...')
+                form(enctype="multipart/form-data" method="post")#img
+                  a(href='#')
+                    img.avatar.border-gray#image(src=student.profile_image alt='...')
+                    input(type='file' accept='image/*' name='profile_image' id='image-upload' style="display:none;")
+                  h4.title #{student.name}
+                    br
+                    small #{student.usn}
+                  p.description.text-center #{student.about_me}
+                  button.btn.btn-info.btn-fill.pull-right(type='button' onclick="javascript:$('#image-upload').click();" id='update-image') Update Image 
+            //- button.btn.btn-info.btn-fill.pull-right(type='button' id='update-cover') Update Cover
             hr
             br
 
   .content(style="color:#9A9A9A;")
     .container-fluid
       .row
-        .col-md-4
+        .col-md-3
           .card
             .header
               h4.title(style="margin-top:15px;margin-left:15px;margin-bottom:8px;") Update Password
             .content
-              form
+              form#password
                 .row
-                  .col-md-8
+                  .col-md-11
                     .form-group
                       label Current Password
-                      input.form-control(type='password'  placeholder='' value="")
+                      input.form-control(type='password' name= 'current_password' placeholder='' value="")
                 .row
-                  .col-md-8
+                  .col-md-11
                     .form-group
                       label New Password
-                      input.form-control(type='password'  placeholder='' value="")
+                      input.form-control(type='password' name = 'new_password' placeholder='' value="")
                 .row
-                  .col-md-8
+                  .col-md-11
                     .form-group
                       label Re-enter New Password
-                      input.form-control(type='password'  placeholder='' value="")
-                button.btn.btn-info.btn-fill.pull-right(type='submit') Update Password
+                      input.form-control(type='password' name = 're_entered_password'  placeholder='' value="")
+                button.btn.btn-info.btn-fill.pull-right(type='button' id="update-password") Update Password
                 .clearfix
+
+script.
+  $(document).ready(function(){
+    $("#update-profile").click(function(){
+
+      $.post("/profile",$("#profile").serialize(),
+      function(data,status){
+        toastr.success(data);
+      });
+
+    });
+
+    $("#image").click(function(){
+      $('#image-upload').click();
+    });
+
+    
+
+
+    $("#update-password").click(function(){
+
+      $.post("/password",$("#password").serialize(),
+      function(data,status){
+        toastr.success(data);
+        //- alert(data);
+      }).fail(function(data, status, error){
+        toastr.error(data.responseText);
+      });
+
+    });
+
+  });
+  $("#about_me").val("#{student.about_me}");
+  $('#image-upload').change(submitPhoto);
+  function submitPhoto(){
+              
+              if(document.getElementById("image-upload").value != ""){
+             $.ajax({
+                url: '/uploadImage',
+                type: 'post',
+                data: new FormData($('#img')[0]),
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function( data, textStatus, jQxhr ){
+                    toastr.success(data);
+                    setTimeout(function(){location.reload();},500);
+                },
+                error: function( jqXhr, textStatus, errorThrown ){
+                    toastr.error(errorThrown);
+                }
+            });
+              }
+        }
 

@@ -8,21 +8,36 @@ html
     link(rel='stylesheet' href='list_style/bootstrap/css/new.css')
     link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,400,700')
     link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css')
+    style.
+        body{
+            background-color:#f5f5f0;
+        }
+        .pull-right{
+                float:right;
+            }
     body
         .jumbotron.text-left.bg-info.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
             h1 PRACTICE
         div#practice
             main.page.projets-page
                 section.portfolio-block.project-no-images
-                    .container1
-                        .row1
-                            - let questions=q
-                            each i in questions
-                                .col-md-6.col-lg-4
-                                    .project-card-no-image
-                                        h3(style="font-family:Lato,sanf-serif")=i.name
-                                        a.btn1.btn1-outline-primary.btn1-sm(role='button' href='/practice/'+i.qid) SOLVE
-                        
+                    .container-fluid
+                        .row
+                            .col-lg-9
+                                - let questions=q
+                                each i in questions
+                                    .col-lg-4.col-md-4
+                                        .project-card-no-image
+                                            h3(style="font-family:Lato,sanf-serif")=i.name
+                                                br
+                                                a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' href='/practice/'+i.qid) SOLVE
+
+                            .col-lg-3.text-center
+                                h2 Administration
+                                hr(style="border-color:grey;")
+                                br
+                                button.btn.btn-primary
+                                    i.fas.fa-plus-square &nbsp; Add Question
         script(src='list_style/js/jquery.min.js')
         //-script(src='list_style/bootstrap/js/bootstrap.min.js')
         script(src='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js')

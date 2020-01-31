@@ -148,7 +148,7 @@ html(lang='en')
         font-family: 'Open Sans', sans-serif;
         margin-top:4px;
         margin-bottom:0px;
-        font-size:18px;
+        font-size:15.2px;
       }
       .ql-editor{
         padding:0px 0px;
@@ -214,7 +214,13 @@ html(lang='en')
         a(href='#opbox' style="color:white;font-weight:bold") Submit
       button#button.btn.btn-primary(value='Run', onclick='readText()', style='font-weight:bold;color:white;float:right;margin-right:20px;width:100px;')
         a(href='#loader' style="color:white;font-weight:bold") Run
-      
+    .row(style="margin:30px;")
+      .col-lg-5.col-md-4
+        .custom-control.custom-checkbox
+          input#custom_i.custom-control-input(type='checkbox' name='')
+          label.custom-control-label(for='custom_i') Custom Input
+                  
+        textarea.form-control(rows="5" id="custom_input" style="display:none")
     
     #opbox.output_box(style="width:650px; display:inline-block;")
     #loader(style="height:600px;display:none;")
@@ -272,17 +278,30 @@ html(lang='en')
       let l = document.getElementById("lang").value;
       l=l.slice(-2);
       $(document).ready(function(){
+      let input = null;
+      if(document.getElementById("custom_i").checked == true){
+        input = document.getElementById("custom_input").value;
+      }
       $.post("/api",
       {
       source:editor.getValue(),
       language: l,
-      qid: window.location.pathname
+      qid: window.location.pathname,
+      custom: input
       },
-      function(data,status){ if(!Array.isArray(data)){
+      function(data,status){ 
+        if(document.getElementById("custom_i").checked == true){
+          $(".custom").remove();  
+          $('#opbox').append('<div class="card custom" style="width:650px;;"><label><b>Custom TestCase</b></label><hr style="width:25%;margin-top:0rem;"><label><b>Input</b></label><textarea readonly="readonly" class="bg-col" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:auto;">'+ document.getElementById("custom_input").value+'</textarea ><br><label><b>Output</b></label><textarea readonly="readonly" class="bg-col" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:125px;">'+data[0].output+'</textarea>') 
+          document.getElementById("loader").style.display="none";  
+        }
+        else{
+        if(!Array.isArray(data)){
         toastr.warning(data);
         document.getElementById("loader").style.display="none";
         return;
       }
+
       for(let i=0;i<data.length;i++)
       {
       if(data[i].id==3){
@@ -308,6 +327,7 @@ html(lang='en')
       document.getElementById("loader").style.display="none";
       document.getElementById("out").style.display="block";
       window.location.href="#opbox";
+        }
       });
       
       });
@@ -389,6 +409,7 @@ html(lang='en')
           }
           
           document.getElementById("out").style.display="none";
+          $(".custom").remove();
           document.getElementById("loader").style.display="block";
           
         });
@@ -407,4 +428,21 @@ html(lang='en')
         document.getElementById("loader").style.display="block";
         //- document.getElementById("loader").style.height="350px";
         });
+
+        $('#custom_i').click(function(){
+          if(document.getElementById('custom_i').checked == true){
+          document.getElementById('custom_input').style.display = "block";
+          }else
+          {
+            $('.custom').remove();
+          document.getElementById('custom_input').style.display = "none";
+          }
+        });
+
+        $('#custom_input').click(function(){
+          if(document.getElementById('custom_i').checked == false)
+          $('#custom_i').click();
+        })
+
+
         });

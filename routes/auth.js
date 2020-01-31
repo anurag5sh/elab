@@ -11,6 +11,21 @@ const session = require('express-session');
 const admin = require('../middleware/admin');
 const {Practice} = require('../models/practice');
 
+const fs = require('fs');
+
+const multer = require('multer');
+let storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, '/home/abdul/elab/profilePhotos')
+  },
+  filename: function (req, file, cb) {
+    console.log(file);
+    let file_name = file.originalname.split('.');
+    cb(null, req.session.usn+'.'+file_name[1])
+  }
+  })
+  let upload = multer({ storage: storage })
+
 //filter teacher and student login
 //redirect to respective dashboard
 router.get('/',(req,res,next)=>{
@@ -51,12 +66,134 @@ router.get('/logout', function(req, res, next) {
 
 
 //profile
-router.get('/profile', async function(req,res){
-  const student = await Student.findOne({ usn: req.session.usn }).lean().select('usn name email');
+router.get('/profile', authenticate,async function(req,res){
+
+  if(req.session.staff_id){
+    const teacher = await Teacher.findOne({ staff_id: req.session.staff_id }).lean().select('staff_id name email recovery_email about_me');
+
+    if(!teacher){
+    return res.status(400).end();
+  }
+  res.render('teacher/profile',{teacher:teacher});
+  }
+  else{
+    const student = await Student.findOne({ usn: req.session.usn }).lean().select('usn name email recovery_email about_me profile_image');
   if(!student){
     return res.status(400).end();
   }
   res.render('profile',{student:student});
+  }
+  
+});
+
+router.post('/profile', authenticate, async (req, res) =>{
+  if(!req.body.recovery_email || req.body.recovery_email.trim() == ''){
+    return res.send("Recovery Email cannont be Blank please fill");
+  }
+
+  if(req.session.staff_id){
+    let teacher = await Teacher.findOne({ staff_id: req.session.staff_id}).select('recovery_email about_me');
+    if(!teacher) return res.status(400).send("Invalid ID");
+    teacher.about_me = req.body.about_me;
+    teacher.recovery_email = req.body.recovery_email;
+    await teacher.save();
+    res.send("Saved");
+  }
+  else{
+    let student = await Student.findOne({ usn: req.session.usn }).select('recovery_email about_me');
+    if(!student) return res.status(400).send("Invalid USN");
+    student.recovery_email = req.body.recovery_email;
+    student.about_me = req.body.about_me;
+    await student.save();
+    res.send("Saved");
+  }
+});
+
+//password reset validation and updation
+router.post('/password',authenticate, async (req, res)=>{
+
+if(!req.body.current_password || req.body.current_password == ''){
+  return res.status(400).send("Current Password Field is Blank");
+}
+else if(!req.body.new_password || req.body.new_password < 5){
+  return res.status(400).send("New Password length should be of minimum 5 character long");
+}
+else if(!req.body.re_entered_password || req.body.re_entered_password < 5){
+  return res.status(400).send("New Password length should be of minimum 5 character long");
+}
+  let user=null;
+  if(req.session.staff_id)
+  user = await Teacher.findOne({staff_id:req.session.staff_id}).select('password');
+  else
+  user = await Student.findOne({usn:req.session.usn}).select('password');
+  
+  if(req.body.new_password == req.body.re_entered_password){
+
+    const changedPassword = await bcrypt.compare(req.body.current_password,user.password);
+
+    if(changedPassword) {
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(req.body.new_password, salt);
+      user.save();
+      return res.send("Password Successfully Changed");
+      
+    }
+    else
+      return res.status(400).send("Current Password is Invalid");
+  }
+  else{
+    return res.status(400).send("New password and Re-entered Password are not same");
+  }
+
+});
+
+
+// Image Update
+
+router.post('/uploadImage', async (req,res,next)=>{
+  
+  let student = await Student.findOne({usn: req.session.usn}).select('profile_image');
+  if(student.profile_image != '/profileImage/default.png' ){
+    const fileName = student.profile_image.split('.');
+    fs.unlink('/home/abdul/elab/profilePhotos/'+req.session.usn + '.' + fileName[1] , async (err) => {
+      if (err) {
+        console.log(err);
+      }
+      
+      // student.profile_image = '/profileImage/' + new_file_name + '.' + ext[1];
+      // await student.save();
+    });
+  }next();
+},upload.single('profile_image'), authenticate,async (req,res,next)=> {
+  let student = await Student.findOne({usn: req.session.usn}).select('profile_image');
+  
+if(req.file){
+  
+  const ext = req.file.originalname.split('.');
+  const new_file_name = req.session.usn;
+ // const old_file_name = student.profile_image.split('.');
+  student.profile_image = '/profileImage/' + new_file_name + '.' + ext[1];
+    await student.save();
+  
+  // await student.save();
+  return res.send("Profile Photo Updated");
+}
+else
+{
+  student.profile_image = '/profileImage/default.png';
+  await student.save();
+return res.status(400).send("No Image uploaded");
+}
+});
+
+//download image
+router.get('/profileImage/:name',authenticate,async (req,res)=>{
+  fs.readFile('/home/abdul/elab/profilePhotos/'+req.params.name, function(err, data) {
+      if(err) console.log(err);
+      //res.writeHead(200, {'Content-Type': 'image/jpeg'});
+      res.sendFile('/home/abdul/elab/profilePhotos/'+req.params.name);
+      
+  });
 });
 
 //login validation

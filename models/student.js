@@ -35,6 +35,13 @@ const studentSchema = new mongoose.Schema({
   recovery_email : {
     type: String,
   },
+  about_me : {
+    type: String,
+    maxlength: 300
+  },
+  profile_image: {
+    type: String
+  }
 
 
   

@@ -63,14 +63,6 @@ html
       .row{
         margin-left:10px;
       }
-    script.
-      function submitForm(){
-      const con = $.post("", $("#con").serialize(), function(data,status) {
-         alert(data);
-              })
-                  .fail(function(error){
-                        alert(error.responseText);
-                  })}
   body
     .contestform
       div(class = detail)
@@ -134,3 +126,10 @@ html
         function submitform(){
           
         }
+        function submitForm(){
+        const con = $.post("", $("#con").serialize(), function(data,status) {
+          toastr.success(data);
+                })
+                  .fail(function(error){
+                        toastr.error(error.responseText);
+                  })}

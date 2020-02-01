@@ -40,6 +40,7 @@ const contestSchema = new mongoose.Schema({
     usn:{type : String},
     name:{type:String},
     time:{ type: Date, default:new Date()},
+    year:{type:Number},
     _id : false
   }],
   questions:{

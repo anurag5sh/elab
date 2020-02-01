@@ -45,7 +45,7 @@ router.get('/',(req,res,next)=>{
 //student dashboard
 router.get('/dashboard', authenticate,async (req,res)=> {
     const q = await Practice.find().sort({date:-1}).limit(5).lean().catch(err => res.send(err));
-    if(!req.session.name.staff_id)
+    if(!req.session.staff_id)
     res.render('dashboard', {q:q});
     else
     res.status(404).end();
@@ -71,7 +71,7 @@ router.get('/logout', function(req, res, next) {
 router.get('/profile', authenticate,async function(req,res){
 
   if(req.session.staff_id){
-    const teacher = await Teacher.findOne({ staff_id: req.session.staff_id }).lean().select('staff_id name email recovery_email about_me');
+    const teacher = await Teacher.findOne({ staff_id: req.session.staff_id }).lean().select('staff_id fname lname email recovery_email about_me');
 
     if(!teacher){
     return res.status(400).end();
@@ -79,7 +79,7 @@ router.get('/profile', authenticate,async function(req,res){
   res.render('teacher/profile',{teacher:teacher});
   }
   else{
-    const student = await Student.findOne({ usn: req.session.usn }).lean().select('usn name email recovery_email about_me profile_image');
+    const student = await Student.findOne({ usn: req.session.usn }).lean().select('usn fname lname email recovery_email about_me profile_image');
   if(!student){
     return res.status(400).end();
   }
@@ -211,10 +211,11 @@ router.post('/', async (req, res) => { console.log(req.body);
     const validPassword = await bcrypt.compare(req.body.password, student.password);
     if (!validPassword) return res.render('login',{login_error:"Invalid email or password"});
 
-    req.session.name = student.name; 
+    req.session.fname = student.fname; 
+    req.session.lname = student.lname;
     req.session.usn = student.usn;
     req.session.year = student.year;
-    res.cookie("name", student.name,{sameSite:"strict"});
+    res.cookie("name", student.fname,{sameSite:"strict"});
     return res.redirect('/dashboard');
   }
 
@@ -226,9 +227,10 @@ router.post('/', async (req, res) => { console.log(req.body);
     const validPassword = await bcrypt.compare(req.body.password, teacher.password);
     if (!validPassword) return res.render('login',{login_error:"Invalid email or password"});
 
-    req.session.name = teacher.name;
+    req.session.fname = teacher.fname;
+    req.session.lname = teacher.lname;
     req.session.staff_id = teacher.staff_id;
-    res.cookie("name", teacher.name,{sameSite:"strict"});
+    res.cookie("name", teacher.fname,{sameSite:"strict"});
     if(teacher.isAdmin){
       req.session.isAdmin = teacher.isAdmin;
       return res.redirect('/admin');
@@ -255,7 +257,7 @@ function validate(req) {
 }
 
 router.get('/students/:year',authenticate,teacher, async (req,res) =>{
-  const students = await Student.find({ year: req.params.year }).lean().select({usn:1,name:1,_id:0});
+  const students = await Student.find({ year: req.params.year }).lean().select({usn:1,fname:1,_id:0});
   if(!students) return res.status(400).send("Students not Found");
 
   res.send(students);

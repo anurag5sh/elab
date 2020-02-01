@@ -4,7 +4,7 @@ const moment = require('moment');
 
 const contestSchema = new mongoose.Schema({
   createdBy:{
-    type:mongoose.Schema.Types.ObjectId
+    type:String
   },
   id:{
     type:Number
@@ -55,15 +55,14 @@ const contestSchema = new mongoose.Schema({
     points:{type: Number,default:0},
     _id : false
   }],
-  leaderboard:{
-    position:{type:Number},
+  leaderboard:[{
     name:{type:String},
     usn:{type:String},
     timestamp:{type:Date},
     year:{type:String},
     points:{type:Number},
     _id : false
-  }
+  }]
   
 });
 

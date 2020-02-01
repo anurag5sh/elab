@@ -34,6 +34,13 @@ const teacherSchema = new mongoose.Schema({
   isTeacher:{
       type:Boolean,
       default:true
+  },
+  recovery_email : {
+    type: String,
+  },
+  about_me : {
+    type: String,
+    maxlength: 300
   }
 });
 

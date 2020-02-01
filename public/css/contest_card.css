@@ -38,10 +38,10 @@
   }
   .c-card-block:before {
     content: '';
-    width: 4rem;
-    height: 1rem;
+    width: 6rem;
+    height: 0.5rem;
     border-radius: 50px;
-    right: 40%;
+    right: 34%;
     margin-top:30px;
     background: #12aaeb;
     position: absolute;
@@ -77,4 +77,31 @@
 
   .attem{
     margin:auto;
+  }
+
+  
+
+  .block-with-text {
+    overflow: hidden;
+    position: relative; 
+    max-height: 4.6em; 
+    margin-right: -1em;
+    padding-right: 1em;
+  }
+
+  .block-with-text:before {
+    content: '...';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+  }
+
+  .block-with-text:after {
+    content: '';
+    position: absolute;
+    right: 0;
+    width: 1em;
+    height: 1em;
+    margin-top: 0.2em;
+    background: white;
   }

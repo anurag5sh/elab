@@ -19,22 +19,6 @@ style.
   margin-left:10px;
   }
 
-  
-
-
-
-  /*.box-shadow-3{
-  -webkit-box-shadow:0 14px 24px 0 rgba(62,57,107,.26);box-shadow:0 14px 24px 0 rgba(62,57,107,.26);
-  }
-  .round{
-  border-radius:1.5rem;
-  font-weight:bold;
-  font-size:16px;
-  }
-
-  .pull-right{
-  float:right;
-  }*/
 
 
 .jumbotron.bg-info
@@ -45,36 +29,17 @@ br
   .col-lg-9.col-md-10  
     .row
       each i in contest 
-        //- ul
-        //-   a(href="/contest/"+i.url)=i.name
-
-        //- .col-lg-4.col-md-4
-        //-   .card(style="margin-bottom:20px;")
-        //-     .card-body
-        //-       h4.card-title.text-info #{i.name}
-        //-       p.card-text Some example text.
-        //-       a.btn.btn-sm.btn-info.round.box-shadow-3.pull-right(href='/contest/'+i.url ) Enter
         .col-lg-4  
           .container_card
             .c-card-block
               a(href="/contest/"+i.url)
                 .cheader
-                  h1 #{ i.name}
-                p
-                  | Himanshu shekar
-                button.attem.btn.btn-info(type='button' onclick="location.href=/contest/"+i.url+"") Attempt
+                  h4 #{ i.name}
+                  br
+                p.block-with-text=i.description
+                button.attem.btn.btn-info(type='button' onclick="location.href=/contest/"+i.url+"") View
 
   .col-lg-3.col-md-2  
-    //- .card(style="width:100%;height:240px;margin-top:50px;")
-    //-   .card-body
-    //-     h3.card-title.text-center Administration
-    //-     .row
-    //-       .col.text-center
-    //-         a.btn.btn-info(href='/contest/create') Create Contest
-    //-     br
-    //-     .row
-    //-       .col.text-center    
-    //-         a.btn.btn-info(href='/contest/manage') Manage Contest\
     div(style="margin-top:50px;")
       h2.card-title.text-center Administration
       hr(style="border-color:grey;")
@@ -82,11 +47,11 @@ br
         .col.text-center
           a.btn(href='/contest/create' style="font-size:20px;") 
             i.fas.fa-plus-square
-            label &nbsp; Create Contest
+            label(style="cursor: pointer") &nbsp; Create Contest
       .row
         .col.text-center
           a.btn(href='/contest/manage' style="font-size:20px;")
             i.fas.fa-cogs 
-            label &nbsp; Manage Contest
+            label(style="cursor: pointer") &nbsp; Manage Contest
   
   

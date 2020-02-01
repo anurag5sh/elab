@@ -8,6 +8,13 @@ html
     link(rel='stylesheet' href='list_style/bootstrap/css/new.css')
     link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,400,700')
     link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css')
+    style.
+        body{
+            background-color:#f5f5f0;
+        }
+        .pull-right{
+            float:right;
+        }
     body
         .jumbotron.text-left.bg-info.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
             h1 PRACTICE
@@ -21,7 +28,8 @@ html
                                 .col-md-6.col-lg-4
                                     .project-card-no-image
                                         h3(style="font-family:Lato,sanf-serif")=i.name
-                                        a.btn1.btn1-outline-primary.btn1-sm(role='button' href='/practice/'+i.qid) SOLVE
+                                            br
+                                            a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' href='/practice/'+i.qid) SOLVE
                         
         script(src='list_style/js/jquery.min.js')
         //-script(src='list_style/bootstrap/js/bootstrap.min.js')

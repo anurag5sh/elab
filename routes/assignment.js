@@ -25,21 +25,41 @@ router.get('/',authenticate, async (req,res) => {
 
     if(req.session.staff_id){
         const current = await Assignment.find({ 'duration.ends' :{$gt : new Date()} }).lean().select({id:1,sem:1,_id:0}).sort({id:1});
-        res.render('teacher/assignment',{current : current});
+        res.render('teacher/assignment',{current:current});
     }
     else{
         const assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).lean().select('id questions');
         if(!assignment) return res.send("Try again later.");
 
-        let questions = await AssignmentQ.find({assignmentId:assignment.id}).lean().select({_id:0,test_cases:0});
+        let questions = await AssignmentQ.find({assignmentId:assignment.id}).lean().select({_id:0,name:1,qid:1});
         if(!questions) questions = [];
 
-        const old = await AssignmentQ.find({qid:{$in:assignment.questions}}).lean().select({_id:0,test_cases:0});
+        const old = await AssignmentQ.find({qid:{$in:assignment.questions}}).lean().select({_id:0,name:1,qid:1});
         questions = questions.concat(old);
 
         res.render('assignment',{questions:questions});
     }
     
+});
+
+router.get('/get/:id',authenticate,teacher,async (req,res) =>{
+
+    const assignment = await Assignment.findOne({id:req.params.id,'duration.ends' :{$gt : new Date()}}).lean().select('id questions');
+    if(!assignment) return res.send("Try again later.");
+
+    let questions = await AssignmentQ.find({assignmentId:assignment.id}).lean().select({_id:0,name:1,qid:1});
+    if(!questions) questions = [];
+
+    const old = await AssignmentQ.find({qid:{$in:assignment.questions}}).lean().select({_id:0,name:1,qid:1});
+    questions = questions.concat(old);
+
+    res.send(questions);
+
+});
+
+router.get('/manage',authenticate,teacher,async (req,res) => {
+    const current = await Assignment.find({ 'duration.ends' :{$gt : new Date()} }).lean().select({id:1,sem:1,_id:0}).sort({id:1});
+        res.render('teacher/manageAssignment',{current : current});
 });
 
 //teacher editing details
@@ -65,18 +85,27 @@ router.post('/',authenticate,async (req,res) => {
 
 //display single question for student
 router.get('/:qid',authenticate,async (req,res) => {
+
+    if(req.session.staff_id){
+        const question =  await AssignmentQ.findOne({qid:req.params.qid}).lean();
+        return res.render('teacher/editorAssignment',{question:question});
+    }
+
     const assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).lean().select('id questions');
     if(!assignment) return res.status(400).end();
 
-    let idArray = [];
-    idArray.push(assignment.id);
-    assignment.questions.forEach((item,index)=>{
-        idArray.push(item);
-    });
-    const question = await AssignmentQ.findOne({assignmentId:{$in:idArray},qid:req.params.qid}).lean().select({_id:0,test_cases:0,date:0});
+    if(assignment.questions.includes(req.params.qid)){
+        const question = await AssignmentQ.findOne({qid:req.params.qid}).lean().select({_id:0,test_cases:0,date:0});
+        return  res.render('editorAssignment',{question:question});
+
+    }else
+    {
+        const question = await AssignmentQ.findOne({assignmentId:assignment.id,qid:req.params.qid}).lean().select({_id:0,test_cases:0,date:0});
+        res.render('editorAssignment',{question:question});
+        
+    }
     
-    if(!question) return res.send("Invalid ID");
-    res.render('editorAssignment',{question:question});
+    return res.send("Invalid ID");
 
 });
 
@@ -86,13 +115,16 @@ router.post('/:qid',authenticate,async (req,res)=>{
     const assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).select('id questions submissions');
     if(!assignment) return res.status(400).end();
 
-    let idArray = [];
-    idArray.push(assignment.id);
-    assignment.questions.forEach((item,index)=>{
-        idArray.push(item);
-    });
-    const question = await AssignmentQ.findOne({assignmentId:{$in:idArray},qid:req.params.qid}).lean().select({_id:0,test_cases:1});
+    if(assignment.questions.includes(req.params.qid)){
+
+    const question = await AssignmentQ.findOne({qid:req.params.qid}).lean().select({_id:0,test_cases:1});
     if(!question) return res.send("Invalid ID");
+    }
+    else{
+
+    const question = await AssignmentQ.findOne({assignmentId:assignment.id,qid:req.params.qid}).lean().select({_id:0,test_cases:1});
+    if(!question) return res.send("Invalid ID");
+    }
 
     const testcase = question.test_cases;
     let contest_points = 0;

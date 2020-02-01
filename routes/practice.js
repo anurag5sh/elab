@@ -7,6 +7,8 @@ const authenticate = require('../middleware/auth');
 const {Practice,validatePractise} = require('../models/practice');
 const moment = require('moment');
 const request = require("request-promise");
+const teacher = require('../middleware/teacher');
+
 
 
 function encode64(string){ //encoding to base64
@@ -30,10 +32,17 @@ router.get('/', authenticate,async (req,res)=> {
 
 
 router.get('/:qid', authenticate, async (req,res)=>{
-  const question = await Practice.findOne({qid: req.params.qid});
+  const question = await Practice.findOne({qid: req.params.qid}).lean();
   if(!question) return res.send("Question not found!!");
 
-  res.render('editor', {question : _.pick(question,['name','statement','constraints', 'input_format','output_format','sample_cases'])});
+  if(req.session.staff_id){
+    res.render('teacher/editor', {question : _.pick(question,['name','statement','constraints', 'input_format','output_format','sample_cases'])});
+
+  }
+  else{
+    res.render('editor', {question : _.pick(question,['name','statement','constraints', 'input_format','output_format','sample_cases'])});
+
+  }
 });
 
 router.post('/:qid',authenticate,async (req,res) => {
@@ -79,26 +88,109 @@ router.post('/:qid',authenticate,async (req,res) => {
 
 });
 
-router.post('/',async (req,res)=>{
+//adding a new question
+router.post('/',authenticate,teacher,async (req,res)=>{
 
     const {error} = validatePractise(req.body);
-    if(error) return res.send(error.message);
+    if(error) return res.status(400).send(error.message);
     const date = moment().format('DDMMYY');
-    let count = await Practice.countDocuments({qid: new RegExp("^"+date)});
-
-    let question = new Practice(_.pick(req.body, ['qid','name','statement', 'constraints', 'input_format','output_format']));
-    question.qid+= ++count;
-    for(let i=0;i<req.body.i_sample.length;i++){
-      question.sample_cases.push({input:req.body.i_sample[i], output:req.body.o_sample[i]});
+    let lastInserted = await Practice.find({qid:new RegExp('\^'+date)}).sort({_id:-1}).limit(1).lean().select('qid');
+    let count =0;
+    if(lastInserted.length>0){
+        count = lastInserted[0].qid.replace(date,"");
     }
 
-    for(let i=0;i<req.body.i_testcase.length;i++){
-        question.test_cases.push({input:req.body.i_testcase[i], output:req.body.o_testcase[i]});
-    }
+    let question = new Practice();
+    question.name = req.body.name;
+    question.constraints = req.body.constraints;
+    question.input_format = req.body.i_format;
+    question.output_format = req.body.o_format;
+    question.statement=decodeURIComponent(req.body.statement); 
+    question.qid=date + (++count);
+    if(Array.isArray(req.body.i_sample1)){
 
+      for(let i=0;i<req.body.i_sample1.length;i++){
+          question.sample_cases.push({input:req.body.i_sample1[i], output:req.body.o_sample1[i]});
+      }
+      }
+      else{
+          question.sample_cases.push({input:req.body.i_sample1, output:req.body.o_sample1});
+          
+      }
+      
+      if(Array.isArray(req.body.i_testcase1)){
+  
+          for(let i=0;i<req.body.i_testcase1.length;i++){
+              question.test_cases.push({input:req.body.i_testcase1[i], output:req.body.o_testcase1[i],points:req.body.points[i]});
+          }
+      }
+      else
+      {
+          question.test_cases.push({input:req.body.i_testcase1, output:req.body.o_testcase1,points:req.body.points});
+      }
+      question.explanation= req.body.explanation;
     await question.save();
 
-    res.send(question);
+    res.send("Question Added");
+});
+
+
+//editing a question
+router.post('/edit/:qid',authenticate,teacher,async (req,res)=>{
+  const {error} = validatePractise(req.body);
+    if(error) return res.status(400).send(error.message);
+
+    let question  = await Practice.findOne({qid:req.params.qid});
+    if(!question) return res.status(400).send('Invalid ID');
+
+    question.name = req.body.name;
+    question.constraints = req.body.constraints;
+    question.input_format = req.body.i_format;
+    question.output_format = req.body.o_format;
+    question.statement=decodeURIComponent(req.body.statement); 
+
+    question.sample_cases = [];
+    question.test_cases =[];
+    if(Array.isArray(req.body.i_sample1)){
+
+      for(let i=0;i<req.body.i_sample1.length;i++){
+          question.sample_cases.push({input:req.body.i_sample1[i], output:req.body.o_sample1[i]});
+      }
+      }
+      else{
+          question.sample_cases.push({input:req.body.i_sample1, output:req.body.o_sample1});
+          
+      }
+      
+      if(Array.isArray(req.body.i_testcase1)){
+  
+          for(let i=0;i<req.body.i_testcase1.length;i++){
+              question.test_cases.push({input:req.body.i_testcase1[i], output:req.body.o_testcase1[i],points:req.body.points[i]});
+          }
+      }
+      else
+      {
+          question.test_cases.push({input:req.body.i_testcase1, output:req.body.o_testcase1,points:req.body.points});
+      }
+      question.explanation= req.body.explanation;
+    await question.save().then(()=>{
+      res.send("Question saved.")
+    })
+    .catch(err =>{
+      res.status(400).send("Something went wrong!");
+    });
+
+
+});
+
+
+router.get('/edit/:qid',authenticate,teacher,async (req,res) => {
+  const question  = await Practice.findOne({qid:req.params.qid}).lean();
+  if(!question) return res.status(400).send("Invalid ID");
+
+  res.send(question);
+  
+
 });
 
 module.exports = router;

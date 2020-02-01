@@ -51,6 +51,9 @@ const practiceSchema = new mongoose.Schema({
           }  ,
           _id : false
         }],
+    explanation:{
+        type:String
+    },
     date:{
         type: Date,
         default: moment().format()
@@ -65,14 +68,15 @@ function validatePractise(question)
     const schema = Joi.object({
         name: Joi.string().required(),
         statement:Joi.string().required(),
-        constraints: Joi.string(),
-        input_format: Joi.string().required(),
-        output_format: Joi.string().required(),
-        i_sample: Joi.required(),
-        o_sample: Joi.required(),
-        i_testcase: Joi.required(),
-        o_testcase: Joi.required(),
-        points:Joi.required()
+        constraints: Joi.string().allow(''),
+        i_format: Joi.string().required(),
+        o_format: Joi.string().required(),
+        i_sample1: [Joi.string(),Joi.array().items(Joi.string())],
+        o_sample1: [Joi.string(),Joi.array().items(Joi.string())],
+        i_testcase1: [Joi.string(),Joi.array().items(Joi.string())],
+        o_testcase1: [Joi.string(),Joi.array().items(Joi.string())],
+        explanation: Joi.string().required(),
+        points:[Joi.number(),Joi.array().items(Joi.number())]
     });
 
     return schema.validate(question);

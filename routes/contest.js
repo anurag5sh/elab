@@ -140,21 +140,22 @@ router.get('/manage/:name',authenticate,teacher, async (req,res) => {
     }
 
     let questionNo = [];
-    for(let i of questions){
+    for( i of questions){
         questionNo.push({qid:i.qid,name:i.name, Accepted: 0,Partially_Accepted: 0,Wrong_Answer: 0});
     }
 
     for (i of contest.submissions){
-        if(i.description == "Accepted" ){
-            const index = questionNo.indexOf( j => j.qid === i.qid);
+        if(i.status === "Accepted" ){
+            const index = questionNo.findIndex( j => j.qid === i.qid);
+            console.log(index);
             questionNo[index].Accepted++;
         }
-        else if(i.description == "Partially Accepted"){
-            const index = questionNo.indexOf( j => j.qid === i.qid);
+        else if(i.status === "Partially Accepted"){
+            const index = questionNo.findIndex( j => j.qid === i.qid);
             questionNo[index].Partially_Accepted++;
         }
         else{
-            const index = questionNo.indexOf( j => j.qid === i.qid);
+            const index = questionNo.findIndex( j => j.qid === i.qid);
             questionNo[index].Wrong_Answer++;
         }
     }
@@ -177,7 +178,7 @@ router.post('/manage/:name',authenticate,async (req,res) =>{
 
 //sign up for contest
 router.get('/sign/:curl',authenticate,contestAuth,async (req,res) => {
-   const con = await Contest.findOneAndUpdate({url:req.params.curl, 'signedUp.usn':{$ne : req.session.usn},'timings.starts':{$lt:new Date()},'timings.ends':{$gt:new Date()}},{$addToSet :{signedUp : {usn: req.session.usn,name:req.session.fname+" "+req.session.lname,time:new Date()},year:req.session.year}},
+   const con = await Contest.findOneAndUpdate({url:req.params.curl, 'signedUp.usn':{$ne : req.session.usn},'timings.starts':{$lt:new Date()},'timings.ends':{$gt:new Date()}},{$addToSet :{signedUp : {usn: req.session.usn,name:req.session.fname+" "+req.session.lname,time:new Date(),year:req.session.year}}},
    (err,doc) => {
     if(err)
     return res.status(404).send("Not Permitted");

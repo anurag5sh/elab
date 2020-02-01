@@ -227,8 +227,10 @@ router.post('/', async (req, res) => { console.log(req.body);
     req.session.name = teacher.name;
     req.session.staff_id = teacher.staff_id;
     res.cookie("name", teacher.name,{sameSite:"strict"});
-    if(teacher.isAdmin)
+    if(teacher.isAdmin){
+      req.session.isAdmin = teacher.isAdmin;
       return res.redirect('/admin');
+    }
     return res.render('teacher/trdashboard');
   }
   

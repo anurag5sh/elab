@@ -25,6 +25,13 @@ router.get('/', admin, (req,res)=> {
     res.render('admin/admin',{name:req.session.name});
 });
 
+router.get('/get/students/:year',admin,async (req,res)=>{
+    const list = await Student.find({year:req.params.year}).lean('usn name');
+    if(!list) return [];
+
+    res.send(list);
+});
+
 router.get('/add',admin, (req,res) => {
     res.render('admin/addAccount');
 });

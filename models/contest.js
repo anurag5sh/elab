@@ -4,7 +4,7 @@ const moment = require('moment');
 
 const contestSchema = new mongoose.Schema({
   createdBy:{
-    type:mongoose.Schema.Types.ObjectId
+    type:String
   },
   id:{
     type:Number

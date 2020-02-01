@@ -81,41 +81,6 @@ $(document).ready(function() {
   
     
   });
-
-  function submitFormAdd(){ 
-      function isQuillEmpty(quill) {
-      if ((quill.getContents()['ops'] || []).length !== 1) { return false }
-      return quill.getText().trim().length === 0
-      }
-
-      if(isQuillEmpty(editor)){
-          alert("Problem Statement cannot be empty");
-          return false;
-      }
-
-      document.getElementById('es').value=encodeURIComponent(JSON.stringify(editor.getContents()));
-      $.ajax({
-            type: "POST",
-            url: "/contest/add/"+curl,
-            data: $("#ques").serialize(),
-            success: function (data) {
- 
-              toastr.success(data);
-              setTimeout(()=>{
-                location.reload();
-              },1000)
-              
- 
-            },
-            error: function (e) {
- 
-               toastr.error(e.responseText);
- 
-            }
-        });
-      return false;
-  }
-  
 /* -----------------------edit------------------------------------- */
 var ecount = 1;
     // CREATE A "DIV" ELEMENT AND DESIGN IT USING jQuery ".css()" CLASS.
@@ -212,74 +177,115 @@ $(document).ready(function() {
 
 
 /*-------------------------*/
+function closeModal() {
+  $('#loading').on('shown.bs.modal', function(e) {
+      $("#loading").modal("hide");
+  });
+}
+
+function submitFormAdd(){ 
+    function isQuillEmpty(quill) {
+    if ((quill.getContents()['ops'] || []).length !== 1) { return false }
+    return quill.getText().trim().length === 0
+    }
+
+    if(isQuillEmpty(editor)){
+        toastr.warning("Problem Statement cannot be empty");
+        return false;
+    }
+
+    document.getElementById('es').value=encodeURIComponent(JSON.stringify(editor.getContents()));
+    $.ajax({
+          type: "POST",
+          url: "/practice",
+          data: $("#ques").serialize(),
+          success: function (data) {
+
+            toastr.success(data);
+            setTimeout(()=>{
+              location.reload();
+            },1000)
+            
+
+          },
+          error: function (e) {
+
+              toastr.error(e.responseText);
+
+          }
+      });
+    return false;
+}
+
 $(document).ready(function() {
-    $("#edit").on('show.bs.modal', function(e){
-    $("#ques-edit")[0].reset();
-    $("#samplecase_extra").empty();
-    $("#testcase_extra").empty();
-    ecount = ecount2 = 1 ;
-    editor_edit.setText("");
-    const qid = e.relatedTarget.dataset.id;
-    $("#qid").val(qid);
+  $("#edit").on('show.bs.modal', function(e){
+  $("#ques-edit")[0].reset();
+  $("#samplecase_extra").empty();
+  $("#testcase_extra").empty();
+  ecount = ecount2 = 1 ;
+  editor_edit.setText("");
+  const qid = e.relatedTarget.dataset.qid;
+  $("#qid").val(qid);
 
-    $.get("/assignment/edit/"+curl+"/"+qid,function(data,status){
-        
-        $("#name-e").val(data.name);
-        editor_edit.setContents(JSON.parse(data.statement));
-        $("#constraints-e").val(data.constraints);
-        $("#i_format-e").val(data.input_format);
-        $("#o_format-e").val(data.output_format);
-        $("#ei_sample1").val(data.sample_cases[0].input);
-        $("#eo_sample1").val(data.sample_cases[0].output);
-        $("#explanation_edit").val(data.explanation);
-        $("#ei_testcase1").val(data.test_cases[0].input);
-        $("#eo_testcase1").val(data.test_cases[0].output);
-        $("#epoints1").val(data.test_cases[0].points);
+  $.get("/practice/edit/"+qid,function(data,status){
+      $("#name-e").val(data.name);
+      editor_edit.setContents(JSON.parse(data.statement));
+      $("#constraints-e").val(data.constraints);
+      $("#i_format-e").val(data.input_format);
+      $("#o_format-e").val(data.output_format);
+      $("#ei_sample1").val(data.sample_cases[0].input);
+      $("#eo_sample1").val(data.sample_cases[0].output);
+      $("#explanation_edit").val(data.explanation);
+      $("#ei_testcase1").val(data.test_cases[0].input);
+      $("#eo_testcase1").val(data.test_cases[0].output);
+      $("#epoints1").val(data.test_cases[0].points);
 
-        for(let i=1;i<data.sample_cases.length;i++){
-            sampleAdd();
-            $("#ei_sample"+(i+1)).val(data.sample_cases[i].input);
-            $("#eo_sample"+(i+1)).val(data.sample_cases[i].output);
-        }
+      for(let i=1;i<data.sample_cases.length;i++){
+          sampleAdd();
+          $("#ei_sample"+(i+1)).val(data.sample_cases[i].input);
+          $("#eo_sample"+(i+1)).val(data.sample_cases[i].output);
+      }
 
-        for(let i=1;i<data.test_cases.length;i++){
-            testAdd();
-            $("#ei_testcase"+(i+1)).val(data.test_cases[i].input);
-            $("#eo_testcase"+(i+1)).val(data.test_cases[i].output);
-            $("#epoints"+(i+1)).val(data.test_cases[i].points);
-        }
+      for(let i=1;i<data.test_cases.length;i++){
+          testAdd();
+          $("#ei_testcase"+(i+1)).val(data.test_cases[i].input);
+          $("#eo_testcase"+(i+1)).val(data.test_cases[i].output);
+          $("#epoints"+(i+1)).val(data.test_cases[i].points);
+      }
 
-    });    
+  });    
 
 
-    });
+  });
 
-    $("#delete").on('show.bs.modal', function(e){
-        $("#dbody").empty();
-        $("#dbody").append("<p>"+e.relatedTarget.dataset.name+"</p><p style='display:none;' id='del_qid'>"+e.relatedTarget.dataset.id+"</p>");
+  $("#delete").on('show.bs.modal', function(e){
+      $("#dbody").empty();
+      $("#dbody").append("<p>"+e.relatedTarget.dataset.name+"</p><p style='display:none;' id='del_qid'>"+e.relatedTarget.dataset.qid+"</p>");
 
-    });
+  });
 
-    
+  
 });
 function editForm(){
-    const qid = document.getElementById('qid').value;
+
+const qid = $("#qid").val();
+
 $("#es_edit").val(encodeURIComponent(JSON.stringify(editor_edit.getContents())));
 $.ajax({
-    type: "POST",
-    url: "/contest/edit/"+curl+"/"+qid,
-    data: $("#ques-edit").serialize(),
-    success: function (data,status, jqXHR) {
-    $("#edit").modal('hide');
-    $("#loading").modal('show');
-    closeModal();
-    toastr.success(data);
-    editor.setText("");
-    },
-    error: function (e) {
-        toastr.error(e.responseText);
+  type: "POST",
+  url: "/practice/edit/"+qid,
+  data: $("#ques-edit").serialize(),
+  success: function (data,status, jqXHR) {
+  $("#edit").modal('hide');
+  $("#loading").modal('show');
+  closeModal();
+  toastr.success(data);
+  editor.setText("");
+  },
+  error: function (e) {
+      toastr.error(e.responseText);
 
-    }
+  }
 
 });
 
@@ -289,12 +295,10 @@ function deleteQ(){
 $("#delete").modal('hide');
 $("#loader").modal('show');
 const qid = $("#del_qid").html();
-const aId = $("#sem").val();
-$.get('/contest/delete/'+curl+'/'+qid,function(data,status){
-    toastr.success(data);
-    closeModal();
-    $("#sem").val(aId).change();
-    $("#del_qid").empty();
+$.get('/practice/delete/'+qid,function(data,status){
+  toastr.success(data);
+  closeModal();
+  $("#del_qid").empty();
 });
 
 }

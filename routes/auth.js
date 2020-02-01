@@ -209,8 +209,7 @@ router.post('/', async (req, res) => { console.log(req.body);
     const validPassword = await bcrypt.compare(req.body.password, student.password);
     if (!validPassword) return res.render('login',{login_error:"Invalid email or password"});
 
-    req.session.userId = student._id;
-    req.session.name = student.name.trim(); 
+    req.session.name = student.name; 
     req.session.usn = student.usn;
     req.session.year = student.year;
     res.cookie("name", student.name,{sameSite:"strict"});
@@ -225,7 +224,6 @@ router.post('/', async (req, res) => { console.log(req.body);
     const validPassword = await bcrypt.compare(req.body.password, teacher.password);
     if (!validPassword) return res.render('login',{login_error:"Invalid email or password"});
 
-    req.session.userId = teacher._id;
     req.session.name = teacher.name;
     req.session.staff_id = teacher.staff_id;
     res.cookie("name", teacher.name,{sameSite:"strict"});

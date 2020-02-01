@@ -73,12 +73,12 @@ router.get('/create',authenticate, (req,res) => {
 });
 
 //Saving the contest in db
-router.post('/create',authenticate, async (req,res)=>{
+router.post('/create',authenticate,teacher, async (req,res)=>{
     const { error } = validateContest(req.body);
     if(error) return res.status(400).send(error.message); 
     if(req.body.starts>=req.body.ends)
         return res.status(400).send("Incorrect timings");
-    const createdBy = req.session.userId;
+    const createdBy = req.session.staff_id;
     let id=null;
     let lastInserted = await Contest.find({}).sort({_id:-1}).limit(1).lean().select('id');
     if(lastInserted[0]){
@@ -114,7 +114,7 @@ router.post('/create',authenticate, async (req,res)=>{
 
 // list the contest made by teacher 
 router.get('/manage',authenticate, async (req,res) => {
-    let trcontest = await Contest.find({createdBy:req.session.userId}); 
+    let trcontest = await Contest.find({createdBy:req.session.staff_id}); 
     if(!trcontest) res.send.status(404).end();
     res.render('teacher/manage',{q:trcontest}); 
     
@@ -131,7 +131,7 @@ router.get('/manage/:name',authenticate,teacher, async (req,res) => {
     for(i of contest.questions){
         questions.push(await ContestQ.findOne({qid:i}).lean());
     }
-    if(contest.createdBy == req.session.userId)
+    if(contest.createdBy == req.session.staff_id)
        return res.render('teacher/manageContest',{contest:contest, questions:questions});
     else
         return res.status(404).end();
@@ -203,7 +203,7 @@ router.post('/add/:cname',authenticate,teacher,async (req,res) => {
     }
 
     question.explanation= req.body.explanation;
-    question.qid+= ++count;
+    question.qid =date + (++count);
     await question.save();
 
     contest.questions.push(question.qid);
@@ -233,6 +233,9 @@ router.post('/edit/:curl/:qid',authenticate,teacher,async (req,res)=>{
     question.constraints = req.body.constraints;
     question.input_format = req.body.i_format;
     question.output_format = req.body.o_format;
+
+    question.sample_cases = [];
+    question.test_cases =[];
 
     if(Array.isArray(req.body.i_sample1)){
 

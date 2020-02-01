@@ -22,7 +22,14 @@ let storage = multer.diskStorage({
 let upload = multer({ storage: storage })
 
 router.get('/', admin, (req,res)=> {
-    res.render('admin/admin',{name:req.session.name});
+    res.render('admin/admin',{name:req.session.fname});
+});
+
+router.get('/get/students/:year',admin,async (req,res)=>{
+    const list = await Student.find({year:req.params.year}).lean('usn fname lname');
+    if(!list) return [];
+
+    res.send(list);
 });
 
 router.get('/add',admin, (req,res) => {
@@ -53,7 +60,7 @@ router.post('/add', upload.single('csv'), admin,async (req, res, next) => {
         const { error } = validate(jsonArray[i]); 
         if (error) return res.status(400).send(error.message + " at index="+ i+1);
 
-        let student = new Student(_.pick(jsonArray[i], ['name', 'email', 'password']));
+        let student = new Student(_.pick(jsonArray[i], ['fname', 'lname','email', 'password']));
         const salt = await bcrypt.genSalt(10);
         student.password = await bcrypt.hash(student.password, salt);
         studentArray.push(student);

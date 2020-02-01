@@ -178,7 +178,7 @@ router.post('/manage/:name',authenticate,async (req,res) =>{
 
 //sign up for contest
 router.get('/sign/:curl',authenticate,contestAuth,async (req,res) => {
-   const con = await Contest.findOneAndUpdate({url:req.params.curl, 'signedUp.usn':{$ne : req.session.usn},'timings.starts':{$lt:new Date()},'timings.ends':{$gt:new Date()}},{$addToSet :{signedUp : {usn: req.session.usn,name:req.session.name,time:new Date()}}},
+   const con = await Contest.findOneAndUpdate({url:req.params.curl, 'signedUp.usn':{$ne : req.session.usn},'timings.starts':{$lt:new Date()},'timings.ends':{$gt:new Date()}},{$addToSet :{signedUp : {usn: req.session.usn,name:req.session.fname+" "+req.session.lname,time:new Date()},year:req.session.year}},
    (err,doc) => {
     if(err)
     return res.status(404).send("Not Permitted");
@@ -486,7 +486,7 @@ if(contest.timings.starts > new Date() && contest.timings.ends < new Date())
             let leadObj = {};
             leadObj.usn=req.session.usn;
             leadObj.timestamp = new Date() - contest.timings.starts;
-            leadObj.name = req.session.name;
+            leadObj.name = req.session.fname;
             leadObj.year = req.session.year;
             leadObj.points = total_points; 
              
@@ -534,7 +534,7 @@ if(contest.timings.starts > new Date() && contest.timings.ends < new Date())
             let leadObj = {};
             leadObj.usn=req.session.usn;
             leadObj.timestamp = new Date()- contest.timings.starts;
-            leadObj.name = req.session.name;
+            leadObj.name = req.session.fname;
             leadObj.year = req.session.year;
             leadObj.points = total_points; 
              
@@ -580,7 +580,7 @@ if(contest.timings.starts > new Date() && contest.timings.ends < new Date())
             let leadObj = {};
             leadObj.usn=req.session.usn;
             leadObj.timestamp = new Date() -  contest.timings.starts;
-            leadObj.name = req.session.name;
+            leadObj.name = req.session.fname;
             leadObj.year = req.session.year;
             leadObj.points = total_points; 
              

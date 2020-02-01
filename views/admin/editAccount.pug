@@ -7,4 +7,38 @@ block append code
 
 
 block content   
-    
+    .card.card-primary
+            .card-header 
+                h3.card-title Edit Account
+            .card-body
+                .col-3(style="margin:auto;")#col
+                    .form-group
+                        select#type(name="type").form-control.custom-select.type
+                            option(selected,disabled) Select Account Type
+                            option(value="student") Student
+                            option(value="teacher") Teacher
+    #List
+
+    script.
+        $("#type").change(()=>{
+            const type= $("#type").val();
+            $("#List").empty();
+            if(type=="teacher"){
+                $("#stud").remove();
+                $.get('/admin/get/teachers',function (data,status){
+
+                });
+            }else
+            {   
+                $("#col").append('<div class="form-group" id="stud"><label>Select Year</label><select id="year" class="form-control custom-select"><option selected disabled>Select Year</option><option value=1>1</option><option value=2>2</option><option value=3>3</option><option value=4>4</option></select></div>');
+                
+                $("#year").change(()=>{
+                    $("#List").empty();
+                     $.get('/admin/get/students/'+$("#year").val(),function (data,status){
+                         $('#List').append('<div class="card card-primary"><div class="card-header"><h3 class="card-title">Students</h3></div><div class="card-body table-responsive p-0"><table class="table table-hover"><thead><tr><th>#</th><th>Name</th><th>USN</th><th>Edit</th><th>Delete</th></th></tr></thead></table></div></div></div>');
+                    });
+                })
+               
+
+            }
+        });

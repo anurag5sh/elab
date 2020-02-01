@@ -1,9 +1,9 @@
 const {Teacher} = require('../models/teacher');
 
 module.exports= async function (req, res, next) {
-    if (req.session && req.session.userId) {
+    if (req.session && req.session.staff_id) {
         try{
-            const admin = await Teacher.findById(req.session.userId).lean();
+            const admin = await Teacher.findOne({staff_id:req.session.staff_id}).lean();
         if(admin.isAdmin)
         return next();
         else{

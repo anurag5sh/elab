@@ -1,7 +1,67 @@
 head
   title STUDENTLIST
- 
+  link(rel="stylesheet", href="https://use.fontawesome.com/releases/v5.7.0/css/all.css")
+  link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css")
+style.
+      .btn-label {
+          position: relative;
+          left: -12px;
+          display: inline-block;
+          padding: 6px 12px;
+          background: rgba(0,0,0,0.15);
+          border-radius: 3px 0 0 3px;
+      }
+      .btn-labeled {
+          padding-top: 0;
+          padding-bottom: 0;
+          float: right;
+      }
+      .btn { 
+          margin-bottom:10px;
+          margin-right:5px;
+      } 
 body
+  .modal.fade#custom(tabindex ="-1" role="dialog" )
+    .modal-dialog.modal-xl
+        .modal-content
+            .modal-header
+                h4.modal-title Add student 
+            .modal-body
+                .container
+                    .row.justify-content-md-center
+                        .col.col-md-2
+                            select#year.custom-select
+                                option(selected,disabled,value=0) Select Year
+                                each i,j in y
+                                  if(!i && j!=0)
+                                    option(value=j)=j
+                        .col.col-md-2
+                            .input-group.input-group(style="width:200px;")
+                                input#oldSearch.form-control.float-right(type="text", name="old_search" , placeholder="Search a usn")  
+                                .input-group-append
+                                    button.btn.btn-default(onclick="javascript:$('#oldSearch').keyup()")
+                                        i.fas.fa-search
+                br
+                
+                table.table.table-hover
+                    thead
+                        tr
+                            th Select
+                            th Usn
+                            th Name
+                            //- th Year
+                            //- th View
+                    tbody#list
+                br
+                #pagination
+                
+            .modal-footer
+                button.btn.btn-success(type='button' onclick="customInsert()") Add
+                button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+  a.btn.btn-labeled.btn-success(href='' role='button'  data-toggle="modal" data-target="#custom")
+    span.btn-label
+        i.fas.fa-user-plus
+    | Add Custom Students
   table.table.table-stripped
     thead
       tr
@@ -16,3 +76,72 @@ body
           td=i.name
           td=i.usn
           td=i.time.toString()
+
+      script.
+        function display(page){
+        if(!page) page=1;
+        $("#pagination").empty();
+        $("#list").empty();
+        $.ajax({
+            type: "GET",
+            url: "/students/"+$("#year").val(),
+            success: function (data,status, jqXHR) {
+                data.forEach((item,index)=>{
+                        $("#list").append('<td><input type="checkbox" name="list" value="'+item.usn+'" />&nbsp;</td><td>'+item.usn+'</td><td>'+item.name+'</td>');
+                });
+                
+                let pagi = '<nav aria-label="..."><ul class="pagination pagination-sm justify-content-center"><li class="page-item '+(page==1?'disabled':'') +'"><a class="page-link" href="javascript:display('+(page-1)+')" '+(page==1?'aria-disabled="true"':'')+'>Previous</a></li>';
+                for(let i=1;i<=Math.ceil(data.total/10);i++){
+                   pagi+='<li class="page-item '+(page==i?'active':'') +'"><a class="page-link " href="javascript:display('+i+')">'+i+" "+(page==i?'<span class="sr-only">(current)</span>':'')+'</a></li>';
+                }
+                pagi+='<li class="page-item '+(page==Math.ceil(data.total/10)?'disabled':'') +'"><a class="page-link" href="javascript:display('+(page+1)+')" '+(page==data.total?'aria-disabled="true"':'')+'>Next</a></li></ul></nav>';
+                $("#pagination").append(pagi);
+                
+                list();
+            },
+            error: function (e) {
+                toastr.error(e.responseText);
+    
+            }
+        
+        });
+        }
+    
+        $('#year').change(function (){
+            $("#list").empty();
+            $("#pagination").empty();
+    
+          display(1);
+        
+         });
+
+        function customInsert(){
+        $.ajax({
+            type: "POST",
+            url: "/students/"+$('#contestid').val(),
+            data:{list:listArray,year:$("#year").val()},
+            success: function (data,status, jqXHR) {
+               toastr.success(data);  
+                
+            },
+            error: function (e) {
+                toastr.error(e.responseText);
+    
+            }
+        
+            });
+    
+         }
+
+           let listArray=[];
+        function list(){
+        $('input[name="list"]').click(function(){
+            if($(this).prop("checked") == true){
+                listArray.push($(this).val());
+                
+            }
+            else if($(this).prop("checked") == false){
+                listArray.splice(listArray.indexOf($(this).val()),1);
+            }
+        });
+        }

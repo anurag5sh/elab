@@ -64,8 +64,7 @@ router.get('/',authenticate, async (req,res)=> {
 });
 
 //teacher creates contest 
-//auth : pending
-router.get('/create',authenticate, (req,res) => {
+router.get('/create',authenticate,teacher, (req,res) => {
     if(req.session.staff_id)
     res.render('teacher/createContest');
     else

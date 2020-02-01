@@ -131,8 +131,38 @@ router.get('/manage/:name',authenticate,teacher, async (req,res) => {
     for(i of contest.questions){
         questions.push(await ContestQ.findOne({qid:i}).lean());
     }
+    let signed_up =[0,0,0,0];
+    for(i of contest.signedUp){
+         signed_up[i.year-1]++;
+    }
+    let submissions = [0,0,0,0];
+    for(i of contest.submissions){
+        submissions[i.year - 1]++;
+    }
+
+    let questionNo = [];
+    for(let i of questions){
+        questionNo.push({qid:i.qid,name:i.name, Accepted: 0,Partially_Accepted: 0,Wrong_Answer: 0});
+    }
+
+    for (i of contest.submissions){
+        if(i.description == "Accepted" ){
+            const index = questionNo.indexOf( j => j.qid === i.qid);
+            questionNo[index].Accepted++;
+        }
+        else if(i.description == "Partially Accepted"){
+            const index = questionNo.indexOf( j => j.qid === i.qid);
+            questionNo[index].Partially_Accepted++;
+        }
+        else{
+            const index = questionNo.indexOf( j => j.qid === i.qid);
+            questionNo[index].Wrong_Answer++;
+        }
+    }
+
+    let stats ={signed_up:signed_up , submissions:submissions};
     if(contest.createdBy == req.session.staff_id)
-       return res.render('teacher/manageContest',{contest:contest, questions:questions});
+       return res.render('teacher/manageContest',{contest:contest, questions:questions,stats:stats,questionNo:questionNo});
     else
         return res.status(404).end();
     

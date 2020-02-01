@@ -1,3 +1,45 @@
+
 .container
     p No of students signed up : #{contest.signedUp.length}
     p Total No. of submissions : #{contest.submissions.length}
+
+.container
+    table.table.table-striped
+        thead
+            tr
+                th Year
+                th No of Students signed up
+                th Total No. of submissions
+        tbody
+            tr
+                td 1
+                td=stats.signed_up[0]
+                td=stats.submissions[0]
+            tr
+                td 2
+                td=stats.signed_up[1]
+                td=stats.submissions[1]
+            tr
+                td 3
+                td=stats.signed_up[2]
+                td=stats.submissions[2]
+            tr
+                td 4
+                td=stats.signed_up[3]
+                td=stats.submissions[3]
+    table.table.table-striped
+        thead
+            tr
+                th Question Name
+                th Accepted
+                th Partially Accepted
+                th Wrong Answer
+        tbody
+            each i in questionNo
+                tr
+                    td=i.name
+                    td=i.Accepted
+                    td=i.Partially_Accepted
+                    td=i.Wrong_Answer
+
+

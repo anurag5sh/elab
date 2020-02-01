@@ -3,6 +3,10 @@ html
     link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css")
     script(src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js")
     script(src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js")
+    link(rel="stylesheet", href="https://use.fontawesome.com/releases/v5.7.0/css/all.css")
+    link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css")
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css")
+    script(src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js")
     style.
       * {
       box-sizing: border-box;
@@ -16,6 +20,49 @@ html
       .mwidth{
         width:400px;
       }
+      .btn-label {
+       position: relative;
+       left: -12px;
+       display: inline-block;
+       padding: 6px 12px;
+       background: rgba(0,0,0,0.15);
+       border-radius: 3px 0 0 3px;
+      }
+      .btn-labeled {
+          padding-top: 0;
+          padding-bottom: 0;
+          float: right;
+      }
+      .btn { 
+          margin-bottom:10px;
+          margin-right:5px;
+      }
+      .foot{
+        float:right;
+        margin-right:30px;
+      }
+      .contestform{
+        width: 65%;
+        //- box-shadow: 0 0.5px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        text-align: left;
+        left: 10px;
+        //- padding: 10px;
+        margin: 10px;
+        position: relative;
+        //- display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 1px solid rgba(0,0,0,.125);
+        border-radius: .25rem;
+      }
+      .row{
+        margin-left:10px;
+      }
     script.
       function submitForm(){
       const con = $.post("", $("#con").serialize(), function(data,status) {
@@ -26,7 +73,7 @@ html
                   })}
   body
     .contestform
-      div
+      div(class = detail)
         form#con
           label(for='Contest') Contest Name
           input.form-control.mwidth#Contest(type='text', name='Contestname', placeholder='Contest', required='true',value=contest.name)
@@ -39,7 +86,7 @@ html
           br
           br
           .row
-            label(for='select ') For:
+            label(for='select') For:
             - let y = [false,false,false,false,false];
             - for(i=1;i<=contest.year.length;i++) y[contest.year[i-1]]=true;
             .col-1.custom-control.custom-checkbox
@@ -56,17 +103,34 @@ html
               label(class="custom-control-label" for="4-year") 4th Year
           br
           br
-          input(type='button', value='SAVE SETTINGS', onclick="submitForm()")
+          label(for='Status' style = "margin-left:10px;") Status:
+          input(type="checkbox" checked data-toggle="toggle" data-on="Ready" data-off="Not Ready" data-onstyle="success" data-offstyle="danger" id ="Status")
+          br
+          div(class="foot")
+            a.btn.btn-labeled.btn-success(href='' role='button' onclick="submitForm()")
+              span.btn-label
+                i.fas.fa-thumbs-up
+              | Save Settings
+            a.btn.btn-labeled.btn-danger(href='' role='button')
+              span.btn-label
+                i.fas.fa-trash
+              | Delete
+        
+      input(type = 'text',id ='contestid' value =contest.id style="display:none;")
 
-          script.
-            $(function() {
-              $('#timings').daterangepicker({
-                timePicker: true,
-                startDate:  new Date("#{contest.timings.starts}"),
-                endDate: new Date("#{contest.timings.ends}"),
-                locale: {
-                  format: 'YYYY/MM/DD hh:mm A'
-                  } 
-                });
-              });
+          //- input(type='button', value='SAVE SETTINGS', onclick="submitForm()")
 
+      script.
+        $(function() {
+          $('#timings').daterangepicker({
+            timePicker: true,
+            startDate:  new Date("#{contest.timings.starts}"),
+            endDate: new Date("#{contest.timings.ends}"),
+            locale: {
+              format: 'YYYY/MM/DD hh:mm A'
+              } 
+            });
+          });
+        function submitform(){
+          
+        }

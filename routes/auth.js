@@ -7,9 +7,11 @@ const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 const authenticate = require('../middleware/auth');
+const teacher = require('../middleware/teacher');
 const session = require('express-session');
 const admin = require('../middleware/admin');
 const {Practice} = require('../models/practice');
+const {Contest} = require('../models/contest');
 
 //filter teacher and student login
 //redirect to respective dashboard
@@ -114,6 +116,22 @@ function validate(req) {
 
   return schema.validate(req);
 }
+
+router.get('/students/:year',authenticate,teacher, async (req,res) =>{
+  const students = await Student.find({ year: req.params.year }).lean().select({usn:1,name:1,_id:0});
+  if(!students) return res.status(400).send("Students not Found");
+
+  res.send(students);
+
+});
+
+router.post('/students/:id',authenticate,teacher,async (req,res) =>{
+  const contest = await Contest.findOne({id:req.params.id});
+  contest.custom_usn = contest.custom_usn.concat(req.body.list);
+  await contest.save();
+  res.send("Students Added");
+  
+});
 
 
 /* TEACHER'S ACCOUNT ROUTES

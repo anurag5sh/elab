@@ -135,15 +135,17 @@ each i in ques
   .container
   .card(style='background-color: rgba(171, 188, 219, 0.616);')
     .card-body
-      .edit
-        a(href='#')
-          i.ed.fas.fa-times(style='font-size:15px;color:red;float: right;')
       h4.card-title #{i.name}
       p.card-text #{i.description}
       .edit(style='float:right;')
-        a(href='#')
-          | EDIT
-          i.ed.fas.fa-edit(style='font-size:15px;color:rgb(0, 0, 255); ')
+        a.btn.btn-labeled.btn-primary(href='' role='button')
+          span.btn-label
+            i.fas.fa-edit
+          | Edit
+        a.btn.btn-labeled.btn-danger(href='' role='button')
+          span.btn-label
+            i.fas.fa-trash
+          | Delete
 
 script.
   

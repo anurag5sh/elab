@@ -31,7 +31,7 @@ let storage = multer.diskStorage({
 //filter teacher and student login
 //redirect to respective dashboard
 router.get('/',(req,res,next)=>{
-  if (req.session && req.session.userId)
+  if (req.session && (req.session.staff_id || req.session.usn))
     if(req.session.staff_id) 
       return res.render('teacher/trdashboard');
     else

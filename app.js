@@ -26,23 +26,34 @@ mongoose.connect('mongodb://localhost/elab').then(() => {
 })
 .catch((err)=> { console.log("Error connecting to mongo",err)});
     
-
+app.use(express.static('public'));
 app.set('view engine', 'pug');
 app.set('views',__dirname+"/views");
 
+app.use(function(req, res, next) {
+  res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  next();
+});
+
+
 app.use(session({
+    name:'elab',
     secret: 'elab',
-    cookie:{sameSite:"strict",maxAge:2*60*60*60*1000},
-    resave: true,
+    cookie:{sameSite:"strict",maxAge:2*60*60*1000},
+    resave: false,
     rolling:true,
     saveUninitialized: false,
     store: new MongoStore({
       mongooseConnection: mongoose.connection
     })
   }));
+app.use(function(req,res,next){
+  res.locals.session = req.session;
+  next();
+});
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
-app.use(express.static('public'));
+
 app.use('/', login)
 app.use('/assignment', assignment);
 app.use('/contest', contest);

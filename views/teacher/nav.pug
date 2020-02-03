@@ -39,9 +39,8 @@ html
                                     a.dropdown-item(role='presentation' href='/assignment/manage')
                                         strong MANAGE ASSIGNMENT
                             li.dropdown.nav-item
-                                a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#')
-                                    script.
-                                        document.write(document.cookie.split("=")[1].toUpperCase()); 
+                                a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#') #{session.fname.toUpperCase()}
+                                    
                                 .dropdown-menu(role='menu')
                                     a.dropdown-item(role='presentation', href='/profile')
                                         strong PROFILE

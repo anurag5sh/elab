@@ -1,4 +1,4 @@
-module.exports= function (req, res, next) {
+module.exports= function (req, res, next) { 
     if (req.session && (req.session.usn || req.session.staff_id)) {
       return next();
     } else {

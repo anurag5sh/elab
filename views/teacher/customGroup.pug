@@ -1,0 +1,187 @@
+head
+
+body
+    btn.btn.btn-primary(data-toggle="modal" data-target="#group") Create new group
+    btn.btn.btn-primary(data-toggle="modal" data-target="#allowGroup") Allow a group
+
+
+    .container
+        form#groupForm(onsubmit = "return submitGroup()")
+            .modal.fade#group
+                .modal-dialog.modal-xl
+                    .modal-content
+                        .modal-header
+                            h4.modal-title Create new group
+                            button.close(type='button' data-dismiss='modal') ×
+                            
+                        .modal-body
+                            .form-group.row
+                                label.col-sm-2(for="gname") Group Name:
+                                .col-sm-4
+                                    input.form-control#gname(type="text", name="name" ,required, placeholder="Enter a name")
+                            .form-group.row
+                                label.col-sm-2(for="description") Description:
+                                .col-sm-4
+                                    textarea#description.form-control(name="description", cols="30", rows="3" ,required,placeholder="Describe the group")
+                            .form-group.row
+                                label.col-sm-2(for="usn") USN:
+                                .col-sm-8
+                                    textarea#usn.form-control(name="usn", cols="50", rows="10", placeholder="Enter list of usn separated by comma. Eg: 1HK18CS100,1HK17CS050,...", required)
+
+                        .modal-footer
+                            input.btn.btn-success(type='submit' value="Create")
+                            button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+
+    .container
+        .modal.fade#allowGroup
+            .modal-dialog.modal-xl
+                .modal-content
+                    .modal-header
+                        h4.modal-title Allow a group
+                        button.close(type='button' data-dismiss='modal') ×
+                        
+                    .modal-body#allowBody
+
+                    .modal-footer
+                        button.btn.btn-success(type='button'  onclick="enableGroup()") Save
+                        button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+
+    .container
+        .modal.fade#view
+            .modal-dialog.modal-lg
+                .modal-content
+                    .modal-header
+                        h4.modal-title#title
+                        button.close(type='button' data-dismiss='modal') ×
+                        
+                    .modal-body
+                        form#viewForm
+                            .form-group.row
+                                label.col-sm-2(for="gnamev") Group Name:
+                                .col-sm-4
+                                    input.form-control#gnamev(type="text",  value="")
+                            .form-group.row
+                                label.col-sm-2(for="idv") Group ID:
+                                .col-sm-4
+                                    input.form-control#idv(type="text", value="")
+                            .form-group.row
+                                label.col-sm-2(for="descriptionv") Description:
+                                .col-sm-4
+                                    textarea#descriptionv.form-control( cols="30", rows="3" value="")
+                            .form-group.row
+                                label.col-sm-2(for="usn") USN:
+                                .col-sm-8
+                                    textarea#usnv.form-control( cols="50", rows="10", value="")
+
+                    .modal-footer
+                        button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+
+    table.table.table-hover
+        thead
+            tr
+                th ID
+                th Group Name
+                th Created On
+                th View
+                th Remove 
+        tbody
+            each i in custom
+                tr  
+                    td=i.id
+                    td=i.name
+                    td=new Date(i.date).toLocaleString()
+                    td
+                        a( href="" data-toggle="modal" data-target="#view" data-id=i.id)
+                            i.fas.fa-eye(style="color:dimgray")
+                    td
+                        a( href="")
+                            i.fas.fa-times(style="color:red")
+
+
+    script.
+        function submitGroup(){
+        $.ajax({
+        type: "POST",
+        url: "/contest/group/add",
+        data: $("#groupForm").serialize(),
+        success: function (data,status, jqXHR) {
+    
+        toastr.success(data);
+        $("#group").modal('hide');
+        $("#groupForm")[0].reset();
+        return false;
+        },
+        error: function (e) {
+
+            toastr.error(e.responseText);
+
+        }
+        
+        });
+        return false;
+        }
+        function display(page){
+            if(!page) page=1;
+            $("#pagination").empty();
+            const lst = '!{contest.customGroup}';
+             $.get('/contest/group',function(data,status){
+                 data.groups.forEach((item,index)=>{
+                     if(lst.includes(item.id)) return;
+                    $("#groupList").append('<tr><td><input type="checkbox" name="selectedList" value="'+item.id+'"></td><td>'+item.name+'</td><td>'+new Date(item.date).toLocaleString()+'</td><td><a href=""><i class="fas fa-eye"  style="color:dimgrey;" ></i></a></td><td><a  href=""><i class="fas fa-trash"  style="color:red;"></i></a></td></tr>');
+                });
+                
+                let pagi = '<nav aria-label="..."><ul class="pagination pagination-sm justify-content-center"><li class="page-item '+(page==1?'disabled':'') +'"><a class="page-link" href="javascript:display('+(page-1)+')" '+(page==1?'aria-disabled="true"':'')+'>Previous</a></li>';
+                for(let i=1;i<=Math.ceil(data.total/10);i++){
+                pagi+='<li class="page-item '+(page==i?'active':'') +'"><a class="page-link " href="javascript:display('+i+')">'+i+" "+(page==i?'<span class="sr-only">(current)</span>':'')+'</a></li>';
+                }
+                pagi+='<li class="page-item '+(page==Math.ceil(data.total/10)?'disabled':'') +'"><a class="page-link" href="javascript:display('+(page+1)+')" '+(page==data.total?'aria-disabled="true"':'')+'>Next</a></li></ul></nav>';
+                $("#pagination").append(pagi);
+                }).fail(err =>{
+                    toastr.error(err.responseText);
+                }); 
+
+        }
+        $("#allowGroup").on('show.bs.modal', function(e){
+            $("#allowBody").empty();
+            $("#allowBody").append('<table class="table table-hover"><thead class="text-center"><tr><th>Select</th><th>Name</th><th>Created on</th><th>View</th><th>Delete</th><tr></thead><tbody id="groupList" class="text-center"></tbody></table><div id="pagination"></div>');
+            display(1);
+
+        });
+
+        function enableGroup(){
+            let lst1 =[];
+            $("input[name=selectedList]:checked").each(function(){
+                lst1.push(this.value);
+            })
+            $.ajax({
+                type:"POST",
+                url:'/contest/group/allow/#{contest.url}',
+                data: {selectedList:lst1},
+                success: function (data,status, jqXHR) {
+                toastr.success(data);
+                $("#allowGroup").modal('hide');
+                
+                },
+                error: function (e) {
+
+                    toastr.error(e.responseText);
+
+                }
+            });
+        }
+
+        
+        $("#view").on('show.bs.modal',function(e){
+            $("#viewForm")[0].reset();
+            $.get('/contest/group/'+$(e.relatedTarget).data('id'),function(data,status){
+                $("#title").text(data.name);
+                $("#idv").val(data.id);
+                $("#usnv").val(data.usn);
+                $("#gnamev").val(data.name);
+                $("#descriptionv").val(data.description);
+            }).fail((err)=>{
+                toastr.error(err.responseText);
+            });
+        });
+       
+    

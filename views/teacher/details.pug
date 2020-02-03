@@ -66,19 +66,19 @@ html
   body
     .contestform
       div(class = detail)
-        form#con
+        form#con(onsubmit="return submitForm()")
           label(for='Contest') Contest Name
-          input.form-control.mwidth#Contest(type='text', name='Contestname', placeholder='Contest', required='true',value=contest.name)
+          input.form-control.mwidth#Contest(type='text', name='name', placeholder='Contest', required ,value=contest.name)
           br
           label(for='Start Time') Date
           input#timings.form-control.mwidth(type='text' name='timings' )
           br
           label(for='descrip') Description
-          input.form-control.mwidth#Contest(type='text', name='description', placeholder='Description', required='true',value = contest.description)
+          input.form-control.mwidth#descrip(type='text', name='description', placeholder='Description', required ,value = contest.description)
           br
           br
           .row
-            label(for='select') For:
+            label(for='select') For:&nbsp;&nbsp;&nbsp;
             - let y = [false,false,false,false,false];
             - for(i=1;i<=contest.year.length;i++) y[contest.year[i-1]]=true;
             .col-1.custom-control.custom-checkbox
@@ -95,22 +95,31 @@ html
               label(class="custom-control-label" for="4-year") 4th Year
           br
           br
-          label(for='Status' style = "margin-left:10px;") Status:
-          input(type="checkbox" checked data-toggle="toggle" data-on="Ready" data-off="Not Ready" data-onstyle="success" data-offstyle="danger" id ="Status")
+          label(style = "margin-left:10px;") Status:&nbsp;&nbsp;&nbsp;
+          input#status(type="checkbox" checked=contest.isReady data-toggle="toggle" data-on="Ready" data-off="Not Ready" data-onstyle="success" data-offstyle="danger" name ="status" )
           br
           div(class="foot")
-            a.btn.btn-labeled.btn-success(href='' role='button' onclick="submitForm()")
+            btn.btn.btn-labeled.btn-success#btn-submit(role='submit' style="cursor:pointer" )
               span.btn-label
                 i.fas.fa-thumbs-up
               | Save Settings
-            a.btn.btn-labeled.btn-danger(href='' role='button')
+            btn.btn.btn-labeled.btn-danger(role='button' style="cursor:pointer" data-target="#delete" data-toggle="modal")
               span.btn-label
                 i.fas.fa-trash
               | Delete
         
       input(type = 'text',id ='contestid' value =contest.id style="display:none;")
 
-          //- input(type='button', value='SAVE SETTINGS', onclick="submitForm()")
+      .modal.fade#delete(tabindex ="-1" role="dialog" )
+        .modal-dialog.modal-sm
+            .modal-content
+                .modal-header
+                    h4.modal-title Delete Contests
+                .modal-body
+                    p All the questions in this contest will be deleted.
+                .modal-footer
+                    button.btn.btn-danger(type='button' data-dismiss='modal' onclick="contestDelete()") Delete
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
 
       script.
         $(function() {
@@ -123,13 +132,24 @@ html
               } 
             });
           });
-        function submitform(){
-          
-        }
+          $("#btn-submit").click(()=>{
+            $("#con").submit();
+          });
         function submitForm(){
-        const con = $.post("", $("#con").serialize(), function(data,status) {
+        const con = $.post("/contest/manage/#{contest.url}", $("#con").serialize(), function(data,status) {
           toastr.success(data);
                 })
                   .fail(function(error){
-                        toastr.error(error);
-                  })}
+                        toastr.error(error.responseText);
+                  })
+                  return false;
+                  }
+
+        function contestDelete(){
+          $.get('/contest/delete/#{contest.url}',function(data,status){
+            toastr.success(data);
+            location.href="/contest";
+          }).fail(()=>{
+            toastr.error(error);
+          });
+        }

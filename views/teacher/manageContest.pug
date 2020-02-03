@@ -21,7 +21,7 @@ html(lang='en')
       div#alertForm
       br
       // Nav tabs
-      ul.nav.nav-tabs(role='tablist')
+      ul.nav.nav-tabs(role='tablist')#myTab
         li.nav-item
           a.nav-link.active(data-toggle='tab', href='#home') DETAILS
         li.nav-item
@@ -29,11 +29,13 @@ html(lang='en')
         li.nav-item
           a.nav-link(data-toggle='tab', href='#menu2') STUDENTS
         li.nav-item
-          a.nav-link(data-toggle='tab', href='#menu3') LEADERBOARD
+          a.nav-link(data-toggle='tab', href='#menu3') GROUPS
         li.nav-item
-          a.nav-link(data-toggle='tab', href='#menu4') STATISTICS
+          a.nav-link(data-toggle='tab', href='#menu4') LEADERBOARD
         li.nav-item
-          a.nav-link(data-toggle='tab', href='#menu5') RULES
+          a.nav-link(data-toggle='tab', href='#menu5') STATISTICS
+        li.nav-item
+          a.nav-link(data-toggle='tab', href='#menu6') RULES
       // Tab panes
       .tab-content
         #home.container.tab-pane.active
@@ -49,13 +51,28 @@ html(lang='en')
           include studtab
         #menu3.container.tab-pane.fade
           br
+          include customGroup
+        #menu4.container.tab-pane.fade
+          br
           h3 LEADERBOARD
           include leaderboard
-        #menu4.container.tab-pane.fade
+        #menu5.container.tab-pane.fade
           br
           h3 STATISTICS
           include statistics
-        #menu5.container.tab-pane.fade
+        #menu6.container.tab-pane.fade
           br
           h3 RULES
           include rules
+    
+    script.
+      $(function() {
+      $('a[data-toggle="tab"]').on('click', function(e) {
+          window.sessionStorage.setItem('activeTab', $(e.target).attr('href'));
+      });
+      var activeTab = window.sessionStorage.getItem('activeTab');
+      if (activeTab) {
+          $('#myTab a[href="' + activeTab + '"]').tab('show');
+          window.sessionStorage.removeItem("activeTab");
+      }
+      });

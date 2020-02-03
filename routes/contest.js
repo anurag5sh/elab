@@ -213,13 +213,39 @@ router.get('/manage/:name',authenticate,teacher, async (req,res) => {
     for(i of contest.questions){
         questions.push(await ContestQ.findOne({qid:i}).lean());
     }
-    if(contest.createdBy == req.session.staff_id){
-
-        let custom = await CustomGroup.find({id:{$in: contest.customGroup}}).lean().select({id:1,name:1,date:1,_id:0});
-        if(!custom) custom = [];
-        return res.render('teacher/manageContest',{contest:contest, questions:questions,custom:custom});
+    let signed_up =[0,0,0,0];
+    for(i of contest.signedUp){
+         signed_up[i.year-1]++;
     }
-       
+    let submissions = [0,0,0,0];
+    for(i of contest.submissions){
+        submissions[i.year - 1]++;
+    }
+
+    let questionNo = [];
+    for( i of questions){
+        questionNo.push({qid:i.qid,name:i.name, Accepted: 0,Partially_Accepted: 0,Wrong_Answer: 0});
+    }
+
+    for (i of contest.submissions){
+        if(i.status === "Accepted" ){
+            const index = questionNo.findIndex( j => j.qid === i.qid);
+            console.log(index);
+            questionNo[index].Accepted++;
+        }
+        else if(i.status === "Partially Accepted"){
+            const index = questionNo.findIndex( j => j.qid === i.qid);
+            questionNo[index].Partially_Accepted++;
+        }
+        else{
+            const index = questionNo.findIndex( j => j.qid === i.qid);
+            questionNo[index].Wrong_Answer++;
+        }
+    }
+
+    let stats ={signed_up:signed_up , submissions:submissions};
+    if(contest.createdBy == req.session.staff_id)
+       return res.render('teacher/manageContest',{contest:contest, questions:questions,stats:stats,questionNo:questionNo});
     else
         return res.status(404).end();
     
@@ -254,7 +280,7 @@ router.post('/manage/:name',authenticate,teacher,async (req,res) =>{
 
 //sign up for contest
 router.get('/sign/:curl',authenticate,contestAuth,async (req,res) => {
-   const con = await Contest.findOneAndUpdate({url:req.params.curl, 'signedUp.usn':{$ne : req.session.usn},'timings.starts':{$lt:new Date()},'timings.ends':{$gt:new Date()}},{$addToSet :{signedUp : {usn: req.session.usn,name:req.session.fname+" "+req.session.lname,time:new Date()},year:req.session.year}},
+   const con = await Contest.findOneAndUpdate({url:req.params.curl, 'signedUp.usn':{$ne : req.session.usn},'timings.starts':{$lt:new Date()},'timings.ends':{$gt:new Date()}},{$addToSet :{signedUp : {usn: req.session.usn,name:req.session.fname+" "+req.session.lname,time:new Date(),year:req.session.year}}},
    (err,doc) => {
     if(err)
     return res.status(404).send("Not Permitted");

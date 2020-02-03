@@ -209,6 +209,9 @@ router.get('/manage/:name',authenticate,teacher, async (req,res) => {
     let contest = await Contest.findOne({url:req.params.name}).lean();
     if(!contest) return res.status(404).end();
 
+    let custom = await CustomGroup.find({id:{$in: contest.customGroup}}).lean();
+    if(!custom) custom=[];
+
     let questions = [];
     for(i of contest.questions){
         questions.push(await ContestQ.findOne({qid:i}).lean());
@@ -245,7 +248,7 @@ router.get('/manage/:name',authenticate,teacher, async (req,res) => {
 
     let stats ={signed_up:signed_up , submissions:submissions};
     if(contest.createdBy == req.session.staff_id)
-       return res.render('teacher/manageContest',{contest:contest, questions:questions,stats:stats,questionNo:questionNo});
+       return res.render('teacher/manageContest',{contest:contest, questions:questions,stats:stats,questionNo:questionNo,custom:custom});
     else
         return res.status(404).end();
     

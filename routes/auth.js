@@ -21,8 +21,10 @@ let storage = multer.diskStorage({
     cb(null, '/home/abdul/elab/profilePhotos')
   },
   filename: function (req, file, cb) {
-    console.log(file);
     let file_name = file.originalname.split('.');
+    if(req.session.staff_id)
+    cb(null, req.session.staff_id+'.'+file_name[1])
+    else
     cb(null, req.session.usn+'.'+file_name[1])
   }
   })
@@ -40,6 +42,17 @@ router.get('/',(req,res,next)=>{
 
 }, (req,res) => {
     res.render('login');
+});
+
+
+//View Profile
+router.get('/viewProfile',authenticate,(req,res,next)=>{
+  if(req.session.usn){
+    return res.render('viewProfile');
+  }
+  else next();
+}, (req,res)=> {
+  res.render('login');
 });
 
 //student dashboard
@@ -71,7 +84,7 @@ router.get('/logout', function(req, res, next) {
 router.get('/profile', authenticate,async function(req,res){
 
   if(req.session.staff_id){
-    const teacher = await Teacher.findOne({ staff_id: req.session.staff_id }).lean().select('staff_id fname lname email recovery_email about_me');
+    const teacher = await Teacher.findOne({ staff_id: req.session.staff_id }).lean().select('staff_id fname lname email recovery_email about_me profile_image');
 
     if(!teacher){
     return res.status(400).end();
@@ -153,11 +166,21 @@ else if(!req.body.re_entered_password || req.body.re_entered_password < 5){
 // Image Update
 
 router.post('/uploadImage', async (req,res,next)=>{
-  
-  let student = await Student.findOne({usn: req.session.usn}).select('profile_image');
-  if(student.profile_image != '/profileImage/default.png' ){
-    const fileName = student.profile_image.split('.');
-    fs.unlink('/home/abdul/elab/profilePhotos/'+req.session.usn + '.' + fileName[1] , async (err) => {
+  let user = null;
+  let old_file =null;
+  if(req.session.staff_id)
+  {
+    user = await Teacher.findOne({staff_id: req.session.staff_id}).select('profile_image');
+    old_file = req.session.staff_id;
+  }  
+  else{
+    user = await Student.findOne({usn: req.session.usn}).select('profile_image');
+    old_file =req.session.usn;
+  }
+  // let student = await Student.findOne({usn: req.session.usn}).select('profile_image');
+  if(user.profile_image != '/profileImage/default.png' ){
+    const fileName = user.profile_image.split('.');
+    fs.unlink('/home/abdul/elab/profilePhotos/'+ old_file + '.' + fileName[1] , async (err) => {
       if (err) {
         console.log(err);
       }
@@ -167,23 +190,33 @@ router.post('/uploadImage', async (req,res,next)=>{
     });
   }next();
 },upload.single('profile_image'), authenticate,async (req,res,next)=> {
-  let student = await Student.findOne({usn: req.session.usn}).select('profile_image');
-  
+  let user = null;
+  let old_file =null;
+  if(req.session.staff_id)
+  {
+    user = await Teacher.findOne({staff_id: req.session.staff_id}).select('profile_image');
+    old_file = req.session.staff_id;
+  }  
+  else{
+    user = await Student.findOne({usn: req.session.usn}).select('profile_image');
+    old_file =req.session.usn;
+  }
+  // let student = await Student.findOne({usn: req.session.usn}).select('profile_image');
 if(req.file){
   
   const ext = req.file.originalname.split('.');
-  const new_file_name = req.session.usn;
+  const new_file_name = old_file;
  // const old_file_name = student.profile_image.split('.');
-  student.profile_image = '/profileImage/' + new_file_name + '.' + ext[1];
-    await student.save();
+  user.profile_image = '/profileImage/' + new_file_name + '.' + ext[1];
+    await user.save();
   
   // await student.save();
   return res.send("Profile Photo Updated");
 }
 else
 {
-  student.profile_image = '/profileImage/default.png';
-  await student.save();
+  user.profile_image = '/profileImage/default.png';
+  await user.save();
 return res.status(400).send("No Image uploaded");
 }
 });

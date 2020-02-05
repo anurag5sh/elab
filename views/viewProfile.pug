@@ -1,0 +1,65 @@
+doctype html
+include navbar
+head
+  link(rel='stylesheet' type='text/css' href='assets/css/light.css')
+
+  title profile
+  
+body
+  br
+  .content(style="color:#9A9A9A;")
+    .container-fluid
+      .row
+        .col-md-8
+          .card
+            .header
+              h4.title(style="margin-top:15px;margin-left:15px;margin-bottom:8px;") Edit Profile
+            .content
+              form#profile
+                .row
+                  .col-md-4
+                    .form-group
+                      label USN
+                      input.form-control(type='text' disabled placeholder='' value='')
+                  .col-md-4
+                    .form-group
+                      label First Name
+                      input.form-control(type='text' disabled placeholder='First Name' value='')    
+                  .col-md-4
+                    .form-group
+                      label Last Name
+                      input.form-control(type='text' disabled placeholder='Last Name' value='') 
+                .row
+                  .col-md-6
+                    .form-group
+                      label Primary Email
+                      input.form-control(type='email' disabled placeholder='' value='')
+                //-   .col-md-6
+                //-     .form-group
+                //-       label(for='exampleInputEmail1') Recovery Email
+                //-       input.form-control(type='email' name="recovery_email" placeholder='Email' value=student.recovery_email)
+                .row
+                  .col-md-12
+                    .form-group
+                      label About Me
+                      textarea#about_me.form-control(rows='5' name="about_me" disabled placeholder='Here can be your description')
+                //- button.btn.btn-info.btn-fill.pull-right(type='button' id='update-profile') Update Profile
+                .clearfix
+        .col-md-4
+          .card.card-user
+            .image
+              img(src='https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400' alt='...')
+            .content
+              .author
+                form(enctype="multipart/form-data" method="post")#img
+                  a(href='#')
+                    img.avatar.border-gray#image(src='' alt='...')
+                    input(type='file' accept='image/*' name='profile_image' id='image-upload' style="display:none;")
+                  h4.title
+                    br
+                    small
+                  p.description.text-center
+                //-   button.btn.btn-info.btn-fill.pull-right(type='button' onclick="javascript:$('#image-upload').click();" id='update-image') Update Image 
+            //- button.btn.btn-info.btn-fill.pull-right(type='button' id='update-cover') Update Cover
+            hr
+            br

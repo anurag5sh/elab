@@ -32,6 +32,9 @@ const contestSchema = new mongoose.Schema({
   custom_usn : {
     type:[String]
   },
+  customGroup:{
+    type:[Number]
+   },
   isReady:{
     type: Boolean,
     default:false,
@@ -76,7 +79,8 @@ function validateContest(contest)
         name: Joi.string().required(),
         timings:Joi.string().required(),
         year:[Joi.number(),Joi.array().items(Joi.number().required())],
-        description:Joi.string().allow('')
+        description:Joi.string().allow(''),
+        status:Joi.string().allow('')
     });
 
     return schema.validate(contest);

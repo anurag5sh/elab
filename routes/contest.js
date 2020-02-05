@@ -6,6 +6,7 @@ const contestAuth = require('../middleware/contestAuth');
 const {Contest,validateContest} = require('../models/contest');
 const {ContestQ,validateCQ} = require('../models/contestQ');
 const {Submission} = require('../models/submission');
+const {CustomGroup,validateGroup} = require('../models/customGroup');
 const crypto = require("crypto");
 const moment = require('moment');
 const _ = require('lodash');
@@ -56,7 +57,11 @@ router.get('/',authenticate, async (req,res)=> {
     res.render('teacher/trcontest',{contest:contest});
     }
     else{
-    const contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn}]}).select('name url description').lean();
+    let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn}],isReady:true}).select('name url description').lean();
+    const grp = await CustomGroup.find({'usn':req.session.usn}).lean().select({id:1,_id:0});
+    let gid=[];
+    for(i of grp) gid.push(i.id);
+    contest = contest.concat(await Contest.find({customGroup:{$in:gid},isReady:true}).lean().select('name url description'));
     if(!contest) return res.render('contest',{contest:[]});
 
     res.render('contest',{contest:contest});
@@ -75,8 +80,7 @@ router.get('/create',authenticate,teacher, (req,res) => {
 router.post('/create',authenticate,teacher, async (req,res)=>{
     const { error } = validateContest(req.body);
     if(error) return res.status(400).send(error.message); 
-    if(req.body.starts>=req.body.ends)
-        return res.status(400).send("Incorrect timings");
+   
     const createdBy = req.session.staff_id;
     let id=null;
     let lastInserted = await Contest.find({}).sort({_id:-1}).limit(1).lean().select('id');
@@ -96,12 +100,17 @@ router.post('/create',authenticate,teacher, async (req,res)=>{
     else
         url = url + (++count);
     }
-    let contest = new Contest({createdBy:createdBy,id:id,name:req.body.name.trim(),url:url,year:req.body.year});
+    let contest = new Contest({createdBy:createdBy,id:id,name:req.body.name.trim(),url:url});
+    if(req.body.year) contest.year =req.body.year;
+    else contest.year =[];
+    
     contest.timings.created= moment().format();
     const starts = new Date(req.body.timings.split("-")[0]);
-    contest.timings.starts = starts;
     const ends = new Date(req.body.timings.split("-")[1]);
+    if(starts>=ends)
+    return res.status(400).send("Incorrect timings");
     contest.timings.ends = ends;
+    contest.timings.starts = starts;
     contest.description = req.body.description;
 
     await contest.save();
@@ -112,7 +121,7 @@ router.post('/create',authenticate,teacher, async (req,res)=>{
 
 
 // list the contest made by teacher 
-router.get('/manage',authenticate, async (req,res) => {
+router.get('/manage',authenticate,teacher, async (req,res) => {
     let trcontest = await Contest.find({createdBy:req.session.staff_id}); 
     if(!trcontest) res.send.status(404).end();
     res.render('teacher/manage',{q:trcontest}); 
@@ -120,11 +129,88 @@ router.get('/manage',authenticate, async (req,res) => {
 
 });
 
+//contest group add
+router.post('/group/add',authenticate,teacher,async (req,res)=>{
+    let usnArray = req.body.usn.split(",").filter(function(value,index,arr){
+        return value.trim() != '';
+    });
+    req.body.usn = Array.from(new Set(usnArray));
+    req.body.usn = req.body.usn.map(f=>{ return f.toUpperCase(); });
+
+    const {error} = validateGroup(req.body);
+    if(error) return res.status(400).send(error.message);
+
+
+    let id=null;
+    const lastInserted = await CustomGroup.findOne().sort({_id:-1}).lean().select('id');
+    if(lastInserted) id=++lastInserted.id;
+    else id=1;
+
+    let group = new CustomGroup();
+
+    const lastName = await CustomGroup.findOne({name:req.body.name}).lean().select('name');
+    if(lastName) return res.status(400).send("Group with name "+ req.body.name +" already exists!");
+    group.name = req.body.name;
+    group.description = req.body.description;
+    group.id = id;
+    group.date = new Date();
+    group.createdBy = req.session.staff_id;
+    group.usn = req.body.usn;
+    
+    await group.save().catch((err)=>{
+        return res.send(err);
+    });
+
+    res.send("Group saved.");
+    
+});
+
+//get list of groups
+router.get('/group',authenticate,teacher,async (req,res)=>{
+
+    if(!req.query.page) req.query.page=1;
+
+    let totalCount = await CustomGroup.estimatedDocumentCount();
+    if(!totalCount) totalCount=0;
+
+    let list = await CustomGroup.find().sort({date:-1}).lean().skip((req.query.page-1)*10).limit(10);
+    if(!list) list=[]
+
+    return res.send({groups:list,total:totalCount});
+});
+
+//get a specific group
+router.get('/group/:id',authenticate,teacher,async (req,res)=>{
+
+    let group = await CustomGroup.findOne({id:req.params.id}).lean();
+    if(!group) return res.status(400).send("Invalid ID");
+
+    return res.send(group);
+});
+
+//allowing a group to participate in contest
+router.post('/group/allow/:url',authenticate,teacher,async (req,res)=>{
+    let contest = await Contest.findOne({url:req.params.url}).select('customGroup');
+    if(!contest) return res.status(400).send("Contest not found");
+
+    if(req.body.selectedList){
+        contest.customGroup = contest.customGroup.concat(req.body.selectedList);
+        await contest.save();
+        res.send('Group added to this contest!');
+    }
+    else
+        return res.status(400).send("Nothing to add");
+  
+});
+
 //teacher manage contest
 router.get('/manage/:name',authenticate,teacher, async (req,res) => {
 
     let contest = await Contest.findOne({url:req.params.name}).lean();
     if(!contest) return res.status(404).end();
+
+    let custom = await CustomGroup.find({id:{$in: contest.customGroup}}).lean();
+    if(!custom) custom=[];
 
     let questions = [];
     for(i of contest.questions){
@@ -162,7 +248,7 @@ router.get('/manage/:name',authenticate,teacher, async (req,res) => {
 
     let stats ={signed_up:signed_up , submissions:submissions};
     if(contest.createdBy == req.session.staff_id)
-       return res.render('teacher/manageContest',{contest:contest, questions:questions,stats:stats,questionNo:questionNo});
+       return res.render('teacher/manageContest',{contest:contest, questions:questions,stats:stats,questionNo:questionNo,custom:custom});
     else
         return res.status(404).end();
     
@@ -170,8 +256,27 @@ router.get('/manage/:name',authenticate,teacher, async (req,res) => {
 });
 
 //teacher editing existing contest
-router.post('/manage/:name',authenticate,async (req,res) =>{
-    res.send("Saved");
+router.post('/manage/:name',authenticate,teacher,async (req,res) =>{
+    const { error } = validateContest(req.body);
+    if(error) return res.status(400).send(error.message); 
+
+    let contest = await Contest.findOne({url:req.params.name,'timings.ends':{$gt:new Date()}});
+    if(!contest) return res.status(400).send('Cannot edit this contest');
+    const starts = new Date(req.body.timings.split("-")[0]);
+    const ends = new Date(req.body.timings.split("-")[1]);
+    if(starts>=ends)
+    return res.status(400).send("Incorrect timings");
+    contest.name = req.body.name;
+    contest.timings.ends = ends;
+    contest.timings.starts = starts;
+    contest.description = req.body.description;
+    contest.year = req.body.year;
+    contest.isReady = (req.body.status == "on"?true:false);
+
+    await contest.save();
+
+    res.send("Changes saved!");
+   
 });
 
 

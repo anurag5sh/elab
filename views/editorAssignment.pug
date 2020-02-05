@@ -3,8 +3,8 @@ html(lang='en')
   head
     title=question.name
     include navbar
-    script(src='/ace-builds/src-min/ace.js' charset='utf-8')
-    script(src='/ace-builds/src-min/ext-language_tools.js')
+    script(src='/src-min-noconflict/ace_modified.js' charset='utf-8')
+    script(src='/src-min-noconflict/ext-language_tools.js')
     script(src='/assets/js/jquery.min.js')
     link(rel='stylesheet' href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css')
     link(rel="stylesheet", href="/css/nice-select.css")
@@ -185,7 +185,7 @@ html(lang='en')
         
     .card(style="width:90%; display:inline-block;")
       label.language(for="lang") Language
-      select.option-disp#lang(onchange='language()')
+      select.option-disp#lang(onchange='setup()')
         option(value='python71') Python
         option(value='java62') Java
         option(value='javascript63') Javascript
@@ -193,7 +193,7 @@ html(lang='en')
         option(value='c_cpp54') C++
         option(value='csharp51') C#
       label.theme(for="theme") Theme
-      select.option-disp#theme(onchange='theme()')
+      select.option-disp#theme(onchange='setup()')
         option(value='monokai') Monokai
         option(value='chaos') Chaos
         option(value='dracula') Dracula
@@ -203,17 +203,24 @@ html(lang='en')
         option(value='chrome') Chrome
         option(value='github') Github
       label.font_size Font Size
-      select.option-disp#fontsize( onchange='fontSize()')
+      select.option-disp#fontsize( onchange='setup()')
         option(value='18') &nbsp; &nbsp; 18 &nbsp; &nbsp;
         option(value='24') &nbsp; &nbsp; 24 &nbsp; &nbsp;
         option(value='30') &nbsp; &nbsp; 30 &nbsp; &nbsp;
         option(value='36') &nbsp; &nbsp; 36 &nbsp; &nbsp;
       
       div#editor
-      button#button_submit.btn.btn-success(value='Submit', onclick='submission()', style='float:right;width:100px;left:20px;') 
+      button#button_submit.btn.btn-success(value='Submit', onclick='setup().submit()', style='float:right;width:100px;left:20px;') 
         a(href='#opbox' style="color:white;font-weight:bold") Submit
-      button#button.btn.btn-primary(value='Run', onclick='readText()', style='font-weight:bold;color:white;float:right;margin-right:20px;width:100px;')
+      button#button.btn.btn-primary(value='Run', onclick='setup().run()', style='font-weight:bold;color:white;float:right;margin-right:20px;width:100px;')
         a(href='#loader' style="color:white;font-weight:bold") Run
+    .row(style="margin:30px;")
+      .col-lg-5.col-md-4
+        .custom-control.custom-checkbox
+          input#custom_i.custom-control-input(type='checkbox' name='')
+          label.custom-control-label(for='custom_i') Custom Input
+                  
+        textarea.form-control(rows="5" id="custom_input" style="display:none")
       
     
     #opbox.output_box(style="width:650px; display:inline-block;")
@@ -224,65 +231,61 @@ html(lang='en')
 
     script.
 
-      function statement(){
-        const quill = new Quill('#statement', {
+      (()=>{const quill = new Quill('#statement', {
       theme: 'bubble' ,
-      readOnly: true  // Specify theme in configuration
+      readOnly: true 
       });
       const s = !{question.statement};
       quill.setContents(s);
-      }
-      statement();
+      })();
 
-      let editor = ace.edit("editor");
+      function setup(){const editor = ace.edit("editor");
+      ace.config.set("basePath", "/src-min-noconflict");
       ace.require("ace/ext/language_tools");
-      editor.setTheme("ace/theme/monokai");
-      editor.session.setMode("ace/mode/python");
+      editor.setTheme("ace/theme/"+$("#theme").val());
+      let l = $("#lang").val();
+      l=l.slice(0,-2);
+      editor.session.setMode("ace/mode/"+l);
       editor.getSession().setUseWrapMode(true);
+      
 
       editor.setOptions({
       enableBasicAutocompletion: true,
       enableSnippets: true,
       enableLiveAutocompletion: true,
       showPrintMargin: false,
-      fontSize:18,
+      fontSize:parseInt($("#fontsize").val()),
       indentedSoftWrap: false
-
       });
 
-      $(document).ready(function() {
-      $('select').niceSelect();
-      });
-
-      function theme(){
-      let t = document.getElementById("theme").value;
-      editor.setTheme("ace/theme/"+t);
-      }
-      function fontSize() {
-        let s = document.getElementById("fontsize").value;
-        editor.setOption("fontSize",parseInt(s));
-      }
-      function language(){
-      let l = document.getElementById("lang").value;
-      l=l.slice(0,-2);
-      editor.session.setMode("ace/mode/"+l);
-      }
-      
-      function readText () { window.location.href="#loader";
+     function readText() { window.location.href="#loader";
       let l = document.getElementById("lang").value;
       l=l.slice(-2);
       $(document).ready(function(){
+      let input = null;
+      if(document.getElementById("custom_i").checked == true){
+        input = document.getElementById("custom_input").value;
+      }
       $.post("/api",
       {
       source:editor.getValue(),
       language: l,
-      qid: window.location.pathname
+      qid: window.location.pathname,
+      custom: input
       },
-      function(data,status){ if(!Array.isArray(data)){
+      function(data,status){ 
+        if(document.getElementById("custom_i").checked == true){
+          $(".custom").remove();  
+          $('#opbox').append('<div class="card custom" style="width:650px;;"><label><b>Custom TestCase</b></label><hr style="width:25%;margin-top:0rem;"><label><b>Input</b></label><textarea readonly="readonly" class="bg-col" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:auto;">'+ document.getElementById("custom_input").value+'</textarea ><br><label><b>Output</b></label><textarea readonly="readonly" class="bg-col" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:125px;">'+data[0].output+'</textarea>') 
+          document.getElementById("loader").style.display="none";  
+        }
+        else{
+        if(!Array.isArray(data)){
         toastr.warning(data);
         document.getElementById("loader").style.display="none";
         return;
       }
+
       for(let i=0;i<data.length;i++)
       {
       if(data[i].id==3){
@@ -308,11 +311,11 @@ html(lang='en')
       document.getElementById("loader").style.display="none";
       document.getElementById("out").style.display="block";
       window.location.href="#opbox";
+        }
       });
       
       });
       }
-
       function submission(){ 
         let l = document.getElementById("lang").value;
         l=l.slice(-2);
@@ -327,7 +330,7 @@ html(lang='en')
         toastr.warning(data);
         document.getElementById("loader").style.display="none";
         return;
-        }
+      }
           $(".points").remove();
           $(".green-tick-t").remove();
             $(".red-cross-t").remove();
@@ -365,6 +368,14 @@ html(lang='en')
         });
         });
       }
+      return {run:readText,submit:submission}
+      }
+
+       $(document).ready(function() {
+      $('select').niceSelect();
+      setup();
+      });
+
 
       $(document).ready(function() {
         var count=0,count1=0;
@@ -407,4 +418,20 @@ html(lang='en')
         document.getElementById("loader").style.display="block";
         //- document.getElementById("loader").style.height="350px";
         });
+
+        $('#custom_i').click(function(){
+          if(document.getElementById('custom_i').checked == true){
+          document.getElementById('custom_input').style.display = "block";
+          }else
+          {
+            $('.custom').remove();
+          document.getElementById('custom_input').style.display = "none";
+          }
+        });
+
+        $('#custom_input').click(function(){
+          if(document.getElementById('custom_i').checked == false)
+          $('#custom_i').click();
+        })
+
         });

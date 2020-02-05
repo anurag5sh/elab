@@ -73,6 +73,7 @@ router.get('/logout', function(req, res, next) {
       if(err) {
         return next(err);
       } else {
+        res.clearCookie('elab', {path: '/'});
         return res.redirect('/');
       }
     });
@@ -248,7 +249,6 @@ router.post('/', async (req, res) => { console.log(req.body);
     req.session.lname = student.lname;
     req.session.usn = student.usn;
     req.session.year = student.year;
-    res.cookie("name", student.fname,{sameSite:"strict"});
     return res.redirect('/dashboard');
   }
 
@@ -263,7 +263,6 @@ router.post('/', async (req, res) => { console.log(req.body);
     req.session.fname = teacher.fname;
     req.session.lname = teacher.lname;
     req.session.staff_id = teacher.staff_id;
-    res.cookie("name", teacher.fname,{sameSite:"strict"});
     if(teacher.isAdmin){
       req.session.isAdmin = teacher.isAdmin;
       return res.redirect('/admin');

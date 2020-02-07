@@ -46,9 +46,10 @@ router.get('/',(req,res,next)=>{
 
 
 //View Profile
-router.get('/viewProfile',authenticate,(req,res,next)=>{
-  if(req.session.usn){
-    return res.render('viewProfile');
+router.get('/viewProfile/:usn',authenticate,async (req,res,next)=>{
+  if(req.session.staff_id || req.session.usn){
+    const student = await Student.findOne({usn:req.params.usn}).lean();
+    return res.render('viewProfile',{student:student});
   }
   else next();
 }, (req,res)=> {

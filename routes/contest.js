@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authenticate = require('../middleware/auth');
+const {Student} = require('../models/student');
 const teacher = require('../middleware/teacher');
 const contestAuth = require('../middleware/contestAuth');
 const {Contest,validateContest} = require('../models/contest');
@@ -389,7 +390,17 @@ router.post('/add/:cname',authenticate,teacher,async (req,res) => {
 
 });
 
-
+//View Profile
+router.get('/:curl/viewProfile/:usn',authenticate,async (req,res,next)=>{
+    if(req.session.staff_id){
+      const student = await Student.findOne({usn:req.params.usn}).lean();
+      return res.render('viewProfile',{student:student});
+    }
+    else next();
+  }, (req,res)=> {
+    res.render('login');
+  });
+  
 
 //editing questions
 router.post('/edit/:curl/:qid',authenticate,teacher,async (req,res)=>{

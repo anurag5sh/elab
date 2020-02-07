@@ -17,7 +17,7 @@ function decode64(string64){//decode to utf8
 return b.toString();
 }
 
-router.post('/', authenticate,async (req,res)=>{
+router.post('/', authenticate,async (req,res)=>{ 
 
   //verifying the request body
   function validate(body)
@@ -33,7 +33,7 @@ router.post('/', authenticate,async (req,res)=>{
   }
 
   const { error } = validate(req.body); 
-  if (error) return res.status(400).send(error.message);
+  if (error) return res.status(400).send("Invalid Request");
 
   let question = undefined;
   if(req.body.qid.split("/")[1] == "practice"){
@@ -59,6 +59,11 @@ router.post('/', authenticate,async (req,res)=>{
   else{
   sample = question.sample_cases;
   }
+
+  if(req.body.source.substr(req.body.source.length-18) == "undefinedundefined")
+  req.body.source = req.body.source.substr(0,req.body.source.length-18);
+  else
+  return res.status(400).send("Unauthorized");
   if(req.body.source.trim()=='')
     return res.send("Source Code cannot be empty!");
 

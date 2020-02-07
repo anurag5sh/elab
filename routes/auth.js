@@ -256,10 +256,13 @@ function validate(req) {
 }
 
 router.get('/students/:year',authenticate,teacher, async (req,res) =>{
-  const students = await Student.find({ year: req.params.year }).lean().select({usn:1,fname:1,_id:0});
+  const students = await Student.find({ year: req.params.year }).lean().select({usn:1,fname:1,_id:0}).skip((req.query.page-1)*10).limit(10);
   if(!students) return res.status(400).send("Students not Found");
 
-  res.send(students);
+  const total = await Student.estimatedDocumentCount({year:req.params.year});
+
+
+  res.send({students:students,total:total});
 
 });
 
@@ -271,6 +274,17 @@ router.post('/students/:id',authenticate,teacher,async (req,res) =>{
   
 });
 
+
+router.get('/students/id/:id',authenticate,teacher,async (req,res) =>{
+  const contest = await Contest.findOne({id:req.params.id}).lean().select('custom_usn');
+  if(!contest) return res.status(400).send("Invalid ID");
+
+  let students = await Student.find({usn:{$in:contest.custom_usn}}).lean().select({usn:1,fname:1,lname:1,year:1,_id:0});
+  if(!students) students=[];
+
+  return res.send(students);
+
+});
 
 /* TEACHER'S ACCOUNT ROUTES
 

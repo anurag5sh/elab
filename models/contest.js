@@ -27,7 +27,9 @@ const contestSchema = new mongoose.Schema({
     ends:{type:Date}
   },
   year:[{
-    type:Number
+    type:Number,
+    required:true,
+    default : []
   }],
   custom_usn : {
     type:[String]

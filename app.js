@@ -1,3 +1,4 @@
+require('express-async-errors');
 const express = require('express');
 const app = express();
 const config = require('config');
@@ -11,7 +12,10 @@ const api = require('./routes/api');
 const assignment = require('./routes/assignment');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
+const errors = require('./middleware/errors');
 const moment = require('moment');
+const winston = require('winston');
+require('winston-mongodb');
 
 const port = process.env.elab_port_no || 4000;
 
@@ -22,9 +26,9 @@ mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
 
 mongoose.connect('mongodb://localhost/elab').then(() => {
-    console.log("connected to mongo");
+    winston.info("connected to mongo");
 })
-.catch((err)=> { console.log("Error connecting to mongo",err)});
+.catch((err)=> { winston.error("Error connecting to mongo",err)});
     
 app.use(express.static('public'));
 app.set('view engine', 'pug');
@@ -35,7 +39,25 @@ app.use(function(req, res, next) {
   next();
 });
 
+//logging 
+winston.add(new winston.transports.File({ filename: './logs/error.log', level: 'error' }));
+winston.add(new winston.transports.File({ filename: './logs/combined.log' }));
+winston.add(new winston.transports.MongoDB({db:"mongodb://localhost/elab",options:{useUnifiedTopology: true},level:'error',expireAfterSeconds:60*24*60*60,tryReconnect:true}));
 
+if (process.env.NODE_ENV !== 'production') {
+ winston.add(new winston.transports.Console)
+}
+
+winston.exceptions.handle(
+  new winston.transports.File({filename:'./logs/exceptions.log',exitOnError:true})
+);
+
+process.on('unhandledRejection',(ex)=>{
+  throw(ex);
+});
+
+
+//middleware
 app.use(session({
     name:'elab',
     secret: 'elab',
@@ -61,7 +83,7 @@ app.use('/practice', practice);
 app.use('/admin', admin);
 app.use('/api',api);
 app.use('/register', register);
-
+app.use(errors);
 
 
 app.listen(port,()=> {

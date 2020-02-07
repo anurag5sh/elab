@@ -41,7 +41,7 @@ html(lang='en')
               $('#manageModal').modal('show');
               })
                   .fail(function(error){
-                      toastr.error(error);
+                      toastr.error(error.responseText);
                   })}
       
 

@@ -101,11 +101,13 @@ router.get('/:qid',authenticate,async (req,res) => {
     }else
     {
         const question = await AssignmentQ.findOne({assignmentId:assignment.id,qid:req.params.qid}).lean().select({_id:0,test_cases:0,date:0});
-        res.render('editorAssignment',{question:question});
+        if(!question) return res.send("Invalid ID");
+        
+        return res.render('editorAssignment',{question:question});
         
     }
     
-    return res.send("Invalid ID");
+    
 
 });
 
@@ -132,6 +134,10 @@ router.post('/:qid',authenticate,async (req,res)=>{
     contest_points +=item.points;
   });
 
+  if(req.body.source.substr(req.body.source.length-18) == "undefinedundefined")
+  req.body.source = req.body.source.substr(0,req.body.source.length-18);
+  else
+  return res.status(400).send("Unauthorized");
     if(req.body.source.trim()=='')
     return res.send("Source Code cannot be empty!");
 

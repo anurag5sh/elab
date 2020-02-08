@@ -1,4 +1,6 @@
 {
-    "name":"Elab",
-    "elab_port":"4000"
+    "elab-admin-mail":{
+	"email":"cs.edc@hkbk.edu.in",
+	"password":"hkbk@321"
+	}
 }

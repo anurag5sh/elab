@@ -620,6 +620,10 @@ if(contest.timings.starts > new Date() && contest.timings.ends < new Date())
             total_points+= item.points;
     });
    
+    if(req.session.staff_id){
+        req.session.usn = req.session.staff_id;
+        req.session.year = '';
+    }
 
     const user_submission = contest.submissions.find(i => i.usn === req.session.usn && i.qid === req.params.qid);
 

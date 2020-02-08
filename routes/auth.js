@@ -396,7 +396,7 @@ router.get('/resetPassword/:token',async (req,res) =>{
   if(!user) user = await Teacher.findOne({resetToken : req.params.token,tokenExpires:{$gt:Date.now()}});
 
   if(!user) return res.status(400).send("Invalid or Expired token!");
-  res.send("enter new password");
+  res.render('changePassword');
 });
 
 router.post('/resetPassword/:token', async (req,res)=>{
@@ -420,7 +420,7 @@ router.post('/resetPassword/:token', async (req,res)=>{
   user.tokenExpires=null;
   user.save();
 
-  res.send("Password updated!");
+  res.send("Password updated! proceed to login page.");
 
 });
 

@@ -36,7 +36,7 @@ html(lang='en')
                 span.fa.fa-lock
             //- input.form-radio(type='radio', name='type', value='student',checked="checked")
             //- | Student
-            .row
+            .row#row
               .col-6  
                 .custom-control.custom-radio
                   input#student.custom-control-input(type='radio', name='type', value='student', checked="checked")
@@ -54,7 +54,7 @@ html(lang='en')
                 | Login
             .forgot-password
               br
-              a(href='#') Forgot password?
+              a(href='/forgotPassword') Forgot password?
             
     script(src='/vendor/jquery/jquery-3.2.1.min.js')
     // ===============================================================================================

@@ -1,0 +1,21 @@
+
+.container
+    .row
+        .col-lg-9.col-md-10
+            form#rules
+                textarea.form-control(name="rules" placeholder="Enter the Rules" style="height:250px;")
+                br
+                button.btn.btn-success.btn-fill(type='button' id="add-rules") Add Rules
+
+script.
+    
+    $(document).ready(function(){
+        $("#add-rules").click(function(){
+
+        $.post("",$("#rules").serialize(),
+        function(data,status){
+            toastr.success(data);
+        });
+
+        });
+    });

@@ -42,7 +42,7 @@ body.light-theme .buttons .button:hover {
 .example {
   font-family: 'Roboto', sans-serif;
   width: 550px;
-  height: 378px;
+  height: auto;
   margin: auto;
   padding: 20px;
   box-sizing: border-box;

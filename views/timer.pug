@@ -26,7 +26,15 @@ else
 //- if(time)
 //-     script(src='/js/timer.js')
 
-
+style.
+    .abc{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -ms-transform: translateX(-50%) translateY(-50%);
+        -webkit-transform: translate(-50%,-50%);
+        transform: translate(-50%,-50%);
+    }
 
 link(href='https://fonts.googleapis.com/css?family=Roboto:100,400,700,900' rel='stylesheet')
 link(rel='stylesheet' href='https://use.fontawesome.com/releases/v5.3.1/css/all.css' integrity='sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU' crossorigin='anonymous')
@@ -47,17 +55,18 @@ script.
         });
 
     // Toggle theme
+    
     var interval = setInterval(() => {
         let body = document.body;
-        body.classList.toggle('light-theme');
-        body.querySelector('#flipdown').classList.toggle('flipdown__theme-dark');
-        body.querySelector('#flipdown').classList.toggle('flipdown__theme-light');
+        //- body.classList.toggle('light-theme');
+        //- body.querySelector('#flipdown').classList.toggle('flipdown__theme-dark');
+        //- body.querySelector('#flipdown').classList.toggle('flipdown__theme-light');
         }, 5000);
     });
 
 body
-    .box(style="text-align:center;")
-        img(src='/images/photo_2019-10-09_20-39-00.jpg' style="border-radius:10px;width:200px;height:200px;")
+    .box(style="text-align:center;height:auto" class="abc")
+        //- img(src='/images/photo_2019-10-09_20-39-00.jpg' style="border-radius:10px;width:200px;height:200px;")
         h1  #{name}
         if(attempt)
             a.btn.btn-info(type="button" href=attempt) Enter Contest

@@ -123,7 +123,13 @@ router.post('/create',authenticate,teacher, async (req,res)=>{
 
 // list the contest made by teacher 
 router.get('/manage',authenticate,teacher, async (req,res) => {
-    let trcontest = await Contest.find({createdBy:req.session.staff_id}); 
+
+    if(req.session.isAdmin){
+        const contest = await Contest.find().lean();
+        return res.render('teacher/manage',{q:contest}); 
+    }
+
+    let trcontest = await Contest.find({createdBy:req.session.staff_id}).lean(); 
     if(!trcontest) res.send.status(404).end();
     res.render('teacher/manage',{q:trcontest}); 
     
@@ -204,6 +210,40 @@ router.post('/group/allow/:url',authenticate,teacher,async (req,res)=>{
   
 });
 
+//removing a group from contest
+router.get('/group/remove/:curl/:id',authenticate,teacher,async (req,res)=>{
+    const contest = await Contest.findOne({url:req.params.curl}).select('customGroup');
+    if(!contest) return res.status(400).send('Invalid ID');
+
+    const i =contest.customGroup.findIndex(i => {return i.id == req.params.id});
+    if(!i) return res.status(400).send("Group not exisiting in this contest.");
+
+    contest.customGroup.splice(i,1);
+    await contest.save();
+
+    res.send("Group removed");
+});
+
+//deleting a group
+router.get('/group/delete/:id',authenticate,teacher,async (req,res)=>{
+    const group = await CustomGroup.findOne({id:req.params.id});
+    if(!group) return res.status(400).send("Invalid ID");
+
+    const list = await Contest.find({customGroup:req.params.id}).lean().select('name');
+
+    let lst=[];
+    if(list.length == 0){
+        await CustomGroup.deleteOne({id:group.id});
+        return res.send("Group deleted!");
+    } 
+    else{
+        for(i of list){
+            lst.push(i.name);
+        }
+        return res.status(400).send("Group is currently used in the following contests:"+lst);
+    } 
+});
+
 //teacher manage contest
 router.get('/manage/:name',authenticate,teacher, async (req,res) => {
 
@@ -248,7 +288,7 @@ router.get('/manage/:name',authenticate,teacher, async (req,res) => {
     }
 
     let stats ={signed_up:signed_up , submissions:submissions};
-    if(contest.createdBy == req.session.staff_id)
+    if(contest.createdBy == req.session.staff_id || req.session.isAdmin)
        return res.render('teacher/manageContest',{contest:contest, questions:questions,stats:stats,questionNo:questionNo,custom:custom});
     else
         return res.status(404).end();
@@ -262,7 +302,8 @@ router.post('/manage/:name',authenticate,teacher,async (req,res) =>{
     if(error) return res.status(400).send(error.message); 
 
     let contest = await Contest.findOne({url:req.params.name,'timings.ends':{$gt:new Date()}});
-    if(!contest) return res.status(400).send('Cannot edit this contest');
+    if(!contest) return res.status(400).send('Contest Ended!');
+    if(!(contest.createdBy==req.session.staff_id || req.session.isAdmin)) return res.status(400).send('Cannot edit this contest');
     const starts = new Date(req.body.timings.split("-")[0]);
     const ends = new Date(req.body.timings.split("-")[1]);
     if(starts>=ends)
@@ -271,7 +312,7 @@ router.post('/manage/:name',authenticate,teacher,async (req,res) =>{
     contest.timings.ends = ends;
     contest.timings.starts = starts;
     contest.description = req.body.description;
-    contest.year = req.body.year;
+    contest.year = req.body.year || [];
     contest.isReady = (req.body.status == "on"?true:false);
 
     await contest.save();
@@ -540,6 +581,11 @@ if(contest.timings.starts > new Date() && contest.timings.ends < new Date())
     contest_points +=item.points;
   });
 
+  if(req.body.source.substr(req.body.source.length-18) == "undefinedundefined")
+  req.body.source = req.body.source.substr(0,req.body.source.length-18);
+  else
+  return res.status(400).send("Unauthorized");
+
   if(req.body.source.trim()=='')
   return res.send("Source Code cannot be empty!");
 
@@ -574,6 +620,10 @@ if(contest.timings.starts > new Date() && contest.timings.ends < new Date())
             total_points+= item.points;
     });
    
+    if(req.session.staff_id){
+        req.session.usn = req.session.staff_id;
+        req.session.year = '';
+    }
 
     const user_submission = contest.submissions.find(i => i.usn === req.session.usn && i.qid === req.params.qid);
 

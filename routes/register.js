@@ -28,7 +28,7 @@ router.post('/',admin, async (req, res) => {
   await student.save();
 
 
-  res.send(student);
+  res.send("Account created!");
 
   }
   else if(req.body.type === "teacher")
@@ -44,7 +44,7 @@ router.post('/',admin, async (req, res) => {
   teacher.password = await bcrypt.hash(teacher.password, salt);
   await teacher.save();
 
-  res.send(teacher);
+  res.send("Account created!");
   }
   else
     res.send('Please select the account type');

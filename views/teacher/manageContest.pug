@@ -1,15 +1,15 @@
 include nav
 html(lang='en')
   head
-    title Bootstrap Example
+    title=contest.name
     meta(charset='utf-8')
     meta(name='viewport', content='width=device-width, initial-scale=1')
     script(src="/js/highlight.js")
-    link(rel="stylesheet", href="https://cdn.quilljs.com/1.3.6/quill.snow.css")
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js')
-    script(src="https://cdn.quilljs.com/1.3.6/quill.js")
-    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css")
-    script(src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.js")
+    link(rel="stylesheet", href="/css/quill.snow.css")
+    script(src='/js/popper.min.js')
+    script(src="/js/quill.js")
+    link(rel="stylesheet", href="/css/katex.min.css")
+    script(src="/js/katex.min.js")
 
     
    
@@ -27,15 +27,17 @@ html(lang='en')
         li.nav-item
           a.nav-link(data-toggle='tab', href='#menu1') QUESTIONS
         li.nav-item
-          a.nav-link(data-toggle='tab', href='#menu2') STUDENTS
+          a.nav-link(data-toggle='tab', href='#menu2') SIGNED UP
         li.nav-item
-          a.nav-link(data-toggle='tab', href='#menu3') GROUPS
+          a.nav-link(data-toggle='tab', href='#menu3') ACCESS
         li.nav-item
-          a.nav-link(data-toggle='tab', href='#menu4') LEADERBOARD
+          a.nav-link(data-toggle='tab', href='#menu4') GROUPS
         li.nav-item
-          a.nav-link(data-toggle='tab', href='#menu5') STATISTICS
+          a.nav-link(data-toggle='tab', href='#menu5') LEADERBOARD
         li.nav-item
-          a.nav-link(data-toggle='tab', href='#menu6') RULES
+          a.nav-link(data-toggle='tab', href='#menu6') STATISTICS
+        li.nav-item
+          a.nav-link(data-toggle='tab', href='#menu7') RULES
       // Tab panes
       .tab-content
         #home.container.tab-pane.active
@@ -51,16 +53,19 @@ html(lang='en')
           include studtab
         #menu3.container.tab-pane.fade
           br
-          include customGroup
+          include access
         #menu4.container.tab-pane.fade
+          br
+          include customGroup
+        #menu5.container.tab-pane.fade
           br
           h3 LEADERBOARD
           include leaderboard
-        #menu5.container.tab-pane.fade
+        #menu6.container.tab-pane.fade
           br
           h3 STATISTICS
           include statistics
-        #menu6.container.tab-pane.fade
+        #menu7.container.tab-pane.fade
           br
           h3 RULES
           include rules

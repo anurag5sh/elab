@@ -47,6 +47,12 @@ const studentSchema = new mongoose.Schema({
   },
   profile_image: {
     type: String
+  },
+  resetToken :{
+    type : String
+  },
+  tokenExpires : {
+    type : Date
   }
 
 

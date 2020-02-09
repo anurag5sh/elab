@@ -50,6 +50,12 @@ const teacherSchema = new mongoose.Schema({
   },
   profile_image: {
     type: String
+  },
+  resetToken :{
+    type : String
+  },
+  tokenExpires : {
+    type : Date
   }
 });
 
@@ -66,7 +72,7 @@ function validateTeacher(user) {
     staff_id:Joi.number().required()
   });
 
-  return schema.validateTeacher(user);
+  return schema.validate(user);
 }
 
 exports.Teacher = Teacher;

@@ -36,13 +36,13 @@ block append code
                }
             const reg = $.post("/register", $("#add").serialize(), function(data,status) {
 
-            alert("Account added Successfully");
+            toastr.success(data);
             window.location.href = '/admin/add'
             })
                 .fail(function(error){
                    
                     $("#addForm *").prop('disabled',false);
-                    alert(error.responseText);
+                    toastr.error(error.responseText);
                 })
             
         }
@@ -55,10 +55,10 @@ block append code
                 contentType: false,
                 processData: false,
                 success: function( data, textStatus, jQxhr ){
-                    alert(data);
+                    toastr.success(data);
                 },
                 error: function( jqXhr, textStatus, errorThrown ){
-                    alert(errorThrown);
+                    toastr.error(errorThrown);
                 }
             });
         }
@@ -108,8 +108,14 @@ block content
                             
                     .col-md-4.teacher.hide#tf
                         .form-group
-                            label(for="name") Name
-                            input#name.form-control(type="text",name="name")
+                            label(for="fname") First Name
+                            input#fname.form-control(type="text",name="fname")
+                        .form-group
+                            label(for="lname") Last Name
+                            input#lname.form-control(type="text",name="lname")
+                        .form-group
+                            label(for="staffid") Staff ID
+                            input#staffid.form-control(type="text",name="staff_id")
                         .form-group
                             label(for="email") Email
                             input#email.form-control(type="email",name="email")

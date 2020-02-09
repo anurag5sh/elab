@@ -1,6 +1,6 @@
 const Joi = require('@hapi/joi');
 const bcrypt = require('bcryptjs');
-//const _ = require('lodash');
+const config = require('config');
 const {Student} = require('../models/student');
 const {Teacher} = require('../models/teacher')
 const mongoose = require('mongoose');
@@ -12,6 +12,8 @@ const session = require('express-session');
 const admin = require('../middleware/admin');
 const {Practice} = require('../models/practice');
 const {Contest} = require('../models/contest');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 
 const fs = require('fs');
 
@@ -290,10 +292,13 @@ function validate(req) {
 }
 
 router.get('/students/:year',authenticate,teacher, async (req,res) =>{
-  const students = await Student.find({ year: req.params.year }).lean().select({usn:1,fname:1,_id:0});
+  const students = await Student.find({ year: req.params.year }).lean().select({usn:1,fname:1,_id:0}).skip((req.query.page-1)*10).limit(10);
   if(!students) return res.status(400).send("Students not Found");
 
-  res.send(students);
+  const total = await Student.estimatedDocumentCount({year:req.params.year});
+
+
+  res.send({students:students,total:total});
 
 });
 
@@ -306,10 +311,118 @@ router.post('/students/:id',authenticate,teacher,async (req,res) =>{
 });
 
 
-/* TEACHER'S ACCOUNT ROUTES
+router.get('/students/id/:id',authenticate,teacher,async (req,res) =>{
+  const contest = await Contest.findOne({id:req.params.id}).lean().select('custom_usn');
+  if(!contest) return res.status(400).send("Invalid ID");
 
---------------------------------------------------------- */
+  let students = await Student.find({usn:{$in:contest.custom_usn}}).lean().select({usn:1,fname:1,lname:1,year:1,_id:0});
+  if(!students) students=[];
 
+  return res.send(students);
+
+});
+
+router.get('/forgotPassword',async (req,res)=>{
+  res.render('forgotPassword');
+});
+
+
+router.post('/forgotPassword',async (req,res)=>{
+
+  const schema = Joi.object({
+    email: Joi.string().min(5).max(255).required().email(),
+    type:Joi.string().required().error(new Error('Please select the account type'))
+  });
+
+  const {error} = schema.validate(req.body);
+  if(error ) return res.status(400).send(error.message);
+
+  let user; let token;
+  if(req.body.type == 'student'){
+    user = await Student.findOne({email:req.body.email});
+    if(!user) return res.status(400).send('User not found!');
+
+    token = crypto.randomBytes(20).toString('hex');
+    user.resetToken = token;
+    user.tokenExpires = Date.now() + 3600000;
+    await user.save();
+  }
+  else if(req.body.type == 'teacher'){
+
+    user = await Teacher.findOne({email:req.body.email});
+    if(!user) return res.status(400).send('User not found!');
+
+    token = crypto.randomBytes(20).toString('hex');
+    user.resetToken = token;
+    user.tokenExpires = Date.now() + 3600000;
+    await user.save();
+
+  }
+  else return res.status(400).send("Invalid account type");
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: config.get('elab-admin-mail.email'),
+      pass: config.get('elab-admin-mail.password'),
+    },
+  });
+  if(!user.recovery_email || user.recovery_email == '' || user.recovery_email==null) return res.status(400).send('Recovery Email not set!');
+  const mailOptions = {
+    from: config.get('elab-admin-mail.email'),
+    to: `${user.recovery_email}`,
+    subject: 'ELAB - Password Reset link',
+    text:
+      `Hi ${user.fname},\n\n`
+      + 'You recently requested to reset your password for your Elab account. Click on the link below to reset it.\n\n'
+      + `http://localhost:4000/resetPassword/${token}\n\n`
+      + 'If you did not request this, please ignore this email and your password will remain unchanged. This reset link is valid only for next 1hr.\n',
+  };
+
+  transporter.sendMail(mailOptions, (err, response) => {
+    if (err) {
+      res.status(400).send("Unable to send the reset link.");
+    } else {
+      res.status(200).send('Recovery E-mail sent.');
+    }
+  });
+
+});
+
+//reset password via token
+router.get('/resetPassword/:token',async (req,res) =>{
+  let user;
+  user = await Student.findOne({resetToken : req.params.token,tokenExpires:{$gt:Date.now()}});
+  if(!user) user = await Teacher.findOne({resetToken : req.params.token,tokenExpires:{$gt:Date.now()}});
+
+  if(!user) return res.status(400).send("Invalid or Expired token!");
+  res.render('changePassword');
+});
+
+router.post('/resetPassword/:token', async (req,res)=>{
+  let user;
+  user = await Student.findOne({resetToken : req.params.token,tokenExpires:{$gt:Date.now()}});
+  if(!user) user = await Teacher.findOne({resetToken : req.params.token,tokenExpires:{$gt:Date.now()}});
+
+  if(!user) return res.status(400).send("Invalid or Expired token!");
+
+  const schema = Joi.object({
+    password: Joi.string().min(5).max(255).required(),
+    cnf_password:Joi.string().min(5).max(255).required().equal(Joi.ref('password')).error(new Error("Passwords do not match!"))
+  });
+
+  const {error} = schema.validate(req.body);
+  if (error) return res.status(400).send(error.message);
+
+  const salt = await bcrypt.genSalt(10);
+  user.password = await bcrypt.hash(req.body.password, salt);
+  user.resetToken = null;
+  user.tokenExpires=null;
+  user.save();
+
+  res.send("Password updated! proceed to login page.");
+
+});
 
 
 module.exports = router; 

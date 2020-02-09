@@ -12,6 +12,7 @@ const crypto = require("crypto");
 const moment = require('moment');
 const _ = require('lodash');
 const request = require("request-promise");
+const config = require('config');
 
 
 function encode64(string){ //encoding to base64
@@ -486,9 +487,49 @@ router.get('/delete/:curl/:qid',authenticate,teacher,async (req,res)=>{
     res.send("Question deleted.");
 });
 
+//fetching source code
+function lang(l){
+    switch (l){
+        case 50 : return "C50";
+        case 54 : return "C++54";
+        case 51 : return "C#51";
+        case 62 : return "Java62";
+        case 63 : return "Javascript63";
+        case 71 : return "Python71";
+    }   
+}
+router.get('/source/:curl/:qid',authenticate,contestAuth,async (req,res) =>{
+    let source=[];
+    if(req.query.lang){
+        let contest = await Contest.findOne({url:req.params.curl},{submissions:{$elemMatch:{usn:req.session.usn,qid:req.params.qid,language_id:req.query.lang}}},{_id:0,'submissions.$':1}).lean();
+        if(!contest) return res.status(404).end();
+        if(!contest.submissions) contest.submissions=[];
+
+        const submission = await Submission.find({usn:req.session.usn,qid:req.params.qid,language_id:req.query.lang}).lean();
+        source = contest.submissions.concat(submission);
+        if(source.length == 0){
+            source=[{sourceCode:config.get(`source.${req.query.lang}`)}];
+            return res.send(source);
+        }
+    }
+    else{
+        let contest = await Contest.findOne({url:req.params.curl},{submissions:{$elemMatch:{usn:req.session.usn,qid:req.params.qid}}},{_id:0,'submissions.$':1}).lean();
+        if(!contest) return res.status(404).end();
+        if(!contest.submissions) contest.submissions=[];
+    
+        const submission = await Submission.find({usn:req.session.usn,qid:req.params.qid}).lean();
+        source = contest.submissions.concat(submission);
+        for(i=0;i<source.length;i++){
+            source[i].language_id = lang(source[i].language_id);
+        }
+    }
+  
+    res.send(source.sort((a,b)=>(a.timestamp>b.timestamp)?-1:1));
+});
+
 //landing page for contest
 router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
-    let contest = await Contest.findOne({url:req.params.curl}).lean().select('timings signedUp name');
+    let contest = await Contest.findOne({url:req.params.curl}).lean().select('timings signedUp name questions');
     if(!contest) return res.status(404).end();
 
     const now = new Date();
@@ -507,21 +548,23 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
     //student
     else{ 
         
-        if(now>=contest.timings.starts && now<=contest.timings.ends){
+        if(now>=contest.timings.starts && now<=contest.timings.ends){ //between contest
         if(!contest.signedUp.find(({usn}) => usn == req.session.usn)){
            return res.render("timer" , {attempt:"/contest/sign/"+req.params.curl,time:false,type: "student"});
         }
 
-        return res.send("questions");
+        let questions = await ContestQ.find({qid:{$in:contest.questions}}).select('name difficulty qid description -_id')
+        if(!questions) questions=[];
+        return res.render('qdisplay',{contest:contest,questions:questions});
         }
 
-        if(now < contest.timings.starts)
+        if(now < contest.timings.starts) //before contest
         {   const milli = contest.timings.starts - now; //stores milli seconds
             
             return res.render("timer",{time:Date.now() + milli,name:contest.name} );
         }
 
-        if(now > contest.timings.ends)
+        if(now > contest.timings.ends) //after contest
         {
             return res.send("Ended");
         }
@@ -542,13 +585,12 @@ router.get('/:curl/leaderboard',authenticate,async (req,res) =>{
 
 //viewing question
 router.get('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
-    let contest = await Contest.findOne({url:req.params.curl}).lean().select('questions');
+    let contest = await Contest.findOne({url:req.params.curl},{submissions:{$elemMatch:{usn:req.session.usn,qid:req.params.qid}}},{_id:0,'submissions.$':1}).lean().select('questions');
     if(!contest) return res.status(404).end();
-
+    
     if(!contest.questions.includes(req.params.qid)){
         return res.status(404).end();
     }
-
     let question = await ContestQ.findOne({qid:req.params.qid}).catch(err => {
         return res.status(404).end();
     });
@@ -557,6 +599,8 @@ router.get('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
 
 
 });
+
+
 
 //submission of contest
 router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{

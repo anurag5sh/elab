@@ -10,7 +10,8 @@ style.
   .card{
         margin-top:10px;
         box-sizing: border-box;
-    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.13)
+        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.13);
+        width:850px;
       }
       .card:hover .edit{
         display: block;
@@ -144,9 +145,9 @@ each i in ques
           span.btn-label
             i.fas.fa-trash
           | Delete
-        a(href='#')
-          | EDIT
-          i.ed.fas.fa-edit(style='font-size:15px;color:rgb(0, 0, 255); ')
+        //- a(href='#')
+        //-   | EDIT
+        //-   i.ed.fas.fa-edit(style='font-size:15px;color:rgb(0, 0, 255); ')
 .container
   .modal#edit
       .modal-dialog.modal-xl

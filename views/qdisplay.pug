@@ -1,0 +1,192 @@
+doctype html
+head
+  title ELAB | questions
+  meta(charset='utf-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1')
+  link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css')
+  link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
+  script(src='https://kit.fontawesome.com/a076d05399.js')
+  script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js')
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js')
+  script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js')
+  link(href='https://fonts.googleapis.com/css?family=Pompiere|Vast+Shadow&display=swap' rel='stylesheet')
+  style.
+    .hovering,.hovering1,.hovering2,.hovering3{
+    color:white;
+    border-color:white;
+    }
+    .hovering:hover{
+    color:#8bc34a;
+    background-color:white;
+    border-color:#8bc34a;
+    }
+    .hovering1:hover{
+    color:#ec407a;
+    background-color:white;
+    border-color:#ec407a;
+    }
+    .hovering2:hover{
+    color:#fbc02d;
+    background-color:white;
+    border-color:#fbc02d;
+    }
+    .hovering3:hover{
+    color:#00bcd4;
+    background-color:white;
+    border-color:#00bcd4;
+    }
+    body * {
+    font-family: 'Nunito', sans-serif;
+    box-sizing: border-box;
+    }
+    #countdown-wrap {
+    width: 100%;
+    height: 300px;
+    padding: 20px;
+    font-family: arial;
+    max-width: 650px;
+    margin: 20px auto 300px;
+    }
+    #goal {
+    font-size: 35px;
+    text-align: right;
+    color: rgb(22, 22, 22);
+    }
+    @media only screen and (max-width: 640px) {
+    #goal {
+    text-align: center;
+    }
+    }
+    #glass {
+    width: 100%;
+    height: 20px;
+    background: #f5f1f1;
+    border-radius: 10px;
+    float: left;
+    overflow: hidden;
+    }
+    #progress {
+    float: left;
+    width: 16%;
+    height: 20px;
+    background: #FF5D50;
+    z-index: 333;
+    }
+    .goal-stat {
+    width: 70%;
+    padding: 10px;
+    float: auto;
+    margin: 0;
+    color: rgb(8, 8, 8);
+    }
+    @media only screen and (max-width: 640px) {
+    .goal-stat {
+    width: 50%;
+    /* text-align: center; */
+    }
+    }
+    .goal-number,
+    .goal-label {
+    display: inline-block;
+    }
+    .goal-number {
+    font-weight: bold;
+    }
+  script.
+    CountDownTimer('02/25/2020 10:1 AM', 'countdown'); //specify end Date Here
+    // CountDownTimer('02/06/2020 10:1 AM', 'newcountdown');
+    function CountDownTimer(dt, id)
+    {
+    var end = new Date(dt);
+    var _second = 1000;
+    var _minute = _second * 60;
+    var _hour = _minute * 60;
+    var _day = _hour * 24;
+    var timer;
+    function showRemaining() {
+    var now = new Date();
+    var distance = end - now;
+    if (distance < 0) {
+    clearInterval(timer);
+    document.getElementById(id).innerHTML = '0';
+    return;
+    }
+    var days = Math.floor(distance / _day);
+    var hours = Math.floor((distance % _day) / _hour);
+    var minutes = Math.floor((distance % _hour) / _minute);
+    var seconds = Math.floor((distance % _minute) / _second);
+    document.getElementById(id).innerHTML = days /*+ ' days'*/;
+    //document.getElementById(id).innerHTML += hours + 'hrs ';
+    //document.getElementById(id).innerHTML += minutes + 'mins ';
+    //document.getElementById(id).innerHTML += seconds + 'secs';
+    }
+    timer = setInterval(showRemaining, 1000);
+    }
+.row(style='width: 100%; margin-left: 60px;')
+  .col-lg-7.col-md-10
+    div(style='margin-bottom: -25px;')
+      h1 Contest Name
+      hr(style='border: 1px solid red;')
+    br
+    .row
+      .col-lg-8.col-md-8
+        .shadow.p-3.rounded(style='background-color: #8bc34a;width: 700px; margin-left: 25px;')
+          h3(style="font-family: 'Vast Shadow', cursive;color:white")  Array Sort 
+          .row
+            .col-lg-10.col-md-10
+              p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;")  This is a Sorting Program given an Array a sort and Print
+            .col-lg-2.col-md-2
+              button.btn.btn-outline-success.hovering(style='font-weight:bold;border-radius:20px;') Solve
+    br
+    .row
+      .col-lg-8.col-md-8
+        .shadow.p-3.rounded(style='background-color: #ec407a;  width: 700px; margin-left: 25px; ')
+          h3(style="font-family: 'Vast Shadow', cursive;color:white")  Cipher Text 
+          .row
+            .col-lg-10.col-md-10
+              p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;")  This is a Sorting Program given an Array a sort and Print
+            .col-lg-2.col-md-2
+              button.btn.btn-outline-success.hovering1(style='font-weight:bold;border-radius:20px;') Solve
+    br
+    .row
+      .col-lg-8.col-md-8
+        .shadow.p-3.rounded(style='background-color: #fbc02d; width: 700px; margin-left: 25px; ')
+          h3(style="font-family: 'Vast Shadow', cursive;color:white")  Box Pattern 
+          .row
+            .col-lg-10.col-md-10
+              p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;")  This is a Sorting Program given an Array a sort and Print
+            .col-lg-2.col-md-2
+              button.btn.btn-outline-success.hovering2(style='font-weight:bold;border-radius:20px;') Solve
+    br
+    .row
+      .col-lg-8.col-md-8
+        .shadow.p-3.rounded(style='background-color: #00bcd4; width: 700px;  margin-left: 25px;')
+          h3(style="font-family: 'Vast Shadow', cursive;color:white")  Merge Sort 
+          .row
+            .col-lg-10.col-md-10
+              p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;")  This is a Sorting Program given an Array a sort and Print
+            .col-lg-2.col-md-2
+              button.btn.btn-outline-success.hovering3(style='font-weight:bold;border-radius:20px;') Solve
+  .col-lg-5.col-md-2(style='margin-top: 10px;align-items: initial;')
+    .box
+      #countdown-wrap(style='width: 60%;margin-left: initial; background-color: lavender; margin-bottom: 10px;')
+        #goal #Ending Date
+        #glass
+          #progress(style='width: 90%;')
+        .goal-stat
+          span.goal-number
+            #countdown
+            span.goal-label Days to End
+        hr
+        h5 Created by:
+      #countdown-wrap(style='width: 60%;margin-left: initial; background-color: lavender; margin-bottom: 10px; height: 120px;')
+        .row
+          .col.text-left
+            a.btn(href='#' style='font-size:15px;')
+              i.fas.fa-info
+              label(style='cursor: pointer;') &nbsp; Rules
+        .row
+          .col.text-left
+            a.btn(href='#' style='font-size:15px;')
+              i.fas.fa-list
+              label(style='cursor: pointer;') &nbsp; Leader Board

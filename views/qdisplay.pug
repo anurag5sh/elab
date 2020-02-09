@@ -122,6 +122,7 @@ head
     timer = setInterval(showRemaining, 1000);
     }
 body
+  p=totalPoints
   .row(style='width: 100%; margin-left: 60px;')
     .col-lg-7.col-md-10
       div(style='margin-bottom: -25px;')
@@ -187,6 +188,6 @@ body
                 label(style='cursor: pointer;') &nbsp; Rules
           .row
             .col.text-left
-              a.btn(href='#' style='font-size:15px;')
+              a.btn(href="/contest/"+contest.url+"/leaderboard" style='font-size:15px;')
                 i.fas.fa-list
                 label(style='cursor: pointer;') &nbsp; Leader Board

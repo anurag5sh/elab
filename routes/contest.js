@@ -529,7 +529,7 @@ router.get('/source/:curl/:qid',authenticate,contestAuth,async (req,res) =>{
 
 //landing page for contest
 router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
-    let contest = await Contest.findOne({url:req.params.curl}).lean().select('timings signedUp name questions');
+    let contest = await Contest.findOne({url:req.params.curl}).lean().select('timings signedUp name questions url');
     if(!contest) return res.status(404).end();
 
     const now = new Date();
@@ -554,8 +554,18 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
         }
 
         let questions = await ContestQ.find({qid:{$in:contest.questions}}).select('name difficulty qid description -_id')
+        let totalPoints = [];
         if(!questions) questions=[];
-        return res.render('qdisplay',{contest:contest,questions:questions});
+        else
+        {
+            questions.forEach((item,index)=>{ let total=0;
+                item.test_cases.forEach((itemp)=>{
+                    total+=itemp.points;
+                })
+                totalPoints.push(total);
+            });
+        }
+        return res.render('qdisplay',{contest:contest,questions:questions,totalPoints:totalPoints});
         }
 
         if(now < contest.timings.starts) //before contest
@@ -574,11 +584,11 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
 });
 
 //leaderboard route
-router.get('/:curl/leaderboard',authenticate,async (req,res) =>{
-    const contest =  await Contest.findOne({url:req.params.curl}).lean().select('leaderboard');
+router.get('/:curl/leaderboard',authenticate,contestAuth,async (req,res) =>{
+    const contest =  await Contest.findOne({url:req.params.curl}).lean().select('leaderboard url name');
     if(!contest) return res.send("Invalid ID");
 
-    res.send(result);
+    res.render('leaderboard',{contest:contest});
 });
 
 
@@ -709,7 +719,7 @@ if(contest.timings.starts > new Date() && contest.timings.ends < new Date())
 
     let sub = new Submission();
     const subCount = await Submission.estimatedDocumentCount({usn:req.session.usn,qid:req.params.qid});
-    if(subCount>20){
+    if(subCount == 20){
         sub = await Submission.findOne({usn:req.session.usn,qid:req.params.qid}).sort({timestamp:1});
     }
     if(total_points == contest_points && user_submission.status == "Accepted"){

@@ -32,7 +32,29 @@ html(lang='en')
       .at{
         width:100px;
       }
-      
+      .row{
+        margin-left:10px;    
+      }
+      .contestform{
+        width: 65%;
+        //- box-shadow: 0 0.5px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        text-align: left;
+        left: 10px;
+        //- padding: 10px;
+        margin: 10px;
+        position: relative;
+        //- display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 1px solid rgba(0,0,0,.125);
+        border-radius: .25rem;
+      }
+
     script.
       let u ="";
       function submitForm(){
@@ -92,9 +114,10 @@ html(lang='en')
             .col-1.custom-control.custom-checkbox
               input(type='checkbox', class= "custom-control-input",name='year',id="4-year", value='4')
               label(class="custom-control-label" for="4-year") 4th Year
-          br  
-          input.btn.btn-outline-primary.btn-sm(type='button', value='GET STARTED', onclick="submitForm()")
-
+          br 
+          input.btn.btn-outline-danger.btn-sm(type='button', value='CANCEL', onclick="",style="float:right;margin-right:70px;") 
+          input.btn.btn-outline-primary.btn-sm(type='button', value='GET STARTED', onclick="submitForm()",style="float:right;margin-right:10px;")
+         
         script.
           $(function() {
             $('#timings').daterangepicker({

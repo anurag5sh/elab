@@ -5,7 +5,6 @@ html(lang='en')
     include navbar
     script(src='/src-min-noconflict/ace_modified.js' charset='utf-8')
     script(src='/src-min-noconflict/ext-language_tools.js')
-    script(src='/assets/js/jquery.min.js')
     link(rel='stylesheet' href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css')
     link(rel="stylesheet", href="/css/nice-select.css")
     script(src="/js/jquery.nice-select.min.js")
@@ -186,12 +185,12 @@ html(lang='en')
     .card(style="width:90%; display:inline-block;")
       label.language(for="lang") Language
       select.option-disp#lang(onchange='setup()')
+        option(value='c50') C
+        option(value='c++54') C++
+        option(value='c#51') C#
         option(value='python71') Python
         option(value='java62') Java
         option(value='javascript63') Javascript
-        option(value='c_cpp50') C
-        option(value='c_cpp54') C++
-        option(value='csharp51') C#
       label.theme(for="theme") Theme
       select.option-disp#theme(onchange='setup()')
         option(value='monokai') Monokai
@@ -209,6 +208,9 @@ html(lang='en')
         option(value='30') &nbsp; &nbsp; 30 &nbsp; &nbsp;
         option(value='36') &nbsp; &nbsp; 36 &nbsp; &nbsp;
       
+      a(style='float:right' href="" data-toggle="modal" data-target="#sourceModal") View Code history
+
+
       div#editor
       button#button_submit.btn.btn-success(value='Submit', onclick='setup().submit()', style='float:right;width:100px;left:20px;') 
         a(href='#opbox' style="color:white;font-weight:bold") Submit
@@ -227,6 +229,26 @@ html(lang='en')
     #loader(style="height:600px;display:none;")
       .loader(style="")  
 
+    .modal.fade#sourceModal(tabindex ="-1" role="dialog" )
+        .modal-dialog.modal-lg
+            .modal-content
+                .modal-header
+                  h4.modal-title My source code history
+                  button.close(type='button' data-dismiss='modal') ×
+                .modal-body
+                  table.table.table-hover
+                    thead 
+                      tr
+                        th #
+                        th Language
+                        th Status
+                        th Points
+                        th Select
+                    tbody#sourceBody
+
+                .modal-footer
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+
 
 
     script.
@@ -242,21 +264,60 @@ html(lang='en')
       function setup(){const editor = ace.edit("editor");
       ace.config.set("basePath", "/src-min-noconflict");
       ace.require("ace/ext/language_tools");
-      editor.setTheme("ace/theme/"+$("#theme").val());
-      let l = $("#lang").val();
-      l=l.slice(0,-2);
-      editor.session.setMode("ace/mode/"+l);
       editor.getSession().setUseWrapMode(true);
-      
-
-      editor.setOptions({
+       editor.setOptions({
       enableBasicAutocompletion: true,
       enableSnippets: true,
       enableLiveAutocompletion: true,
       showPrintMargin: false,
-      fontSize:parseInt($("#fontsize").val()),
       indentedSoftWrap: false
       });
+      
+      setup.sourceArray=[];
+      function source(lang){
+        const con = window.location.pathname.split("/");
+        if(!lang) lang='';
+        $.get(`/assignment/source/${con[2]}`,{lang:lang},function (data,status){
+            if(lang){
+            editor.setValue(data[0].sourceCode);
+            
+            }
+            else{$("#sourceBody").empty();sourceArray=data;
+              data.forEach((item,index)=>{
+              $("#sourceBody").append('<tr><td>'+(index+1)+'</td><td>'+item.language_id.slice(0,-2)+'</td><td>'+item.status+'</td><td>'+item.points+'</td><td><a href="javascript:setup().sourceInsert('+index+')">Select</a></td></tr>');
+              });
+            }
+        }).fail((err)=>{
+          toastr.error(err.responseText);
+        })
+      }
+      function sourceInsert(i){
+        editor.setValue(sourceArray[i].sourceCode);
+        $("#lang").val(sourceArray[i].language_id.toLowerCase()).change();
+        $('select').niceSelect('update');
+        $("#sourceModal").modal('hide');
+      }
+
+      function setLang(){ let m='';
+        const l = $("#lang").val();
+        switch (parseInt(l.substr(l.length-2))){
+          case 50 : m='c_cpp';break;
+          case 51 : m='csharp';break;
+          case 54 : m='c_cpp';break;
+          default: m=l.slice(0,-2); 
+        }
+        
+        editor.session.setMode("ace/mode/"+m);
+        source(l.substr(l.length-2));
+      }
+      function setTheme(){
+        editor.setTheme("ace/theme/"+$("#theme").val());
+      }
+      function setFont(){
+        editor.setFontSize(parseInt($("#fontsize").val()));
+      }
+
+      (function setDefault(){setLang();setTheme();setFont();setDefault=()=>{}})();
 
      function readText() { window.location.href="#loader";
       let l = document.getElementById("lang").value;
@@ -368,12 +429,16 @@ html(lang='en')
         });
         });
       }
-      return {run:readText,submit:submission}
+      return {run:readText,submit:submission,setLang:setLang,source:source,setTheme:setTheme,setFont:setFont,sourceInsert:sourceInsert}
+
       }
 
        $(document).ready(function() {
       $('select').niceSelect();
       setup();
+      $("#sourceModal").on('show.bs.modal', function(){
+        setup().source();
+      });
       });
 
 

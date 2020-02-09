@@ -9,6 +9,7 @@ const {Assignment,validateAssignment} = require('../models/assignment');
 const {AssignmentQ,validateAQ} = require('../models/assignmentQ');
 const {aSubmission} = require('../models/assignmentSubmission');
 const moment = require('moment');
+const config = require('config');
 
 function encode64(string){ //encoding to base64
     const b = new Buffer.from(string);
@@ -60,6 +61,46 @@ router.get('/get/:id',authenticate,teacher,async (req,res) =>{
 router.get('/manage',authenticate,teacher,async (req,res) => {
     const current = await Assignment.find({ 'duration.ends' :{$gt : new Date()} }).lean().select({id:1,sem:1,_id:0}).sort({id:1});
         res.render('teacher/manageAssignment',{current : current});
+});
+
+//fetching source code
+function lang(l){
+    switch (l){
+        case 50 : return "C50";
+        case 54 : return "C++54";
+        case 51 : return "C#51";
+        case 62 : return "Java62";
+        case 63 : return "Javascript63";
+        case 71 : return "Python71";
+    }   
+}
+router.get('/source/:qid',authenticate,async (req,res) =>{
+    let source=[];
+    if(req.query.lang){
+        let assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year)},{submissions:{$elemMatch:{usn:req.session.usn,qid:req.params.qid,language_id:req.query.lang}}},{_id:0,'submissions.$':1}).lean();
+        if(!assignment) return res.status(404).end();
+        if(!assignment.submissions)assignment.submissions=[];
+
+        const submission = await aSubmission.find({usn:req.session.usn,qid:req.params.qid,language_id:req.query.lang}).lean();
+        source = assignment.submissions.concat(submission);
+        if(source.length == 0){
+            source=[{sourceCode:config.get(`source.${req.query.lang}`)}];
+            return res.send(source);
+        }
+    }
+    else{
+        let assignment = await Assignment.findOne({url:req.params.curl},{submissions:{$elemMatch:{usn:req.session.usn,qid:req.params.qid}}},{_id:0,'submissions.$':1}).lean();
+        if(!assignment) return res.status(404).end();
+        if(!assignment.submissions) assignment.submissions=[];
+    
+        const submission = await aSubmission.find({usn:req.session.usn,qid:req.params.qid}).lean();
+        source = assignment.submissions.concat(submission);
+        for(i=0;i<source.length;i++){
+            source[i].language_id = lang(source[i].language_id);
+        }
+    }
+  
+    res.send(source.sort((a,b)=>(a.timestamp>b.timestamp)?-1:1));
 });
 
 //teacher editing details
@@ -117,14 +158,15 @@ router.post('/:qid',authenticate,async (req,res)=>{
     const assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).select('id questions submissions');
     if(!assignment) return res.status(400).end();
 
+    let question=null;
     if(assignment.questions.includes(req.params.qid)){
 
-    const question = await AssignmentQ.findOne({qid:req.params.qid}).lean().select({_id:0,test_cases:1});
+    question = await AssignmentQ.findOne({qid:req.params.qid}).lean().select({_id:0,test_cases:1});
     if(!question) return res.send("Invalid ID");
     }
     else{
 
-    const question = await AssignmentQ.findOne({assignmentId:assignment.id,qid:req.params.qid}).lean().select({_id:0,test_cases:1});
+    question = await AssignmentQ.findOne({assignmentId:assignment.id,qid:req.params.qid}).lean().select({_id:0,test_cases:1});
     if(!question) return res.send("Invalid ID");
     }
 
@@ -169,7 +211,7 @@ router.post('/:qid',authenticate,async (req,res)=>{
                 total_points+= item.points;
         });
 
-        const user_submission = assignment.submissions.find(i => i.usn === req.session.usn);
+        const user_submission = assignment.submissions.find(i => (i.usn == req.session.usn && i.qid==req.params.qid));
         if(!user_submission){
         
             let obj ={};
@@ -194,6 +236,10 @@ router.post('/:qid',authenticate,async (req,res)=>{
         }
     
         let sub = new aSubmission();
+        const subCount = await aSubmission.estimatedDocumentCount({usn:req.session.usn,qid:req.params.qid});
+        if(subCount == 20){
+            sub = await aSubmission.findOne({usn:req.session.usn,qid:req.params.qid}).sort({timestamp:1});
+        }
         if(total_points == contest_points && user_submission.status == "Accepted"){
             
             sub.qid = req.params.qid;

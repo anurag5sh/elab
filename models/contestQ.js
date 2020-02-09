@@ -18,6 +18,9 @@ const contestQSchema = new mongoose.Schema({
         required: true,
 
     },
+    difficulty:{
+        type:String
+    },
     constraints:{
         type: String,
         default : ""
@@ -77,7 +80,8 @@ function validateCQ(question)
         i_testcase1: [Joi.string(),Joi.array().items(Joi.string())],
         o_testcase1: [Joi.string(),Joi.array().items(Joi.string())],
         explanation: Joi.string().required(),
-        points : [Joi.number(),Joi.array().items(Joi.number())]
+        points : [Joi.number(),Joi.array().items(Joi.number())],
+        difficulty:Joi.string().valid(['Easy,Medium,Hard']).required()
         
     });
 

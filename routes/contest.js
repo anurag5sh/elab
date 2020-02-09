@@ -553,7 +553,7 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
            return res.render("timer" , {attempt:"/contest/sign/"+req.params.curl,time:false,type: "student"});
         }
 
-        let questions = await ContestQ.find({qid:{$in:contest.questions}}).select('name difficulty qid description -_id')
+        let questions = await ContestQ.find({qid:{$in:contest.questions}}).select('name difficulty qid description _id test_cases')
         let totalPoints = [];
         if(!questions) questions=[];
         else
@@ -565,6 +565,7 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
                 totalPoints.push(total);
             });
         }
+        questions.test_cases = [];
         return res.render('qdisplay',{contest:contest,questions:questions,totalPoints:totalPoints});
         }
 

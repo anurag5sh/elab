@@ -57,6 +57,21 @@ style.
                       td
                         input#name(type='text' name='name' required style="width:50%").form-control
                     tr
+                      td
+                        label(for='difficult') Difficulty:
+                      td
+                        //- input#difficulty(type='text' name='description' required).form-control
+                        .form-group(style="width:50%")
+                          select#difficult.form-control(name='difficulty')
+                            option(value='Easy') Easy
+                            option(value='Medium') Medium
+                            option(value='Difficult') Difficult
+                    tr
+                      td
+                        label(for='description') Description:
+                      td
+                        input#description(type='text' name='description' required).form-control
+                    tr
                       td(style="width:150px;")
                         label Problem Statement:
                       td
@@ -167,6 +182,21 @@ each i in ques
                                               label Question name:
                                           td
                                               input#name-e(type='text' name='name' required style="width:50%").form-control
+                                      tr
+                                          td
+                                              label(for='difficult') Difficulty
+                                          td
+                                          
+                                              .form-group
+                                                select#difficult.form-control(name='difficult')
+                                                  option(value='Easy') Easy
+                                                  option(value='Medium') Medium
+                                                  option(value='Difficult') Difficult
+                                      tr
+                                          td
+                                            label(for='description') Description:
+                                          td
+                                            input#description(type='text' name='description' required).form-control                                     
                                       tr
                                           td(style="width:150px;")
                                               label Problem Statement:

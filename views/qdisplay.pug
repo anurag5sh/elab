@@ -3,25 +3,26 @@ head
   title=contest.name
   meta(charset='utf-8')
   meta(name='viewport' content='width=device-width, initial-scale=1')
-  link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css')
+  //- link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css')
   link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
+  link(href="https://fonts.googleapis.com/css?family=Open+Sans:700&display=swap" rel="stylesheet")
   script(src='https://kit.fontawesome.com/a076d05399.js')
   script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js')
   script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js')
-  script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js')
+  //- script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js')
   link(href='https://fonts.googleapis.com/css?family=Pompiere|Vast+Shadow&display=swap' rel='stylesheet')
   style.
     .hovering,.hovering1,.hovering2,.hovering3{
     color:white;
     border-color:white;
     }
-    .hovering:hover{
+    /*.hovering:hover{
     color:#8bc34a;
     background-color:white;
     border-color:#8bc34a;
-    }
+    }*/
     .hovering1:hover{
-    color:#ec407a;
+    color:#ff4d4d;
     background-color:white;
     border-color:#ec407a;
     }
@@ -49,7 +50,7 @@ head
     }
     #goal {
     font-size: 35px;
-    text-align: right;
+    text-align: left;
     color: rgb(22, 22, 22);
     }
     @media only screen and (max-width: 640px) {
@@ -121,56 +122,83 @@ head
     }
     timer = setInterval(showRemaining, 1000);
     }
-body
+body()
   p=totalPoints
-  .row(style='width: 100%; margin-left: 60px;')
+  p=questions
+  div(style="padding:25px;padding-bottom:10px")
+    h1(style="font-family: 'Open Sans', sans-serif;")=contest.name
+    hr(style='border: 1px solid red;width:56.5%;margin-left:0px')
+  .row(style="width:100%")
     .col-lg-7.col-md-10
-      div(style='margin-bottom: -25px;')
-        h1 Contest Name
-        hr(style='border: 1px solid red;')
-      br
-      .row
-        .col-lg-8.col-md-8
-          .shadow.p-3.rounded(style='background-color: #8bc34a;width: 700px; margin-left: 25px;')
-            h3(style="font-family: 'Vast Shadow', cursive;color:white")  Array Sort 
-            .row
-              .col-lg-10.col-md-10
-                p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;")  This is a Sorting Program given an Array a sort and Print
-              .col-lg-2.col-md-2
-                button.btn.btn-outline-success.hovering(style='font-weight:bold;border-radius:20px;') Solve
-      br
-      .row
-        .col-lg-8.col-md-8
-          .shadow.p-3.rounded(style='background-color: #ec407a;  width: 700px; margin-left: 25px; ')
-            h3(style="font-family: 'Vast Shadow', cursive;color:white")  Cipher Text 
-            .row
-              .col-lg-10.col-md-10
-                p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;")  This is a Sorting Program given an Array a sort and Print
-              .col-lg-2.col-md-2
-                button.btn.btn-outline-success.hovering1(style='font-weight:bold;border-radius:20px;') Solve
-      br
-      .row
-        .col-lg-8.col-md-8
-          .shadow.p-3.rounded(style='background-color: #fbc02d; width: 700px; margin-left: 25px; ')
-            h3(style="font-family: 'Vast Shadow', cursive;color:white")  Box Pattern 
-            .row
-              .col-lg-10.col-md-10
-                p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;")  This is a Sorting Program given an Array a sort and Print
-              .col-lg-2.col-md-2
-                button.btn.btn-outline-success.hovering2(style='font-weight:bold;border-radius:20px;') Solve
-      br
-      .row
-        .col-lg-8.col-md-8
-          .shadow.p-3.rounded(style='background-color: #00bcd4; width: 700px;  margin-left: 25px;')
-            h3(style="font-family: 'Vast Shadow', cursive;color:white")  Merge Sort 
-            .row
-              .col-lg-10.col-md-10
-                p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;")  This is a Sorting Program given an Array a sort and Print
-              .col-lg-2.col-md-2
-                button.btn.btn-outline-success.hovering3(style='font-weight:bold;border-radius:20px;') Solve
-    .col-lg-5.col-md-2(style='margin-top: 10px;align-items: initial;')
+      
+      //- -if (questions[0].difficulty === 'Easy')
+      //-     br
+      //-     .row
+      //-       .col-lg-8.col-md-8
+      //-         .shadow.p-3.rounded(style='background-color: #8bc34a;width: 700px; margin-left: 25px;')
+      //-           h3(style="font-family: 'Vast Shadow', cursive;color:white")  #{i.name} 
+      //-           .row
+      //-             .col-lg-10.col-md-10
+      //-               p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;")  This is a Sorting Program given an Array a sort and Print
+      //-             .col-lg-2.col-md-2
+      //-               button.btn.btn-outline-success.hovering(style='font-weight:bold;border-radius:20px;') Solve
+      each i,j in questions
+        -if(i.difficulty === 'Easy')
+          br
+          .row
+            .col-lg-8.col-md-8
+              .shadow.p-3.rounded(style='background-color: #00bcd4; width: 700px;  margin-left: 25px;')
+                h3(style="font-family: 'Vast Shadow', cursive;color:white")  #{i.name} 
+                .row
+                  .col-lg-10.col-md-10
+                    p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;") #{i.description}
+                .row
+                  .col-lg-3.col-md-3(style='color:white')
+                    label(for='difficulty') Difficulty: #{i.difficulty}
+                  .col-lg-3.col-md-3(style='color:white')
+                    label(for='points') Points: #{totalPoints[j]}
+                  .col-lg-4
+                  .col-lg-2.col-md-2
+                    button.btn.btn-outline-light.hovering3(style='font-weight:bold;border-radius:20px;') Solve
+        -else if(i.difficulty === 'Medium')
+          br
+          .row
+            .col-lg-8.col-md-8
+              .shadow.p-3.rounded(style='background-color: #fbc02d; width: 700px; margin-left: 25px; ')
+                h3(style="font-family: 'Vast Shadow', cursive;color:white") #{i.name} 
+                .row
+                  .col-lg-10.col-md-10
+                    p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;") #{i.description}
+                .row
+                  .col-lg-3.col-md-3(style='color:white')
+                    label(for='difficulty') Difficulty: #{i.difficulty}
+                  .col-lg-3.col-md-3(style='color:white')
+                    label(for='points') Points: #{totalPoints[j]}
+                  .col-lg-4
+                  .col-lg-2.col-md-2
+                    button.btn.btn-outline-light.hovering2(style='font-weight:bold;border-radius:20px;' href='/'+i.qid+'') Solve
+        -else if(i.difficulty === 'Hard')
+          br
+          .row
+            .col-lg-8.col-md-8
+              .shadow.p-3.rounded(style='background-color: #ff4d4d;  width: 700px; margin-left: 25px; ')
+                h3(style="font-family: 'Vast Shadow', cursive;color:white") #{i.name} 
+                .row
+                  .col-lg-10.col-md-10
+                    p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;") #{i.description}
+                .row
+                  .col-lg-3.col-md-3(style='color:white')
+                    label(for='difficulty') Difficulty: #{i.difficulty}
+                  .col-lg-3.col-md-3(style='color:white')
+                    label(for='points') Points: #{totalPoints[j]}
+                  .col-lg-4
+                  .col-lg-2.col-md-2
+                    button.btn.btn-outline-light.hovering1(style='font-weight:bold;border-radius:20px;') Solve
+        
+        
+    .col-lg-5.col-md-2(style='margin-top:23px;align-items: initial;')
       .box
-        #countdown-wrap(style='width: 60%;margin-left: initial; background-color: lavender; margin-bottom: 10px;')
+        #countdown-wrap(style='width: 60%;margin:auto; background-color: lavender; margin-bottom: 25px;')
           #goal #Ending Date
           #glass
             #progress(style='width: 90%;')
@@ -180,7 +208,7 @@ body
               span.goal-label Days to End
           hr
           h5 Created by:
-        #countdown-wrap(style='width: 60%;margin-left: initial; background-color: lavender; margin-bottom: 10px; height: 120px;')
+        #countdown-wrap(style='width: 60%;margin:auto; background-color: lavender; margin-bottom: 10px; height: 120px;')
           .row
             .col.text-left
               a.btn(href='#' style='font-size:15px;')
@@ -191,3 +219,4 @@ body
               a.btn(href="/contest/"+contest.url+"/leaderboard" style='font-size:15px;')
                 i.fas.fa-list
                 label(style='cursor: pointer;') &nbsp; Leader Board
+  br

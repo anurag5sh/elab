@@ -708,6 +708,10 @@ if(contest.timings.starts > new Date() && contest.timings.ends < new Date())
     }
 
     let sub = new Submission();
+    const subCount = await Submission.estimatedDocumentCount({usn:req.session.usn,qid:req.params.qid});
+    if(subCount>20){
+        sub = await Submission.findOne({usn:req.session.usn,qid:req.params.qid}).sort({timestamp:1});
+    }
     if(total_points == contest_points && user_submission.status == "Accepted"){
         
         sub.qid = req.params.qid;

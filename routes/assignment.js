@@ -194,6 +194,10 @@ router.post('/:qid',authenticate,async (req,res)=>{
         }
     
         let sub = new aSubmission();
+        const subCount = await aSubmission.estimatedDocumentCount({usn:req.session.usn,qid:req.params.qid});
+        if(subCount>20){
+            sub = await aSubmission.findOne({usn:req.session.usn,qid:req.params.qid}).sort({timestamp:1});
+        }
         if(total_points == contest_points && user_submission.status == "Accepted"){
             
             sub.qid = req.params.qid;

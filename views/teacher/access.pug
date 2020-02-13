@@ -35,28 +35,33 @@ body
                                     each i,j in y
                                         if(!i && j!=0)
                                             option(value=j)=j
-                            .col.col-md-2
-                                .input-group.input-group(style="width:200px;")
-                                    input#oldSearch.form-control.float-right(type="text", name="old_search" , placeholder="Search a usn")  
-                                    .input-group-append
-                                        button.btn.btn-default(onclick="javascript:$('#oldSearch').keyup()")
-                                            i.fas.fa-search
                     br
                     
-                    table.table.table-hover
+                    table.table.table-hover#studentTable
                         thead
                             tr
                                 th Select
                                 th Usn
                                 th Name
-                                //- th Year
-                                //- th View
-                        tbody#list
-                    br
-                    #pagination
                     
                 .modal-footer
                     button.btn.btn-success(type='button' onclick="customInsert()") Add
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+    .modal.fade#customTeacher(tabindex ="-1" role="dialog" )
+        .modal-dialog.modal-xl
+            .modal-content
+                .modal-header
+                    h4.modal-title Add Teacher to contest
+                .modal-body
+                    table#teacherTable.table.table-hover(style="width:100%")
+                        thead
+                            tr
+                                th Select
+                                th STAFF ID
+                                th Name
+                    
+                .modal-footer
+                    button.btn.btn-success(type='button' onclick="customInsertTeacher()") Add
                     button.btn.btn-secondary(type='button' data-dismiss='modal') Close
     a.btn.btn-labeled.btn-success(href='' role='button'  data-toggle="modal" data-target="#custom")
         span.btn-label
@@ -97,7 +102,7 @@ body
                         thead
                             tr
                                 th #
-                                th ID
+                                th STAFF ID
                                 th Name
                         tbody#selectedTeachers
 
@@ -106,49 +111,34 @@ body
     
     
     script.
-        function displayS(page){ 
-        if(!page) page=1;
-        $("#pagination").empty();
-        $("#list").empty();
-        $.ajax({
-            type: "GET",
-            data: page,
-            url: "/students/"+$("#year").val(),
-            success: function (data,status, jqXHR) { 
-                data.students.forEach((item,index)=>{
-                        $("#list").append('<td><input type="checkbox" name="list" value="'+item.usn+'" />&nbsp;</td><td>'+item.usn+'</td><td>'+item.fname+'</td>');
-                });
-                
-                let pagi = '<nav aria-label="..."><ul class="pagination pagination-sm justify-content-center"><li class="page-item '+(page==1?'disabled':'') +'"><a class="page-link" href="javascript:displayS('+(page-1)+')" '+(page==1?'aria-disabled="true"':'')+'>Previous</a></li>';
-                for(let i=1;i<=Math.ceil(data.total/10);i++){
-                   pagi+='<li class="page-item '+(page==i?'active':'') +'"><a class="page-link " href="javascript:displayS('+i+')">'+i+" "+(page==i?'<span class="sr-only">(current)</span>':'')+'</a></li>';
-                }
-                pagi+='<li class="page-item '+(page==Math.ceil(data.total/10)?'disabled':'') +'"><a class="page-link" href="javascript:displayS('+(page+1)+')" '+(page==data.total?'aria-disabled="true"':'')+'>Next</a></li></ul></nav>';
-                $("#pagination").append(pagi);
-                
-                list();
-            },
-            error: function (e) {
-                toastr.error(e.responseText);
-    
-            }
         
-        });
-        }
-    
         $('#year').change(function (){
-            $("#list").empty();
-            $("#pagination").empty();
-
-            displayS(1);
-        
+            $("#studentTable").DataTable().destroy();
+            $.get('/contest/students/'+$("#year").val(),{id:$('#contestid').val()},function(data,status){
+                const students = $('#studentTable').DataTable( {
+                    "data":data,
+                    "columns": [
+                        { "data": "select" },
+                        { "data": "usn" },
+                        { "data": "name" },
+                    ],
+                    "order": [[ 1, 'asc' ]],
+                    "columnDefs": [ {"searchable": false,"orderable": false,"targets": 0} ]
+                } );
+            }).fail((err)=>{
+                toastr.error(err.responseText);
+            });
          });
 
         function customInsert(){
+        let selected =[];
+        $("input[name='studentListCustom']:checked").each(function () {
+            selected.push(this.value);
+        });
         $.ajax({
             type: "POST",
-            url: "/students/"+$('#contestid').val(),
-            data:{list:listArray,year:$("#year").val()},
+            url: "/contest/students/"+$('#contestid').val(),
+            data:{studentListCustom:selected},
             success: function (data,status, jqXHR) {
                toastr.success(data);  
                 
@@ -162,21 +152,31 @@ body
     
          }
 
-           let listArray=[];
-        function list(){
-        $('input[name="list"]').click(function(){
-            if($(this).prop("checked") == true){
-                listArray.push($(this).val());
-                
-            }
-            else if($(this).prop("checked") == false){
-                listArray.splice(listArray.indexOf($(this).val()),1);
-            }
+         function customInsertTeacher(){
+        let selected =[];
+        $("input[name='teacherListCustom']:checked").each(function () {
+            selected.push(this.value);
         });
-        }
+        $.ajax({
+            type: "POST",
+            url: "/contest/teachers/"+$('#contestid').val(),
+            data:{teacherListCustom:selected},
+            success: function (data,status, jqXHR) {
+               toastr.success(data);  
+                
+            },
+            error: function (e) {
+                toastr.error(e.responseText);
+    
+            }
+        
+            });
+    
+         }
+
 
         $("#collapseOne").on('show.bs.collapse',function (){$("#selectedStudents").empty();
-           $.get('/students/id/'+$('#contestid').val(),function (data,status){
+           $.get('/contest/students/id/'+$('#contestid').val(),function (data,status){
                data.forEach((item,index)=>{
                    $("#selectedStudents").append('<tr><td>'+(index+1)+'</td><td>'+item.usn+'</td><td>'+item.fname+" "+item.lname+'</td><td>'+item.year+'</td></tr>');
                })
@@ -184,4 +184,33 @@ body
            }).fail((err)=>{
                    toastr.error(err.responseText);
                });
+        });
+
+        $("#collapseTwo").on('show.bs.collapse',function (){$("#selectedTeachers").empty();
+           $.get('/contest/teachers/id/'+$('#contestid').val(),function (data,status){
+               data.forEach((item,index)=>{
+                   $("#selectedTeachers").append('<tr><td>'+(index+1)+'</td><td>'+item.staff_id+'</td><td>'+item.fname+" "+item.lname+'</td></tr>');
+               })
+               
+           }).fail((err)=>{
+                   toastr.error(err.responseText);
+               });
+        });
+
+        $("#customTeacher").on('show.bs.modal',function (e){
+            $("#teacherTable").DataTable().destroy();
+            $.get('/contest/teachers',{id:$('#contestid').val()},function(data,status){
+                const teachers = $('#teacherTable').DataTable( {
+                    "data":data,
+                    "columns": [
+                        { "data": "select" },
+                        { "data": "staff_id" },
+                        { "data": "name" },
+                    ],
+                    "order": [[ 1, 'asc' ]],
+                    "columnDefs": [ {"searchable": false,"orderable": false,"targets": 0} ]
+                } );
+            }).fail((err)=>{
+                toastr.error(err.responseText);
+            });
         });

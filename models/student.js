@@ -53,10 +53,12 @@ const studentSchema = new mongoose.Schema({
   },
   tokenExpires : {
     type : Date
+  },
+  active : {
+    type:Boolean,
+    default:true
   }
 
-
-  
 });
 
 
@@ -74,7 +76,7 @@ function validateUser(user) {
 
   });
 
-  return schema.validate(user);
+  return schema.validate(user,{escapeHtml:true});
 }
 
 exports.Student = Student; 

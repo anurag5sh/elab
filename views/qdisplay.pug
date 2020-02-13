@@ -95,6 +95,7 @@ head
     }
   script.
     CountDownTimer('#{contest.timings.ends.toString()}', 'countdown');
+    const starts = new Date('#{contest.timings.starts.toString()}');
     function CountDownTimer(dt, id)
     {
     var end = new Date(dt);
@@ -116,15 +117,18 @@ head
     var minutes = Math.floor((distance % _hour) / _minute);
     var seconds = Math.floor((distance % _minute) / _second);
     document.getElementById(id).innerHTML = days /*+ ' days'*/;
-    //document.getElementById(id).innerHTML += hours + 'hrs ';
-    //document.getElementById(id).innerHTML += minutes + 'mins ';
-    //document.getElementById(id).innerHTML += seconds + 'secs';
+    document.getElementById(id).innerHTML += hours + 'hrs ';
+    document.getElementById(id).innerHTML += minutes + 'mins ';
+    document.getElementById(id).innerHTML += seconds + 'secs';
+
+    const overall = end-starts;
+    const elapsed = overall - distance;
+    const width = (elapsed/overall) * 100 + "%";
+    $("#progress").css('width',width);
     }
     timer = setInterval(showRemaining, 1000);
     }
 body()
-  p=totalPoints
-  p=questions
   div(style="padding:25px;padding-bottom:10px")
     h1(style="font-family: 'Open Sans', sans-serif;")=contest.name
     hr(style='border: 1px solid red;width:56.5%;margin-left:0px')
@@ -159,7 +163,7 @@ body()
                     label(for='points') Points: #{totalPoints[j]}
                   .col-lg-4
                   .col-lg-2.col-md-2
-                    button.btn.btn-outline-light.hovering3(style='font-weight:bold;border-radius:20px;') Solve
+                    a.btn.btn-outline-light.hovering3(style='font-weight:bold;border-radius:20px;' href="/contest/"+contest.url+"/"+i.qid) Solve
         -else if(i.difficulty === 'Medium')
           br
           .row
@@ -176,7 +180,7 @@ body()
                     label(for='points') Points: #{totalPoints[j]}
                   .col-lg-4
                   .col-lg-2.col-md-2
-                    button.btn.btn-outline-light.hovering2(style='font-weight:bold;border-radius:20px;' href='/'+i.qid+'') Solve
+                    a.btn.btn-outline-light.hovering2(style='font-weight:bold;border-radius:20px;' href="/contest/"+contest.url+"/"+i.qid) Solve
         -else if(i.difficulty === 'Hard')
           br
           .row
@@ -193,7 +197,7 @@ body()
                     label(for='points') Points: #{totalPoints[j]}
                   .col-lg-4
                   .col-lg-2.col-md-2
-                    button.btn.btn-outline-light.hovering1(style='font-weight:bold;border-radius:20px;') Solve
+                    a.btn.btn-outline-light.hovering1(style='font-weight:bold;border-radius:20px;' href="/contest/"+contest.url+"/"+i.qid) Solve
         
         
     .col-lg-5.col-md-2(style='margin-top:23px;align-items: initial;')
@@ -201,11 +205,11 @@ body()
         #countdown-wrap(style='width: 60%;margin:auto; background-color: lavender; margin-bottom: 25px;')
           #goal #Ending Date
           #glass
-            #progress(style='width: 90%;')
+            #progress
           .goal-stat
             span.goal-number
               #countdown
-              span.goal-label Days to End
+              //- span.goal-label Days to End
           hr
           h5 Created by:
         #countdown-wrap(style='width: 60%;margin:auto; background-color: lavender; margin-bottom: 10px; height: 120px;')

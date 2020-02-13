@@ -9,7 +9,7 @@ block code
   script(src='/adminLTE/plugins/jquery/jquery.min.js')
   script(src="/js/toastr.min.js")
   link(rel="stylesheet", href="/css/toastr.min.css")
-  - let active={dashboard:"",add:"",manage:"",edit:"",assignment:"",addAssignment:"",editAssignment:"",assignmentReports:""}
+  - let active={dashboard:"",add:"",manage:"",edit:"",assignment:"",addAssignment:"",editAssignment:"",assignmentReports:"",academic:""}
   - let menu={manage:"",assignment:""}
 
 html(lang='en')
@@ -36,46 +36,7 @@ html(lang='en')
           li.nav-item.d-none.d-sm-inline-block
             a.nav-link(href='/') Home
           li.nav-item.d-none.d-sm-inline-block
-            a.nav-link(href='#') Contact
-        //  SEARCH FORM 
-        form.form-inline.ml-3
-          .input-group.input-group-sm
-            input.form-control.form-control-navbar(type='search' placeholder='Search' aria-label='Search')
-            .input-group-append
-              button.btn.btn-navbar(type='submit')
-                i.fas.fa-search
-        //  Right navbar links 
-        ul.navbar-nav.ml-auto
-          //  Notifications Dropdown Menu 
-          li.nav-item.dropdown
-            a.nav-link(data-toggle='dropdown' href='#')
-              i.far.fa-bell
-              span.badge.badge-warning.navbar-badge 15
-            .dropdown-menu.dropdown-menu-lg.dropdown-menu-right
-              span.dropdown-header 15 Notifications
-              .dropdown-divider
-              a.dropdown-item(href='#')
-                i.fas.fa-envelope.mr-2
-                |  4 new messages
-
-                span.float-right.text-muted.text-sm 3 mins
-              .dropdown-divider
-              a.dropdown-item(href='#')
-                i.fas.fa-users.mr-2
-                |  8 friend requests
-
-                span.float-right.text-muted.text-sm 12 hours
-              .dropdown-divider
-              a.dropdown-item(href='#')
-                i.fas.fa-file.mr-2
-                |  3 new reports
-
-                span.float-right.text-muted.text-sm 2 days
-              .dropdown-divider
-              a.dropdown-item.dropdown-footer(href='#') See All Notifications
-          li.nav-item
-            a.nav-link(data-widget='control-sidebar' data-slide='true' href='#')
-              i.fas.fa-th-large
+            a.nav-link(href='/logout') Logout
       //  /.navbar 
       //  Main Sidebar Container 
       aside.main-sidebar.sidebar-dark-primary.elevation-4
@@ -138,12 +99,10 @@ html(lang='en')
                       i.fas.fa-chart-bar.nav-icon
                       p Reports
               li.nav-item
-                a.nav-link(href='#')
-                  i.nav-icon.fas.fa-th
+                a.nav-link(href='/admin/academic' class=active.academic)
+                  i.nav-icon.fas.fa-calendar-plus
                   p
-                    | Simple Link
-
-                    span.right.badge.badge-danger New
+                    | New Academic Year
           //  /.sidebar-menu 
         //  /.sidebar 
       //  Content Wrapper. Contains page content 
@@ -178,7 +137,6 @@ html(lang='en')
         //  To the right 
         .float-right.d-none.d-sm-inline.
           
-          Anything you want
           
         //  Default to the left 
         strong

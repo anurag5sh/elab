@@ -23,6 +23,10 @@ html
                         span.navbar-toggler-icon
                     #navcol-1.collapse.navbar-collapse
                         ul.nav.navbar-nav.ml-auto
+                            -if(session.isAdmin)
+                                li.nav-item(role='presentation')
+                                    a.nav-link(href='/admin')
+                                        p Admin Panel
                             li.nav-item(role='presentation')
                                 a.nav-link(href='/practice', style='color: rgb(55,67,77);letter-spacing: normal;')
                                     strong PRACTICE
@@ -43,8 +47,6 @@ html
                                 .dropdown-menu(role='menu')
                                     a.dropdown-item(role='presentation', href='/profile')
                                         strong PROFILE
-                                    a.dropdown-item(role='presentation', href='#')
-                                        strong SUBMISSION
                                     a.dropdown-item(role='presentation', href='/logout')
                                         strong LOGOUT
         block content

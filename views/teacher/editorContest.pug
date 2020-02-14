@@ -365,6 +365,8 @@ html(lang='en')
           document.getElementById("loader").style.display="none";
           document.getElementById("out").style.display="block";
           
+        }).fail((err)=>{
+          toastr.error(err.responseText);
         });
         });
       }

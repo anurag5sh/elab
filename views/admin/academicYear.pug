@@ -1,0 +1,29 @@
+extends layout
+
+block append code
+    -active.academic = "active"
+
+block content
+    .card.card-primary
+        .card-header 
+            h3.card-title New Academic Year Config 
+        .card-body
+            p This must be performed only during the beginning of 'ODD SEM'.
+            button.btn.btn-success(type="Button" data-toggle="modal" data-target="#promote") Promote Students
+
+    .modal.fade#promote(tabindex ="-1" role="dialog" )
+        .modal-dialog.modal-sm
+            .modal-content
+                .modal-header
+                    h4.modal-title Promote
+                .modal-body
+                    p Are you sure you want to promote the students?
+                    br
+                .modal-footer
+                    button.btn.btn-success(type='button' data-dismiss='modal' onclick="promote()") Proceed
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+
+    .card.card-primary
+        .card-header 
+            h3.card-title Year Back Students
+        .card-body

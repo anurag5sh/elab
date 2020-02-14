@@ -2,7 +2,10 @@ doctype html
 html(lang='en')
   head
     title=question.name
-    include navbar
+    -if(session.usn) 
+      include navbar 
+    -else 
+      include teacher/nav
     script(src='/src-min-noconflict/ace_modified.js' charset='utf-8')
     script(src='/src-min-noconflict/ext-language_tools.js')
     link(rel='stylesheet' href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css')
@@ -259,7 +262,6 @@ html(lang='en')
       const s = !{question.statement};
       quill.setContents(s);
       })();
-
       function setup(){const editor = ace.edit("editor");
       ace.config.set("basePath", "/src-min-noconflict");
       ace.require("ace/ext/language_tools");
@@ -316,7 +318,9 @@ html(lang='en')
         editor.setFontSize(parseInt($("#fontsize").val()));
       }
 
-      (function setDefault(){setLang();setTheme();setFont();setDefault=()=>{}})();
+      function setDefault(){setLang();setTheme();setFont();setup.hh=true;}
+      (!setup.hh?setDefault():void(0));
+      
 
       function readText() { window.location.href="#loader";
       let l = document.getElementById("lang").value;
@@ -372,7 +376,10 @@ html(lang='en')
       document.getElementById("out").style.display="block";
       window.location.href="#opbox";
         }
-      });
+      }).fail((err)=>{
+          toastr.error(err.responseText);
+          document.getElementById("loader").style.display="none";
+        });
       
       });
       }
@@ -425,6 +432,9 @@ html(lang='en')
           document.getElementById("loader").style.display="none";
           document.getElementById("out").style.display="block";
           
+        }).fail((err)=>{
+          toastr.error(err.responseText);
+          document.getElementById("loader").style.display="none";
         });
         });
       }

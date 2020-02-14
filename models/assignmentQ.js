@@ -86,7 +86,7 @@ function validateAQ(question)
         
     });
 
-    return schema.validate(question);
+    return schema.validate(question,{escapeHtml:true});
 }
 
 

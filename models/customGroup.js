@@ -38,7 +38,7 @@ function validateGroup(group)
         usn:Joi.array().items(Joi.string().required())
     });
 
-    return schema.validate(group);
+    return schema.validate(group,{escapeHtml:true});
 }
 
 module.exports.CustomGroup = CustomGroup;

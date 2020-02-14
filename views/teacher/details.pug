@@ -149,7 +149,7 @@ html
           $.get('/contest/delete/#{contest.url}',function(data,status){
             toastr.success(data);
             location.href="/contest";
-          }).fail(()=>{
-            toastr.error(error);
+          }).fail((error)=>{
+            toastr.error(error.responseText);
           });
         }

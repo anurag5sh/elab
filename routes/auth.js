@@ -20,7 +20,7 @@ const fs = require('fs');
 const multer = require('multer');
 let storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, '/home/abdul/elab/profilePhotos')
+    cb(null, './public/profileImage')
   },
   filename: function (req, file, cb) {
     let file_name = file.originalname.split('.');
@@ -48,14 +48,10 @@ router.get('/',(req,res,next)=>{
 
 
 //View Profile
-router.get('/viewProfile/:usn',authenticate,async (req,res,next)=>{
-  if(req.session.staff_id || req.session.usn){
+router.get('/viewProfile/:usn',authenticate,async (req,res)=>{
     const student = await Student.findOne({usn:req.params.usn}).lean();
+    if(!student) return res.status(400).send('Invalid USN');
     return res.render('viewProfile',{student:student});
-  }
-  else next();
-}, (req,res)=> {
-  res.render('login');
 });
 
 //student dashboard
@@ -184,7 +180,7 @@ router.post('/uploadImage', async (req,res,next)=>{
   // let student = await Student.findOne({usn: req.session.usn}).select('profile_image');
   if(user.profile_image != '/profileImage/default.png' ){
     const fileName = user.profile_image.split('.');
-    fs.unlink('/home/abdul/elab/profilePhotos/'+ old_file + '.' + fileName[1] , async (err) => {
+    fs.unlink('./public/profileImage/'+ old_file + '.' + fileName[1] , async (err) => {
       if (err) {
         console.log(err);
       }
@@ -225,56 +221,51 @@ return res.status(400).send("No Image uploaded");
 }
 });
 
-//download image
-router.get('/profileImage/:name',authenticate,async (req,res)=>{
-  fs.readFile('/home/abdul/elab/profilePhotos/'+req.params.name, function(err, data) {
-      if(err) console.log(err);
-      //res.writeHead(200, {'Content-Type': 'image/jpeg'});
-      res.sendFile('/home/abdul/elab/profilePhotos/'+req.params.name);
-      
-  });
-});
 
 //login validation
-router.post('/', async (req, res) => { console.log(req.body);
+router.post('/', async (req, res) => {
   const { error } = validate(req.body); 
-  if (error) return res.render('login',{login_error:error.message});
-  
+  if (error) return res.status(400).send(error.message);
+
   if(req.body.type === "student")
   {
-    let student = await Student.findOne({ email: req.body.email });
-    if (!student) return res.render('login',{login_error:"Invalid email or password"});
+    let student = await Student.findOne({ email: req.body.email }).lean().select('fname lname password usn year active -_id');
+    if (!student) return res.status(400).send("Invalid Email or Password.");
 
     const validPassword = await bcrypt.compare(req.body.password, student.password);
-    if (!validPassword) return res.render('login',{login_error:"Invalid email or password"});
+    if (!validPassword) return res.status(400).send("Invalid Email or Password.");
+
+    if(!student.active) return res.status(400).send("Account Disabled!");
 
     req.session.fname = student.fname; 
     req.session.lname = student.lname;
     req.session.usn = student.usn;
     req.session.year = student.year;
-    return res.redirect('/dashboard');
+    return res.send('/dashboard');
   }
 
   else if(req.body.type === "teacher")
   {
-    let teacher = await Teacher.findOne({ email: req.body.email }).lean();
-    if (!teacher) return res.render('login',{login_error:"Invalid email or password"});
+    let teacher = await Teacher.findOne({ email: req.body.email }).lean().select('fname lname password staff_id isAdmin active -_id');
+    if (!teacher) return res.status(400).send("Invalid Email or Password.");
 
     const validPassword = await bcrypt.compare(req.body.password, teacher.password);
-    if (!validPassword) return res.render('login',{login_error:"Invalid email or password"});
+    if (!validPassword) return res.status(400).send("Invalid Email or Password.");
+
+    if(!teacher.active) return res.status(400).send("Account Disabled!");
 
     req.session.fname = teacher.fname;
     req.session.lname = teacher.lname;
     req.session.staff_id = teacher.staff_id;
+    req.session.isAdmin = teacher.isAdmin;
     if(teacher.isAdmin){
-      req.session.isAdmin = teacher.isAdmin;
-      return res.redirect('/admin');
+      return res.send('/admin');
     }
-    return res.render('teacher/trdashboard');
+    return res.send('/');
   }
   
   else{
-    res.render('login',{login_error:"Invalid account type"});
+    res.status(400).send("Invalid account type");
   }
   
   
@@ -288,39 +279,8 @@ function validate(req) {
     type:Joi.string().required().error(new Error('Please select the account type'))
   });
 
-  return schema.validate(req);
+  return schema.validate(req,{escapeHtml:true});
 }
-
-router.get('/students/:year',authenticate,teacher, async (req,res) =>{
-  const students = await Student.find({ year: req.params.year }).lean().select({usn:1,fname:1,_id:0}).skip((req.query.page-1)*10).limit(10);
-  if(!students) return res.status(400).send("Students not Found");
-
-  const total = await Student.estimatedDocumentCount({year:req.params.year});
-
-
-  res.send({students:students,total:total});
-
-});
-
-router.post('/students/:id',authenticate,teacher,async (req,res) =>{
-  const contest = await Contest.findOne({id:req.params.id});
-  contest.custom_usn = contest.custom_usn.concat(req.body.list);
-  await contest.save();
-  res.send("Students Added");
-  
-});
-
-
-router.get('/students/id/:id',authenticate,teacher,async (req,res) =>{
-  const contest = await Contest.findOne({id:req.params.id}).lean().select('custom_usn');
-  if(!contest) return res.status(400).send("Invalid ID");
-
-  let students = await Student.find({usn:{$in:contest.custom_usn}}).lean().select({usn:1,fname:1,lname:1,year:1,_id:0});
-  if(!students) students=[];
-
-  return res.send(students);
-
-});
 
 router.get('/forgotPassword',async (req,res)=>{
   res.render('forgotPassword');
@@ -390,7 +350,7 @@ router.post('/forgotPassword',async (req,res)=>{
 });
 
 //reset password via token
-router.get('/resetPassword/:token',async (req,res) =>{
+router.get('/resetPassword/:token',async (req,res) =>{ 
   let user;
   user = await Student.findOne({resetToken : req.params.token,tokenExpires:{$gt:Date.now()}});
   if(!user) user = await Teacher.findOne({resetToken : req.params.token,tokenExpires:{$gt:Date.now()}});

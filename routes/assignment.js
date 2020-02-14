@@ -206,12 +206,15 @@ router.post('/:qid',authenticate,async (req,res)=>{
         }
         desc.push({id:data.status.id,description:data.status.description,points:points}); 
     }
+    if(req.session.code == req.body.source) return res.send(desc);
+
         let total_points  = 0;
         desc.forEach((item,index) =>{
                 total_points+= item.points;
         });
 
         const user_submission = assignment.submissions.find(i => (i.usn == req.session.usn && i.qid==req.params.qid));
+        req.session.code = req.body.source;
         if(!user_submission){
         
             let obj ={};

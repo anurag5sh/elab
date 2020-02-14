@@ -34,6 +34,9 @@ const contestSchema = new mongoose.Schema({
   custom_usn : {
     type:[String]
   },
+  custom_staff_id:{
+    type:[String]
+  },
   customGroup:{
     type:[Number]
    },
@@ -68,7 +71,10 @@ const contestSchema = new mongoose.Schema({
     year:{type:String},
     points:{type:Number},
     _id : false
-  }]
+  }],
+  rules:{
+    type:String
+  }
   
 });
 
@@ -85,7 +91,7 @@ function validateContest(contest)
         status:Joi.string().allow('')
     });
 
-    return schema.validate(contest);
+    return schema.validate(contest,{escapeHtml:true});
 }
 
 exports.validateContest = validateContest;

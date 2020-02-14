@@ -14,15 +14,18 @@ html(lang='en')
     link(rel='stylesheet', type='text/css', href='/vendor/select2/select2.min.css')
     link(rel='stylesheet', type='text/css', href='/css/util.css')
     link(rel='stylesheet', type='text/css', href='/css/main.css')
+    script(src='/vendor/jquery/jquery-3.2.1.min.js')
+    script(src="/js/toastr.min.js")
+    link(rel="stylesheet", href="/css/toastr.min.css")
+
     
   body
     .limiter
       .container-login100
         .wrap-login100.p-l-50.p-r-50.p-t-77.p-b-30
-          form.login100-form.validate-form(method='POST' action='/')
+          form.login100-form.validate-form#login(onsubmit="return login()")
             span.login100-form-title.p-b-55
               | Login
-            p=login_error
             .wrap-input100.validate-input.m-b-16(data-validate='Valid email is required: ex@abc.xyz')
               input.input100(type='text', name='email', placeholder='Email')
               span.focus-input100
@@ -50,13 +53,11 @@ html(lang='en')
             //- | Teacher
           
             .container-login100-form-btn.p-t-25
-              button.login100-form-btn
-                | Login
+              input.login100-form-btn(type="Submit" value="Login")
             .forgot-password
               br
               a(href='/forgotPassword') Forgot password?
             
-    script(src='/vendor/jquery/jquery-3.2.1.min.js')
     // ===============================================================================================
     script(src='/vendor/bootstrap/js/popper.js')
     script(src='/vendor/bootstrap/js/bootstrap.min.js')
@@ -64,3 +65,13 @@ html(lang='en')
     script(src='/vendor/select2/select2.min.js')
     // ===============================================================================================
     script(src='/js/main.js')
+    script.
+      function login(){
+        $.post('/',$('#login').serialize(),function(data,status){
+        window.location.replace(data);
+      }).fail((err)=>{
+        toastr.error(err.responseText);
+      });
+      return false;
+      }
+      

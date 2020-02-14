@@ -6,8 +6,10 @@ const admin = require('../middleware/admin');
 const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 const {Student, validate} = require('../models/student');
+const {Teacher,validateTeacher} = require('../models/teacher');
 const {Assignment,validateAssignment} = require('../models/assignment');
 const {AssignmentQ,validateAQ} = require('../models/assignmentQ');
+const Joi = require("@hapi/joi");
 
 //------------------Accounts routes start-----------------//
 let storage = multer.diskStorage({
@@ -25,11 +27,146 @@ router.get('/', admin, (req,res)=> {
     res.render('admin/admin',{name:req.session.fname});
 });
 
-router.get('/get/students/:year',admin,async (req,res)=>{
-    const list = await Student.find({year:req.params.year}).lean('usn fname lname');
-    if(!list) return [];
+//fetching teachers
+router.get('/get/teachers',admin,async (req,res)=>{
+  let list = await Teacher.find().lean().select('fname lname staff_id -_id');
+  if(!list) return res.send([]);
+  
+  for(let i=0;i<list.length;i++){
+    list[i].name = list[i].fname + " " + list[i].lname;
+    list[i].edit = '<a class="fas fa-edit" data-toggle="modal" data-target="#editTeacher" data-id="'+list[i].staff_id+'" style="color:dimgrey;" href=""></a>';
+    list[i].delete = '<a class="fas fa-trash" data-toggle="modal" data-target="#delete" data-id="'+list[i].staff_id+'" style="color:red;" href=""></a>';
 
+    delete list[i].fname;
+    delete list[i].lname;
+  }
+  res.send(list);
+});
+
+//fetching a teacher's info
+router.get('/get/teacher/:id',admin,async (req,res)=>{
+  const teacher = await Teacher.findOne({staff_id:req.params.id}).lean().select('fname lname staff_id email recovery_email isAdmin -_id');
+  if(!teacher) return res.status(400).send("Invalid ID");
+
+  res.send(teacher);
+});
+
+//editing a teacher's data
+router.post('/teacher/:id',admin,async (req,res)=>{
+  let teacher = await Teacher.findOne({staff_id:req.params.id});
+  if(!teacher) return res.status(400).send("Invalid ID");
+
+  const schema = Joi.object({
+    fnameT: Joi.string().min(3).max(25).required(),
+    lnameT: Joi.string().min(1).max(25).required(),
+    emailT: Joi.string().min(3).max(255).required().email(),
+    passwordT: Joi.string().min(5).max(255).allow(''),
+    recovery_emailT: Joi.string().email().min(3).max(255),
+    staff_id:Joi.number().required(),
+    isAdmin:Joi.boolean().required(),
+    activeT:Joi.boolean().required()
+  });
+
+  const {error} = schema.validate(req.body,{escapeHtml:true});
+  if(error) return res.status(400).send(error.message);
+
+  teacher.fname = req.body.fnameT;
+  teacher.lname = req.body.lnameT;
+  teacher.email = req.body.emailT;
+  teacher.recovery_email = req.body.recovery_emailT;
+  teacher.isAdmin = req.body.isAdmin;
+  teacher.staff_id = req.body.staff_id;
+  teacher.active = req.body.activeT;
+  
+  if(!req.body.passwordT == ''){
+    const salt = await bcrypt.genSalt(10);
+    teacher.password = await bcrypt.hash(req.body.passwordT, salt);
+  }
+
+  await teacher.save().catch((err)=>{
+    return res.status(400).send("Unable to save.");
+  });
+  res.send("Changes Saved!");
+});
+
+//deleting a teacher
+router.get('/delete/teacher/:id',admin,async (req,res)=>{
+  await Teacher.findOneAndDelete({staff_id:req.params.id}).then(()=>{
+    return res.send("Account deleted!");
+  }).catch((err)=>{
+    return res.status(400).send("Unable to delete!");
+  })
+});
+
+//fetching students in a year
+router.get('/get/students/:year',admin,async (req,res)=>{
+    let list = await Student.find({year:req.params.year}).sort({usn:1}).select('usn fname lname -_id').lean();
+    if(!list) return res.send([]);
+
+    for(let i=0;i<list.length;i++){
+      list[i].name = list[i].fname + " " + list[i].lname;
+      list[i].edit = '<a class="fas fa-edit" data-toggle="modal" data-target="#edit" data-usn="'+list[i].usn+'" style="color:dimgrey;" href=""></a>';
+      list[i].delete = '<a class="fas fa-trash" data-toggle="modal" data-target="#delete" data-usn="'+list[i].usn+'" style="color:red;" href=""></a>';
+
+      delete list[i].fname;
+      delete list[i].lname;
+    }
     res.send(list);
+});
+
+//fetching a student info
+router.get('/get/student/:usn',admin,async (req,res)=>{
+  const student = await Student.findOne({usn:req.params.usn}).lean().select('fname lname usn email recovery_email year -_id');
+  if(!student) return res.status(400).send("Invalid USN");
+
+  res.send(student);
+});
+
+//editing student info
+router.post('/student/:usn',admin,async (req,res)=>{
+  let student = await Student.findOne({usn:req.params.usn});
+  if(!student) return res.status(400).send("Invalid USN");
+
+  const schema = Joi.object({
+    fname: Joi.string().min(3).max(25).required(),
+    lname: Joi.string().min(1).max(25).required(),
+    email: Joi.string().min(3).max(255).required().email(),
+    password: Joi.string().min(5).max(255).allow(''),
+    recovery_email: Joi.string().email().min(3).max(255),
+    year: Joi.number().required().integer().max(4).positive(),
+    usn:Joi.string().required(),
+    active: Joi.boolean().required()
+  });
+
+  const {error} = schema.validate(req.body,{escapeHtml:true});
+  if(error) return res.status(400).send(error.message);
+
+  student.fname = req.body.fname;
+  student.lname = req.body.lname;
+  student.email = req.body.email;
+  student.recovery_email = req.body.recovery_email;
+  student.year = req.body.year;
+  student.usn = req.body.usn;
+  student.active = req.body.active;
+  
+  if(!req.body.password == ''){
+    const salt = await bcrypt.genSalt(10);
+    student.password = await bcrypt.hash(req.body.password, salt);
+  }
+
+  await student.save().catch((err)=>{
+    return res.status(400).send("Unable to save.");
+  });
+  res.send("Changes Saved!");
+});
+
+//deleting a student
+router.get('/delete/student/:usn',admin,async (req,res)=>{
+    await Student.findOneAndDelete({usn:req.params.usn}).then(()=>{
+      return res.send("Account deleted!");
+    }).catch((err)=>{
+      return res.status(400).send("Unable to delete!");
+    })
 });
 
 router.get('/add',admin, (req,res) => {
@@ -38,6 +175,10 @@ router.get('/add',admin, (req,res) => {
 
 router.get('/edit',admin, (req,res) => {
   res.render('admin/editAccount');
+});
+
+router.get('/academic',admin, (req,res)=>{
+  res.render('admin/academicYear');
 });
 
 router.post('/add', upload.single('csv'), admin,async (req, res, next) => {
@@ -60,7 +201,7 @@ router.post('/add', upload.single('csv'), admin,async (req, res, next) => {
         const { error } = validate(jsonArray[i]); 
         if (error) return res.status(400).send(error.message + " at index="+ i+1);
 
-        let student = new Student(_.pick(jsonArray[i], ['fname', 'lname','email', 'password']));
+        let student = new Student(_.pick(jsonArray[i], ['fname', 'lname','email', 'password','year','usn']));
         const salt = await bcrypt.genSalt(10);
         student.password = await bcrypt.hash(student.password, salt);
         studentArray.push(student);

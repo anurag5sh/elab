@@ -317,7 +317,8 @@ html(lang='en')
         editor.setFontSize(parseInt($("#fontsize").val()));
       }
 
-      (function setDefault(){setLang();setTheme();setFont();setDefault=()=>{}})();
+      function setDefault(){setLang();setTheme();setFont();setup.hh=true;}
+      (!setup.hh?setDefault():void(0));
 
      function readText() { window.location.href="#loader";
       let l = document.getElementById("lang").value;
@@ -373,7 +374,10 @@ html(lang='en')
       document.getElementById("out").style.display="block";
       window.location.href="#opbox";
         }
-      });
+      }).fail((err)=>{
+          toastr.error(err.responseText);
+          document.getElementById("loader").style.display="none";
+        });
       
       });
       }
@@ -426,6 +430,9 @@ html(lang='en')
           document.getElementById("loader").style.display="none";
           document.getElementById("out").style.display="block";
           
+        }).fail((err)=>{
+          toastr.error(err.responseText);
+          document.getElementById("loader").style.display="none";
         });
         });
       }

@@ -50,6 +50,10 @@ function encode64(string){ //encoding to base64
   return t
   }
 
+  //viewing Submission 
+router.get('/submis',async (req,res) =>{
+    res.render('teacher/subtab');
+});
 
 router.get('/',authenticate, async (req,res)=> {
     if(req.session.staff_id){
@@ -591,8 +595,6 @@ router.get('/:curl/leaderboard',authenticate,contestAuth,async (req,res) =>{
 
     res.render('leaderboard',{contest:contest});
 });
-
-
 
 //viewing question
 router.get('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{

@@ -588,7 +588,7 @@ router.get('/source/:curl/:usn/:qid',authenticate,teacher,async (req,res) =>{
     const contest = await Contest.findOne({url:req.params.curl}).lean().select('custom_staff_id createdBy submissions timings -_id');
     if(!contest) return res.status(400).send("Contest not found!");
 
-    if(req.session.staff_id == contest.createdBy || new Date() > contest.timings.ends){
+    if(req.session.staff_id == contest.createdBy || new Date() > contest.timings.ends || req.session.isAdmin){
         res.send(contest.submissions.find(i => i.usn == req.params.usn && i.qid == req.params.qid).sourceCode);
     }
     else res.end();

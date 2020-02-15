@@ -68,8 +68,11 @@ body
                     toastr.error(err.responseText);
                 });
 
+        
         $("#source").on('show.bs.modal',function (e){
             $.get('/contest/source/#{contest.url}/'+$(e.relatedTarget).data('usn')+'/'+$(e.relatedTarget).data('qid'),function(data,status){
-                $("#sourceArea").text(data);
+                $("#sourceArea").val(data);
+                $("#sourceArea").height($("#sourceArea")[0].scrollHeight);
             });
+
         });

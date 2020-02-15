@@ -1,6 +1,63 @@
 include nav
 link(rel="stylesheet", href="/css/contest_card.css")
 script(src="/js/contest_card.js")
+script.
+  var TxtType = function(el, toRotate, period) {
+        this.toRotate = toRotate;
+        this.el = el;
+        this.loopNum = 0;
+        this.period = parseInt(period, 10) || 2000;
+        this.txt = '';
+        this.tick();
+        this.isDeleting = false;
+    };
+
+    TxtType.prototype.tick = function() {
+        var i = this.loopNum % this.toRotate.length;
+        var fullTxt = this.toRotate[i];
+
+        if (this.isDeleting) {
+        this.txt = fullTxt.substring(0, this.txt.length - 1);
+        } else {
+        this.txt = fullTxt.substring(0, this.txt.length + 1);
+        }
+
+        this.el.innerHTML = '<span class="wrap">'+this.txt+'</span>';
+
+        var that = this;
+        var delta = 200 - Math.random() * 100;
+
+        if (this.isDeleting) { delta /= 2; }
+
+        if (!this.isDeleting && this.txt === fullTxt) {
+        delta = this.period;
+        this.isDeleting = true;
+        } else if (this.isDeleting && this.txt === '') {
+        this.isDeleting = false;
+        this.loopNum++;
+        delta = 500;
+        }
+
+        setTimeout(function() {
+        that.tick();
+        }, delta);
+    };
+
+    window.onload = function() {
+        var elements = document.getElementsByClassName('typewrite');
+        for (var i=0; i<elements.length; i++) {
+            var toRotate = elements[i].getAttribute('data-type');
+            var period = elements[i].getAttribute('data-period');
+            if (toRotate) {
+              new TxtType(elements[i], JSON.parse(toRotate), period);
+            }
+        }
+        // INJECT CSS
+        var css = document.createElement("style");
+        css.type = "text/css";
+        css.innerHTML = ".typewrite > .wrap { border-right: 0.08em solid white}";
+        document.body.appendChild(css);
+    };
 style.
   .admin{
   float: right;
@@ -19,17 +76,53 @@ style.
   margin-left:10px;
   }
 
+  /*body {
+  background-color:#ce3635;
+  text-align: center;
+  color:#fff;
+  padding-top:10em;
+  }
+
+  * { color:#fff; text-decoration: none;}*/
+
+  .container {
+    position: relative;
+    text-align: center;
+    color: white;
+  }
+
+  .centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  }
+
+  
 
 
-.jumbotron.bg-info
-  h1.text-center.text-light Contest
-br
+.container-fluid(style="width:100%;height:90%")
+  .row()
+    .col-lg-12(style="padding:0px")
+      img(src="/images/coding5.jpg"  style="width:100%;height:90%")
+      .centered
+        h1.text-center(style="font-weight:bold;font-size:50px;color:#8c8c8c")
+          p.typewrite(href='' data-period='2000' data-type='[ "CONTEST" ]' style="color:white")
+            span.wrap
+//- .jumbotron.bg-light.shadow.d-lg-flex.justify-content-lg-center.align-items-lg-center(style="background-color:#003366!important;box-shadow: 0 .5rem 9rem rgba(13,13,13,.15)!important;border-radius:0px!important;margin-bottom:0rem;")
+//-   div.text-center(style="width:25%")
+//-     //- h1.text-center(style="font-weight:bold;font-size:50px;color:#8c8c8c") CONTEST
+//-     //- h1.text-center(style="font-weight:bold;font-size:50px;color:#8c8c8c")
+//-     //-   p.typewrite(href='' data-period='2000' data-type='[ "CONTEST"]' style="color:white")
+//-     //-     span.wrap
+
+//-     //- hr(style="border-color:black")
 .row(style="width:100%")
   
   .col-lg-9.col-md-10  
     .row
       each i in contest 
-        .col-lg-4  
+        .col-lg-4(style="padding:0px;padding-left:30px")
           .container_card
             .c-card-block
               a(href="/contest/"+i.url)
@@ -39,7 +132,7 @@ br
                 p.block-with-text=i.description
                 button.attem.btn.btn-info(type='button' onclick="location.href=/contest/"+i.url+"") View
 
-  .col-lg-3.col-md-2  
+  .col-lg-3.col-md-2(style="padding-left:30px")
     div(style="margin-top:50px;")
       h2.card-title.text-center Administration
       hr(style="border-color:grey;")

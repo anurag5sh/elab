@@ -13,9 +13,13 @@ html
         script(src="/js/toastr.min.js")
         link(rel="stylesheet", href="/css/toastr.min.css")
         block head
+        style.
+            .colo{
+                color:white;
+            }
     body
         div
-            nav.navbar.navbar-light.navbar-expand-md.navigation-clean
+            nav.navbar.navbar-light.navbar-expand-md.navigation-clean(style='background-color:#1aa3ff;')
                 .container
                     a.navbar-brand(href='/') ELAB
                     button.navbar-toggler(data-toggle='collapse', data-target='#navcol-1')
@@ -24,14 +28,14 @@ html
                     #navcol-1.collapse.navbar-collapse
                         ul.nav.navbar-nav.ml-auto
                             li.nav-item(role='presentation')
-                                a.nav-link(href='/practice', style='color: rgb(55,67,77);letter-spacing: normal;')
-                                    strong PRACTICE
+                                a.nav-link(href='/practice', style='letter-spacing: normal;')
+                                    strong.color PRACTICE
                             li.nav-item(role='presentation')
                                 a.nav-link(href='/contest')
-                                    strong CONTEST
+                                    strong.color CONTEST
                             li.dropdown.nav-item
                                 a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#')
-                                    strong ASSIGNMENT
+                                    strong.color ASSIGNMENT
                                 .dropdown-menu(role='menu')
                                     a.dropdown-item(role='presentation' href='/assignment')
                                         strong VIEW ASSIGNMENT

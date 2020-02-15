@@ -4,6 +4,9 @@ block append code
     - active.edit="active"
     - active.manage="active"
     - menu.manage="menu-open"
+    link(rel="stylesheet", href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css")
+    script(src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js")
+    script(src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js")
 
 
 block content   
@@ -19,26 +22,264 @@ block content
                             option(value="teacher") Teacher
     #List
 
+    .modal.fade#delete(tabindex ="-1" role="dialog" )
+        .modal-dialog.modal-sm
+            .modal-content
+                .modal-header
+                    h4.modal-title Delete Account
+                .modal-body
+                    p Are you sure you want to delete this account?
+                    p#delID
+                .modal-footer
+                    button.btn.btn-danger(type='button' data-dismiss='modal' onclick="deleteAccount()") Delete
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+    
+    .modal.fade#edit(tabindex ="-1" role="dialog" )
+        .modal-dialog.modal-lg
+            form#editForm(onsubmit="return edit()")
+                .modal-content
+                    .modal-header
+                        h4.modal-title Edit
+                        button.close(type='button' data-dismiss='modal') ×
+                    .modal-body
+                        .form-group.row
+                            label.col-sm-2(for="usn") USN:
+                            .col-sm-4
+                                input.form-control#usn(type="text",  value="" name="usn" required)
+                        .form-group.row
+                            label.col-sm-2(for="fname") First Name:
+                            .col-sm-4
+                                input.form-control#fname(type="text",  value="" name="fname" required)
+                        .form-group.row
+                            label.col-sm-2(for="lname") Last Name:
+                            .col-sm-4
+                                input.form-control#lname(type="text",  value="" name="lname" required)
+                        .form-group.row
+                            label.col-sm-2(for="yearForm") Year:
+                            .col-sm-4
+                                select#yearForm(name="year").form-control.custom-select
+                                    option(value=1) 1
+                                    option(value=2) 2
+                                    option(value=3) 3
+                                    option(value=4) 4
+                        .form-group.row
+                            label.col-sm-2(for="email") Email-ID:
+                            .col-sm-4
+                                input.form-control#email(type="text", value="" name="email" required)
+                        .form-group.row
+                            label.col-sm-2(for="recoveryEmail") Recovery Email-ID:
+                            .col-sm-4
+                                input.form-control#recoveryEmail(required type="text", value="" name="recovery_email") 
+                        .form-group.row
+                            label.col-sm-2(for="active") Account active
+                            .col-sm-4
+                                select#activeT.form-control.custom-select(name="active")
+                                    option(value="false") False
+                                    option(value="true") True                        
+                        br
+                        h4 Change password
+                        br
+                        .form-group.row
+                            label.col-sm-2(for="password") Password:
+                            .col-sm-4
+                                .input-group
+                                    input.form-control.password#password(type="password", value="" name="password")
+                                    .input-group-append
+                                        button.btn#viewPass(type="Button")
+                                            i.fas.fa-eye-slash(aria-hidden="true")
+                    .modal-footer
+                        input.btn.btn-success(type='Submit' value="Submit")
+                        button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+    
+    .modal.fade#editTeacher(tabindex ="-1" role="dialog" )
+        .modal-dialog.modal-lg
+            form#editFormTeacher(onsubmit="return editTeacher()")
+                .modal-content
+                    .modal-header
+                        h4.modal-title Edit
+                        button.close(type='button' data-dismiss='modal') ×
+                    .modal-body
+                        .form-group.row
+                            label.col-sm-2(for="staff_id") STAFF ID:
+                            .col-sm-4
+                                input.form-control#staff_id(type="text",required  value="" name="staff_id")
+                        .form-group.row
+                            label.col-sm-2(for="fnameT") First Name:
+                            .col-sm-4
+                                input.form-control#fnameT(type="text",required  value="" name="fnameT")
+                        .form-group.row
+                            label.col-sm-2(for="lnameT") Last Name:
+                            .col-sm-4
+                                input.form-control#lnameT(type="text",required  value="" name="lnameT")
+                        .form-group.row
+                            label.col-sm-2(for="emailT") Email-ID:
+                            .col-sm-4
+                                input.form-control#emailT(type="text", required value="" name="emailT")
+                        .form-group.row
+                            label.col-sm-2(for="recoveryEmailT") Recovery Email-ID:
+                            .col-sm-4
+                                input.form-control#recoveryEmailT(type="text", required value="" name="recovery_emailT") 
+                        .form-group.row
+                            label.col-sm-2(for="isAdmin") Admin Privileges
+                            .col-sm-4
+                                select#isAdmin.form-control.custom-select(name="isAdmin")
+                                    option(value="false") Restrict
+                                    option(value="true") Permit
+                        .form-group.row
+                            label.col-sm-2(for="activeT") Account active
+                            .col-sm-4
+                                select#activeT.form-control.custom-select(name="activeT")
+                                    option(value="false") False
+                                    option(value="true") True
+                        br
+                        h4 Change password
+                        br
+                        .form-group.row
+                            label.col-sm-2(for="passwordT") Password:
+                            .col-sm-4
+                                .input-group
+                                    input.form-control.password#passwordT(type="password", value="" name="passwordT")
+                                    .input-group-append
+                                        button.btn#viewPass(type="Button")
+                                            i.fas.fa-eye-slash(aria-hidden="true")
+                    .modal-footer
+                        input.btn.btn-success(type='Submit' value="Submit")
+                        button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+
+
     script.
         $("#type").change(()=>{
             const type= $("#type").val();
             $("#List").empty();
             if(type=="teacher"){
                 $("#stud").remove();
+                let html ='<div class="card card-primary"><div class="card-header"><h3 class="card-title">Teachers</h3></div><div class="card-body table-responsive p-0"><br><table id="list" class="table table-hover"><thead><tr><th style="width:30px">#</th><th>STAFF ID</th><th>Name</th><th>Edit</th><th>Delete</th></tr></thead></table></div></div>';
+                $("#List").append(html);
                 $.get('/admin/get/teachers',function (data,status){
+                    const teachers = $('#list').DataTable( {
+                            "data":data,
+                            "columns": [
+                                { "data": null },
+                                { "data": "staff_id" },
+                                { "data": "name" },
+                                { "data": "edit" },
+                                { "data": "delete" },
+                            ],
+                            "order": [[ 1, 'asc' ]],
+                            "columnDefs": [ {"searchable": false,"orderable": false,"targets": 0},
+                                            {"searchable": false,"orderable": false,"targets": 3},
+                                            {"searchable": false,"orderable": false,"targets": 4} ]
+                        } );
 
-                });
+                        teachers.on( 'order.dt search.dt', function () {
+                        teachers.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                            cell.innerHTML = i+1;
+                        } );
+                    } ).draw();
+                    }).fail((err)=>{
+                        toastr.error(err.responseText);
+                    });
             }else
             {   
                 $("#col").append('<div class="form-group" id="stud"><label>Select Year</label><select id="year" class="form-control custom-select"><option selected disabled>Select Year</option><option value=1>1</option><option value=2>2</option><option value=3>3</option><option value=4>4</option></select></div>');
                 
                 $("#year").change(()=>{
                     $("#List").empty();
-                     $.get('/admin/get/students/'+$("#year").val(),function (data,status){
-                         $('#List').append('<div class="card card-primary"><div class="card-header"><h3 class="card-title">Students</h3></div><div class="card-body table-responsive p-0"><table class="table table-hover"><thead><tr><th>#</th><th>Name</th><th>USN</th><th>Edit</th><th>Delete</th></th></tr></thead></table></div></div></div>');
+                    let html ='<div class="card card-primary"><div class="card-header"><h3 class="card-title">Students</h3></div><div class="card-body table-responsive p-0"><br><table id="list" class="table table-hover"><thead><tr><th style="width:30px">#</th><th>USN</th><th>Name</th><th>Edit</th><th>Delete</th></tr></thead></table></div></div>';
+                    $("#List").append(html);
+                    $.get('/admin/get/students/'+$("#year").val(),function (data,status){
+                        const students = $('#list').DataTable( {
+                            "data":data,
+                            "columns": [
+                                { "data": null },
+                                { "data": "usn" },
+                                { "data": "name" },
+                                { "data": "edit" },
+                                { "data": "delete" },
+                            ],
+                            "order": [[ 1, 'asc' ]],
+                            "columnDefs": [ {"searchable": false,"orderable": false,"targets": 0},
+                                            {"searchable": false,"orderable": false,"targets": 3},
+                                            {"searchable": false,"orderable": false,"targets": 4} ]
+                        } );
+
+                        students.on( 'order.dt search.dt', function () {
+                        students.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                            cell.innerHTML = i+1;
+                        } );
+                    } ).draw();
+                    }).fail((err)=>{
+                        toastr.error(err.responseText);
                     });
+
                 })
                
 
             }
+        });
+
+        $("#edit").on('show.bs.modal',function(e){
+            $("#editForm")[0].reset();
+            $.get('/admin/get/student/'+$(e.relatedTarget).data('usn'),function(data,status){
+                $("#fname").val(data.fname);
+                $("#lname").val(data.lname);
+                $("#usn").val(data.usn);
+                $("#email").val(data.email);
+                $("#recoveryEmail").val(data.recovery_email);
+                $("#yearForm").val(data.year);
+            }).fail((err)=>{
+                toastr.error(err.responseText);
+            });
+        });
+
+        function edit(){
+            $.post('/admin/student/'+$("#usn").val(),$("#editForm").serialize(),function (data,status){
+                toastr.success(data);
+            }).fail((err)=>{
+                toastr.error(err.responseText);
+            })
+            return false;
+        }
+
+        $("#delete").on('show.bs.modal',function(e){
+            $("#delID").text($(e.relatedTarget).data('usn') || $(e.relatedTarget).data('id') );
+        });
+
+        function deleteAccount(){
+            $.get('/admin/delete/student/'+$("#delID").text(),function(data,status){
+                toastr.success(data);
+            }).fail((err)=>{
+                toastr.error(err.responseText);
+            });
+        }
+
+         $("#editTeacher").on('show.bs.modal',function(e){
+            $("#editFormTeacher")[0].reset();
+            $.get('/admin/get/teacher/'+$(e.relatedTarget).data('id'),function(data,status){
+                $("#fnameT").val(data.fname);
+                $("#lnameT").val(data.lname);
+                $("#staff_id").val(data.staff_id);
+                $("#emailT").val(data.email);
+                $("#recoveryEmailT").val(data.recovery_email);
+                $("#isAdmin").val(""+data.isAdmin);
+            }).fail((err)=>{
+                toastr.error(err.responseText);
+            });
+        });
+
+        function editTeacher(){
+            $.post('/admin/teacher/'+$("#staff_id").val(),$("#editFormTeacher").serialize(),function (data,status){
+                toastr.success(data);
+            }).fail((err)=>{
+                toastr.error(err.responseText);
+            })
+            return false;
+        }
+        $("#viewPass").on('click',function() {
+        var $pwd = $(".password");
+        if ($pwd.attr('type') === 'password') {
+            $pwd.attr('type', 'text');
+        } else {
+            $pwd.attr('type', 'password');
+        }
         });

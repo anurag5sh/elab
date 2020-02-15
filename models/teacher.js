@@ -56,6 +56,10 @@ const teacherSchema = new mongoose.Schema({
   },
   tokenExpires : {
     type : Date
+  },
+  active : {
+    type:Boolean,
+    default:true
   }
 });
 
@@ -72,7 +76,7 @@ function validateTeacher(user) {
     staff_id:Joi.number().required()
   });
 
-  return schema.validate(user);
+  return schema.validate(user,{escapeHtml:true});
 }
 
 exports.Teacher = Teacher;

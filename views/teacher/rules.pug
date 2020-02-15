@@ -3,19 +3,19 @@
     .row
         .col-lg-9.col-md-10
             form#rules
-                textarea.form-control(name="rules" placeholder="Enter the Rules" style="height:250px;")
+                textarea.form-control(name="rules" placeholder="Enter the Rules" style="height:250px;") #{contest.rules}
                 br
-                button.btn.btn-success.btn-fill(type='button' id="add-rules") Add Rules
+                button.btn.btn-success.btn-fill(type='button' onclick="addRules()") Add Rules
 
 script.
     
-    $(document).ready(function(){
-        $("#add-rules").click(function(){
-
-        $.post("",$("#rules").serialize(),
-        function(data,status){
-            toastr.success(data);
-        });
-
-        });
+    function addRules(){
+    $.post("/contest/rules/#{contest.url}",$("#rules").serialize(),
+    function(data,status){
+        toastr.success(data);
+    }).fail((err)=>{
+        toastr.error(err.responseText);
     });
+    }
+
+

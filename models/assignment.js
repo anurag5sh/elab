@@ -59,7 +59,7 @@ const assignmentSchema = new mongoose.Schema({
 
       });
   
-      return schema.validate(assignment);
+      return schema.validate(assignment,{escapeHtml:true});
   }
   
   exports.validateAssignment = validateAssignment;

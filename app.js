@@ -16,6 +16,7 @@ const errors = require('./middleware/errors');
 const moment = require('moment');
 const winston = require('winston');
 require('winston-mongodb');
+const mongoSanitize = require('express-mongo-sanitize');
 
 const port = process.env.elab_port_no || 4000;
 
@@ -75,6 +76,9 @@ app.use(function(req,res,next){
 });
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
+app.use(mongoSanitize({
+  replaceWith: '_'
+}));
 
 app.use('/', login)
 app.use('/assignment', assignment);

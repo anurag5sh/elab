@@ -51,10 +51,7 @@ function encode64(string){ //encoding to base64
   return t
   }
 
-  //viewing Submission 
-router.get('/submis',async (req,res) =>{
-    res.render('teacher/subtab');
-});
+
 
 router.get('/',authenticate, async (req,res)=> {
     if(req.session.staff_id){
@@ -398,16 +395,55 @@ router.post('/add/:cname',authenticate,teacher,async (req,res) => {
 
 });
 
-//View Profile
-router.get('/:curl/viewProfile/:usn',authenticate,async (req,res,next)=>{
-    if(req.session.staff_id){
-      const student = await Student.findOne({usn:req.params.usn}).lean();
-      return res.render('viewProfile',{student:student});
+//fetching submissions
+router.get('/submissions/:curl',authenticate,teacher,async (req,res) =>{
+    const contest = await Contest.findOne({url:req.params.curl}).lean().select('submissions questions -_id');
+    if(!contest) return res.status(400).send("Contest not found");
+
+    let students = [];
+    let teachers =[];
+    for(i=0;i<contest.submissions.length;i++){
+        if(contest.submissions[i].year != '-')
+        students.push(contest.submissions[i].usn);
+        else
+        teachers.push(contest.submissions[i].usn);
+
     }
-    else next();
-  }, (req,res)=> {
-    res.render('login');
-  });
+    
+    let studentData = await Student.find({usn:{$in:students}}).select('usn fname lname -_id').lean();
+    if(!studentData) studentData = [];
+
+    let teacherData = await Teacher.find({staff_id:{$in:teachers}}).select('staff_id fname lname -_id').lean();
+    if(!teacherData) teacherData = [];
+
+    let questions = await ContestQ.find({qid:{$in:contest.questions}}).lean().select('qid name -_id');
+    if(!questions) questions=[];
+
+    let SendData=[];
+    for(i=0;i<contest.submissions.length;i++){ let data={};
+        if(contest.submissions[i].year != '-' ){
+            const index = studentData.findIndex(j => j.usn == contest.submissions[i].usn);
+            data.usn = studentData[index].usn;
+            data.name = studentData[index].fname + " " + studentData[index].lname;
+            data.code = '<a data-target="modal" data-target="source">View Code</a>';
+        }
+        else{
+            const index1 = teacherData.findIndex(j => j.staff_id == contest.submissions[i].usn);
+            data.usn = teacherData[index1].staff_id;
+            data.name = teacherData[index1].fname + " " + teacherData[index1].lname;
+            data.code = '<a data-target="modal" data-target="source">View Code</a>';
+        }
+        data.qname = questions[questions.findIndex(j => j.qid == contest.submissions[i].qid)].name;
+        data.time = contest.submissions[i].timestamp.toLocaleString();
+        data.points =contest.submissions[i].points;
+        data.status = contest.submissions[i].status;
+
+        SendData.push(data);
+    }
+
+    res.send(SendData);
+
+});
   
 
 //editing questions
@@ -636,10 +672,41 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
 
     //teacher 
     if(req.session.staff_id){
-        if(now > contest.timings.starts)
-        return res.send("questions");
-        else if(contest.createdBy == req.session.staff_id){
-            return res.send("questions");
+        if(contest.createdBy == req.session.staff_id)
+        {
+        let questions = await ContestQ.find({qid:{$in:contest.questions}}).select('name difficulty qid description _id test_cases')
+        let totalPoints = [];
+        if(!questions) questions=[];
+        else
+        {
+            questions.forEach((item,index)=>{ let total=0;
+                item.test_cases.forEach((itemp)=>{
+                    total+=itemp.points;
+                })
+                totalPoints.push(total);
+            });
+        }
+        questions.test_cases = [];
+        return res.render('teacher/quedisplay',{contest:contest,questions:questions,totalPoints:totalPoints});
+        }
+        else if(now > contest.timings.starts){
+        let questions = await ContestQ.find({qid:{$in:contest.questions}}).select('name difficulty qid description _id test_cases')
+        let totalPoints = [];
+        if(!questions) questions=[];
+        else
+        {
+            questions.forEach((item,index)=>{ let total=0;
+                item.test_cases.forEach((itemp)=>{
+                    total+=itemp.points;
+                })
+                totalPoints.push(total);
+            });
+        }
+        questions.test_cases = [];
+        if( now > contest.timings.ends) 
+        return res.render('teacher/quedisplay',{contest:contest,questions:questions,totalPoints:totalPoints});
+        else
+        return res.render('qdisplay',{contest:contest,questions:questions,totalPoints:totalPoints});
         }
         else{
             const milli = contest.timings.starts - now;
@@ -692,6 +759,13 @@ router.get('/:curl/leaderboard',authenticate,contestAuth,async (req,res) =>{
     if(!contest) return res.send("Invalid ID");
 
     res.render('leaderboard',{contest:contest});
+});
+
+router.get('/:curl/submissions',authenticate,teacher, async (req,res)=>{
+    const contest = await Contest.findOne({url:req.params.curl}).lean().select('url -_id');
+    if(!contest) return res.status(400).send("Contest not found");
+
+    res.render('teacher/submission',{contest:contest});
 });
 
 //viewing question
@@ -792,6 +866,7 @@ if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
         obj.qid = req.params.qid;
         obj.timestamp = new Date();
         obj.usn = usn;
+        obj.year = year;
         obj.sourceCode = req.body.source;
         if(total_points == contest_points){
             obj.status = "Accepted";
@@ -832,6 +907,7 @@ if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
         sub.qid = req.params.qid;
         sub.timestamp = new Date();
         sub.usn = usn;
+        sub.year = year;
         sub.sourceCode = req.body.source;
         sub.status = "Accepted";
         sub.language_id = req.body.language;
@@ -849,6 +925,7 @@ if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
         obj.qid = req.params.qid;
         obj.timestamp = new Date();
         obj.usn = usn;
+        obj.year = year;
         obj.sourceCode = req.body.source;
         obj.status = "Accepted";
         obj.points = total_points;
@@ -887,6 +964,7 @@ if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
         obj.qid = req.params.qid;
         obj.timestamp = new Date();
         obj.usn = usn;
+        obj.year = year;
         obj.sourceCode = req.body.source;
         if(total_points == contest_points){
             obj.status = "Accepted";
@@ -930,6 +1008,7 @@ if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
         sub.qid = req.params.qid;
         sub.timestamp = new Date();
         sub.usn = usn;
+        sub.year = year;
         sub.sourceCode = req.body.source;
         if(total_points == contest_points){
             sub.status = "Accepted";

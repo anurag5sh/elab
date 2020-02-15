@@ -13,6 +13,9 @@ const submissionSchema = new mongoose.Schema({
     usn:{
         type:String
     },
+    year:{
+        type:String
+    },
     sourceCode:{
         type:String
     },

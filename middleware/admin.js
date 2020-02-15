@@ -3,7 +3,7 @@ const {Teacher} = require('../models/teacher');
 module.exports= async function (req, res, next) {
     if (req.session && req.session.staff_id) {
         try{
-            const admin = await Teacher.findOne({staff_id:req.session.staff_id}).lean();
+            const admin = await Teacher.findOne({staff_id:req.session.staff_id}).lean().select('isAdmin');
         if(admin.isAdmin)
         return next();
         else{

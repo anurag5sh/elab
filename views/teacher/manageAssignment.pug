@@ -148,7 +148,7 @@ block content
                     tbody#qlist
     
     .container
-        .modal#edit
+        .modal#edit(role="dialog" tabindex ="-1" style="z-index:100000")
             .modal-dialog.modal-xl
                 form#ques-edit(onsubmit="return editForm()")
                     .modal-content

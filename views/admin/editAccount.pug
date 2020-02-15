@@ -31,7 +31,7 @@ block content
                     p Are you sure you want to delete this account?
                     p#delID
                 .modal-footer
-                    button.btn.btn-danger(type='button' data-dismiss='modal' onclick="deleteAccount()") Delete
+                    button#deleteAcc.btn.btn-danger(type='button' data-dismiss='modal' onclick="deleteAccount()") Delete
                     button.btn.btn-secondary(type='button' data-dismiss='modal') Close
     
     .modal.fade#edit(tabindex ="-1" role="dialog" )
@@ -243,11 +243,23 @@ block content
 
         $("#delete").on('show.bs.modal',function(e){
             $("#delID").text($(e.relatedTarget).data('usn') || $(e.relatedTarget).data('id') );
+            if($(e.relatedTarget).data('teacher')) $("#deleteAcc").attr('onclick','deleteAccountTeacher()');
+            else $("#deleteAcc").attr('onclick','deleteAccount()');
         });
 
         function deleteAccount(){
             $.get('/admin/delete/student/'+$("#delID").text(),function(data,status){
                 toastr.success(data);
+                $('#type').val('student').change();
+            }).fail((err)=>{
+                toastr.error(err.responseText);
+            });
+        }
+
+        function deleteAccountTeacher(){
+            $.get('/admin/delete/teacher/'+$("#delID").text(),function(data,status){
+                toastr.success(data);
+                $('#type').val('teacher').change();
             }).fail((err)=>{
                 toastr.error(err.responseText);
             });

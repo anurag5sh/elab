@@ -17,15 +17,24 @@ body
                     thead
                         tr
                             th No.
-                            th USN
+                            th USN / ID
                             th Name
                             th Question Name
                             th Source Code
-                            th Time
+                            th Time (HH:MM:SS:MS)
                             th Points
                             th Status
                     tbody
 
+    .modal.fade#source(tabindex ="-1" role="dialog" )
+        .modal-dialog.modal-lg
+            .modal-content
+                .modal-header
+                    h4.modal-title 
+                .modal-body#sourceBody
+                    textarea#sourceArea()
+                .modal-footer
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
 
     script.
         $.get('/contest/submissions/#{contest.url}',function(data,status){
@@ -41,8 +50,14 @@ body
                             { "data": "points" },
                             { "data": "status" },
                         ],
-                        "order": [[ 1, 'asc' ]],
-                        "columnDefs": [ {"searchable": false,"orderable": false,"targets": 0} ]
+                        "order": [[ 5, 'asc' ]],
+                        "columnDefs": [ {"searchable": false,"orderable": false,"targets": 0},
+                                        { "width": "1%", "targets": 0 },
+                                        {"searchable": false,"orderable": false,"targets": 4},
+                                        {"searchable": false,"targets": 3},
+                                        {"searchable": false,"targets": 5},
+                                        {"searchable": false,"targets": 6},
+                                        {"searchable": false,"targets": 7} ]
                     } );
                      submissions.on( 'order.dt search.dt', function () {
                         submissions.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
@@ -52,3 +67,9 @@ body
                 }).fail((err)=>{
                     toastr.error(err.responseText);
                 });
+
+        $("#source").on('show.bs.modal',function (e){
+            $.get('/contest/source/#{contest.url}/'+$(e.relatedTarget).data('usn')+'/'+$(e.relatedTarget).data('qid'),function(data,status){
+                $("#sourceArea").text(data);
+            });
+        });

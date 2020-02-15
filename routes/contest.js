@@ -400,6 +400,8 @@ router.get('/submissions/:curl',authenticate,teacher,async (req,res) =>{
     const contest = await Contest.findOne({url:req.params.curl}).lean().select('submissions questions -_id');
     if(!contest) return res.status(400).send("Contest not found");
 
+    function time_noDays(ms) {var sec = Math.floor(ms/1000);  ms = ms % 1000;  t = three(ms);  var min = Math.floor(sec/60);  sec = sec % 60;  t = two(sec) + ":" + t;  var hr = Math.floor(min/60);  min = min % 60;  t = two(min) + ":" + t; var day = Math.floor(hr/60);  hr = hr % 60;  t = two(hr) + ":" + t;   return t;  }
+
     let students = [];
     let teachers =[];
     for(i=0;i<contest.submissions.length;i++){
@@ -425,16 +427,16 @@ router.get('/submissions/:curl',authenticate,teacher,async (req,res) =>{
             const index = studentData.findIndex(j => j.usn == contest.submissions[i].usn);
             data.usn = studentData[index].usn;
             data.name = studentData[index].fname + " " + studentData[index].lname;
-            data.code = '<a data-target="modal" data-target="source">View Code</a>';
+            data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+studentData[index].usn+'" data-qid="'+contest.submissions[i].qid +'" href="#">View Code</a>';
         }
         else{
             const index1 = teacherData.findIndex(j => j.staff_id == contest.submissions[i].usn);
             data.usn = teacherData[index1].staff_id;
             data.name = teacherData[index1].fname + " " + teacherData[index1].lname;
-            data.code = '<a data-target="modal" data-target="source">View Code</a>';
+            data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+teacherData[index1].staff_id+'" data-qid="'+contest.submissions[i].qid +'" href="#">View Code</a>';
         }
         data.qname = questions[questions.findIndex(j => j.qid == contest.submissions[i].qid)].name;
-        data.time = contest.submissions[i].timestamp.toLocaleString();
+        data.time = time_noDays(contest.submissions[i].timestamp);
         data.points =contest.submissions[i].points;
         data.status = contest.submissions[i].status;
 
@@ -579,6 +581,17 @@ router.get('/source/:curl/:qid',authenticate,contestAuth,async (req,res) =>{
     }
   
     res.send(source.sort((a,b)=>(a.timestamp>b.timestamp)?-1:1));
+});
+
+//fetch source code for teacher
+router.get('/source/:curl/:usn/:qid',authenticate,teacher,async (req,res) =>{
+    const contest = await Contest.findOne({url:req.params.curl}).lean().select('custom_staff_id createdBy submissions timings -_id');
+    if(!contest) return res.status(400).send("Contest not found!");
+
+    if(req.session.staff_id == contest.createdBy || new Date() > contest.timings.ends){
+        res.send(contest.submissions.find(i => i.usn == req.params.usn && i.qid == req.params.qid).sourceCode);
+    }
+    else res.end();
 });
 
 //get list of students by year

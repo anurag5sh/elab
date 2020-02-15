@@ -347,6 +347,14 @@ router.get('/edit/:id',teacher,async (req,res) => {
     res.send({assignment:assignment,questions:questions});
   });
 
+//get an old assignment question
+router.get('/old/:qid',teacher,async (req,res)=>{
+    let question = await AssignmentQ.findOne({qid:req.params.qid}).lean();
+    if(!question) return res.status(400).send("Not Found!");
+
+    res.send(question);
+});
+
   //get an assignment question
 router.get('/edit/:id/:qid',teacher,async (req,res) => {
     const assignment = await Assignment.findOne({id:req.params.id}).lean().select('questions id');

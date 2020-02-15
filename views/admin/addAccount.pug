@@ -9,59 +9,7 @@ block append code
         .hide{
             display:none;
         }
-    script(type='text/javascript').
-        $(document).on('change', '#type', function() {
-        let target = $(this).data('target');
-        let show = $("option:selected", this).data('show');
-        $(target).children().addClass('hide');
-        $(show).removeClass('hide');
-        let type=document.getElementById('type').value;
-        $("#add").trigger("reset");
-        document.getElementById('type').value=type;
-        
-        });
-        $(document).ready(function(){
-        $('.type').trigger('change');
-        
-        });
-
-        function submitForm(){
-
-            
-            if(document.getElementById('type').value === "student"){
-                //-$("#tf").remove();
-                $("#tf *").prop('disabled',true);}
-            else{
-                $("#sf *").prop('disabled',true);
-               }
-            const reg = $.post("/register", $("#add").serialize(), function(data,status) {
-
-            toastr.success(data);
-            window.location.href = '/admin/add'
-            })
-                .fail(function(error){
-                   
-                    $("#addForm *").prop('disabled',false);
-                    toastr.error(error.responseText);
-                })
-            
-        }
-        function submitCSV(){
-             $.ajax({
-                url: '/admin/add',
-                type: 'post',
-                data: new FormData($('#csv')[0]),
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function( data, textStatus, jQxhr ){
-                    toastr.success(data);
-                },
-                error: function( jqXhr, textStatus, errorThrown ){
-                    toastr.error(errorThrown);
-                }
-            });
-        }
+    
         
 block content
     form#add
@@ -132,17 +80,94 @@ block content
                 .col-3(style="margin:auto;")
                     .form-group
                         h6 Select account type
-                        select(name="type_csv", required).form-control.custom-select
+                        select#type_csv(name="type_csv", required).form-control.custom-select
                             option(value="student") Student
                             option(value="teacher") Teacher
                 .row
                     .col-md-4
                         .form-group
-                            p Upload a csv file with following attributes
+                            p Download CSV Template file
+                            a#download.btn.btn-info(href="/student.csv") Download
+                        br
+                        br
                         .form-group
                             input(type="file", name="csv")
                         .form-group
                             input.btn.btn-success(type="button", value="Upload", onclick="submitCSV()")
-                    
+
+    .modal.fade#error_csv(tabindex ="-1" role="dialog" )
+        .modal-dialog.modal-lg
+            .modal-content
+                .modal-header
+                    h4.modal-title Error
+                .modal-body
+                    #ebody
+                .modal-footer
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+    
+    script(type='text/javascript').
+        $(document).on('change', '#type', function() {
+        let target = $(this).data('target');
+        let show = $("option:selected", this).data('show');
+        $(target).children().addClass('hide');
+        $(show).removeClass('hide');
+        let type=document.getElementById('type').value;
+        $("#add").trigger("reset");
+        document.getElementById('type').value=type;
+        
+        });
+        $(document).ready(function(){
+        $('.type').trigger('change');
+        
+        });
+
+        function submitForm(){
+
+            
+            if(document.getElementById('type').value === "student"){
+                //-$("#tf").remove();
+                $("#tf *").prop('disabled',true);}
+            else{
+                $("#sf *").prop('disabled',true);
+               }
+            const reg = $.post("/register", $("#add").serialize(), function(data,status) {
+
+            toastr.success(data);
+            window.location.href = '/admin/add'
+            })
+                .fail(function(error){
+                   
+                    $("#addForm *").prop('disabled',false);
+                    toastr.error(error.responseText);
+                })
+            
+        }
+        function submitCSV(){
+             $.ajax({
+                url: '/admin/add/',
+                type: 'post',
+                data: new FormData($('#csv')[0]),
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function( data, textStatus, jQxhr ){
+                    toastr.success(data);
+                },
+                error: function(error){
+                    //toastr.error(error.responseText);
+                    $("#ebody").html(error.responseText);
+                    $('#error_csv').modal('show');
+                }
+            });
+        }
+        $(document).ready(function(){
+            $("#type_csv").change(function (){
+                if($(this).val() == 'student'){
+                    $("#download").attr("href","/student.csv");
+                }else{
+                    $("#download").attr("href","/teacher.csv");
+                }
+            });
+        });
                     
                     

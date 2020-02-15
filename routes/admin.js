@@ -35,7 +35,7 @@ router.get('/get/teachers',admin,async (req,res)=>{
   for(let i=0;i<list.length;i++){
     list[i].name = list[i].fname + " " + list[i].lname;
     list[i].edit = '<a class="fas fa-edit" data-toggle="modal" data-target="#editTeacher" data-id="'+list[i].staff_id+'" style="color:dimgrey;" href=""></a>';
-    list[i].delete = '<a class="fas fa-trash" data-toggle="modal" data-target="#delete" data-id="'+list[i].staff_id+'" style="color:red;" href=""></a>';
+    list[i].delete = '<a class="fas fa-trash" data-toggle="modal" data-target="#delete" data-id="'+list[i].staff_id+'" data-teacher="true" style="color:red;" href=""></a>';
 
     delete list[i].fname;
     delete list[i].lname;
@@ -199,7 +199,7 @@ router.post('/add', upload.single('csv'), admin,async (req, res, next) => {
       for(let i=0;i<jsonArray.length;i++){
 
         const { error } = validate(jsonArray[i]); 
-        if (error) return res.status(400).send(error.message + " at index="+ i+1);
+        if (error) return res.status(400).send(error.message + " at column index="+ i+2);
 
         let student = new Student(_.pick(jsonArray[i], ['fname', 'lname','email', 'password','year','usn']));
         const salt = await bcrypt.genSalt(10);
@@ -209,16 +209,36 @@ router.post('/add', upload.single('csv'), admin,async (req, res, next) => {
     
       Student.insertMany(studentArray,{ordered:false}).then(docs => {
           return res.send("All accounts added Successfully!");
-      }).catch(err => { let e="";
+      }).catch(err => { let e="The following accounts were not created due to data error, re-upload the csv files with only these accounts. All other accounts were added successfully.<br><br>",i=1;
         err.result.result.writeErrors.forEach(message);
         function message(value,index,array){
-          e +=value.errmsg+ " at index " + value.index+"\n\r"; 
+          e +=i++ + ") "+value.errmsg+ " at column index " + (value.index+2)+" <br>"; 
         }
-          return res.send(e);
+          return res.status(400).send(e);
       });
       }
       else if(req.body.type_csv == "teacher"){
-        res.send("Need to add");
+        let teacherArray = [];
+
+        for(let i=0;i<jsonArray.length;i++){
+        const { error } = validateTeacher(jsonArray[i]); 
+        if (error) return res.status(400).send(error.message + " at column index="+ i+2);
+
+        let teacher = new Teacher(_.pick(jsonArray[i], ['fname', 'lname','email', 'password','staff_id']));
+        const salt = await bcrypt.genSalt(10);
+        teacher.password = await bcrypt.hash(teacher.password, salt);
+        teacherArray.push(teacher);
+      }
+    
+      Teacher.insertMany(teacherArray,{ordered:false}).then(docs => {
+          return res.send("All accounts added Successfully!");
+                  }).catch(err => { let e="The following accounts were not created due to data error, re-upload the csv files with only these accounts. All other accounts were added successfully. <br><br>",i=1;
+        err.result.result.writeErrors.forEach(message);
+        function message(value,index,array){
+          e +=i++ + ") "+value.errmsg+ " at column index " + (value.index+2)+" <br>"; 
+        }
+          return res.status(400).send(e);
+      });
       }
       else{
         res.send("Select account type");

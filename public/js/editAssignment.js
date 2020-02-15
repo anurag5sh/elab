@@ -305,8 +305,10 @@ function submitFormAdd(){
         const aId = document.getElementById('sem').value;
         const qid = e.relatedTarget.dataset.id;
         $("#qid").val(qid);
-
-        $.get("/assignment/edit/"+aId+"/"+qid,function(data,status){
+        let url = "/assignment/edit/"+aId+"/"+qid;
+        if(e.relatedTarget.dataset.old){ url = '/assignment/old/'+qid; $("#editSubmit").hide(); }
+        else $("#editSubmit").show();
+        $.get(url,function(data,status){
             if(data.assignmentId!=aId){
                 $("#edit_info").html("Cannot edit an old question");
             }
@@ -400,7 +402,7 @@ function display(page){
         success: function (data,status, jqXHR) {
         
             data.questions.forEach((item,index)=>{
-                    $("#oldQlist").append('<tr><td><input '+(listArray.includes(item.assignmentId+'#'+item.qid)?'checked':'')+' type="checkbox" id="aq" name="list" value="'+item.assignmentId+'#'+item.qid +'"></td><td>'+item.assignmentId.substr(5,4)+'</td><td>'+item.qid+'</td><td>'+item.name+'</td><td><a class="fas fa-eye"  style="color:dimgrey;" href=""></a></td></tr>');
+                    $("#oldQlist").append('<tr><td><input '+(listArray.includes(item.assignmentId+'#'+item.qid)?'checked':'')+' type="checkbox" id="aq" name="list" value="'+item.assignmentId+'#'+item.qid +'"></td><td>'+item.assignmentId.substr(5,4)+'</td><td>'+item.qid+'</td><td>'+item.name+'</td><td><a class="fas fa-eye"  style="color:dimgrey;" data-toggle="modal" data-target="#edit" data-id="'+item.qid+'" data-old="true" href=""></a></td></tr>');
             });
             
             let pagi = '<nav aria-label="..."><ul class="pagination pagination-sm justify-content-center"><li class="page-item '+(page==1?'disabled':'') +'"><a class="page-link" href="javascript:display('+(page-1)+')" '+(page==1?'aria-disabled="true"':'')+'>Previous</a></li>';
@@ -462,7 +464,7 @@ $(function() {
         $.get('/assignment/old/search/'+$("#oldSelect").val()+'/'+val,function(data,status){
             if(Array.isArray(data)){
                 $.each(data, function(_,obj) {
-                    $("#oldQlist").append('<tr><td><input '+(listArray.includes(obj.assignmentId+'#'+obj.qid)?'checked':'')+' type="checkbox" id="aq" name="list" value="'+obj.assignmentId+'#'+obj.qid +'"></td><td>'+obj.assignmentId.substr(5,4)+'</td><td>'+obj.qid+'</td><td>'+obj.name+'</td><td><a class="fas fa-eye"  style="color:dimgrey;" href=""></a></td></tr>');
+                    $("#oldQlist").append('<tr><td><input '+(listArray.includes(obj.assignmentId+'#'+obj.qid)?'checked':'')+' type="checkbox" id="aq" name="list" value="'+obj.assignmentId+'#'+obj.qid +'"></td><td>'+obj.assignmentId.substr(5,4)+'</td><td>'+obj.qid+'</td><td>'+obj.name+'</td><td><a class="fas fa-eye"  style="color:dimgrey;" data-toggle="modal" data-target="#edit" data-id="'+obj.qid+'" data-old="true" href=""></a></td></tr>');
                    });
                    list();
             }

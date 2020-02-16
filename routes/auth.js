@@ -246,6 +246,7 @@ router.post('/first',authenticate,async (req,res)=>{
     user.lastLogin = new Date();
 
     user.save();
+    req.session.incomplete = false;
     res.send('/');
 
   }
@@ -262,6 +263,7 @@ router.post('/first',authenticate,async (req,res)=>{
     user.password = await bcrypt.hash(req.body.password, salt);
     user.lastLogin = new Date();
     user.save();
+    req.session.incomplete = false;
     res.send('/');
   }
   else if(req.body.recovery_email){
@@ -274,6 +276,7 @@ router.post('/first',authenticate,async (req,res)=>{
     user.recovery_email = req.body.recovery_email;
     user.lastLogin = new Date();
     user.save();
+    req.session.incomplete = false;
     res.send('/');
   }
   else res.status(400).send("Not permitted!");
@@ -281,15 +284,21 @@ router.post('/first',authenticate,async (req,res)=>{
 
 
 router.get('/first',authenticate,async (req,res)=>{
+  if(req.session.incomplete)
   return res.render('firstLogin',{select:'both',title:'Change Password and Recovery Email'});
+  else res.status(404).end();
 });
 
 router.get('/firstR',authenticate,async (req,res)=>{
+  if(req.session.incomplete)
   return res.render('firstLogin',{select:'recovery',title:'Update Recovery Email'});
+  else res.status(404).end();
 });
 
 router.get('/firstP',authenticate,async (req,res)=>{
+  if(req.session.incomplete)
   return res.render('firstLogin',{select:'password',title:'Change Password'});
+  else res.status(404).end();
 });
 
 //login validation
@@ -311,14 +320,14 @@ router.post('/', async (req, res) => {
     req.session.lname = student.lname;
     req.session.usn = student.usn;
     req.session.year = student.year;
-    if(student.recovery_email == null){
+    if(student.recovery_email == null){ req.session.incomplete = true;
       if(student.lastLogin == null){
         return res.send('/first');
       }
       else{
         return res.send('/firstR');
       }
-    }else if(student.lastLogin == null){
+    }else if(student.lastLogin == null){ req.session.incomplete = true;
       return res.send('/firstP');
     }
 
@@ -342,7 +351,7 @@ router.post('/', async (req, res) => {
     req.session.staff_id = teacher.staff_id;
     req.session.isAdmin = teacher.isAdmin;
 
-    if(teacher.recovery_email == null){
+    if(teacher.recovery_email == null){ req.session.incomplete = true;
       if(teacher.lastLogin == null){
         return res.send('/first'); //both
       }
@@ -350,7 +359,7 @@ router.post('/', async (req, res) => {
         return res.send('/firstR');
         //only rec
       }
-    }else if(teacher.lastLogin == null){
+    }else if(teacher.lastLogin == null){ req.session.incomplete = true;
       return res.send('/firstP');
       //only pass
     }

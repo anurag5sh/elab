@@ -167,14 +167,14 @@ each i in ques
             p(style="font-family: 'Pompiere', cursive;color:black;font-size:20px;") #{i.description}
         .row
           .col-lg-4.col-md-3(style='color:black')
-            label(for='difficulty') Difficulty: #{i.difficulty}
+            label Difficulty: #{i.difficulty}
           .col-lg-3.col-md-3(style='color:black')
             label(for='points') Points: 
           .col-lg-1
           .col-lg-4.col-md-4
-            button.btn.btn-outline-danger(style='font-weight:bold;border-radius:20px;') 
+            button.btn.btn-outline-danger(style='font-weight:bold;border-radius:20px;' data-toggle="modal" data-target="#deleteQuestion" data-id=i.qid data-name=i.name) 
               i.fas.fa-trash &nbsp; Delete
-            button.btn.btn-outline-primary(style='font-weight:bold;border-radius:20px;')
+            button.btn.btn-outline-primary(style='font-weight:bold;border-radius:20px;' data-toggle="modal" data-target="#edit" data-id=i.qid)
               i.fas.fa-edit &nbsp; Edit
   br
   //- .container
@@ -219,7 +219,7 @@ each i in ques
                                           td
                                           
                                               .form-group
-                                                select#difficult.form-control(name='difficult')
+                                                select#difficult.form-control(name='difficulty')
                                                   option(value='Easy') Easy
                                                   option(value='Medium') Medium
                                                   option(value='Difficult') Difficult
@@ -227,7 +227,7 @@ each i in ques
                                           td
                                             label(for='description') Description:
                                           td
-                                            input#description(type='text' name='description' required).form-control                                     
+                                            input#description-e(type='text' name='description' required).form-control                                     
                                       tr
                                           td(style="width:150px;")
                                               label Problem Statement:
@@ -301,14 +301,14 @@ each i in ques
                       button.btn.btn-secondary(type='button' data-dismiss='modal') Cancel
                       
 
-.modal.fade#delete(tabindex ="-1" role="dialog" )
+.modal.fade#deleteQuestion(tabindex ="-1" role="dialog" )
     .modal-dialog.modal-sm
         .modal-content
             .modal-header
                 h4.modal-title Delete Question
             .modal-body
                 p Delete the following question?
-                #dbody
+                #dbodyQ
             .modal-footer
                 button.btn.btn-danger(type='button' data-dismiss='modal' onclick="deleteQ()") Delete
                 button.btn.btn-secondary(type='button' data-dismiss='modal') Close

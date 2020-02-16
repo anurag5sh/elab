@@ -277,7 +277,6 @@ router.get('/manage/:name',authenticate,teacher, async (req,res) => {
     for (i of contest.submissions){
         if(i.status === "Accepted" ){
             const index = questionNo.findIndex( j => j.qid === i.qid);
-            console.log(index);
             questionNo[index].Accepted++;
         }
         else if(i.status === "Partially Accepted"){
@@ -447,6 +446,16 @@ router.get('/submissions/:curl',authenticate,teacher,async (req,res) =>{
 
 });
   
+//getting a question to edit
+router.get('/edit/:curl/:qid',authenticate,teacher, async (req,res)=>{
+    const contest = await Contest.findOne({url:req.params.curl}).lean().select('questions');
+    if(!contest) return res.status(404).send('Contest not found!');
+
+    const question = await ContestQ.findOne({qid:req.params.qid}).lean();
+    if(!question) return res.status(400).send("Invalid ID");
+
+    res.send(question);
+});
 
 //editing questions
 router.post('/edit/:curl/:qid',authenticate,teacher,async (req,res)=>{
@@ -456,7 +465,7 @@ router.post('/edit/:curl/:qid',authenticate,teacher,async (req,res)=>{
     const contest = await Contest.findOne({url:req.params.curl}).lean().select('questions');
     if(!contest) return res.status(404);
 
-    if(!contest.questions.include(req.params.qid)) return res.status(400).send("Invalid ID");
+    if(!contest.questions.includes(req.params.qid)) return res.status(400).send("Invalid ID");
 
     const question = await ContestQ.findOne({qid:req.params.qid});
     if(!question) return res.status(400).send("Invalid ID");
@@ -466,6 +475,8 @@ router.post('/edit/:curl/:qid',authenticate,teacher,async (req,res)=>{
     question.constraints = req.body.constraints;
     question.input_format = req.body.i_format;
     question.output_format = req.body.o_format;
+    question.description = req.body.description;
+    question.difficulty = req.body.difficulty;
 
     question.sample_cases = [];
     question.test_cases =[];
@@ -519,13 +530,16 @@ router.get('/delete/:curl',authenticate,teacher,async (req,res) => {
 //deleting a question
 router.get('/delete/:curl/:qid',authenticate,teacher,async (req,res)=>{
 
-    const contest = await Contest.findOne({url:req.params.curl}).lean().select('questions');
+    const contest = await Contest.findOne({url:req.params.curl}).select('questions timings');
     if(!contest) return res.status(404);
 
-    if(!contest.questions.include(req.params.qid)) return res.status(400).send("Invalid ID");
+    if(!contest.questions.includes(req.params.qid)) return res.status(400).send("Invalid ID");
 
     if(contest.timings.ends< new Date()) return res.status(400).send("Cannot delete a question after contest is over.");
     
+    contest.questions.splice(contest.questions.indexOf(req.params.qid),1);
+    await contest.save();
+
     await ContestQ.findOneAndDelete({qid:req.params.qid});
     await Submission.deleteMany({qid:req.params.qid});
 
@@ -537,7 +551,7 @@ router.post('/rules/:url',authenticate,teacher,async (req,res)=>{
     const contest = await Contest.findOne({url:req.params.url}).select('rules');
     if(!contest) return res.status(404);
 
-    contest.rules +=req.body.rules || '';
+    contest.rules =req.body.rules || '';
     await contest.save();
     res.send("Rules saved!");
 });

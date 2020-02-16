@@ -17,6 +17,7 @@ const moment = require('moment');
 const winston = require('winston');
 require('winston-mongodb');
 const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require('helmet')
 
 const port = process.env.elab_port_no || 4000;
 
@@ -35,6 +36,7 @@ app.use(express.static('public'));
 app.set('view engine', 'pug');
 app.set('views',__dirname+"/views");
 
+app.use(helmet());
 app.use(function(req, res, next) {
   res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   next();

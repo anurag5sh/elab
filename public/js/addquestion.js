@@ -222,13 +222,14 @@ $(document).ready(function() {
     const qid = e.relatedTarget.dataset.id;
     $("#qid").val(qid);
 
-    $.get("/assignment/edit/"+curl+"/"+qid,function(data,status){
+    $.get("/contest/edit/"+curl+"/"+qid,function(data,status){
         
         $("#name-e").val(data.name);
         editor_edit.setContents(JSON.parse(data.statement));
         $("#constraints-e").val(data.constraints);
         $("#i_format-e").val(data.input_format);
         $("#o_format-e").val(data.output_format);
+        $("#description-e").val(data.description);
         $("#ei_sample1").val(data.sample_cases[0].input);
         $("#eo_sample1").val(data.sample_cases[0].output);
         $("#explanation_edit").val(data.explanation);
@@ -254,9 +255,9 @@ $(document).ready(function() {
 
     });
 
-    $("#delete").on('show.bs.modal', function(e){
-        $("#dbody").empty();
-        $("#dbody").append("<p>"+e.relatedTarget.dataset.name+"</p><p style='display:none;' id='del_qid'>"+e.relatedTarget.dataset.id+"</p>");
+    $("#deleteQuestion").on('show.bs.modal', function(e){
+        $("#dbodyQ").empty();
+        $("#dbodyQ").append("<p>"+e.relatedTarget.dataset.name+"</p><p style='display:none;' id='del_qid'>"+e.relatedTarget.dataset.id+"</p>");
 
     });
 
@@ -271,8 +272,6 @@ $.ajax({
     data: $("#ques-edit").serialize(),
     success: function (data,status, jqXHR) {
     $("#edit").modal('hide');
-    $("#loading").modal('show');
-    closeModal();
     toastr.success(data);
     editor.setText("");
     },
@@ -287,14 +286,13 @@ return false;
 }
 function deleteQ(){
 $("#delete").modal('hide');
-$("#loader").modal('show');
 const qid = $("#del_qid").html();
-const aId = $("#sem").val();
 $.get('/contest/delete/'+curl+'/'+qid,function(data,status){
     toastr.success(data);
-    closeModal();
-    $("#sem").val(aId).change();
     $("#del_qid").empty();
-});
+    window.location.reload();
+}).fail((err)=>{
+    toastr.error(err.responseText);
+})
 
 }

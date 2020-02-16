@@ -334,7 +334,7 @@ router.post('/:qid',authenticate,async (req,res)=>{
 
 //--------------------editing routes------------------------//
 //get an assignment
-router.get('/edit/:id',teacher,async (req,res) => {
+router.get('/edit/:id',authenticate,teacher,async (req,res) => {
     const assignment = await Assignment.findOne({id:req.params.id}).lean();
     if(!assignment) return res.status(400).send("Not Found");
   
@@ -348,7 +348,7 @@ router.get('/edit/:id',teacher,async (req,res) => {
   });
 
 //get an old assignment question
-router.get('/old/:qid',teacher,async (req,res)=>{
+router.get('/old/:qid',authenticate,teacher,async (req,res)=>{
     let question = await AssignmentQ.findOne({qid:req.params.qid}).lean();
     if(!question) return res.status(400).send("Not Found!");
 
@@ -356,7 +356,7 @@ router.get('/old/:qid',teacher,async (req,res)=>{
 });
 
   //get an assignment question
-router.get('/edit/:id/:qid',teacher,async (req,res) => {
+router.get('/edit/:id/:qid',authenticate,teacher,async (req,res) => {
     const assignment = await Assignment.findOne({id:req.params.id}).lean().select('questions id');
     if(!assignment) return res.status(400).send("Error! Not Found");
 
@@ -374,7 +374,7 @@ router.get('/edit/:id/:qid',teacher,async (req,res) => {
 });
 
 //editing a question
-router.post('/edit/:id/:qid',teacher,async (req,res) =>{
+router.post('/edit/:id/:qid',authenticate,teacher,async (req,res) =>{
     const {error} = validateAQ(req.body);
     if(error) return res.status(400).send(error.message);
 

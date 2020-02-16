@@ -122,7 +122,7 @@ head
     document.getElementById(id).innerHTML += seconds + 'secs';
 
     const overall = end-starts;
-    const elapsed = overall - distance;
+    const elapsed = distance;
     const width = (elapsed/overall) * 100 + "%";
     $("#progress").css('width',width);
     }
@@ -198,8 +198,8 @@ body()
                   .col-lg-4
                   .col-lg-2.col-md-2
                     a.btn.btn-outline-light.hovering1(style='font-weight:bold;border-radius:20px;' href="/contest/"+contest.url+"/"+i.qid) Solve
-        
-        
+      br  
+
     .col-lg-5.col-md-2(style='margin-top:23px;align-items: initial;')
       .box
         #countdown-wrap(style='width: 60%;margin:auto; background-color: lavender; margin-bottom: 25px;')

@@ -14,52 +14,52 @@ head
             height:100%;
         }
 body
-    .content(style="margin:auto;width:25%;color:#9A9A9A;")
-        .container-fluid
-            .row
-                .col-md-3
-                    .card
-                        .header
-                            h4.title(style="margin-top:15px;margin-left:15px;margin-bottom:8px;")=title
-                        .content
-                            form#first(onsubmit="return subNext()")
-                                -if(select == 'both')
-                                    .row
-                                        .col-lg-11.col-md-11
-                                            .form-group
-                                                label New Password
-                                                input.form-control(type='password' name = 'password' placeholder='' value="" required)
-                                    .row
-                                        .col-lg-11.col-md-11
-                                            .form-group
-                                                label Confirm Password
-                                                input.form-control(type='password' name = 'cnf_password'  placeholder='' value="" required)
-                                    .row
-                                        .col-lg-11.col-md-11
-                                            .form-group
-                                                label Recovery Email
-                                                input.form-control(type='email' name = 'recovery_email' value="" required)
-                                -else if(select == 'password')
-                                    .row
-                                        .col-lg-11.col-md-11
-                                            .form-group
-                                                label New Password
-                                                input.form-control(type='password' name = 'password' placeholder='' value="" required)
-                                    .row
-                                        .col-lg-11.col-md-11
-                                            .form-group
-                                                label Confirm Password
-                                                input.form-control(type='password' name = 'cnf_password'  placeholder='' value="" required)
-                                            
-                                -else if(select == 'recovery')
-                                    .row
-                                        .col-lg-11.col-md-11
-                                            .form-group
-                                                label Recovery Email
-                                                input.form-control(type='email' name = 'recovery_email' value="" required)
-                                        
-                                button.btn.btn-info.btn-fill.pull-right(id="update-password") Next
-                                .clearfix
+    //- .content(style="margin:auto;width:25%;color:#9A9A9A;")
+    //-     .container-fluid
+    //-         .row
+    //-             .col-md-3
+    .card(style="margin:auto;width:25%;color:#9A9A9A;")
+        .header
+            h4.title(style="margin-top:15px;margin-left:15px;margin-bottom:8px;")=title
+        .content
+            form#first(onsubmit="return subNext()")
+                -if(select == 'both')
+                    .row
+                        .col-lg-11.col-md-11
+                            .form-group
+                                label New Password
+                                input.form-control(type='password' name = 'password' placeholder='' value="" required)
+                    .row
+                        .col-lg-11.col-md-11
+                            .form-group
+                                label Confirm Password
+                                input.form-control(type='password' name = 'cnf_password'  placeholder='' value="" required)
+                    .row
+                        .col-lg-11.col-md-11
+                            .form-group
+                                label Recovery Email
+                                input.form-control(type='email' name = 'recovery_email' value="" required)
+                -else if(select == 'password')
+                    .row
+                        .col-lg-11.col-md-11
+                            .form-group
+                                label New Password
+                                input.form-control(type='password' name = 'password' placeholder='' value="" required)
+                    .row
+                        .col-lg-11.col-md-11
+                            .form-group
+                                label Confirm Password
+                                input.form-control(type='password' name = 'cnf_password'  placeholder='' value="" required)
+                            
+                -else if(select == 'recovery')
+                    .row
+                        .col-lg-11.col-md-11
+                            .form-group
+                                label Recovery Email
+                                input.form-control(type='email' name = 'recovery_email' value="" required)
+                        
+                button.btn.btn-info.btn-fill.pull-right(id="update-password") Next
+                .clearfix
 
     script.
         function subNext(){

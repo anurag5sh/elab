@@ -6,6 +6,10 @@ const contestSchema = new mongoose.Schema({
   createdBy:{
     type:String
   },
+  createdByName:{
+    type:String,
+    default: ''
+  },
   id:{
     type:Number
   },

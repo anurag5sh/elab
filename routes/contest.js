@@ -116,6 +116,7 @@ router.post('/create',authenticate,teacher, async (req,res)=>{
     contest.timings.ends = ends;
     contest.timings.starts = starts;
     contest.description = req.body.description;
+    contest.createdByName = req.session.fname + " "+ req.session.lname;
 
     await contest.save();
     res.send(contest);
@@ -691,7 +692,7 @@ router.get('/teachers/id/:id',authenticate,teacher,async (req,res) =>{
 
 //landing page for contest
 router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
-    let contest = await Contest.findOne({url:req.params.curl}).lean().select('timings signedUp name questions url createdBy rules');
+    let contest = await Contest.findOne({url:req.params.curl}).lean().select('timings signedUp name questions url createdBy createdByName rules');
     if(!contest) return res.status(404).end();
 
     const now = new Date();
@@ -797,7 +798,7 @@ router.get('/:curl/submissions',authenticate,teacher, async (req,res)=>{
 
 //viewing question
 router.get('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
-    let contest = await Contest.findOne({url:req.params.curl},{submissions:{$elemMatch:{usn:req.session.usn,qid:req.params.qid}}},{_id:0,'submissions.$':1}).lean().select('questions');
+    let contest = await Contest.findOne({url:req.params.curl}).lean().select('questions name url');
     if(!contest) return res.status(404).end();
     
     if(!contest.questions.includes(req.params.qid)){
@@ -807,7 +808,7 @@ router.get('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
         return res.status(404).end();
     });
     
-    return res.render('editorContest',{question : _.pick(question,['name','statement','constraints', 'input_format','output_format','sample_cases','explanation'])})
+    return res.render('editorContest',{question : _.pick(question,['name','statement','constraints', 'input_format','output_format','sample_cases','explanation']),contest:contest})
 
 
 });

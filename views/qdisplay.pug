@@ -211,7 +211,7 @@ body()
               #countdown
               //- span.goal-label Days to End
           hr
-          h5 Created by: #{contest.createdBy}
+          h5 Created by: #{contest.createdByName}
         #countdown-wrap(style='width: 60%;margin:auto; background-color: lavender; margin-bottom: 10px; height: 120px;')
           .row
             .col.text-left
@@ -222,13 +222,13 @@ body()
             .col.text-left
               a.btn(href="/contest/"+contest.url+"/leaderboard" style='font-size:15px;')
                 i.fas.fa-list
-                label(style='cursor: pointer;') &nbsp; Leader Board
+                label(style='cursor: pointer;') &nbsp; Leaderboard
     br
     #myModal.modal.fade
       .modal-dialog
           .modal-content
             .modal-header
-              h4.modal-title Modal Heading
+              h4.modal-title Rules
               button.close(type='button' data-dismiss='modal') &times;
             .modal-body
               pre #{contest.rules}

@@ -211,23 +211,35 @@ body()
               #countdown
               //- span.goal-label Days to End
           hr
-          h5
+          h5 Created by: #{contest.createdByName}
         #countdown-wrap(style='width: 60%;margin:auto; background-color: lavender; margin-bottom: 10px; height: auto;')
           .row
             .col.text-left
-              a.btn(href='#' style='font-size:15px;')
+              a.btn(href='#' style='font-size:15px;' data-toggle="modal" data-target="#myModal")
                 i.fas.fa-info
-                label(style='cursor: pointer;') &nbsp; Rules
+                label(style='cursor: pointer;' ) &nbsp; Rules
           .row
             .col.text-left
               a.btn(href="/contest/"+contest.url+"/leaderboard" style='font-size:15px;')
                 i.fas.fa-list
-                label(style='cursor: pointer;') &nbsp; Leader Board
+                label(style='cursor: pointer;') &nbsp; Leaderboard
           .row
             .col.text-left
               a.btn(href='/contest/'+contest.url+'/submissions' style='font-size:15px;')
                 i.fas.fa-chalkboard-teacher
                 label(style='cursor: pointer;') &nbsp; View Submissions
+    br
+    #myModal.modal.fade
+      .modal-dialog
+          .modal-content
+            .modal-header
+              h4.modal-title Rules
+              button.close(type='button' data-dismiss='modal') &times;
+            .modal-body
+              pre #{contest.rules}
+            .modal-footer
+                button.btn.btn-danger(type='button' data-dismiss='modal') Close
+
 
 
 

@@ -158,6 +158,11 @@ html(lang='en')
       }
   body
     br
+    nav(aria-label='breadcrumb')
+      ol.breadcrumb
+        li.breadcrumb-item
+          a(href='/contest/'+contest.url)=contest.name
+        li.breadcrumb-item.active(aria-current='page') #{question.name}
     h1(style="margin-left:40px;") #{question.name}
     .card#card(style="padding-left:25px;padding-right:25px;")
       //- p #{question.name}

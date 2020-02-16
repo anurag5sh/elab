@@ -31,8 +31,8 @@ body
             .modal-content
                 .modal-header
                     h4.modal-title 
-                .modal-body#sourceBody
-                    textarea(style="width:100%;")#sourceArea()
+                .modal-body
+                    #sourceBody(style="white-space: pre-wrap;")
                 .modal-footer
                     button.btn.btn-secondary(type='button' data-dismiss='modal') Close
 
@@ -71,8 +71,7 @@ body
         
         $("#source").on('show.bs.modal',function (e){
             $.get('/contest/source/#{contest.url}/'+$(e.relatedTarget).data('usn')+'/'+$(e.relatedTarget).data('qid'),function(data,status){
-                $("#sourceArea").val(data);
-                $("#sourceArea").height($("#sourceArea")[0].scrollHeight);
+                $("#sourceBody").html(data);
             });
 
         });

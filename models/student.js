@@ -40,6 +40,7 @@ const studentSchema = new mongoose.Schema({
   },
   recovery_email : {
     type: String,
+    default:null
   },
   about_me : {
     type: String,
@@ -57,6 +58,10 @@ const studentSchema = new mongoose.Schema({
   active : {
     type:Boolean,
     default:true
+  },
+  lastLogin :{
+    type: Date,
+    default : null
   }
 
 });

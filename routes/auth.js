@@ -221,6 +221,61 @@ return res.status(400).send("No Image uploaded");
 }
 });
 
+//first time user login logic
+router.post('/first',authenticate,async (req,res)=>{
+  let user = null;
+  if(req.session.usn)user = await Student.findOne({usn:req.session.usn}).select('password recovery_email lastLogin');
+  else user =  await Teacher.findOne({staff_id:req.session.staff_id}).select('password recovery_email lastLogin');
+  
+  if(!(user.lastLogin == null || user.recovery_email == null)) return res.status(404).end();
+
+  if(req.body.password && req.body.recovery_email){
+
+    const schema = Joi.object({
+      recovery_email: Joi.string().min(3).max(255).required().email(),
+      password: Joi.string().min(5).max(255).required(),
+  
+    });
+    const {error} = schema.validate(req.body,{escapeHtml:true});
+    if(error) return res.status(400).send(error.message);
+
+    user.recovery_email = req.body.recovery_email;
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(req.body.new_password, salt);
+    user.lastLogin = new Date();
+
+    user.save();
+    res.redirect('/');
+
+  }
+  else if(req.body.password){
+
+    const schema = Joi.object({
+      password: Joi.string().min(5).max(255).required()
+    });
+    const {error} = schema.validate(req.body,{escapeHtml:true});
+    if(error) return res.status(400).send(error.message);
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(req.body.new_password, salt);
+    user.lastLogin = new Date();
+    user.save();
+    res.redirect('/');
+  }
+  else if(req.body.recovery_email){
+    const schema = Joi.object({
+      recovery_email: Joi.string().min(3).max(255).required().email()
+    });
+    const {error} = schema.validate(req.body,{escapeHtml:true});
+    if(error) return res.status(400).send(error.message);
+
+    user.recovery_email = req.body.recovery_email;
+    user.lastLogin = new Date();
+    user.save();
+    res.redirect('/');
+  }
+});
+
 
 //login validation
 router.post('/', async (req, res) => {
@@ -229,7 +284,7 @@ router.post('/', async (req, res) => {
 
   if(req.body.type === "student")
   {
-    let student = await Student.findOne({ email: req.body.email }).lean().select('fname lname password usn year active -_id');
+    let student = await Student.findOne({ email: req.body.email }).select('fname lname password usn year active lastLogin recovery_email -_id');
     if (!student) return res.status(400).send("Invalid Email or Password.");
 
     const validPassword = await bcrypt.compare(req.body.password, student.password);
@@ -241,12 +296,25 @@ router.post('/', async (req, res) => {
     req.session.lname = student.lname;
     req.session.usn = student.usn;
     req.session.year = student.year;
+    if(student.recovery_email == null){
+      if(student.lastLogin == null){
+        res.render(''); //both
+      }
+      else{
+        //only rec
+      }
+    }else{
+      //only pass
+    }
+
+    student.lastLogin = new Date();
+    await student.save();
     return res.send('/dashboard');
   }
 
   else if(req.body.type === "teacher")
   {
-    let teacher = await Teacher.findOne({ email: req.body.email }).lean().select('fname lname password staff_id isAdmin active -_id');
+    let teacher = await Teacher.findOne({ email: req.body.email }).lean().select('fname lname password staff_id isAdmin active lastLogin recovery_email -_id');
     if (!teacher) return res.status(400).send("Invalid Email or Password.");
 
     const validPassword = await bcrypt.compare(req.body.password, teacher.password);
@@ -258,9 +326,25 @@ router.post('/', async (req, res) => {
     req.session.lname = teacher.lname;
     req.session.staff_id = teacher.staff_id;
     req.session.isAdmin = teacher.isAdmin;
+
+    if(teacher.recovery_email == null){
+      if(teacher.lastLogin == null){
+        res.render(''); //both
+      }
+      else{
+        //only rec
+      }
+    }else{
+      //only pass
+    }
+
     if(teacher.isAdmin){
+      teacher.lastLogin = new Date();
+      await teacher.save();
       return res.send('/admin');
     }
+    teacher.lastLogin = new Date();
+    await teacher.save();
     return res.send('/');
   }
   

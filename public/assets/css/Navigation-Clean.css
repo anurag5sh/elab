@@ -79,7 +79,7 @@
   color: inherit;
 }
 
-textarea {
+.navigation-clean textarea {
   height: 150px;
   width: 1150px;
 }

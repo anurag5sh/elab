@@ -9,15 +9,16 @@ const {Student, validate} = require('../models/student');
 const {Teacher,validateTeacher} = require('../models/teacher');
 const {Assignment,validateAssignment} = require('../models/assignment');
 const {AssignmentQ,validateAQ} = require('../models/assignmentQ');
+const fs = require('fs');
 const Joi = require("@hapi/joi");
 
 //------------------Accounts routes start-----------------//
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, '/home/anurag/uploads')
+      cb(null, './uploads')
     },
     filename: function (req, file, cb) {
-      cb(null, file.fieldname + '-' + Date.now())
+      cb(null, file.originalname)
     }
     })
    
@@ -190,6 +191,11 @@ router.post('/add', upload.single('csv'), admin,async (req, res, next) => {
     }
     
     const jsonArray=await csv().fromFile(file.path);
+    fs.unlink(file.path , async (err) => {
+      if (err) {
+        throw(err);
+      }
+    });
     
     if(req.body.type_csv == "student"){
       let studentArray = [];

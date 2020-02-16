@@ -203,7 +203,7 @@ body()
     .col-lg-5.col-md-2(style='margin-top:23px;align-items: initial;')
       .box
         #countdown-wrap(style='width: 60%;margin:auto; background-color: lavender; margin-bottom: 25px;')
-          #goal #Ending Date
+          #goal Time left
           #glass
             #progress
           .goal-stat
@@ -211,11 +211,11 @@ body()
               #countdown
               //- span.goal-label Days to End
           hr
-          h5 Created by:
+          h5 Created by: #{contest.createdBy}
         #countdown-wrap(style='width: 60%;margin:auto; background-color: lavender; margin-bottom: 10px; height: 120px;')
           .row
             .col.text-left
-              a.btn(href='#' style='font-size:15px;')
+              a.btn(href='#' style='font-size:15px;' data-toggle="modal" data-target="#myModal")
                 i.fas.fa-info
                 label(style='cursor: pointer;') &nbsp; Rules
           .row
@@ -223,4 +223,14 @@ body()
               a.btn(href="/contest/"+contest.url+"/leaderboard" style='font-size:15px;')
                 i.fas.fa-list
                 label(style='cursor: pointer;') &nbsp; Leader Board
-  br
+    br
+    #myModal.modal.fade
+      .modal-dialog
+          .modal-content
+            .modal-header
+              h4.modal-title Modal Heading
+              button.close(type='button' data-dismiss='modal') &times;
+            .modal-body
+              pre #{contest.rules}
+            .modal-footer
+                button.btn.btn-danger(type='button' data-dismiss='modal') Close

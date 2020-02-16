@@ -29,7 +29,7 @@ else
 style.
     .abc{
         position: absolute;
-        top: 50%;
+        top: 30%;
         left: 50%;
         -ms-transform: translateX(-50%) translateY(-50%);
         -webkit-transform: translate(-50%,-50%);
@@ -65,7 +65,7 @@ script.
     });
 
 body
-    .box(style="text-align:center;height:auto" class="abc")
+    .box(style="text-align:center;height:auto;margin:50px" class="ac")
         //- img(src='/images/photo_2019-10-09_20-39-00.jpg' style="border-radius:10px;width:200px;height:200px;")
         h1  #{name}
         if(attempt)
@@ -73,4 +73,8 @@ body
         else
             .example
                 div#flipdown.flipdown
+    div(style="width:50%;margin:auto")
+        h1.text-center Rules
+        pre #{contest.rules}
+        
 

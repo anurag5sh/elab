@@ -723,7 +723,7 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
         }
         else{
             const milli = contest.timings.starts - now;
-            return res.render("timer",{time:Date.now() + milli,name:contest.name,type: "teacher"} );
+            return res.render("timer",{time:Date.now() + milli,name:contest.name,type: "teacher",rules:contest.rules} );
         }
     }
     
@@ -754,7 +754,7 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
         if(now < contest.timings.starts) //before contest
         {   const milli = contest.timings.starts - now; //stores milli seconds
             
-            return res.render("timer",{time:Date.now() + milli,name:contest.name} );
+            return res.render("timer",{time:Date.now() + milli,name:contest.name,rules:contest.rules} );
         }
 
         if(now > contest.timings.ends) //after contest

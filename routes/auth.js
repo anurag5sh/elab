@@ -234,6 +234,7 @@ router.post('/first',authenticate,async (req,res)=>{
     const schema = Joi.object({
       recovery_email: Joi.string().min(3).max(255).required().email(),
       password: Joi.string().min(5).max(255).required(),
+      cnf_password:Joi.string().min(5).max(255).required().equal(Joi.ref('password')).error(new Error("Passwords do not match!"))
   
     });
     const {error} = schema.validate(req.body,{escapeHtml:true});
@@ -241,26 +242,27 @@ router.post('/first',authenticate,async (req,res)=>{
 
     user.recovery_email = req.body.recovery_email;
     const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(req.body.new_password, salt);
+    user.password = await bcrypt.hash(req.body.password, salt);
     user.lastLogin = new Date();
 
     user.save();
-    res.redirect('/');
+    res.send('/');
 
   }
   else if(req.body.password){
 
     const schema = Joi.object({
-      password: Joi.string().min(5).max(255).required()
+      password: Joi.string().min(5).max(255).required(),
+      cnf_password:Joi.string().min(5).max(255).required().equal(Joi.ref('password')).error(new Error("Passwords do not match!"))
     });
     const {error} = schema.validate(req.body,{escapeHtml:true});
     if(error) return res.status(400).send(error.message);
 
     const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(req.body.new_password, salt);
+    user.password = await bcrypt.hash(req.body.password, salt);
     user.lastLogin = new Date();
     user.save();
-    res.redirect('/');
+    res.send('/');
   }
   else if(req.body.recovery_email){
     const schema = Joi.object({
@@ -272,10 +274,23 @@ router.post('/first',authenticate,async (req,res)=>{
     user.recovery_email = req.body.recovery_email;
     user.lastLogin = new Date();
     user.save();
-    res.redirect('/');
+    res.send('/');
   }
+  else res.status(400).send("Not permitted!");
 });
 
+
+router.get('/first',authenticate,async (req,res)=>{
+  return res.render('firstLogin',{select:'both',title:'Change Password and Recovery Email'});
+});
+
+router.get('/firstR',authenticate,async (req,res)=>{
+  return res.render('firstLogin',{select:'recovery',title:'Update Recovery Email'});
+});
+
+router.get('/firstP',authenticate,async (req,res)=>{
+  return res.render('firstLogin',{select:'password',title:'Change Password'});
+});
 
 //login validation
 router.post('/', async (req, res) => {
@@ -284,7 +299,7 @@ router.post('/', async (req, res) => {
 
   if(req.body.type === "student")
   {
-    let student = await Student.findOne({ email: req.body.email }).select('fname lname password usn year active lastLogin recovery_email -_id');
+    let student = await Student.findOne({ email: req.body.email }).select('fname lname password usn year active lastLogin recovery_email ');
     if (!student) return res.status(400).send("Invalid Email or Password.");
 
     const validPassword = await bcrypt.compare(req.body.password, student.password);
@@ -298,13 +313,13 @@ router.post('/', async (req, res) => {
     req.session.year = student.year;
     if(student.recovery_email == null){
       if(student.lastLogin == null){
-        res.render(''); //both
+        return res.send('/first');
       }
       else{
-        //only rec
+        return res.send('/firstR');
       }
-    }else{
-      //only pass
+    }else if(student.lastLogin == null){
+      return res.send('/firstP');
     }
 
     student.lastLogin = new Date();
@@ -314,7 +329,7 @@ router.post('/', async (req, res) => {
 
   else if(req.body.type === "teacher")
   {
-    let teacher = await Teacher.findOne({ email: req.body.email }).lean().select('fname lname password staff_id isAdmin active lastLogin recovery_email -_id');
+    let teacher = await Teacher.findOne({ email: req.body.email }).select('fname lname password staff_id isAdmin active lastLogin recovery_email');
     if (!teacher) return res.status(400).send("Invalid Email or Password.");
 
     const validPassword = await bcrypt.compare(req.body.password, teacher.password);
@@ -329,12 +344,14 @@ router.post('/', async (req, res) => {
 
     if(teacher.recovery_email == null){
       if(teacher.lastLogin == null){
-        res.render(''); //both
+        return res.send('/first'); //both
       }
       else{
+        return res.send('/firstR');
         //only rec
       }
-    }else{
+    }else if(teacher.lastLogin == null){
+      return res.send('/firstP');
       //only pass
     }
 

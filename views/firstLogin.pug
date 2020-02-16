@@ -1,0 +1,67 @@
+
+head
+    link(rel='stylesheet' type='text/css' href='assets/css/light.css')
+    title ELAB
+    script(src="/assets/js/jquery.min.js")
+    link(rel='stylesheet', href='/assets/bootstrap/css/bootstrap.min.css')
+    script(src="/assets/bootstrap/js/popper.min.js")
+    script(src="/assets/bootstrap/js/bootstrap.min.js")
+    script(src="/js/toastr.min.js")
+    link(rel="stylesheet", href="/css/toastr.min.css")
+
+body
+    .content(style="color:#9A9A9A;")
+        .container-fluid
+            .row
+                .col-md-3
+                    .card
+                        .header
+                            h4.title(style="margin-top:15px;margin-left:15px;margin-bottom:8px;")=title
+                        .content
+                            form#first
+                                -if(select == 'both')
+                                    .row
+                                        .col-lg-11.col-md-11
+                                            .form-group
+                                                label New Password
+                                                input.form-control(type='password' name = 'password' placeholder='' value="")
+                                    .row
+                                        .col-lg-11.col-md-11
+                                            .form-group
+                                                label Confirm Password
+                                                input.form-control(type='password' name = 'cnf_password'  placeholder='' value="")
+                                    .row
+                                        .col-lg-11.col-md-11
+                                            .form-group
+                                                label Recovery Email
+                                                input.form-control(type='email' name = 'recovery_email')
+                                -else if(select == 'password')
+                                    .row
+                                        .col-lg-11.col-md-11
+                                            .form-group
+                                                label New Password
+                                                input.form-control(type='password' name = 'password' placeholder='' value="")
+                                    .row
+                                        .col-lg-11.col-md-11
+                                            .form-group
+                                                label Confirm Password
+                                                input.form-control(type='password' name = 'cnf_password'  placeholder='' value="")
+                                            
+                                -else if(select == 'recovery')
+                                    .row
+                                        .col-lg-11.col-md-11
+                                            .form-group
+                                                label Recovery Email
+                                                input.form-control(type='email' name = 'recovery_email')
+                                        
+                                button.btn.btn-info.btn-fill.pull-right(type='button' id="update-password" onclick="subNext()") Next
+                                .clearfix
+
+    script.
+        function subNext(){
+            $.post('/first',$("#first").serialize(),function (data,status){
+                window.location.href=data;
+            }).fail((err)=>{
+                toastr.error(err.responseText);
+            });
+        }

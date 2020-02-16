@@ -677,7 +677,7 @@ router.get('/teachers/id/:id',authenticate,teacher,async (req,res) =>{
 
 //landing page for contest
 router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
-    let contest = await Contest.findOne({url:req.params.curl}).lean().select('timings signedUp name questions url createdBy');
+    let contest = await Contest.findOne({url:req.params.curl}).lean().select('timings signedUp name questions url createdBy rules');
     if(!contest) return res.status(404).end();
 
     const now = new Date();

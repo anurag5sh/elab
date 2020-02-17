@@ -158,8 +158,10 @@ html(lang='en')
       }
   body
     br
-    nav(aria-label='breadcrumb')
-      ol.breadcrumb
+    nav(aria-label='breadcrumb' style="color:black;width:65%;margin-left:40px")
+      ol.breadcrumb(style="padding-left:20px")
+        li.breadcrumb-item
+          a(href='/contest') Contest
         li.breadcrumb-item
           a(href='/contest/'+contest.url)=contest.name
         li.breadcrumb-item.active(aria-current='page') #{question.name}

@@ -11,21 +11,47 @@ head
 
 
 body
-  h2 #{contest.name} Leaderboard
-  table.table.table-stripped
-    thead.text-center
-      tr
-        th RANK
-        th USN / ID
-        th NAME
-        th POINTS
-        th TIME (HH:MM:SS:MS)
-    tbody
-      each i,j in contest.leaderboard
-        tr.text-center
-          td=j+1
-          td 
-            a(href="viewProfile/"+i.usn+"") #{i.usn}
-          td=i.name
-          td=i.points
-          td #{time(i.timestamp)}
+  h1(style="padding:20px;padding-left:50px") #{contest.name} Leaderboard
+  div(style="padding-left:20px;padding-right:20px")
+    table.table.table-hover
+      thead.text-center
+        tr
+          th RANK
+          th USN / ID
+          th NAME
+          th POINTS
+          th TIME (HH:MM:SS:MS)
+      tbody
+        each i,j in contest.leaderboard
+          -if(j==0)
+            tr.table-success.text-center
+              td=j+1
+              td 
+                a(href="viewProfile/"+i.usn+"" style="font-weight:bold;color:grey") #{i.usn}
+              td=i.name
+              td=i.points
+              td #{time(i.timestamp)}
+          -else if(j==1)
+            tr.table-primary.text-center
+              td=j+1
+              td 
+                a(href="viewProfile/"+i.usn+"" style="font-weight:bold;color:grey") #{i.usn}
+              td=i.name
+              td=i.points
+              td #{time(i.timestamp)}
+          -else if(j==2)
+            tr.table-warning.text-center
+              td=j+1
+              td 
+                a(href="viewProfile/"+i.usn+"" style="font-weight:bold;color:grey") #{i.usn}
+              td=i.name
+              td=i.points
+              td #{time(i.timestamp)}
+          -else
+            tr.text-center
+              td=j+1
+              td 
+                a(href="viewProfile/"+i.usn+"" style="font-weight:bold;") #{i.usn}
+              td=i.name
+              td=i.points
+              td #{time(i.timestamp)}

@@ -78,7 +78,8 @@ const contestSchema = new mongoose.Schema({
     _id : false
   }],
   rules:{
-    type:String
+    type:String,
+    default:''
   }
   
 });

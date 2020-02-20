@@ -747,7 +747,7 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
         
         if(now>=contest.timings.starts && now<=contest.timings.ends){ //between contest
         if(!contest.signedUp.find(({usn}) => usn == req.session.usn)){
-           return res.render("timer" , {attempt:"/contest/sign/"+req.params.curl,time:false,type: "student"});
+           return res.render("timer" , {attempt:"/contest/sign/"+req.params.curl,time:false,type: "student",name:contest.name,rules:contest.rules});
         }
 
         let questions = await ContestQ.find({qid:{$in:contest.questions}}).select('name difficulty qid description _id test_cases')

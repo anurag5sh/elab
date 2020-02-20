@@ -15,7 +15,7 @@ html(lang='en')
     link(rel="stylesheet", href="/css/katex.min.css")
     script(src="/js/katex.min.js")
     link(href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap" rel="stylesheet")
-    
+
     style(type='text/css').
       #editor {
       position: relative;
@@ -155,6 +155,21 @@ html(lang='en')
       }
   body
     br
+    ol.breadcrum
+      li.breadcrumb-item
+        a(href="#") Home
+      li.breadcrumb-item
+        a(href="#") Home
+      li.breadcrumb-item
+        a(href="#") Home
+    br
+    //- nav(aria-label='breadcrumb')
+    //- ol.breadcrumb
+    //-   li.breadcrumb-item
+    //-     a(href='#') Home
+    //-   li.breadcrumb-item
+    //-     a(href='#') Library
+    //-   li.breadcrumb-item.active(aria-current='page') Data
     h1(style="margin-left:40px;") #{question.name}
     .card#card(style="padding-left:25px;padding-right:25px;")
       //- p #{question.name}

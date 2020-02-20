@@ -1,6 +1,6 @@
 extends nav
 
-block head
+block append head
     link(rel="stylesheet", href="/adminLTE/dist/css/daterangepicker.css")
     script(src="/adminLTE/dist/js/moment.min.js")
     script(src="/adminLTE/dist/js/daterangepicker.min.js")
@@ -17,6 +17,7 @@ block head
             font-size:20px;
             font-weight:normal;
         }
+    - active.assignment="active"
 
 block content
     #editAssignment

@@ -13,10 +13,11 @@ html
         script(src="/js/toastr.min.js")
         link(rel="stylesheet", href="/css/toastr.min.css")
         block head
-        style.
-            .colo{
-                color:white;
-            }
+            style.
+                .colo{
+                    color:white;
+                }
+            - let active={practice:"",contest:"",assignment:"",profile:""}
     body
         div
             nav.navbar.navbar-light.navbar-expand-md.navigation-clean(style='background-color:#1aa3ff;')
@@ -29,29 +30,23 @@ html
                         ul.nav.navbar-nav.ml-auto
                             -if(session.isAdmin)
                                 li.nav-item(role='presentation')
-                                    a.nav-link(href='/admin')
-                                        strong.color ADMIN PANEL
+                                    a.nav-link(href='/admin') ADMIN PANEL
                             li.nav-item(role='presentation')
-                                a.nav-link(href='/practice', style='letter-spacing: normal;')
-                                    strong.color PRACTICE
+                                a.nav-link(href='/practice', style='letter-spacing: normal;' class=active.practice) PRACTICE
                             li.nav-item(role='presentation')
-                                a.nav-link(href='/contest')
-                                    strong.color CONTEST
+                                a.nav-link(href='/contest' class=active.contest) CONTEST
                             li.dropdown.nav-item
-                                a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#')
-                                    strong.color ASSIGNMENT
+                                a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#' class=active.assignment) ASSIGNMENT
                                 .dropdown-menu(role='menu')
-                                    a.dropdown-item(role='presentation' href='/assignment')
-                                        strong VIEW ASSIGNMENT
-                                    a.dropdown-item(role='presentation' href='/assignment/manage')
-                                        strong MANAGE ASSIGNMENT
+                                    a.dropdown-item(role='presentation' href='/assignment') VIEW ASSIGNMENT
+                                    a.dropdown-item(role='presentation' href='/assignment/manage') MANAGE ASSIGNMENT
                             li.dropdown.nav-item
-                                a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#') #{session.fname.toUpperCase()}
+                                a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#' class=active.profile) #{session.fname.toUpperCase()}
                                     
                                 .dropdown-menu(role='menu')
-                                    a.dropdown-item(role='presentation', href='/profile')
-                                        strong PROFILE
-                                    a.dropdown-item(role='presentation', href='/logout')
-                                        strong LOGOUT
+                                    a.dropdown-item(role='presentation', href='/profile') PROFILE
+                                        
+                                    a.dropdown-item(role='presentation', href='/logout') LOGOUT
+                                        
         block content
 

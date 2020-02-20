@@ -2,8 +2,7 @@ doctype html
 include navbar
 head
   link(rel='stylesheet' type='text/css' href='/assets/css/light.css')
-
-  title profile
+  title=user.fname + "'s Profile"
   
 body
   br
@@ -19,30 +18,34 @@ body
                 .row
                   .col-md-4
                     .form-group
-                      label USN
-                      input.form-control(type='text' disabled placeholder='' value=student.usn)
+                      -if(user.usn)
+                        label USN
+                        input.form-control(type='text' disabled placeholder='' value=user.usn)
+                      -else
+                        label STAFF ID
+                        input.form-control(type='text' disabled placeholder='' value=user.staff_id)
                   .col-md-4
                     .form-group
                       label First Name
-                      input.form-control(type='text' disabled placeholder='First Name' value=student.fname)    
+                      input.form-control(type='text' disabled placeholder='First Name' value=user.fname)    
                   .col-md-4
                     .form-group
                       label Last Name
-                      input.form-control(type='text' disabled placeholder='Last Name' value=student.lname) 
+                      input.form-control(type='text' disabled placeholder='Last Name' value=user.lname) 
                 .row
                   .col-md-6
                     .form-group
                       label Primary Email
-                      input.form-control(type='email' disabled placeholder='' value=student.email)
+                      input.form-control(type='email' disabled placeholder='' value=user.email)
                 //-   .col-md-6
                 //-     .form-group
                 //-       label(for='exampleInputEmail1') Recovery Email
-                //-       input.form-control(type='email' name="recovery_email" placeholder='Email' value=student.recovery_email)
+                //-       input.form-control(type='email' name="recovery_email" placeholder='Email' value=user.recovery_email)
                 .row
                   .col-md-12
                     .form-group
                       label About Me
-                      textarea#about_me.form-control(rows='5' name="about_me" disabled placeholder='Here can be your description') #{student.about_me}
+                      textarea#about_me.form-control(rows='5' name="about_me" disabled placeholder='Here can be your description') #{user.about_me}
                 //- button.btn.btn-info.btn-fill.pull-right(type='button' id='update-profile') Update Profile
                 .clearfix
         .col-md-4
@@ -53,12 +56,12 @@ body
               .author
                 form(enctype="multipart/form-data" method="post")#img
                   a(href='#')
-                    img.avatar.border-gray#image(src=student.profile_image alt='...')
+                    img.avatar.border-gray#image(src=user.profile_image alt='...')
                     input(type='file' accept='image/*' name='profile_image' id='image-upload' style="display:none;")
-                  h4.title #{student.fname} #{student.lname}
+                  h4.title #{user.fname} #{user.lname}
                     br
-                    small #{student.usn}
-                  p.description.text-center #{student.about_me}
+                    small #{user.usn}
+                  p.description.text-center #{user.about_me}
                 //-   button.btn.btn-info.btn-fill.pull-right(type='button' onclick="javascript:$('#image-upload').click();" id='update-image') Update Image 
             //- button.btn.btn-info.btn-fill.pull-right(type='button' id='update-cover') Update Cover
             hr

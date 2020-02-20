@@ -1,52 +1,61 @@
 extends navbar
 
 
-block head
+block append head
   title Contest
   link(rel="stylesheet", href="/css/contest_card.css")
+  link(rel='stylesheet' type='text/css' href='card.css')
   script(src="/js/contest_card.js")
   style.
     body{
       background-color:#f5f5f0;
     }
+    .flex-container {
+    display: flex;
+    flex-flow: row wrap;
+    }
+  - active.contest="active"
 block content
     .jumbotron.text-left.bg-info.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
       h1 CONTESTS
-    .row(style="width:100%")
+    .row.flex-container
       
-      each i in contest 
-        //- ul
-        //-   a(href="/contest/"+i.url)=i.name
-        .col-lg-3
-          .container_card(style="margin-left:10px;")
-            .c-card-block
-              a(href="/contest/"+i.url)
-                .cheader
-                  h4 #{ i.name}
-                  br
-                p.block-with-text=i.description
-                button.attem.btn.btn-info(type='button' onclick="location.href=/contest/"+i.url+"") Attempt
+      //- each i in contest 
+      //-   .col-lg-3
+      //-     .container_card(style="margin-left:10px;")
+      //-       .c-card-block
+      //-         a(href="/contest/"+i.url)
+      //-           .cheader
+      //-             h4 #{ i.name}
+      //-             br
+      //-           p.block-with-text=i.description
+      //-           button.attem.btn.btn-info(type='button' onclick="location.href=/contest/"+i.url+"") Attempt
 
-      
-      
-
-
-    //- nav.text-center.d-inline-flex(style='height: 36px;margin: 50%;')
-    //-   ul.pagination
-    //-     li.page-item
-    //-       a.page-link(href='#', aria-label='Previous')
-    //-         span(aria-hidden='true') «
-    //-     li.page-item
-    //-       a.page-link(href='#') 1
-    //-     li.page-item
-    //-       a.page-link(href='#') 2
-    //-     li.page-item
-    //-       a.page-link(href='#') 3
-    //-     li.page-item
-    //-       a.page-link(href='#') 4
-    //-     li.page-item
-    //-       a.page-link(href='#') 5
-    //-     li.page-item
-    //-       a.page-link(href='#', aria-label='Next')
-    //-         span(aria-hidden='true') »
-
+      each i in contest
+        .ft-contest 
+          .ft-contest__thumb
+            //-span(id="close-modal")
+                i.ion.ion-md-close
+            //-h3 Today's Featured contest
+            img(src="download.png", alt="Strawberry Waffle")
+          .ft-contest__content
+            header.content__header
+              .row-wrapper
+                  h2(class="contest-title") #{ i.name}
+                  .user-rating
+              ul.contest-details
+                  li.contest-details-item.time
+                      i.ion.ion-ios-clock-outline
+                      span.value 2
+                      span.title Hours
+                  li.contest-details-item.ingredients
+                      i.ion.ion-ios-book-outline
+                      span.value 5
+                      span.title Questions
+                  li.contest-details-item.servings
+                      i.ion.ion-ios-person-outline
+                      span.value 3rd
+                      span.title March
+            p.description=i.description
+            footer.content__footer
+                a(href="/contest/"+i.url) View Contest

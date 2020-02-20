@@ -155,6 +155,11 @@ html(lang='en')
       }
   body
     br
+    nav(aria-label='breadcrumb' style="color:black;width:65%;margin-left:40px")
+      ol.breadcrumb(style="padding-left:20px")
+        li.breadcrumb-item
+          a(href='/assignment') Assignment
+        li.breadcrumb-item.active(aria-current='page') #{question.name}
     h1(style="margin-left:40px;") #{question.name}
     .card#card(style="padding-left:25px;padding-right:25px;")
       //- p #{question.name}

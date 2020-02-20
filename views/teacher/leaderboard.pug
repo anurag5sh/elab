@@ -1,4 +1,4 @@
-
+link(rel="stylesheet", href="/fontawesome/all.min.css")
 -function two(x) {return ((x>9)?"":"0")+x}
 -function three(x) {return ((x>99)?"":"0")+((x>9)?"":"0")+x}
 
@@ -18,7 +18,8 @@ body
     tbody
       each i,j in contest.leaderboard
         tr.text-center
-          td=j+1
+          td
+            i.fad.fa-trophy-alt #{j+1}
           td 
             a(href="viewProfile/"+i.usn+"") #{i.usn}
           td=i.name

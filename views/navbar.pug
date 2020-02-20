@@ -1,4 +1,4 @@
-doctype html
+
 html
 	head
 		meta(charset='utf-8')
@@ -12,9 +12,12 @@ html
 		script(src="/js/toastr.min.js")
 		link(rel="stylesheet", href="/css/toastr.min.css")
 		block head
+			- let active = {practice:"",contest:"",assignment:"",profile:""}
+			- let navClass = "bg-dark";
+			- let navStyle = "background-color:#009688!important";
 	body
 		div
-			nav.navbar.navbar-dark.bg-dark.navbar-expand-md.navigation-clean(style="background-color:#009688!important")
+			nav.navbar.navbar-dark.navbar-expand-md.navigation-clean(style=navStyle,class=navClass)
 				.container
 					a.navbar-brand(href='/dashboard' ) ELAB
 					button.navbar-toggler(data-toggle='collapse', data-target='#navcol-1')
@@ -23,17 +26,16 @@ html
 					#navcol-1.collapse.navbar-collapse
 						ul.nav.navbar-nav.ml-auto
 							li.nav-item(role='presentation')
-								a.nav-link(href='/practice') PRACTICE
+								a.nav-link(href='/practice' class=active.practice) PRACTICE
 							li.nav-item(role='presentation')
-								a.nav-link(href='/contest') CONTEST
+								a.nav-link(href='/contest' class=active.contest) CONTEST
 							li.nav-item(role='presentation')
-								a.nav-link(href='/assignment') ASSIGNMENT
+								a.nav-link(href='/assignment' class=active.assignment) ASSIGNMENT
 							li.dropdown.nav-item
-								a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#') #{session.fname.toUpperCase()}
+								a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#', class=active.profile) #{session.fname.toUpperCase()}
 									
 								.dropdown-menu(role='menu')
 									a.dropdown-item(role='presentation', href='/profile') PROFILE
-									a.dropdown-item(role='presentation', href='#') SUBMISSIONS
 									a.dropdown-item(role='presentation', href='/logout') LOG OUT
 									.dropdown-divider(role='presentation')
 					.clearfix

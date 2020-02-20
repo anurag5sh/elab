@@ -1,14 +1,11 @@
-doctype html
-include navbar
-html
-    head
-    meta(charset='utf-8')
-    meta(name='viewport' content='width=device-width, initial-scale=1.0, shrink-to-fit=no')
+extends navbar
+block append head
+    - active.assignment="active"
     title Assignments
     link(rel='stylesheet' href='list_style/bootstrap/css/new.css')
     link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,400,700')
     link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css')
-    body
+block append content
         .jumbotron.text-left.bg-info.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
             h1 ASSIGNMENT
         main.page.projets-page

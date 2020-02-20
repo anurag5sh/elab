@@ -1,6 +1,5 @@
-doctype html
-include navbar
-head
+extends navbar
+block append head
   link(rel='stylesheet' type='text/css' href='assets/css/light.css')
 
   title profile
@@ -8,8 +7,9 @@ head
     body{
       background-color:#f5f5f0;
     }
+  - active.profile="active"
   
-body
+block content
   br
   .content(style="color:#9A9A9A;")
     .container-fluid
@@ -96,58 +96,58 @@ body
                 button.btn.btn-info.btn-fill.pull-right(type='button' id="update-password") Update Password
                 .clearfix
 
-script.
-  $(document).ready(function(){
-    $("#update-profile").click(function(){
+  script.
+    $(document).ready(function(){
+      $("#update-profile").click(function(){
 
-      $.post("/profile",$("#profile").serialize(),
-      function(data,status){
-        toastr.success(data);
+        $.post("/profile",$("#profile").serialize(),
+        function(data,status){
+          toastr.success(data);
+        });
+
+      });
+
+      $("#image").click(function(){
+        $('#image-upload').click();
+      });
+
+      
+
+
+      $("#update-password").click(function(){
+
+        $.post("/password",$("#password").serialize(),
+        function(data,status){
+          toastr.success(data);
+          //- alert(data);
+        }).fail(function(data, status, error){
+          toastr.error(data.responseText);
+        });
+
       });
 
     });
-
-    $("#image").click(function(){
-      $('#image-upload').click();
-    });
-
     
-
-
-    $("#update-password").click(function(){
-
-      $.post("/password",$("#password").serialize(),
-      function(data,status){
-        toastr.success(data);
-        //- alert(data);
-      }).fail(function(data, status, error){
-        toastr.error(data.responseText);
-      });
-
-    });
-
-  });
-  
-  $("#about_me").val("#{student.about_me}");
-  $('#image-upload').change(submitPhoto);
-  function submitPhoto(){
-              
-              if(document.getElementById("image-upload").value != ""){
-             $.ajax({
-                url: '/uploadImage',
-                type: 'post',
-                data: new FormData($('#img')[0]),
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function( data, textStatus, jQxhr ){
-                    toastr.success(data);
-                    setTimeout(function(){location.reload();},500);
-                },
-                error: function( jqXhr, textStatus, errorThrown ){
-                    toastr.error(errorThrown);
+    $("#about_me").val("#{student.about_me}");
+    $('#image-upload').change(submitPhoto);
+    function submitPhoto(){
+                
+                if(document.getElementById("image-upload").value != ""){
+              $.ajax({
+                  url: '/uploadImage',
+                  type: 'post',
+                  data: new FormData($('#img')[0]),
+                  cache: false,
+                  contentType: false,
+                  processData: false,
+                  success: function( data, textStatus, jQxhr ){
+                      toastr.success(data);
+                      setTimeout(function(){location.reload();},500);
+                  },
+                  error: function( jqXhr, textStatus, errorThrown ){
+                      toastr.error(errorThrown);
+                  }
+              });
                 }
-            });
-              }
-        }
+          }
 

@@ -27,7 +27,7 @@ body
             tr.table-success.text-center
               td=j+1
               td 
-                a(href="viewProfile/"+i.usn+"" style="font-weight:bold;color:grey") #{i.usn}
+                a(href="/viewProfile/"+i.usn+"" style="font-weight:bold;color:grey") #{i.usn}
               td=i.name
               td=i.points
               td #{time(i.timestamp)}
@@ -35,7 +35,7 @@ body
             tr.table-primary.text-center
               td=j+1
               td 
-                a(href="viewProfile/"+i.usn+"" style="font-weight:bold;color:grey") #{i.usn}
+                a(href="/viewProfile/"+i.usn+"" style="font-weight:bold;color:grey") #{i.usn}
               td=i.name
               td=i.points
               td #{time(i.timestamp)}
@@ -43,7 +43,7 @@ body
             tr.table-warning.text-center
               td=j+1
               td 
-                a(href="viewProfile/"+i.usn+"" style="font-weight:bold;color:grey") #{i.usn}
+                a(href="/viewProfile/"+i.usn+"" style="font-weight:bold;color:grey") #{i.usn}
               td=i.name
               td=i.points
               td #{time(i.timestamp)}
@@ -51,7 +51,7 @@ body
             tr.text-center
               td=j+1
               td 
-                a(href="viewProfile/"+i.usn+"" style="font-weight:bold;") #{i.usn}
+                a(href="/viewProfile/"+i.usn+"" style="font-weight:bold;") #{i.usn}
               td=i.name
               td=i.points
               td #{time(i.timestamp)}

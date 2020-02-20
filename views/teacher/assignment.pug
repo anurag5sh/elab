@@ -1,10 +1,11 @@
 extends nav
 
-block head
+block append head
     title Assignments
     link(rel='stylesheet' href='list_style/bootstrap/css/new.css')
     link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,400,700')
     link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css')
+    - active.assignment="active"
 
 block content
     .jumbotron.text-left.bg-light.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center

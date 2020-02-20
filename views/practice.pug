@@ -1,7 +1,6 @@
-doctype html
-include navbar
-html
-    head
+extends navbar
+block append head   
+    - active.practice="active"
     meta(charset='utf-8')
     meta(name='viewport' content='width=device-width, initial-scale=1.0, shrink-to-fit=no')
     title Practice
@@ -15,7 +14,8 @@ html
         .pull-right{
             float:right;
         }
-    body
+        
+block content
         .jumbotron.text-left.bg-info.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
             h1 PRACTICE
         div#practice
@@ -31,7 +31,5 @@ html
                                             br
                                             a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' href='/practice/'+i.qid) SOLVE
                         
-        script(src='list_style/js/jquery.min.js')
-        //-script(src='list_style/bootstrap/js/bootstrap.min.js')
         script(src='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js')
         script(src='list_style/js/theme.js')

@@ -32,6 +32,11 @@ let storage = multer.diskStorage({
   })
   let upload = multer({ storage: storage })
 
+router.get('/card',(req,res)=>{
+  res.render('card');
+});
+
+
 //filter teacher and student login
 //redirect to respective dashboard
 router.get('/',(req,res,next)=>{
@@ -48,10 +53,13 @@ router.get('/',(req,res,next)=>{
 
 
 //View Profile
-router.get('/viewProfile/:usn',authenticate,async (req,res)=>{
-    const student = await Student.findOne({usn:req.params.usn}).lean();
-    if(!student) return res.status(400).send('Invalid USN');
-    return res.render('viewProfile',{student:student});
+router.get('/viewProfile/:id',authenticate,async (req,res)=>{
+    let user = await Student.findOne({usn:req.params.id}).lean();
+    if(!user) {
+      user = await Teacher.findOne({staff_id:req.params.id}).lean();
+      if(!user) return res.status(400).send('Invalid ID');
+    }
+    return res.render('viewProfile',{user:user});
 });
 
 //student dashboard
@@ -306,11 +314,8 @@ router.post('/', async (req, res) => {
   const { error } = validate(req.body); 
   if (error) return res.status(400).send(error.message);
 
-  if(req.body.type === "student")
-  {
-    let student = await Student.findOne({ email: req.body.email }).select('fname lname password usn year active lastLogin recovery_email ');
-    if (!student) return res.status(400).send("Invalid Email or Password.");
-
+  let student = await Student.findOne({ email: req.body.email }).select('fname lname password usn year active lastLogin recovery_email ');
+  if (student){
     const validPassword = await bcrypt.compare(req.body.password, student.password);
     if (!validPassword) return res.status(400).send("Invalid Email or Password.");
 
@@ -336,49 +341,40 @@ router.post('/', async (req, res) => {
     return res.send('/dashboard');
   }
 
-  else if(req.body.type === "teacher")
-  {
-    let teacher = await Teacher.findOne({ email: req.body.email }).select('fname lname password staff_id isAdmin active lastLogin recovery_email');
-    if (!teacher) return res.status(400).send("Invalid Email or Password.");
+  let teacher = await Teacher.findOne({ email: req.body.email }).select('fname lname password staff_id isAdmin active lastLogin recovery_email');
+  if (!teacher) return res.status(400).send("Invalid Email or Password.");
 
-    const validPassword = await bcrypt.compare(req.body.password, teacher.password);
-    if (!validPassword) return res.status(400).send("Invalid Email or Password.");
+  const validPassword = await bcrypt.compare(req.body.password, teacher.password);
+  if (!validPassword) return res.status(400).send("Invalid Email or Password.");
 
-    if(!teacher.active) return res.status(400).send("Account Disabled!");
+  if(!teacher.active) return res.status(400).send("Account Disabled!");
 
-    req.session.fname = teacher.fname;
-    req.session.lname = teacher.lname;
-    req.session.staff_id = teacher.staff_id;
-    req.session.isAdmin = teacher.isAdmin;
+  req.session.fname = teacher.fname;
+  req.session.lname = teacher.lname;
+  req.session.staff_id = teacher.staff_id;
+  req.session.isAdmin = teacher.isAdmin;
 
-    if(teacher.recovery_email == null){ req.session.incomplete = true;
-      if(teacher.lastLogin == null){
-        return res.send('/first'); //both
-      }
-      else{
-        return res.send('/firstR');
-        //only rec
-      }
-    }else if(teacher.lastLogin == null){ req.session.incomplete = true;
-      return res.send('/firstP');
-      //only pass
+  if(teacher.recovery_email == null){ req.session.incomplete = true;
+    if(teacher.lastLogin == null){
+      return res.send('/first'); //both
     }
-
-    if(teacher.isAdmin){
-      teacher.lastLogin = new Date();
-      await teacher.save();
-      return res.send('/admin');
+    else{
+      return res.send('/firstR');
+      //only rec
     }
+  }else if(teacher.lastLogin == null){ req.session.incomplete = true;
+    return res.send('/firstP');
+    //only pass
+  }
+
+  if(teacher.isAdmin){
     teacher.lastLogin = new Date();
     await teacher.save();
-    return res.send('/');
+    return res.send('/admin');
   }
-  
-  else{
-    res.status(400).send("Invalid account type");
-  }
-  
-  
+  teacher.lastLogin = new Date();
+  await teacher.save();
+  return res.send('/');
   
 });
 
@@ -438,6 +434,10 @@ router.post('/forgotPassword',async (req,res)=>{
     },
   });
   if(!user.recovery_email || user.recovery_email == '' || user.recovery_email==null) return res.status(400).send('Recovery Email not set!');
+  let host= 'elab.hkbk.edu.in';
+  if (process.env.NODE_ENV !== 'production') {
+    host='localhost:'+process.env.elab_port_no || 'localhost:4000' ;
+  }
   const mailOptions = {
     from: config.get('elab-admin-mail.email'),
     to: `${user.recovery_email}`,
@@ -445,7 +445,7 @@ router.post('/forgotPassword',async (req,res)=>{
     text:
       `Hi ${user.fname},\n\n`
       + 'You recently requested to reset your password for your Elab account. Click on the link below to reset it.\n\n'
-      + `http://localhost:4000/resetPassword/${token}\n\n`
+      + `http://${host}/resetPassword/${token}\n\n`
       + 'If you did not request this, please ignore this email and your password will remain unchanged. This reset link is valid only for next 1hr.\n',
   };
 

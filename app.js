@@ -27,11 +27,14 @@ mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
 
+function connectWithRetry(){
 mongoose.connect('mongodb://localhost/elab').then(() => {
     winston.info("connected to mongo");
 })
-.catch((err)=> { winston.error("Error connecting to mongo",err)});
-    
+.catch((err)=> { winston.error("Error connecting to mongo",err);setTimeout(connectWithRetry, 5000);});
+}
+connectWithRetry();
+
 app.use(express.static('public'));
 app.set('view engine', 'pug');
 app.set('views',__dirname+"/views");
@@ -42,10 +45,14 @@ app.use(function(req, res, next) {
   next();
 });
 
-//logging 
-winston.add(new winston.transports.File({ filename: './logs/error.log', level: 'error' }));
-winston.add(new winston.transports.File({ filename: './logs/combined.log' }));
-winston.add(new winston.transports.MongoDB({db:"mongodb://localhost/elab",options:{useUnifiedTopology: true},level:'error',expireAfterSeconds:60*24*60*60,tryReconnect:true}));
+//logging
+winston.configure({
+  format : winston.format.combine(winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),winston.format.json(),winston.format.errors({stack:true})),
+  transports : [new winston.transports.File({ filename: './logs/error.log', level: 'error'}),
+  new winston.transports.File({ filename: './logs/combined.log' }),
+  new winston.transports.MongoDB({db:"mongodb://localhost/elab",options:{useUnifiedTopology: true},level:'error',expireAfterSeconds:60*24*60*60,tryReconnect:true})]
+});
+
 
 if (process.env.NODE_ENV !== 'production') {
  winston.add(new winston.transports.Console)

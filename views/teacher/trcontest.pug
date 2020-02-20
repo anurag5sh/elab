@@ -1,7 +1,12 @@
 include nav
 link(rel="stylesheet", href="/css/contest_card.css")
+link(rel="stylesheet", href="/assets/css/n.css")
 script(src="/js/contest_card.js")
 script.
+  $(document).ready(function(){
+    $("nav").addClass("bg-fade");
+    $("nav").addClass("trans");
+  });
   var TxtType = function(el, toRotate, period) {
         this.toRotate = toRotate;
         this.el = el;
@@ -98,17 +103,31 @@ style.
   transform: translate(-50%, -50%);
   }
 
+  .trans{
+    position:absolute;
+    right:60px;
+    left:60px;
+    padding-top:30px;
+    background:transparent;
+    background-color:transparent!important;
+  }
+
   
 
 
-.container-fluid(style="width:100%;height:90%")
-  .row()
-    .col-lg-12(style="padding:0px")
-      img(src="/images/codew1.jpg"  style="width:100%;height:300px")
-      .centered
-        h1.text-center(style="font-weight:bold;font-size:50px;color:#8c8c8c")
-          p.typewrite(href='' data-period='2000' data-type='[ "CONTEST" ]' style="color:white")
-            span.wrap
+//- .container-fluid(style="width:100%;height:90%")
+//-   .row()
+//-     .col-lg-12(style="padding:0px")
+//-       img(src="/images/codew1.jpg"  style="width:100%;height:300px")
+//-       .centered
+//-         h1.text-center(style="font-weight:bold;font-size:50px;color:#8c8c8c")
+//-           p.typewrite(href='' data-period='2000' data-type='[ "CONTEST" ]' style="color:white")
+//-             span.wrap
+
+section.module.parallax.parallax-1(data-type='background' data-speed='10')
+      .parallax-container
+        h2.typewrite(href='' data-period='2000' data-type='[ "CONTEST" ]' style="font-weight:bold")
+          span.wrap
 //- .jumbotron.bg-light.shadow.d-lg-flex.justify-content-lg-center.align-items-lg-center(style="background-color:#003366!important;box-shadow: 0 .5rem 9rem rgba(13,13,13,.15)!important;border-radius:0px!important;margin-bottom:0rem;")
 //-   div.text-center(style="width:25%")
 //-     //- h1.text-center(style="font-weight:bold;font-size:50px;color:#8c8c8c") CONTEST

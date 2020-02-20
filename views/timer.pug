@@ -3,78 +3,54 @@ if(type=="teacher")
 else
     include navbar
 
-//- doctype html
-//- head
-//-   meta(charset='UTF-8')
-//-   meta(name='viewport' content='width=device-width, initial-scale=1.0')
-//-   meta(http-equiv='X-UA-Compatible' content='ie=edge')
-//-   link(rel='stylesheet' href='/css/timer.css')
-//-   title Coming Soon
-//- section.landing
-//-   .landing-inner
-//-     img(src='/images/photo_2019-10-09_20-39-00.jpg' style="border-radius:10px;width:200px;height:200px;")
-//-     h1  #{name}
-//-     if(attempt)
-//-         a.btn.btn-info(type="button" href=attempt) abc
-//-     else
-//-         .countdown   
-//- script.
-//-     let launchDate = new Date().getTime();
-//-     if(#{time})
-//-         launchDate = new Date(!{ time}).getTime();
-    
-//- if(time)
-//-     script(src='/js/timer.js')
+- function date(x) { let date = x; return x;}
+  
+head
+  title TITLE
+  meta(http-equiv='X-UA-Compatible' content='IE=edge')
+  meta(name='viewport' content='width=device-width, initial-scale=1')
+  meta(charset='UTF-8')
+  link(href='https://fonts.googleapis.com/css?family=Open+Sans:400,700%7CPoppins:400,500' rel='stylesheet')
+  link(rel='stylesheet' href='/css/jquery.classycountdown.css')
+  link(href='/css/timer_styles.css' rel='stylesheet')
+  link(href='/css/timer_responsive.css' rel='stylesheet')
+.main-area
+  section.left-section(style='background-image: url(/images/countdown-2-1000x1000.jpg)')
+    .display-table.center-text
+      .display-table-cell
+        - var x = date(time);
+          if(x)
+            #normal-countdown(data-date=date(time))
+          else
+            #normal-countdown(data-date='0001/01/01')
+            .main-content(style="margin:25px")
+              .email-input-area(style="margin:auto")
+                if(attempt)
+                  a(href=attempt)
+                    button.submit-btn(type='button')
+                      b(style="font-weight:bold") ENTER 
+  section.right-section.full-height
+    .display-table
+      .display-table-cell
+        .main-content
+          h1.title
+            b Code Quest
+          p This is a contest
+          .email-input-area
+            // <input class="email-input" name="email" type="text" placeholder="Enter your email"/>
+            button.submit-btn(name='submit' type='submit' data-toggle="modal" data-target="#rules_modal")
+              b(style="font-weight:bold") RULES
+          
+    #rules_modal.modal.fade
+      .modal-dialog(style="width:50%;max-width:70%")
+          .modal-content
+            .modal-header
+              h4.modal-title Rules
+              button.close(type='button' data-dismiss='modal') &times;
+            .modal-body
+              div(style="white-space:pre-wrap") #{rules}
+            .modal-footer
+                button.btn.btn-danger(type='button' data-dismiss='modal') Close
 
-style.
-    .abc{
-        position: absolute;
-        top: 30%;
-        left: 50%;
-        -ms-transform: translateX(-50%) translateY(-50%);
-        -webkit-transform: translate(-50%,-50%);
-        transform: translate(-50%,-50%);
-    }
-
-link(href='https://fonts.googleapis.com/css?family=Roboto:100,400,700,900' rel='stylesheet')
-link(rel='stylesheet' href='https://use.fontawesome.com/releases/v5.3.1/css/all.css' integrity='sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU' crossorigin='anonymous')
-link(rel='stylesheet' type='text/css' href='/css/flipdown.css')
-link(rel='stylesheet' type='text/css' href='/css/timer.css')
-script(type='text/javascript' src='/js/flipdown.js')
-
-script.
-    document.addEventListener('DOMContentLoaded', () => {
-    var Countdown = new FlipDown(#{time}/1000)
-
-        // Start the countdown
-        .start()
-
-        // Do something when the countdown ends
-        .ifEnded(() => {
-        location.reload();
-        });
-
-    // Toggle theme
-    
-    var interval = setInterval(() => {
-        let body = document.body;
-        //- body.classList.toggle('light-theme');
-        //- body.querySelector('#flipdown').classList.toggle('flipdown__theme-dark');
-        //- body.querySelector('#flipdown').classList.toggle('flipdown__theme-light');
-        }, 5000);
-    });
-
-body
-    .box(style="text-align:center;height:auto;margin:50px" class="ac")
-        //- img(src='/images/photo_2019-10-09_20-39-00.jpg' style="border-radius:10px;width:200px;height:200px;")
-        h1  #{name}
-        if(attempt)
-            a.btn.btn-info(type="button" href=attempt) Enter Contest
-        else
-            .example
-                div#flipdown.flipdown
-    div(style="width:50%;margin:auto")
-        h1.text-center Rules
-        div(style="white-space:pre-wrap;line-height:1.5rem") #{rules}
-        
-
+script(src='/js/jquery.countdown.min.js')
+script(src='/js/timer_scripts.js')

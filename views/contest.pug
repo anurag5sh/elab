@@ -1,17 +1,109 @@
-extends navbar
-
-
+//- extends navbar
 block head
   title Contest
   link(rel="stylesheet", href="/css/contest_card.css")
+  link(rel="stylesheet", href="/assets/css/n.css")
+  link(rel='stylesheet', href='/assets/bootstrap/css/bootstrap.min.css')
+  link(rel='stylesheet', href='/assets/css/Navigation-Clean.css')
+  script(src="/assets/js/jquery.min.js")
+  script(src="/assets/bootstrap/js/popper.min.js")
+  script(src="/assets/bootstrap/js/bootstrap.min.js")
   script(src="/js/contest_card.js")
+  script.
+    var TxtType = function(el, toRotate, period) {
+        this.toRotate = toRotate;
+        this.el = el;
+        this.loopNum = 0;
+        this.period = parseInt(period, 10) || 2000;
+        this.txt = '';
+        this.tick();
+        this.isDeleting = false;
+    };
+
+    TxtType.prototype.tick = function() {
+        var i = this.loopNum % this.toRotate.length;
+        var fullTxt = this.toRotate[i];
+
+        if (this.isDeleting) {
+        this.txt = fullTxt.substring(0, this.txt.length - 1);
+        } else {
+        this.txt = fullTxt.substring(0, this.txt.length + 1);
+        }
+
+        this.el.innerHTML = '<span class="wrap">'+this.txt+'</span>';
+
+        var that = this;
+        var delta = 200 - Math.random() * 100;
+
+        if (this.isDeleting) { delta /= 2; }
+
+        if (!this.isDeleting && this.txt === fullTxt) {
+        delta = this.period;
+        this.isDeleting = true;
+        } else if (this.isDeleting && this.txt === '') {
+        this.isDeleting = false;
+        this.loopNum++;
+        delta = 500;
+        }
+
+        setTimeout(function() {
+        that.tick();
+        }, delta);
+    };
+
+    window.onload = function() {
+        var elements = document.getElementsByClassName('typewrite');
+        for (var i=0; i<elements.length; i++) {
+            var toRotate = elements[i].getAttribute('data-type');
+            var period = elements[i].getAttribute('data-period');
+            if (toRotate) {
+              new TxtType(elements[i], JSON.parse(toRotate), period);
+            }
+        }
+        // INJECT CSS
+        var css = document.createElement("style");
+        css.type = "text/css";
+        css.innerHTML = ".typewrite > .wrap { border-right: 0.08em solid white}";
+        document.body.appendChild(css);
+    };
   style.
     body{
       background-color:#f5f5f0;
     }
 block content
-    .jumbotron.text-left.bg-info.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
-      h1 CONTESTS
+    nav.navbar.navbar-dark.navbar-expand-md.bg-fade.navigation-clean(style="background:transparent;position:absolute;right:60px;left:60px;padding-top:35px")
+      .container
+        a.navbar-brand(href='/dashboard' ) ELAB
+        button.navbar-toggler(data-toggle='collapse', data-target='#navcol-1')
+          span.sr-only Toggle navigation
+          span.navbar-toggler-icon
+        #navcol-1.collapse.navbar-collapse
+          ul.nav.navbar-nav.ml-auto
+            li.nav-item(role='presentation')
+              a.nav-link(href='/practice') PRACTICE
+            li.nav-item(role='presentation')
+              a.nav-link(href='/contest') CONTEST
+            li.nav-item(role='presentation')
+              a.nav-link(href='/assignment') ASSIGNMENT
+            li.dropdown.nav-item
+              a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#') #{session.fname.toUpperCase()}
+                
+              .dropdown-menu(role='menu')
+                a.dropdown-item(role='presentation', href='/profile') PROFILE
+                a.dropdown-item(role='presentation', href='#') SUBMISSIONS
+                a.dropdown-item(role='presentation', href='/logout') LOG OUT
+                .dropdown-divider(role='presentation')
+        .clearfix
+  
+
+
+    section.module.parallax.parallax-1(data-type='background' data-speed='10')
+      .parallax-container
+        h2.typewrite(href='' data-period='2000' data-type='[ "CONTESTS" ]' style="font-weight:bold")
+          span.wrap
+
+    //- .jumbotron.text-left.bg-info.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
+    //-   h1 CONTESTS
     .row(style="width:100%")
       
       each i in contest 

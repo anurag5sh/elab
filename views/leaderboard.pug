@@ -1,57 +1,141 @@
-include navbar
+if(type=="teacher")
+    include teacher/nav
+else
+    include navbar
 
 head
   title=contest.name
+  title Table V01
+  meta(charset='UTF-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1')
+  // ===============================================================================================
+  // <link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
+  // ===============================================================================================
+  //- link(rel='stylesheet' type='text/css' href='/assets/bootstrap/css/bootstrap.min.css')
+  // ===============================================================================================
+  // <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+  // ===============================================================================================
+  // <link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+  // ===============================================================================================
+  // <link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+  // ===============================================================================================
+  // <link rel="stylesheet" type="text/css" href="vendor/perfect-scrollbar/perfect-scrollbar.css">
+  // ===============================================================================================
+  link(rel='stylesheet' type='text/css' href='/css/lb_util.css')
+  link(rel='stylesheet' type='text/css' href='/css/lb_main.css')
+  // ===============================================================================================
 
 -function two(x) {return ((x>9)?"":"0")+x}
 -function three(x) {return ((x>99)?"":"0")+((x>9)?"":"0")+x}
 
 -function time(ms) {var sec = Math.floor(ms/1000);  ms = ms % 1000;  t = three(ms);  var min = Math.floor(sec/60);  sec = sec % 60;  t = two(sec) + ":" + t;  var hr = Math.floor(min/60);  min = min % 60;  t = two(min) + ":" + t; var day = Math.floor(hr/60);  hr = hr % 60;  t = two(hr) + ":" + t;   return t;  }
 
-
-
 body
-  h1(style="padding:20px;padding-left:50px") #{contest.name} Leaderboard
-  div(style="padding-left:20px;padding-right:20px")
-    table.table.table-hover
-      thead.text-center
-        tr
-          th RANK
-          th USN / ID
-          th NAME
-          th POINTS
-          th TIME (HH:MM:SS:MS)
-      tbody
-        each i,j in contest.leaderboard
-          -if(j==0)
-            tr.table-success.text-center
-              td=j+1
-              td 
-                a(href="viewProfile/"+i.usn+"" style="font-weight:bold;color:grey") #{i.usn}
-              td=i.name
-              td=i.points
-              td #{time(i.timestamp)}
-          -else if(j==1)
-            tr.table-primary.text-center
-              td=j+1
-              td 
-                a(href="viewProfile/"+i.usn+"" style="font-weight:bold;color:grey") #{i.usn}
-              td=i.name
-              td=i.points
-              td #{time(i.timestamp)}
-          -else if(j==2)
-            tr.table-warning.text-center
-              td=j+1
-              td 
-                a(href="viewProfile/"+i.usn+"" style="font-weight:bold;color:grey") #{i.usn}
-              td=i.name
-              td=i.points
-              td #{time(i.timestamp)}
-          -else
-            tr.text-center
-              td=j+1
-              td 
-                a(href="viewProfile/"+i.usn+"" style="font-weight:bold;") #{i.usn}
-              td=i.name
-              td=i.points
-              td #{time(i.timestamp)}
+  h1.text-center.p-3 Leaderboard
+  .limiter
+    .container-table100
+      .wrap-table100
+        .table100
+          table
+            thead
+              tr.table100-head
+                th.column1 RANK
+                th.column2 USN/ID
+                th.column3 Name
+                th.column4 POINTS
+                th.column5 TIME (HH:MM:SS:MS)
+                // <th class="column6">Total</th>
+            tbody
+              each i,j in contest.leaderboard
+                tr
+                  td.column1=(j+1) 
+                  td.column2
+                    a(href="viewProfile/"+i.usn+"") #{i.usn}
+                  td.column3 #{i.name} 
+                  td.column4 #{i.points}
+                  td.column5 #{time(i.timestamp)}
+                  // <td class="column6">$999.00</td>
+              //- tr
+              //-   td.column1 2017-09-29 01:22
+              //-   td.column2 200398
+              //-   td.column3 iPhone X 64Gb Grey
+              //-   td.column4 $999.00
+              //-   td.column5 02:20:35:203
+              //-   // <td class="column6">$999.00</td>
+              //- tr
+              //-   td.column1 2017-09-29 01:22
+              //-   td.column2 200398
+              //-   td.column3 iPhone X 64Gb Grey
+              //-   td.column4 $999.00
+              //-   td.column5 02:20:35:203
+              //-   // <td class="column6">$999.00</td>
+              //- tr
+              //-   td.column1 2017-09-29 01:22
+              //-   td.column2 200398
+              //-   td.column3 iPhone X 64Gb Grey
+              //-   td.column4 $999.00
+              //-   td.column5 02:20:35:203
+              //-   // <td class="column6">$999.00</td>
+              //- tr
+              //-   td.column1 2017-09-29 01:22
+              //-   td.column2 200398
+              //-   td.column3 iPhone X 64Gb Grey
+              //-   td.column4 $999.00
+              //-   td.column5 02:20:35:203
+                // <td class="column6">$999.00</td>
+  // ===============================================================================================
+  // <script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+  // ===============================================================================================
+  // <script src="vendor/bootstrap/js/popper.js"></script>
+  // <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+  // ===============================================================================================
+  // <script src="vendor/select2/select2.min.js"></script>
+  // ===============================================================================================
+  // <script src="js/main.js"></script>
+
+//- body
+//-   h1(style="padding:20px;padding-left:50px").text-center #{contest.name} Leaderboard
+//-   div(style="padding-left:20px;padding-right:20px")
+//-     table.table.table-hover
+//-       thead.text-center
+//-         tr
+//-           th RANK
+//-           th USN / ID
+//-           th NAME
+//-           th POINTS
+//-           th TIME (HH:MM:SS:MS)
+//-       tbody
+//-         each i,j in contest.leaderboard
+//-           -if(j==0)
+//-             tr.table-success.text-center
+//-               td=j+1
+//-               td 
+//-                 a(href="viewProfile/"+i.usn+"" style="font-weight:bold;color:grey") #{i.usn}
+//-               td=i.name
+//-               td=i.points
+//-               td #{time(i.timestamp)}
+//-           -else if(j==1)
+//-             tr.table-primary.text-center
+//-               td=j+1
+//-               td 
+//-                 a(href="viewProfile/"+i.usn+"" style="font-weight:bold;color:grey") #{i.usn}
+//-               td=i.name
+//-               td=i.points
+//-               td #{time(i.timestamp)}
+//-           -else if(j==2)
+//-             tr.table-warning.text-center
+//-               td=j+1
+//-               td 
+//-                 a(href="viewProfile/"+i.usn+"" style="font-weight:bold;color:grey") #{i.usn}
+//-               td=i.name
+//-               td=i.points
+//-               td #{time(i.timestamp)}
+//-           -else
+//-             tr.text-center
+//-               td=j+1
+//-               td 
+//-                 a(href="viewProfile/"+i.usn+"" style="font-weight:bold;") #{i.usn}
+//-               td=i.name
+//-               td=i.points
+//-               td #{time(i.timestamp)}
+

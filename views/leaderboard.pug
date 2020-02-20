@@ -8,22 +8,10 @@ head
   title Table V01
   meta(charset='UTF-8')
   meta(name='viewport' content='width=device-width, initial-scale=1')
-  // ===============================================================================================
-  // <link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
-  // ===============================================================================================
-  //- link(rel='stylesheet' type='text/css' href='/assets/bootstrap/css/bootstrap.min.css')
-  // ===============================================================================================
-  // <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-  // ===============================================================================================
-  // <link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
-  // ===============================================================================================
-  // <link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
-  // ===============================================================================================
-  // <link rel="stylesheet" type="text/css" href="vendor/perfect-scrollbar/perfect-scrollbar.css">
-  // ===============================================================================================
   link(rel='stylesheet' type='text/css' href='/css/lb_util.css')
   link(rel='stylesheet' type='text/css' href='/css/lb_main.css')
-  // ===============================================================================================
+  link(rel="stylesheet", href="/fontawesome/all.min.css")
+  script(src="/fontawesome/all.min.js")
 
 -function two(x) {return ((x>9)?"":"0")+x}
 -function three(x) {return ((x>99)?"":"0")+((x>9)?"":"0")+x}
@@ -31,7 +19,15 @@ head
 -function time(ms) {var sec = Math.floor(ms/1000);  ms = ms % 1000;  t = three(ms);  var min = Math.floor(sec/60);  sec = sec % 60;  t = two(sec) + ":" + t;  var hr = Math.floor(min/60);  min = min % 60;  t = two(min) + ":" + t; var day = Math.floor(hr/60);  hr = hr % 60;  t = two(hr) + ":" + t;   return t;  }
 
 body
-  h1.text-center.p-3 Leaderboard
+  div(style="margin-left:25px;margin-top:25px")
+    nav(aria-label='breadcrumb' style="color:black;width:56.5%;")
+        ol.breadcrumb(style="padding-left:20px;background-color:white")
+          li.breadcrumb-item
+            a(href='/contest') Contest
+          li.breadcrumb-item
+            a(href='/contest/'+contest.url)=contest.name
+          li.breadcrumb-item.active(aria-current='page') Leaderboard
+  h1.text-center.pb-3 Leaderboard
   .limiter
     .container-table100
       .wrap-table100
@@ -39,16 +35,34 @@ body
           table
             thead
               tr.table100-head
-                th.column1 RANK
-                th.column2 USN/ID
-                th.column3 Name
-                th.column4 POINTS
-                th.column5 TIME (HH:MM:SS:MS)
+                th.column1 
+                  i.fal.fa-flag-checkered 
+                  | &nbsp; RANK
+                th.column2 
+                  i.fal.fa-id-card
+                  | &nbsp; USN/ID
+                th.column3 
+                  i.fal.fa-user 
+                  | &nbsp; Name
+                th.column4
+                  i.fal.fa-bullseye-arrow
+                  | &nbsp; POINTS
+                th.column5 
+                  i.fal.fa-clock
+                  | &nbsp; TIME (HH:MM:SS:MS)
                 // <th class="column6">Total</th>
             tbody
               each i,j in contest.leaderboard
                 tr
-                  td.column1=(j+1) 
+                  td.column1
+                    if(j+1 == 1)
+                      i.fad.fa-trophy-alt.fa-2x(style="color:#FFDB19")
+                    else if(j+1 == 2)
+                      i.fad.fa-trophy-alt.fa-2x(style="color:#c6c6c6")
+                    else if(j+1 == 3)
+                      i.fad.fa-trophy-alt.fa-2x(style="color:#E67300")
+                    else
+                      div(style="padding-left:12px;font-weight:bold") #{j+1}
                   td.column2
                     a(href="viewProfile/"+i.usn+"") #{i.usn}
                   td.column3 #{i.name} 

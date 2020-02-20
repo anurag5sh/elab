@@ -17,12 +17,46 @@ html(lang='en')
     script(src='/vendor/jquery/jquery-3.2.1.min.js')
     script(src="/js/toastr.min.js")
     link(rel="stylesheet", href="/css/toastr.min.css")
-
+  style.
+    .carousel-inner img {
+    width: 100%;
+    height: 100%;
+    }
+    .carousel-caption{
+      left:0;
+      bottom:0;
+    }
     
   body
     .limiter
       .container-login100
-        .wrap-login100.p-l-50.p-r-50.p-t-77.p-b-30
+        .pi(style="posititon;relative;height:513px;background-color:white;width:40%;color:orange;margin-right:30%; ")
+          #demo.carousel.slide(data-ride='carousel' style='width:100%;height:550px;')
+            ul.carousel-indicators
+              li.active(data-target='#demo' data-slide-to='0')
+              li(data-target='#demo' data-slide-to='1')
+              li(data-target='#demo' data-slide-to='2')
+            .carousel-inner
+              .carousel-item.active
+                img(src='/images/slide1.jpg' alt='Los Angeles' width='1100' height='500')
+                .carousel-caption(style="background-color: #0c2970; width: 100%;margin-top:70%;")
+                  h3 Practice
+                  p 
+              .carousel-item
+                img(src='/images/slide4.jpg' alt='Chicago' width='1100' height='500')
+                .carousel-caption(style="background-color: #c6a4eb; width: 100%;margin-left:0;height:60px;")
+                  h3 Compete
+                  p 
+              .carousel-item
+                img(src='/images/slide2.jpg' alt='New York' width='1100' height='500')
+                .carousel-caption(style="background-color: #1888c9; width: 100%;margin-left:0;height:60px;")
+                  h3 Code
+            a.carousel-control-prev(href='#demo' data-slide='prev')
+              span.carousel-control-prev-icon
+            a.carousel-control-next(href='#demo' data-slide='next')
+              span.carousel-control-next-icon
+
+        .wrap-login100.p-l-50.p-r-50.p-t-77.p-b-30(style= "margin-left:20%;z-index:1;position:absolute;height:82%;")
           form.login100-form.validate-form#login(onsubmit="return login()")
             span.login100-form-title.p-b-55
               | Login
@@ -39,15 +73,15 @@ html(lang='en')
                 span.fa.fa-lock
             //- input.form-radio(type='radio', name='type', value='student',checked="checked")
             //- | Student
-            .row#row
-              .col-6  
-                .custom-control.custom-radio
-                  input#student.custom-control-input(type='radio', name='type', value='student', checked="checked")
-                  label.custom-control-label(for='student') Student
-              .col-6
-                .custom-control.custom-radio
-                  input#teacher.custom-control-input(type='radio', name='type', value='teacher')
-                  label.custom-control-label(for='teacher') Teacher
+            //- .row#row
+            //-   .col-6  
+            //-     .custom-control.custom-radio
+            //-       input#student.custom-control-input(type='radio', name='type', value='student', checked="checked")
+            //-       label.custom-control-label(for='student') Student
+            //-   .col-6
+            //-     .custom-control.custom-radio
+            //-       input#teacher.custom-control-input(type='radio', name='type', value='teacher')
+            //-       label.custom-control-label(for='teacher') Teacher
 
             //- input.form-radio(type='radio', name='type', value='teacher')
             //- | Teacher

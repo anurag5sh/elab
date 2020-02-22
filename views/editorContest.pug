@@ -406,24 +406,24 @@ html
 
       for(let i=0;i<data.length;i++)
       {
-      if(data[i].id==3){
-        $('#color'+(i+1)+'').removeClass('red-cross yellow-exclamation');
-        $('#color'+(i+1)+'').addClass('green-tick');
-        $('#icon'+(i+1)+'').removeClass('fad fa-times fad fa-exclamation-triangle');
-        $('#icon'+(i+1)+'').addClass('fad fa-check');
-      }
-      else if(data[i].id == 4){
-        $('#color'+(i+1)+'').removeClass('green-tick yellow-exclamation');
-        $('#color'+(i+1)+'').addClass('red-cross');
-        $('#icon'+(i+1)+'').removeClass('fad fa-check fad fa-exclamation-triangle');
-        $('#icon'+(i+1)+'').addClass('fad fa-times');
-      }
-      else{
-        $('#color'+(i+1)+'').removeClass('green-tick red-cross');
-        $('#color'+(i+1)+'').addClass('yellow-exclamation');
-        $('#icon'+(i+1)+'').removeClass('fad fa-check fad fa-times');
-        $('#icon'+(i+1)+'').addClass('fad fa-exclamation-triangle');
-      }
+        if(data[i].id==3){
+          $('#color'+(i+1)+'').removeClass('red-cross yellow-exclamation');
+          $('#color'+(i+1)+'').addClass('green-tick');
+          $('#icon'+(i+1)+'').removeClass('fad fa-times fad fa-exclamation-triangle');
+          $('#icon'+(i+1)+'').addClass('fad fa-check');
+        }
+        else if(data[i].id == 4){
+          $('#color'+(i+1)+'').removeClass('green-tick yellow-exclamation');
+          $('#color'+(i+1)+'').addClass('red-cross');
+          $('#icon'+(i+1)+'').removeClass('fad fa-check fad fa-exclamation-triangle');
+          $('#icon'+(i+1)+'').addClass('fad fa-times');
+        }
+        else{
+          $('#color'+(i+1)+'').removeClass('green-tick red-cross');
+          $('#color'+(i+1)+'').addClass('yellow-exclamation');
+          $('#icon'+(i+1)+'').removeClass('fad fa-check fad fa-times');
+          $('#icon'+(i+1)+'').addClass('fad fa-exclamation-triangle');
+        }
       }
       for(let i=0;i<$('#card .sa').length;i++){
       document.getElementById("message"+(i+1)+"").innerHTML=data[i].description;
@@ -498,12 +498,12 @@ html
 
             document.getElementById("myTr"+(i+1)+"").appendChild(test_no);
             let message = document.createElement("TD");
-            let t = document.createTextNode(data[i].description);
+            t = document.createTextNode(data[i].description);
             message.appendChild(t);
             document.getElementById("myTr"+(i+1)+"").appendChild(message);
             
             let points = document.createElement("TD");
-            let t = document.createTextNode(data[i].points);
+            t = document.createTextNode(data[i].points);
             points.appendChild(t);
             document.getElementById("myTr"+(i+1)+"").appendChild(points);
 

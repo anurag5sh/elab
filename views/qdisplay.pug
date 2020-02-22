@@ -203,7 +203,7 @@ body()
         #countdown-wrap(style='width: 60%;margin:auto;  margin-bottom: 25px;')
           -if(contest.timings.ends > new Date())
             #goal
-              i.fal.fa-hourglass-half.fa-lg
+              i.fal.fa-hourglass-half.fa-lg.fa-spin
               | &nbsp; 
               label(style="font-size:22px") Time remaining
             br
@@ -212,7 +212,7 @@ body()
             .goal-stat(style="margin:auto;")
               span.goal-number
                 br
-                #countdown.
+                #countdown(style="width:250px")
                 //- span.goal-label Days to End
           -else
             div.text-center

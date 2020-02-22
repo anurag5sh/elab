@@ -706,7 +706,7 @@ router.get('/teachers/id/:id',authenticate,teacher,async (req,res) =>{
 
 //landing page for contest
 router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
-    let contest = await Contest.findOne({url:req.params.curl}).lean().select('timings signedUp name questions url createdBy createdByName rules');
+    let contest = await Contest.findOne({url:req.params.curl}).lean().select('timings signedUp name questions url createdBy createdByName rules description');
     if(!contest) return res.status(404).end();
 
     const now = new Date();
@@ -758,7 +758,7 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
         
         if(now>=contest.timings.starts && now<=contest.timings.ends){ //between contest
         if(!contest.signedUp.find(({usn}) => usn == req.session.usn)){
-           return res.render("timer" , {attempt:"/contest/sign/"+req.params.curl,time:false,type: "student",name:contest.name,rules:contest.rules});
+           return res.render("timer" , {attempt:"/contest/sign/"+req.params.curl,time:false,type: "student",contest:contest,rules:contest.rules});
         }
 
         let questions = await ContestQ.find({qid:{$in:contest.questions}}).select('name difficulty qid description _id test_cases')
@@ -780,7 +780,7 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
         if(now < contest.timings.starts) //before contest
         {   const milli = contest.timings.starts - now; //stores milli seconds
             
-            return res.render("timer",{time:Date.now() + milli,name:contest.name,rules:contest.rules} );
+            return res.render("timer",{time:Date.now() + milli,contest:contest,rules:contest.rules} );
         }
 
         if(now > contest.timings.ends) //after contest

@@ -3,13 +3,30 @@ extends nav
 block append head
     title Assignments
     link(rel='stylesheet' href='list_style/bootstrap/css/new.css')
+    link(rel="stylesheet", href="/assets/css/n.css")
     link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,400,700')
     link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css')
+    script(src="/js/typewriter.js ")
     - active.assignment="active"
+    - navClass = "bg-fade trans";
+    - navStyle = "";
+    style.
+        .trans{
+        position:absolute;
+        right:60px;
+        left:60px;
+        padding-top:30px;
+        background:transparent;
+        background-color:transparent!important;
+        }
 
 block content
-    .jumbotron.text-left.bg-light.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
-            h1 ASSIGNMENTS
+    //- .jumbotron.text-left.bg-light.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
+    //-         h1 ASSIGNMENTS
+    section.module.parallax.parallax-1(data-type='background' data-speed='10')
+        .parallax-container
+            h2.typewrite(href='' data-period='2000' data-type='[ "ASSIGNMENT" ]' style="font-weight:bold")
+                span.wrap
     .col-3(style="margin:auto;")
         select#sem(name="sem").form-control.custom-select.type
                 option(selected,disabled) Select Semester

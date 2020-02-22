@@ -10,7 +10,8 @@ html
     -else
       script(src='/src-min-noconflict/ace_modified.js' charset='utf-8')
     script(src='/src-min-noconflict/ext-language_tools.js')
-    link(rel='stylesheet' href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css')
+    //- link(rel='stylesheet' href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css')
+    link(rel="stylesheet", href="/fontawesome/all.min.css")
     link(rel="stylesheet", href="/css/nice-select.css")
     script(src="/js/jquery.nice-select.min.js")
     link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap")
@@ -20,6 +21,7 @@ html
     link(rel="stylesheet", href="/css/katex.min.css")
     script(src="/js/katex.min.js")
     link(href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap" rel="stylesheet")
+    script(src="/fontawesome/all.min.js")
     
     style(type='text/css').
       #editor {
@@ -62,6 +64,7 @@ html
       html {
         scroll-behavior: smooth;
       }
+
       textarea {
       border: none;
       background-color: transparent;
@@ -81,14 +84,17 @@ html
         font-weight:bold;
         color:red;
       }
+
       .red-cross,.red-cross-t{
         font-weight:bold;
         color:red;
       }
+
       .red-cross:hover{
           color:white;
           background-color:red;
       }
+      
       .green-tick:hover{
           color:white;
           background-color:green;
@@ -97,6 +103,21 @@ html
       .nav-tabs .nav-link.active.green-tick{
         font-weight:bold;
         color:green;        
+      }
+
+      .nav-tabs .nav-link.active.yellow-exclamation{
+        font-weight:bold;
+        color:#ffc107;        
+      }
+
+      .yellow-exclamation:hover{
+        color:white;
+        background-color:#ffc107;
+      }
+
+      .yellow-exclamation{
+        font-weight:bold;
+        color:#ffc107;
       }
       .green-tick,.green-tick-t{
         font-weight:bold;
@@ -108,15 +129,14 @@ html
       border-color:#dee2e6 #dee2e6 #fff;
       }*/
       .loader {
-    
-      margin:auto;
-      border: 16px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 16px solid #3498db;
-      width: 150px;
-      height: 150px;
-      -webkit-animation: spin 2s linear infinite; /* Safari */
-      animation: spin 2s linear infinite;
+          margin:auto;
+          border: 16px solid #f3f3f3;
+          border-radius: 50%;
+          border-top: 16px solid #3498db;
+          width: 150px;
+          height: 150px;
+          -webkit-animation: spin 2s linear infinite; /* Safari */
+          animation: spin 2s linear infinite;
       }
       @-webkit-keyframes spin {
         0% { -webkit-transform: rotate(0deg); }
@@ -158,6 +178,24 @@ html
         padding:0px 0px;
          
       }
+      
+
+      @font-face {
+      font-family: OpenSans-Regular;
+      src: url('/fonts/OpenSans-Regular.ttf'); 
+      }
+
+      #TestCases,td{
+        font-family: 'OpenSans-Regular';
+        color:#666666;
+      }
+      table:hover{
+        cursor:default;
+      }
+      .tCase{
+        font-weight:bold;
+      }
+
   body
     br
     nav(aria-label='breadcrumb' style="color:black;width:65%;margin-left:40px")
@@ -264,6 +302,7 @@ html
 
 
     script.
+      
 
       (()=>{const quill = new Quill('#statement', {
       theme: 'bubble' ,
@@ -368,16 +407,22 @@ html
       for(let i=0;i<data.length;i++)
       {
       if(data[i].id==3){
-        $('#color'+(i+1)+'').removeClass('red-cross');
+        $('#color'+(i+1)+'').removeClass('red-cross yellow-exclamation');
         $('#color'+(i+1)+'').addClass('green-tick');
-        $('#icon'+(i+1)+'').removeClass('fa fa-close');
-        $('#icon'+(i+1)+'').addClass('fa fa-check');
+        $('#icon'+(i+1)+'').removeClass('fad fa-times fad fa-exclamation-triangle');
+        $('#icon'+(i+1)+'').addClass('fad fa-check');
+      }
+      else if(data[i].id == 4){
+        $('#color'+(i+1)+'').removeClass('green-tick yellow-exclamation');
+        $('#color'+(i+1)+'').addClass('red-cross');
+        $('#icon'+(i+1)+'').removeClass('fad fa-check fad fa-exclamation-triangle');
+        $('#icon'+(i+1)+'').addClass('fad fa-times');
       }
       else{
-        $('#color'+(i+1)+'').removeClass('green-tick');
-        $('#color'+(i+1)+'').addClass('red-cross');
-        $('#icon'+(i+1)+'').removeClass('fa fa-check');
-        $('#icon'+(i+1)+'').addClass('fa fa-close');
+        $('#color'+(i+1)+'').removeClass('green-tick red-cross');
+        $('#color'+(i+1)+'').addClass('yellow-exclamation');
+        $('#icon'+(i+1)+'').removeClass('fad fa-check fad fa-times');
+        $('#icon'+(i+1)+'').addClass('fad fa-exclamation-triangle');
       }
       }
       for(let i=0;i<$('#card .sa').length;i++){
@@ -409,40 +454,87 @@ html
         },
         function(data,status){
           if(!Array.isArray(data)){
-        toastr.warning(data);
-        document.getElementById("loader").style.display="none";
-        return;
-      }
-          $(".points").remove();
-          $(".green-tick-t").remove();
-            $(".red-cross-t").remove();
-            let total =0;
+            toastr.warning(data);
+            document.getElementById("loader").style.display="none";
+            return;
+          }
+          //- $(".points").remove();
+          //- $(".green-tick-t").remove();
+          //- $(".red-cross-t").remove();
+          $("#TestCases").empty();
+
+          let total =0;
+          let table = document.createElement("TABLE");
+          table.setAttribute("id", "table");
+          table.setAttribute("class","table table-borderless");
+          document.getElementById("TestCases").appendChild(table);
+
           for(let i=0;i<data.length;i++){
             
-            let node =document.createElement("P");
-            node.setAttribute("id","t"+(i+1)+"");
-            let textnode=document.createTextNode("Testcase "+(i+1)+""+" ");
-            let n1=document.createElement("I");
+            let row = document.createElement("TR");
+            row.setAttribute("id", "myTr"+(i+1)+"");
+            document.getElementById("table").appendChild(row);
 
-          if(data[i].id==3){
-            node.setAttribute("class","green-tick-t");
-            n1.setAttribute("class","fa fa-check");
+
+            let test_no = document.createElement("TD");
+            let t = document.createTextNode("Testcase "+(i+1)+" ");
+            test_no.appendChild(t);
+
+            let icon = document.createElement("I");
+
+            if(data[i].id==3){
+            test_no.setAttribute("class","green-tick-t tCase");
+            icon.setAttribute("class","fad fa-check");
+            }
+            else if(data[i].id == 4){
+              test_no.setAttribute("class","red-cross-t tCase");
+              icon.setAttribute("class","fad fa-times ");
+            }
+            else{
+              test_no.setAttribute("class","text-warning tCase");
+              icon.setAttribute("class","fad fa-exclamation-triangle");
+            }
+            test_no.appendChild(icon);
+
+            document.getElementById("myTr"+(i+1)+"").appendChild(test_no);
+            let message = document.createElement("TD");
+            let t = document.createTextNode(data[i].description);
+            message.appendChild(t);
+            document.getElementById("myTr"+(i+1)+"").appendChild(message);
+            
+            let points = document.createElement("TD");
+            let t = document.createTextNode(data[i].points);
+            points.appendChild(t);
+            document.getElementById("myTr"+(i+1)+"").appendChild(points);
+
+            total+=data[i].points;
+
           }
-          else{
-            node.setAttribute("class","red-cross-t");
-            n1.setAttribute("class","fa fa-close");
-          }
+
+          //-   let node =document.createElement("P");
+          //-   node.setAttribute("id","t"+(i+1)+"");
+          //-   let textnode=document.createTextNode("Testcase "+(i+1)+""+" ");
+          //-   let n1=document.createElement("I");
+
+          //- if(data[i].id==3){
+          //-   node.setAttribute("class","green-tick-t");
+          //-   n1.setAttribute("class","fad fa-check");
+          //- }
+          //- else{
+          //-   node.setAttribute("class","red-cross-t");
+          //-   n1.setAttribute("class","fad fa-times");
+          //- }
           
-          node.appendChild(textnode);
-          node.appendChild(n1);
-          n1=document.createTextNode(" "+data[i].description);
-          node.appendChild(n1);
-          let points = document.createTextNode("  "+data[i].points);
-          total+=data[i].points;
-          node.appendChild(points);
-          document.getElementById("TestCases").appendChild(node);
-          }
-          $("#out").append('<p class="points"> Total Points = '+ total +'</p>');
+          //-   node.appendChild(textnode);
+          //-   node.appendChild(n1);
+          //-   n1=document.createTextNode(" "+data[i].description);
+          //-   node.appendChild(n1);
+          //-   let points = document.createTextNode("  "+data[i].points);
+          //-   total+=data[i].points;
+          //-   node.appendChild(points);
+          //-   document.getElementById("TestCases").appendChild(node);
+          //- }
+          $("#TestCases").append('<p class="points" style="padding:10px;font-weight:bold"> Total Points = '+ total +'</p>');
           
           document.getElementById("loader").style.display="none";
           document.getElementById("out").style.display="block";
@@ -497,7 +589,7 @@ html
           count=0;
         
         if(count1==0){
-        $('#opbox').append('<div name="out" id="out" class="container mt-3 SUBMIT_BOX" style="width: 650px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);text-align: left;left: 20px;padding: 10px;margin: 20px;position: relative;"><div id="TestCases"></div></div>');
+        $('#opbox').append('<div name="out" id="out" class="container mt-3 SUBMIT_BOX" style="background:white;border-radius:4px;width:550px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);text-align: left;left: 20px;padding: 10px;margin: 20px;position: relative;"><div id="TestCases"></div></div>');
         count1=count1+1;
         
         }

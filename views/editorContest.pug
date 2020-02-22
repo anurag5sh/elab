@@ -1,12 +1,14 @@
-doctype html
-html(lang='en')
+-if(session.usn) 
+  include navbar 
+-else 
+  include teacher/nav
+html
   head
     title=question.name
-    -if(session.usn) 
-      include navbar 
-    -else 
-      include teacher/nav
-    script(src='/src-min-noconflict/ace_modified.js' charset='utf-8')
+    -if(contest.timings.ends < new Date())
+      script(src='/src-min-noconflict/ace.js' charset='utf-8')
+    -else
+      script(src='/src-min-noconflict/ace_modified.js' charset='utf-8')
     script(src='/src-min-noconflict/ext-language_tools.js')
     link(rel='stylesheet' href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css')
     link(rel="stylesheet", href="/css/nice-select.css")
@@ -221,8 +223,9 @@ html(lang='en')
       a.btn.btn-outline-primary.btn-sm(style='float:right;margin-right:12px;margin-top:5px;border-radius:20px;' href="" data-toggle="modal" data-target="#sourceModal") View Code History
       
       div#editor
-      button#button_submit.btn.btn-success(value='Submit', onclick='setup().submit()', style='float:right;width:100px;left:20px;') 
-        a(href='#opbox' style="color:white;font-weight:bold") Submit
+      -if(contest.timings.ends > new Date())
+        button#button_submit.btn.btn-success(value='Submit', onclick='setup().submit()', style='float:right;width:100px;left:20px;') 
+          a(href='#opbox' style="color:white;font-weight:bold") Submit
       button#button.btn.btn-primary(value='Run', onclick='setup().run()', style='font-weight:bold;color:white;float:right;margin-right:20px;width:100px;')
         a(href='#loader' style="color:white;font-weight:bold") Run
     .row(style="margin:30px;")

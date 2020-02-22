@@ -62,6 +62,12 @@ const assignmentQSchema = new mongoose.Schema({
     date:{
         type: Date,
         default: moment().format()
+    },
+    description:{
+        type:String
+    },
+    difficulty:{
+        type:String
     }
     
 });
@@ -82,7 +88,9 @@ function validateAQ(question)
         i_testcase1: [Joi.string(),Joi.array().items(Joi.string())],
         o_testcase1: [Joi.string(),Joi.array().items(Joi.string())],
         points:[Joi.number(),Joi.array().items(Joi.number())],
-        explanation: Joi.string().required()
+        explanation: Joi.string().required(),
+        difficulty:Joi.string().valid('Easy','Medium','Hard').required(),
+        description:Joi.string().required()
         
     });
 

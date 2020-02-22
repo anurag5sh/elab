@@ -57,6 +57,12 @@ const practiceSchema = new mongoose.Schema({
     date:{
         type: Date,
         default: moment().format()
+    },
+    description:{
+        type:String
+    },
+    difficulty:{
+        type:String
     }
     
 });
@@ -78,6 +84,7 @@ function validatePractise(question)
         explanation: Joi.string().required(),
         points:[Joi.number(),Joi.array().items(Joi.number())],
         difficulty:Joi.string().valid('Easy','Medium','Hard').required(),
+        description:Joi.string().required()
     });
 
     return schema.validate(question,{escapeHtml:true});

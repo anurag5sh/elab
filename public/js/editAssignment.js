@@ -284,7 +284,6 @@ function submitFormAdd(){
             editor.setText("");
             },
             error: function (e) {
-
                 toastr.error(e.responseText);
 
             },
@@ -324,6 +323,8 @@ function submitFormAdd(){
             $("#ei_testcase1").val(data.test_cases[0].input);
             $("#eo_testcase1").val(data.test_cases[0].output);
             $("#epoints1").val(data.test_cases[0].points);
+            $("#edifficulty").val(data.difficulty);
+            $("#edescription").val(data.description);
 
             for(let i=1;i<data.sample_cases.length;i++){
                 sampleAdd();

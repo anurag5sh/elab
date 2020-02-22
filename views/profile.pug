@@ -144,8 +144,8 @@ block content
                       toastr.success(data);
                       setTimeout(function(){location.reload();},500);
                   },
-                  error: function( jqXhr, textStatus, errorThrown ){
-                      toastr.error(errorThrown);
+                  error: function(errorThrown ){
+                      toastr.error(errorThrown.responseText);
                   }
               });
                 }

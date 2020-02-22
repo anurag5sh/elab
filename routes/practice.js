@@ -102,6 +102,8 @@ router.post('/',authenticate,teacher,async (req,res)=>{
 
     let question = new Practice();
     question.name = req.body.name;
+    question.difficulty = req.body.difficulty;
+    question.description = req.body.description;
     question.constraints = req.body.constraints;
     question.input_format = req.body.i_format;
     question.output_format = req.body.o_format;
@@ -145,6 +147,8 @@ router.post('/edit/:qid',authenticate,teacher,async (req,res)=>{
 
     question.name = req.body.name;
     question.constraints = req.body.constraints;
+    question.difficulty = req.body.difficulty;
+    question.description = req.body.description;
     question.input_format = req.body.i_format;
     question.output_format = req.body.o_format;
     question.statement=decodeURIComponent(req.body.statement); 

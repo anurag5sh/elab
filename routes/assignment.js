@@ -43,6 +43,14 @@ router.get('/',authenticate, async (req,res) => {
     
 });
 
+//leaderboard for students
+router.get('/leaderboard',authenticate,async (req,res)=>{
+    const assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).lean().select('leaderboard');
+    if(!assignment) return res.status(404).end();
+
+    res.render('leaderboardAssignment',{assignment:assignment});
+});
+
 router.get('/get/:id',authenticate,teacher,async (req,res) =>{
 
     const assignment = await Assignment.findOne({id:req.params.id,'duration.ends' :{$gt : new Date()}}).lean().select('id questions');
@@ -75,6 +83,8 @@ function lang(l){
     }   
 }
 router.get('/source/:qid',authenticate,async (req,res) =>{
+
+    if(req.session.staff_id) return res.send('');
     let source=[];
     if(req.query.lang){
         let assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year)},{submissions:{$elemMatch:{usn:req.session.usn,qid:req.params.qid,language_id:req.query.lang}}},{_id:0,'submissions.$':1}).lean();
@@ -124,12 +134,62 @@ router.post('/',authenticate,async (req,res) => {
   res.status(200).send("Changes Saved.");
 });
 
+//adding a question to assignment
+router.post('/add',authenticate,teacher,async (req,res) => {
+    const {error} = validateAQ(req.body);
+    if(error) return res.status(400).send(error.message);
+
+    let count=1;
+    let lastInserted = await AssignmentQ.findOne({qid:new RegExp('\^'+moment().format('DDMMYY'))}).sort({_id:-1}).lean().select('qid');
+    if(!_.isEmpty(lastInserted)){
+        count = Number(lastInserted.qid.substr(lastInserted.qid.indexOf('Q')+1));
+        count++;
+    }
+
+    let question = new AssignmentQ({assignmentId:req.body.aId});
+    question.name = req.body.name;
+    question.statement= decodeURIComponent(req.body.statement);
+    question.constraints = req.body.constraints;
+    question.input_format = req.body.i_format;
+    question.output_format = req.body.o_format;
+    question.description = req.body.description;
+    question.difficulty = req.body.difficulty;
+
+    if(Array.isArray(req.body.i_sample1)){
+
+        for(let i=0;i<req.body.i_sample1.length;i++){
+            question.sample_cases.push({input:req.body.i_sample1[i], output:req.body.o_sample1[i]});
+        }
+        }
+    else{
+        question.sample_cases.push({input:req.body.i_sample1, output:req.body.o_sample1});
+        
+    }
+
+    if(Array.isArray(req.body.i_testcase1)){
+        for(let i=0;i<req.body.i_testcase1.length;i++){
+            question.test_cases.push({input:req.body.i_testcase1[i], output:req.body.o_testcase1[i],points:req.body.points[i]});
+        }
+    }
+    else{
+        question.test_cases.push({input:req.body.i_testcase1, output:req.body.o_testcase1,points:req.body.points});
+    }
+
+    question.explanation= req.body.explanation;
+    question.qid = moment().format('DDMMYY') + "Q" + count;
+    await question.save();
+
+    res.status(200).send("Question added successfully");
+
+});
+
+
 //display single question for student
 router.get('/:qid',authenticate,async (req,res) => {
 
     if(req.session.staff_id){
         const question =  await AssignmentQ.findOne({qid:req.params.qid}).lean();
-        return res.render('teacher/editorAssignment',{question:question});
+        return res.render('editorAssignment',{question:question});
     }
 
     const assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).lean().select('id questions');
@@ -155,7 +215,7 @@ router.get('/:qid',authenticate,async (req,res) => {
 //submission for assignment
 router.post('/:qid',authenticate,async (req,res)=>{
 
-    const assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).select('id questions submissions');
+    const assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).select('id questions submissions leaderboard duration');
     if(!assignment) return res.status(400).end();
 
     let question=null;
@@ -171,9 +231,9 @@ router.post('/:qid',authenticate,async (req,res)=>{
     }
 
     const testcase = question.test_cases;
-    let contest_points = 0;
+    let question_points = 0;
   testcase.forEach((item,index) =>{
-    contest_points +=item.points;
+    question_points +=item.points;
   });
 
   if(req.body.source.substr(req.body.source.length-18) == "undefinedundefined")
@@ -206,15 +266,16 @@ router.post('/:qid',authenticate,async (req,res)=>{
         }
         desc.push({id:data.status.id,description:data.status.description,points:points}); 
     }
-    if(req.session.code == req.body.source) return res.send(desc);
+    if(req.session.code == req.body.source+req.params.qid) return res.send(desc);
 
         let total_points  = 0;
         desc.forEach((item,index) =>{
                 total_points+= item.points;
         });
-
+        
+        req.session.code = req.body.source + req.params.qid;
+        const usn =req.session.usn;
         const user_submission = assignment.submissions.find(i => (i.usn == req.session.usn && i.qid==req.params.qid));
-        req.session.code = req.body.source;
         if(!user_submission){
         
             let obj ={};
@@ -222,7 +283,7 @@ router.post('/:qid',authenticate,async (req,res)=>{
             obj.timestamp = new Date();
             obj.usn = req.session.usn;
             obj.sourceCode = req.body.source;
-            if(total_points == contest_points){
+            if(total_points == question_points){
                 obj.status = "Accepted";
             }
             else if(total_points == 0 ){
@@ -234,6 +295,29 @@ router.post('/:qid',authenticate,async (req,res)=>{
             obj.points = total_points;
             obj.language_id = req.body.language;
             assignment.submissions.push(obj);
+            
+            //leaderboard
+            if(total_points>0){
+                const index = assignment.leaderboard.findIndex(item=>{
+                    return item.usn == usn;
+                });
+                if(index == -1){
+                    let leadObj = {};
+                    leadObj.usn=usn;
+                    leadObj.timestamp = new Date()- assignment.duration.starts;
+                    leadObj.name = req.session.fname;
+                    leadObj.points = total_points; 
+                    
+                    assignment.leaderboard.push(leadObj);
+                }
+                else
+                {
+                    assignment.leaderboard[index].points += total_points;
+                    assignment.leaderboard[index].timestamp = new Date()- assignment.duration.starts;
+                }
+                leaderboardSort();
+            }
+
             await assignment.save();
             return res.send(desc);
         }
@@ -243,7 +327,7 @@ router.post('/:qid',authenticate,async (req,res)=>{
         if(subCount == 20){
             sub = await aSubmission.findOne({usn:req.session.usn,qid:req.params.qid}).sort({timestamp:1});
         }
-        if(total_points == contest_points && user_submission.status == "Accepted"){
+        if(total_points == question_points && user_submission.status == "Accepted"){
             
             sub.qid = req.params.qid;
             sub.timestamp = new Date();
@@ -255,7 +339,7 @@ router.post('/:qid',authenticate,async (req,res)=>{
             await sub.save();
             return res.send(desc);
         }
-        else if (total_points == contest_points ){
+        else if (total_points == question_points ){
             
             const i= assignment.submissions.indexOf(user_submission);
             let previous_sub =  new aSubmission(_.pick(assignment.submissions[i].toJSON(),['usn','sourceCode','status','timestamp','language_id','points']));
@@ -269,6 +353,27 @@ router.post('/:qid',authenticate,async (req,res)=>{
             obj.status = "Accepted";
             obj.points = total_points;
             obj.language_id = req.body.language;
+
+            //leaderboard
+            const index = assignment.leaderboard.findIndex(item=>{
+                return item.usn == usn;
+            });
+            if(index == -1){
+                let leadObj = {};
+                leadObj.usn=usn;
+                leadObj.timestamp = new Date()- assignment.duration.starts;
+                leadObj.name = req.session.fname;
+                leadObj.points = total_points; 
+                
+                assignment.leaderboard.push(leadObj);
+            }
+            else
+            {
+                assignment.leaderboard[index].points += total_points - old_points;
+                assignment.leaderboard[index].timestamp = new Date()- assignment.duration.starts;
+            }
+            leaderboardSort();
+
             assignment.submissions.push(obj);
             await assignment.save();
             return res.send(desc);
@@ -284,7 +389,7 @@ router.post('/:qid',authenticate,async (req,res)=>{
             obj.timestamp = new Date();
             obj.usn = req.session.usn;
             obj.sourceCode = req.body.source;
-            if(total_points == contest_points){
+            if(total_points == question_points){
                 obj.status = "Accepted";
             }
             else if(total_points == 0 ){
@@ -295,6 +400,28 @@ router.post('/:qid',authenticate,async (req,res)=>{
             }
             obj.language_id = req.body.language;
             obj.points = total_points;
+
+            //leaderboard
+            const index = assignment.leaderboard.findIndex(item =>{
+                return item.usn == usn;
+            });
+            if(index == -1){
+                let leadObj = {};
+                leadObj.usn=usn;
+                leadObj.timestamp = new Date() -  assignment.duration.starts;
+                leadObj.name = req.session.fname;
+                leadObj.points = total_points; 
+                
+                assignment.leaderboard.push(leadObj);
+            }
+            else
+            {
+                assignment.leaderboard[index].points += total_points - old_points;
+                assignment.leaderboard[index].timestamp = new Date()- assignment.duration.starts;
+            }
+
+            leaderboardSort();
+
             assignment.submissions.push(obj);
             await assignment.save();
             return res.send(desc);
@@ -305,7 +432,7 @@ router.post('/:qid',authenticate,async (req,res)=>{
             sub.timestamp = new Date();
             sub.usn = req.session.usn;
             sub.sourceCode = req.body.source;
-            if(total_points == contest_points){
+            if(total_points == question_points){
                 sub.status = "Accepted";
             }
             else if(total_points == 0 ){
@@ -323,6 +450,17 @@ router.post('/:qid',authenticate,async (req,res)=>{
     
         }
 
+        function leaderboardSort(){
+            assignment.leaderboard.sort((a,b) =>{
+                if(a.points > b.points) return -1;
+                else if(a.points < b.points) return 1;
+                else if(a.points == b.points){
+                    if(a.timestamp<b.timestamp) return -1;
+                    else if(a.timestamp>b.timestamp) return 1;
+                    else return 0;
+                }
+        });
+        }
     
     }).catch(err => { console.log(err);
     res.send(err);
@@ -386,6 +524,8 @@ router.post('/edit/:id/:qid',authenticate,teacher,async (req,res) =>{
     question.constraints = req.body.constraints;
     question.input_format = req.body.i_format;
     question.output_format = req.body.o_format;
+    question.description = req.body.description;
+    question.difficulty = req.body.difficulty;
 
     question.sample_cases = [];
     question.test_cases =[];
@@ -418,52 +558,6 @@ router.post('/edit/:id/:qid',authenticate,teacher,async (req,res) =>{
 
 });
 
-//adding a question to assignment
-router.post('/add',authenticate,teacher,async (req,res) => {
-    const {error} = validateAQ(req.body);
-    if(error) return res.status(400).send(error.message);
-
-    let count=1;
-    let lastInserted = await AssignmentQ.findOne({qid:new RegExp('\^'+moment().format('DDMMYY'))}).sort({_id:-1}).lean().select('qid');
-    if(!_.isEmpty(lastInserted)){
-        count = Number(lastInserted.qid.substr(lastInserted.qid.indexOf('Q')+1));
-        count++;
-    }
-
-    let question = new AssignmentQ({assignmentId:req.body.aId});
-    question.name = req.body.name;
-    question.statement= decodeURIComponent(req.body.statement);
-    question.constraints = req.body.constraints;
-    question.input_format = req.body.i_format;
-    question.output_format = req.body.o_format;
-
-    if(Array.isArray(req.body.i_sample1)){
-
-        for(let i=0;i<req.body.i_sample1.length;i++){
-            question.sample_cases.push({input:req.body.i_sample1[i], output:req.body.o_sample1[i]});
-        }
-        }
-    else{
-        question.sample_cases.push({input:req.body.i_sample1, output:req.body.o_sample1});
-        
-    }
-
-    if(Array.isArray(req.body.i_testcase1)){
-        for(let i=0;i<req.body.i_testcase1.length;i++){
-            question.test_cases.push({input:req.body.i_testcase1[i], output:req.body.o_testcase1[i],points:req.body.points[i]});
-        }
-    }
-    else{
-        question.test_cases.push({input:req.body.i_testcase1, output:req.body.o_testcase1,points:req.body.points});
-    }
-
-    question.explanation= req.body.explanation;
-    question.qid = moment().format('DDMMYY') + "Q" + count;
-    await question.save();
-
-    res.status(200).send("Question added successfully");
-
-});
 
 
 //delete a question

@@ -14,6 +14,7 @@ const {Practice} = require('../models/practice');
 const {Contest} = require('../models/contest');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
+const winston = require('winston');
 
 const fs = require('fs');
 
@@ -29,13 +30,36 @@ let storage = multer.diskStorage({
     else
     cb(null, req.session.usn+'.'+file_name[1])
   }
-  })
-  let upload = multer({ storage: storage })
-
-router.get('/card',(req,res)=>{
-  res.render('card');
-});
-
+  });
+  let upload = multer({ storage: storage,
+    fileFilter : async (req, file, cb) => { 
+      if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
+        //deleting old image
+        let user = null;
+        let old_file =null;
+        if(req.session.staff_id)
+        {
+          user = await Teacher.findOne({staff_id: req.session.staff_id}).select('profile_image').lean();
+          old_file = req.session.staff_id;
+        }  
+        else{
+          user = await Student.findOne({usn: req.session.usn}).select('profile_image').lean();
+          old_file =req.session.usn;
+        }
+        
+        if(user.profile_image != '/profileImage/default.png' ){
+          const fileName = user.profile_image.split('.');
+          fs.unlink('./public/profileImage/'+ old_file + '.' + fileName[1] ,(err) => {
+            if (err) { 
+              winston.error(err);
+            }
+          });
+        }
+        cb(null, true);
+      } else { req.fileTypeError = 'Only .png, .jpg and .jpeg format allowed!';
+        cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
+      }
+    } }).single('profile_image');
 
 //filter teacher and student login
 //redirect to respective dashboard
@@ -172,61 +196,49 @@ else if(!req.body.re_entered_password || req.body.re_entered_password < 5){
 
 
 // Image Update
+router.post('/uploadImage',authenticate,async (req,res,next)=> {
+  let user = null;
+  let old_file =null;
+  if(req.session.staff_id)
+  {
+    user = await Teacher.findOne({staff_id: req.session.staff_id}).select('profile_image');
+    old_file = req.session.staff_id;
+  }  
+  else{
+    user = await Student.findOne({usn: req.session.usn}).select('profile_image');
+    old_file =req.session.usn;
+  }
 
-router.post('/uploadImage', async (req,res,next)=>{
-  let user = null;
-  let old_file =null;
-  if(req.session.staff_id)
-  {
-    user = await Teacher.findOne({staff_id: req.session.staff_id}).select('profile_image');
-    old_file = req.session.staff_id;
-  }  
-  else{
-    user = await Student.findOne({usn: req.session.usn}).select('profile_image');
-    old_file =req.session.usn;
-  }
-  // let student = await Student.findOne({usn: req.session.usn}).select('profile_image');
-  if(user.profile_image != '/profileImage/default.png' ){
-    const fileName = user.profile_image.split('.');
-    fs.unlink('./public/profileImage/'+ old_file + '.' + fileName[1] , async (err) => {
-      if (err) {
-        console.log(err);
+  upload(req, res, async function (err) {
+    if (err instanceof multer.MulterError) {
+        winston.error(err);
+    } else if (err) {
+      if(req.fileTypeError)
+      return res.status(400).send(req.fileTypeError);
+      else
+      {
+        winston.error(err);
+        return res.end();
       }
+    }
+
+    if(req.file){
+      const ext = req.file.originalname.split('.');
+      const new_file_name = old_file;
+      user.profile_image = '/profileImage/' + new_file_name + '.' + ext[1];
+        await user.save();
       
-      // student.profile_image = '/profileImage/' + new_file_name + '.' + ext[1];
-      // await student.save();
-    });
-  }next();
-},upload.single('profile_image'), authenticate,async (req,res,next)=> {
-  let user = null;
-  let old_file =null;
-  if(req.session.staff_id)
-  {
-    user = await Teacher.findOne({staff_id: req.session.staff_id}).select('profile_image');
-    old_file = req.session.staff_id;
-  }  
-  else{
-    user = await Student.findOne({usn: req.session.usn}).select('profile_image');
-    old_file =req.session.usn;
-  }
-  // let student = await Student.findOne({usn: req.session.usn}).select('profile_image');
-if(req.file){
+      return res.send("Profile Photo Updated");
+      }
+      else
+      {
+      user.profile_image = '/profileImage/default.png';
+      await user.save();
+      return res.status(400).send("No Image uploaded");
+      }
+  });
   
-  const ext = req.file.originalname.split('.');
-  const new_file_name = old_file;
- // const old_file_name = student.profile_image.split('.');
-  user.profile_image = '/profileImage/' + new_file_name + '.' + ext[1];
-    await user.save();
   
-  // await student.save();
-  return res.send("Profile Photo Updated");
-}
-else
-{
-  user.profile_image = '/profileImage/default.png';
-  await user.save();
-return res.status(400).send("No Image uploaded");
-}
 });
 
 //first time user login logic

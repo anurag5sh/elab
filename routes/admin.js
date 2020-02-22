@@ -11,6 +11,7 @@ const {Assignment,validateAssignment} = require('../models/assignment');
 const {AssignmentQ,validateAQ} = require('../models/assignmentQ');
 const fs = require('fs');
 const Joi = require("@hapi/joi");
+const winston = require('winston');
 
 //------------------Accounts routes start-----------------//
 let storage = multer.diskStorage({
@@ -27,6 +28,28 @@ let upload = multer({ storage: storage })
 router.get('/', admin, (req,res)=> {
     res.render('admin/admin',{name:req.session.fname});
 });
+
+//Logs
+router.get('/logs',admin,async (req,res)=>{
+  const options = {
+    from: new Date() - (24 * 60 * 60 * 1000),
+    until: new Date(),
+    limit: 10,
+    start: 0,
+    order: 'desc',
+    fields: ['message']
+  };
+   
+  winston.query(options, function (err, results) {
+    if (err) {
+      throw err;
+    }
+   
+    console.log(results);
+    res.send(results);
+  });
+});
+
 
 //fetching teachers
 router.get('/get/teachers',admin,async (req,res)=>{
@@ -351,6 +374,21 @@ router.get('/assignment/delete/:aId',admin,async (req,res) => {
   res.status(200).send('Assignment with ID : '+req.params.aId+' Deleted.');
 });
 
+
+//---------------------------------Yearback and Promotion Logic ---------------------------------------
+
+router.get('/promote',admin, async (req,res)=>{
+  await Student.updateMany({},{$inc : {year:1}}).catch((err)=>{
+    winston.error(err);
+    res.status(400).send("Unable to perform this operation.");
+  }).then(()=>{
+    res.send("Operation Successful!")
+  });
+}); 
+
+router.post('/yearback',admin, async (req,res)=>{
+  
+});
 
 
 

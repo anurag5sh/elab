@@ -888,9 +888,9 @@ if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
         return res.status(400).send("Not authorized to make a submission!");
 }
   const testcase = question.test_cases;
-  let contest_points = 0;
+  let question_points = 0;
   testcase.forEach((item,index) =>{
-    contest_points +=item.points;
+    question_points +=item.points;
   });
 
   if(req.body.source.substr(req.body.source.length-18) == "undefinedundefined")
@@ -945,7 +945,7 @@ if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
         obj.usn = usn;
         obj.year = year;
         obj.sourceCode = req.body.source;
-        if(total_points == contest_points){
+        if(total_points == question_points){
             obj.status = "Accepted";
         }
         else if(total_points == 0 ){
@@ -989,7 +989,7 @@ if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
     if(subCount == 20){
         sub = await Submission.findOne({usn:usn,qid:req.params.qid}).sort({timestamp:1});
     }
-    if(total_points == contest_points && user_submission.status == "Accepted"){
+    if(total_points == question_points && user_submission.status == "Accepted"){
         
         sub.qid = req.params.qid;
         sub.timestamp = new Date();
@@ -1002,7 +1002,7 @@ if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
         await sub.save();
         return res.send(desc);
     }
-    else if (total_points == contest_points ){
+    else if (total_points == question_points ){
         
         const i= contest.submissions.indexOf(user_submission);
         let previous_sub =  new Submission(_.pick(contest.submissions[i].toJSON(),['usn','sourceCode','status','timestamp','language_id','points','qid']));
@@ -1055,7 +1055,7 @@ if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
         obj.usn = usn;
         obj.year = year;
         obj.sourceCode = req.body.source;
-        if(total_points == contest_points){
+        if(total_points == question_points){
             obj.status = "Accepted";
         }
         else if(total_points == 0 ){
@@ -1099,7 +1099,7 @@ if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
         sub.usn = usn;
         sub.year = year;
         sub.sourceCode = req.body.source;
-        if(total_points == contest_points){
+        if(total_points == question_points){
             sub.status = "Accepted";
         }
         else if(total_points == 0 ){

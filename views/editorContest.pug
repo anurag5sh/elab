@@ -324,22 +324,29 @@ html
       });
       
       setup.sourceArray=[];
-      function source(lang){
-        const con = window.location.pathname.split("/");
-        if(!lang) lang='';
-        $.get(`/contest/source/${con[2]}/${con[3]}`,{lang:lang},function (data,status){
-            if(lang){
-            editor.setValue(data[0].sourceCode);
-            
-            }
-            else{$("#sourceBody").empty();sourceArray=data;
-              data.forEach((item,index)=>{
-              $("#sourceBody").append('<tr><td>'+(index+1)+'</td><td>'+item.language_id.slice(0,-2)+'</td><td>'+item.status+'</td><td>'+item.points+'</td><td><a href="javascript:setup().sourceInsert('+index+')">Select</a></td></tr>');
-              });
-            }
+      function source(lang){const con = window.location.pathname.split("/");
+        const pre = $("#lang").data('pre');
+        $.post(`/contest/source/${con[2]}/${con[3]}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
+          $("#lang").data('pre', $("#lang").val());
+        
+          if(!lang) lang='';
+          $.get(`/contest/source/${con[2]}/${con[3]}`,{lang:lang},function (data,status){
+              if(lang){
+              editor.setValue(data[0].sourceCode);
+              
+              }
+              else{$("#sourceBody").empty();sourceArray=data;
+                data.forEach((item,index)=>{
+                $("#sourceBody").append('<tr><td>'+(index+1)+'</td><td>'+item.language_id.slice(0,-2)+'</td><td>'+item.status+'</td><td>'+item.points+'</td><td><a href="javascript:setup().sourceInsert('+index+')">Select</a></td></tr>');
+                });
+              }
+          }).fail((err)=>{
+            toastr.error(err.responseText);
+          });
         }).fail((err)=>{
-          toastr.error(err.responseText);
-        })
+            toastr.error(err.responseText);
+          });
+        
       }
       function sourceInsert(i){
         editor.setValue(sourceArray[i].sourceCode);
@@ -360,6 +367,14 @@ html
         editor.session.setMode("ace/mode/"+m);
         source(l.substr(l.length-2));
       }
+  
+      setInterval(function(){
+        const con = window.location.pathname.split("/");
+        const pre = $("#lang").data('pre');
+        $.post(`/contest/source/${con[2]}/${con[3]}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
+          $("#lang").data('pre', $("#lang").val());});
+      },60000*5);
+
       function setTheme(){
         editor.setTheme("ace/theme/"+$("#theme").val());
       }
@@ -367,14 +382,9 @@ html
         editor.setFontSize(parseInt($("#fontsize").val()));
       }
 
-      function setDefault(){setLang();setTheme();setFont();setup.hh=true;$('#lang').data('pre', $(this).val());}
+      function setDefault(){$('#lang').data('pre', $("#lang").val());setLang();setTheme();setFont();setup.hh=true;}
       (!setup.hh?setDefault():void(0));
 
-      function save(lang){
-        const con = window.location.pathname.split("/");
-        $.post(`/contest/source/${con[2]}/${con[3]}`,{sourceCode:editor.getValue(),lang:lang});
-      }
-      
 
       function readText() { window.location.href="#loader";
       let l = document.getElementById("lang").value;
@@ -396,6 +406,12 @@ html
           $(".custom").remove();  
           $('#opbox').append('<div class="card custom" style="width:650px;;"><label><b>Custom TestCase</b></label><hr style="width:25%;margin-top:0rem;"><label><b>Input</b></label><textarea readonly="readonly" class="bg-col" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:auto;">'+ document.getElementById("custom_input").value+'</textarea ><br><label><b>Output</b></label><textarea readonly="readonly" class="bg-col" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:125px;">'+data[0].output+'</textarea>') 
           document.getElementById("loader").style.display="none";  
+
+          //save
+          const con = window.location.pathname.split("/");
+          const pre = $("#lang").data('pre');
+          $.post(`/contest/source/${con[2]}/${con[3]}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
+          $("#lang").data('pre', $("#lang").val());});
         }
         else{
         if(!Array.isArray(data)){
@@ -498,13 +514,13 @@ html
 
             document.getElementById("myTr"+(i+1)+"").appendChild(test_no);
             let message = document.createElement("TD");
-            let t = document.createTextNode(data[i].description);
-            message.appendChild(t);
+            let t1 = document.createTextNode(data[i].description);
+            message.appendChild(t1);
             document.getElementById("myTr"+(i+1)+"").appendChild(message);
             
             let points = document.createElement("TD");
-            let t = document.createTextNode(data[i].points);
-            points.appendChild(t);
+            let t2 = document.createTextNode(data[i].points);
+            points.appendChild(t2);
             document.getElementById("myTr"+(i+1)+"").appendChild(points);
 
             total+=data[i].points;

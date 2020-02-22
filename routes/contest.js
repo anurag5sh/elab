@@ -580,7 +580,11 @@ router.get('/source/:curl/:qid',authenticate,contestAuth,async (req,res) =>{
 
         const submission = await Submission.find({usn:usn,qid:req.params.qid,language_id:req.query.lang}).lean();
         source = contest.submissions.concat(submission);
-        source = source.concat(req.session.contest.find(i => {return i.curl == req.params.curl && i.qid == req.params.qid}))
+        if(req.session.contest){
+            const index = req.session.contest.findIndex(i => {return i.curl == req.params.curl && i.qid == req.params.qid && i.lang == req.query.lang})
+            if(index != -1)
+            source = source.concat(req.session.contest[index])
+        }
         if(source.length == 0){
             source=[{sourceCode:config.get(`source.${req.query.lang}`)}];
             return res.send(source);
@@ -598,18 +602,40 @@ router.get('/source/:curl/:qid',authenticate,contestAuth,async (req,res) =>{
         }
     }
   
-    res.send(source.sort((a,b)=>(a.timestamp>b.timestamp)?-1:1));
+    res.send(source.sort((a,b)=>(a.timestamp>b.timestamp)?1:-1));
 });
 
 router.post('/source/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
-    let obj = {};
-    obj.curl = req.params.curl;
-    obj.qid=req.params.qid;
-    obj.lang = req.params.lang;
-    obj.sourceCode = req.body.sourceCode.substr(0,req.body.sourceCode.length-18);
-    obj.timestamp = new Date();
+    req.body.sourceCode = req.body.sourceCode.substr(0,req.body.sourceCode.length-18);
+    if(req.body.sourceCode == '') return res.send('');
+    if(req.session.contest){
+        const found = req.session.contest.findIndex(i =>{return i.qid == req.params.qid && i.curl == req.params.curl && i.lang == req.body.lang.substr(req.body.lang.length-2) });
+        if(found!=-1){
+            req.session.contest[found].sourceCode = req.body.sourceCode;
+            req.session.contest[found].timestamp = new Date();
+        }
+        else{
+            let obj = {};
+            obj.curl = req.params.curl;
+            obj.qid=req.params.qid;
+            obj.lang = req.body.lang.substr(req.body.lang.length-2);
+            obj.sourceCode = req.body.sourceCode;
+            obj.timestamp = new Date();
+            req.session.contest.push(obj);
+        }
+    }
+    else{
+        let obj = {};
+        obj.curl = req.params.curl;
+        obj.qid=req.params.qid;
+        obj.lang = req.body.lang.substr(req.body.lang.length-2);
+        obj.sourceCode = req.body.sourceCode;
+        obj.timestamp = new Date();
+        req.session.contest = [];
+        req.session.contest.push(obj);
+    }
 
-    req.session.contest.push(obj);
+    res.send('');
 });
 
 //fetch source code for teacher

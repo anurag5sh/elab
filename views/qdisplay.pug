@@ -244,12 +244,12 @@ body()
                   label(style='cursor: pointer;') &nbsp; View Submissions
     br
     #myModal.modal.fade
-      .modal-dialog
+      .modal-dialog(style="width:50%;max-width:70%")
           .modal-content
             .modal-header
               h4.modal-title Rules
               button.close(type='button' data-dismiss='modal') &times;
             .modal-body
-              pre #{contest.rules}
+              div(style="white-space:pre-wrap") #{contest.rules}
             .modal-footer
                 button.btn.btn-danger(type='button' data-dismiss='modal') Close

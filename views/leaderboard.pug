@@ -47,7 +47,7 @@ body
                 th.column5 
                   i.fal.fa-clock
                   | &nbsp; TIME (HH:MM:SS:MS)
-                // <th class="column6">Total</th>
+                
             tbody
               each i,j in contest.leaderboard
                 tr
@@ -65,88 +65,3 @@ body
                   td.column3 #{i.name} 
                   td.column4 #{i.points}
                   td.column5 #{time(i.timestamp)}
-                  // <td class="column6">$999.00</td>
-              //- tr
-              //-   td.column1 2017-09-29 01:22
-              //-   td.column2 200398
-              //-   td.column3 iPhone X 64Gb Grey
-              //-   td.column4 $999.00
-              //-   td.column5 02:20:35:203
-              //-   // <td class="column6">$999.00</td>
-              //- tr
-              //-   td.column1 2017-09-29 01:22
-              //-   td.column2 200398
-              //-   td.column3 iPhone X 64Gb Grey
-              //-   td.column4 $999.00
-              //-   td.column5 02:20:35:203
-              //-   // <td class="column6">$999.00</td>
-              //- tr
-              //-   td.column1 2017-09-29 01:22
-              //-   td.column2 200398
-              //-   td.column3 iPhone X 64Gb Grey
-              //-   td.column4 $999.00
-              //-   td.column5 02:20:35:203
-              //-   // <td class="column6">$999.00</td>
-              //- tr
-              //-   td.column1 2017-09-29 01:22
-              //-   td.column2 200398
-              //-   td.column3 iPhone X 64Gb Grey
-              //-   td.column4 $999.00
-              //-   td.column5 02:20:35:203
-                // <td class="column6">$999.00</td>
-  // ===============================================================================================
-  // <script src="vendor/jquery/jquery-3.2.1.min.js"></script>
-  // ===============================================================================================
-  // <script src="vendor/bootstrap/js/popper.js"></script>
-  // <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-  // ===============================================================================================
-  // <script src="vendor/select2/select2.min.js"></script>
-  // ===============================================================================================
-  // <script src="js/main.js"></script>
-
-//- body
-//-   h1(style="padding:20px;padding-left:50px").text-center #{contest.name} Leaderboard
-//-   div(style="padding-left:20px;padding-right:20px")
-//-     table.table.table-hover
-//-       thead.text-center
-//-         tr
-//-           th RANK
-//-           th USN / ID
-//-           th NAME
-//-           th POINTS
-//-           th TIME (HH:MM:SS:MS)
-//-       tbody
-//-         each i,j in contest.leaderboard
-//-           -if(j==0)
-//-             tr.table-success.text-center
-//-               td=j+1
-//-               td 
-//-                 a(href="viewProfile/"+i.usn+"" style="font-weight:bold;color:grey") #{i.usn}
-//-               td=i.name
-//-               td=i.points
-//-               td #{time(i.timestamp)}
-//-           -else if(j==1)
-//-             tr.table-primary.text-center
-//-               td=j+1
-//-               td 
-//-                 a(href="viewProfile/"+i.usn+"" style="font-weight:bold;color:grey") #{i.usn}
-//-               td=i.name
-//-               td=i.points
-//-               td #{time(i.timestamp)}
-//-           -else if(j==2)
-//-             tr.table-warning.text-center
-//-               td=j+1
-//-               td 
-//-                 a(href="viewProfile/"+i.usn+"" style="font-weight:bold;color:grey") #{i.usn}
-//-               td=i.name
-//-               td=i.points
-//-               td #{time(i.timestamp)}
-//-           -else
-//-             tr.text-center
-//-               td=j+1
-//-               td 
-//-                 a(href="viewProfile/"+i.usn+"" style="font-weight:bold;") #{i.usn}
-//-               td=i.name
-//-               td=i.points
-//-               td #{time(i.timestamp)}
-

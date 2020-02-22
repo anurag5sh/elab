@@ -26,20 +26,21 @@ block append head
     display: flex;
     flex-flow: row wrap;
     }
+
     body::-webkit-scrollbar {
-    width: 0.3em;
+      width: 5px;
     }
- 
+    
     body::-webkit-scrollbar-track {
-        background:white;
-        /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);*/
+      background: #ddd;
     }
     
     body::-webkit-scrollbar-thumb {
-      background-color: rgba(217, 217, 217,1.0);
-      outline: 1px solid slategrey;
+      background: #666; 
     }
+
   - active.contest="active"
+  
 block content
     section.module.parallax.parallax-1(data-type='background' data-speed='10')
       .parallax-container

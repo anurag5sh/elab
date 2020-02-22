@@ -173,9 +173,11 @@ each i in ques
           .col-lg-1
           .col-lg-4.col-md-4
             button.btn.btn-outline-danger(style='font-weight:bold;border-radius:20px;' data-toggle="modal" data-target="#deleteQuestion" data-id=i.qid data-name=i.name) 
-              i.fas.fa-trash &nbsp; Delete
+              i.fas.fa-trash 
+              | &nbsp; Delete
             button.btn.btn-outline-primary(style='font-weight:bold;border-radius:20px;' data-toggle="modal" data-target="#edit" data-id=i.qid)
-              i.fas.fa-edit &nbsp; Edit
+              i.fas.fa-edit 
+              | &nbsp;Edit
   br
   //- .container
   //-   .card(style='background-color: rgba(171, 188, 219, 0.616);')

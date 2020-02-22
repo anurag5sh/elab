@@ -1,7 +1,8 @@
-doctype html
-include nav
-html
-    head
+extends nav
+
+block append head
+        - navClass = "bg-fade trans";
+        - navStyle = "";
         meta(charset='utf-8')
         meta(name='viewport' content='width=device-width, initial-scale=1.0, shrink-to-fit=no')
         title Manage Contest
@@ -10,11 +11,28 @@ html
         //- link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css')
         
         link(rel="stylesheet", href="/css/contest_card.css")
+        link(rel="stylesheet", href="/assets/css/n.css")
         script(src="/js/contest_card.js")
+        script(src="/js/typewriter.js")
+        style.
+            .trans{
+                position:absolute;
+                right:60px;
+                left:60px;
+                padding-top:30px;
+                background:transparent;
+                background-color:transparent!important;
+            }
 
-    body(style="background-color:#f5f5f0;")
-        .jumbotron.text-left.bg-light.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
-            h1 MANAGE
+block content
+
+        section.module.parallax.parallax-1(data-type='background' data-speed='10')
+            .parallax-container
+                h2.typewrite(href='' data-period='2000' data-type='[ "MANAGE" ]' style="font-weight:bold")
+                    span.wrap        
+
+        //- .jumbotron.text-left.bg-light.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
+        //-     h1 MANAGE
         //- main.page.projets-page
         //-     section.portfolio-block.project-no-images
         //-         .container1

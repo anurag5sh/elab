@@ -1005,7 +1005,7 @@ if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
                 let leadObj = {};
                 leadObj.usn=usn;
                 leadObj.timestamp = new Date()- contest.timings.starts;
-                leadObj.name = req.session.fname;
+                leadObj.name = req.session.fname + " " + req.session.lname;
                 leadObj.year = year;
                 leadObj.points = total_points; 
                  
@@ -1066,7 +1066,7 @@ if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
             let leadObj = {};
             leadObj.usn=usn;
             leadObj.timestamp = new Date()- contest.timings.starts;
-            leadObj.name = req.session.fname;
+            leadObj.name = req.session.fname + " " + req.session.lname;
             leadObj.year = year;
             leadObj.points = total_points; 
              
@@ -1114,7 +1114,7 @@ if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
             let leadObj = {};
             leadObj.usn=usn;
             leadObj.timestamp = new Date() -  contest.timings.starts;
-            leadObj.name = req.session.fname;
+            leadObj.name = req.session.fname + " " + req.session.lname;
             leadObj.year = year;
             leadObj.points = total_points; 
              

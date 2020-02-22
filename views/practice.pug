@@ -1,12 +1,16 @@
 extends navbar
 block append head   
     - active.practice="active"
+    - navClass = "bg-fade trans";
+    - navStyle = "";
     meta(charset='utf-8')
     meta(name='viewport' content='width=device-width, initial-scale=1.0, shrink-to-fit=no')
     title Practice
     link(rel='stylesheet' href='list_style/bootstrap/css/new.css')
     link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,400,700')
     link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css')
+    link(rel="stylesheet", href="/assets/css/n.css")
+    script(src="/js/typewriter.js")
     style.
         body{
             background-color:#f5f5f0;
@@ -14,10 +18,22 @@ block append head
         .pull-right{
             float:right;
         }
+        .trans{
+        position:absolute;
+        right:60px;
+        left:60px;
+        padding-top:30px;
+        background:transparent;
+        background-color:transparent!important;
+        }
         
 block content
-        .jumbotron.text-left.bg-info.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
-            h1 PRACTICE
+        //- .jumbotron.text-left.bg-info.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
+        //-     h1 PRACTICE
+        section.module.parallax.parallax-1(data-type='background' data-speed='10')
+            .parallax-container
+                h2.typewrite(href='' data-period='2000' data-type='[ "PRACTICE" ]' style="font-weight:bold")
+                    span.wrap
         div#practice
             main.page.projets-page
                 section.portfolio-block.project-no-images

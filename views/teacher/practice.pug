@@ -1,6 +1,8 @@
 extends nav
 block append head
     - active.practice="active"
+    - navClass = "bg-fade trans";
+    - navStyle = "";
     meta(charset='utf-8')
     meta(name='viewport' content='width=device-width, initial-scale=1.0, shrink-to-fit=no')
     title Practice
@@ -14,6 +16,8 @@ block append head
     script(src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.js")
     link(href="https://fonts.googleapis.com/css?family=Crimson+Text&display=swap" rel="stylesheet")
     link(rel="stylesheet", href="/css/dracula.css")
+    link(rel="stylesheet", href="/assets/css/n.css")
+    script(src="/js/typewriter.js")
 
     script.  
         hljs.configure({   
@@ -26,10 +30,22 @@ block append head
         .pull-right{
                 float:right;
                 margin:5px;
-            }
+        }
+        .trans{
+        position:absolute;
+        right:60px;
+        left:60px;
+        padding-top:30px;
+        background:transparent;
+        background-color:transparent!important;
+        }
 block content
-        .jumbotron.text-left.bg-light.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
-            h1 PRACTICE
+        //- .jumbotron.text-left.bg-light.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
+        //-     h1 PRACTICE
+        section.module.parallax.parallax-1(data-type='background' data-speed='10')
+            .parallax-container
+                h2.typewrite(href='' data-period='2000' data-type='[ "PRACTICE" ]' style="font-weight:bold")
+                    span.wrap
         div#practice
             main.page.projets-page
                 section.portfolio-block.project-no-images
@@ -82,7 +98,7 @@ block content
                                                 td(style="width:150px;")
                                                     label Problem Statement:
                                                 td
-                                                    div#statement-editor(style="height:120px;")
+                                                    div#statement-editor(style="min-height:120px;height:auto;")
                                                     script.
                                                         const editor = new Quill('#statement-editor', {
                                                         modules: { 
@@ -183,7 +199,7 @@ block content
                                                 td(style="width:150px;")
                                                     label Problem Statement:
                                                 td
-                                                    div#statement-editor-edit(style="height:120px;")
+                                                    div#statement-editor-edit(style="min-height:120px;height:auto;")
                                                     script.
                                                         const editor_edit = new Quill('#statement-editor-edit', {
                                                         modules: { toolbar: [

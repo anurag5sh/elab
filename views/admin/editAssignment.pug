@@ -64,7 +64,7 @@ block content
                                                                 td(style="width:150px;")
                                                                     label Problem Statement:
                                                                 td
-                                                                    div#statement-editor(style="height:120px;")
+                                                                    div#statement-editor(style="min-height:120px;height:auto;")
                                                                     script.
                                                                         const editor = new Quill('#statement-editor', {
                                                                         modules: { toolbar: [
@@ -171,7 +171,7 @@ block content
                                                 td(style="width:150px;")
                                                     label Problem Statement:
                                                 td
-                                                    div#statement-editor-edit(style="height:120px;")
+                                                    div#statement-editor-edit(style="min-height:120px;height:auto;")
                                                     script.
                                                         const editor_edit = new Quill('#statement-editor-edit', {
                                                         modules: { toolbar: [

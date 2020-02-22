@@ -14,6 +14,20 @@ head
   link(rel='stylesheet' href='/css/jquery.classycountdown.css')
   link(href='/css/timer_styles.css' rel='stylesheet')
   link(href='/css/timer_responsive.css' rel='stylesheet')
+  style.
+    body::-webkit-scrollbar {
+    width: 0.3em;
+    }
+ 
+    body::-webkit-scrollbar-track {
+        background:white;
+        /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);*/
+    }
+    
+    body::-webkit-scrollbar-thumb {
+      background-color: rgba(217, 217, 217,1.0);
+      outline: 1px solid slategrey;
+    }
 .main-area
   section.left-section(style='background-image: url(/images/countdown-2-1000x1000.jpg)')
     .display-table.center-text
@@ -34,8 +48,15 @@ head
       .display-table-cell
         .main-content
           h1.title
-            b Code Quest
-          p This is a contest
+            b #{contest.name}
+          p.pl-2 #{contest.description}
+          - let startTime = (contest.timings.starts).toString()
+          - let G = startTime.indexOf("G")
+          - startTime = startTime.slice(0,G-1)
+          - let endTime = (contest.timings.ends).toString()
+          - G = endTime.indexOf("G")
+          - endTime = endTime.slice(0,G-1)
+          p.p-2(style="font-weight:bold") #{startTime} - #{endTime}
           .email-input-area
             // <input class="email-input" name="email" type="text" placeholder="Enter your email"/>
             button.submit-btn(name='submit' type='submit' data-toggle="modal" data-target="#rules_modal")

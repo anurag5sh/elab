@@ -367,8 +367,13 @@ html
         editor.setFontSize(parseInt($("#fontsize").val()));
       }
 
-      function setDefault(){setLang();setTheme();setFont();setup.hh=true;}
+      function setDefault(){setLang();setTheme();setFont();setup.hh=true;$('#lang').data('pre', $(this).val());}
       (!setup.hh?setDefault():void(0));
+
+      function save(lang){
+        const con = window.location.pathname.split("/");
+        $.post(`/contest/source/${con[2]}/${con[3]}`,{sourceCode:editor.getValue(),lang:lang});
+      }
       
 
       function readText() { window.location.href="#loader";

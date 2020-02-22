@@ -51,6 +51,10 @@ router.post('/:qid',authenticate,async (req,res) => {
   
   const testcase = question.test_cases;
 
+  if(req.body.source.substr(req.body.source.length-18) == "undefinedundefined")
+  req.body.source = req.body.source.substr(0,req.body.source.length-18);
+  else
+  return res.status(400).send("Unauthorized");
 
   if(req.body.source.trim()=='')
   return res.send("Source Code cannot be empty!");

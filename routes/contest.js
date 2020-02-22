@@ -580,6 +580,7 @@ router.get('/source/:curl/:qid',authenticate,contestAuth,async (req,res) =>{
 
         const submission = await Submission.find({usn:usn,qid:req.params.qid,language_id:req.query.lang}).lean();
         source = contest.submissions.concat(submission);
+        source = source.concat(req.session.contest.find(i => {return i.curl == req.params.curl && i.qid == req.params.qid}))
         if(source.length == 0){
             source=[{sourceCode:config.get(`source.${req.query.lang}`)}];
             return res.send(source);
@@ -598,6 +599,17 @@ router.get('/source/:curl/:qid',authenticate,contestAuth,async (req,res) =>{
     }
   
     res.send(source.sort((a,b)=>(a.timestamp>b.timestamp)?-1:1));
+});
+
+router.post('/source/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
+    let obj = {};
+    obj.curl = req.params.curl;
+    obj.qid=req.params.qid;
+    obj.lang = req.params.lang;
+    obj.sourceCode = req.body.sourceCode.substr(0,req.body.sourceCode.length-18);
+    obj.timestamp = new Date();
+
+    req.session.contest.push(obj);
 });
 
 //fetch source code for teacher

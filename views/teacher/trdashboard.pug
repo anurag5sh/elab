@@ -1,1 +1,174 @@
 include nav
+head
+  title Dashboard - Brand
+  link(rel='stylesheet' href='/assets/fonts/fontawesome-all.min.css')
+body
+br
+br
+#wrapper
+  #content-wrapper.d-flex.flex-column
+    #content
+      .container-fluid
+        .d-sm-flex.justify-content-between.align-items-center.mb-4
+          h3.text-dark.mb-0 Welcome #{session.fname}!
+        .row
+          .col-lg-7.col-xl-8
+            .card.shadow.mb-4
+              .card-header
+                h6.text-primary.font-weight-bold.m-0 Contest Report
+              .card-body
+                .chart-area(style='height: 400px;')
+                  canvas#myChart
+          .col-lg-5.col-xl-4
+            .card.shadow.mb-4
+              .card.text-white.bg-secondary.shadow
+                .card-body(onclick="location.href='/contest/create'" style='cursor: pointer;')
+                  p.m-0 Create Contest
+                  p.text-white-50.small.m-0 Contest
+            .card.shadow.mb-4
+              .card.text-white.bg-primary.shadow
+                .card-body(onclick="location.href='/assignment/manage'" style='cursor: pointer;')
+                  p.m-0 Manage Assignments
+                  p.text-white-50.small.m-0 Assignments
+            .card.shadow.mb-4
+              .card.text-white.bg-success.shadow
+                .card-body(onclick="location.href='/practice?create'" style='cursor: pointer;')
+                  p.m-0 Create Question
+                  p.text-white-50.small.m-0 Practice 
+            .card.shadow.mb-4
+              .card.text-white.bg-info.shadow
+                .card-body(onclick="location.href='/contest/manage'" style='cursor: pointer;')
+                  p.m-0 Manage Contest
+                  p.text-white-50.small.m-0 Contest
+      .textcon(style='text-align: center; height: 50px; float: left;transform: rotate(90deg);margin-top: 60px;width: 150px;position: absolute;left: 0;')
+        h2 Contest
+      .textcon(style='text-align: center; height: 50px; float: right;margin-top: 90px;width: 150px;cursor: pointer;' onclick="location.href='#'")
+        h2 Contest
+        i.fas.fa-arrow-circle-right.fa-3x
+      .container
+        div
+          //- <div class="carousel-inner">
+          //- <div class="carousel-item px-5 active">
+          .row
+            .col-4
+              .card
+                img.card-img-top(src='https://placehold.it/400x300' alt='Card image cap')
+                .card-body
+                  h5.card-title Card title
+            .col-4
+              .card
+                img.card-img-top(src='https://placehold.it/400x300' alt='Card image cap')
+                .card-body
+                  h5.card-title Card title
+            .col-4
+              .card
+                img.card-img-top(src='https://placehold.it/400x300' alt='Card image cap')
+                .card-body
+                  h5.card-title Card title
+          //- row
+          //- </div>
+          //- </div>
+          //-
+            </div>
+            </div>
+          //-
+            <a class="carousel-control-prev" href="#carousel-card" role="button" data-slide="prev" >
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carousel-card" role="button" data-slide="next" >
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+            </a>
+        //-
+          <style>
+          #carousel-card .carousel-control-next,
+          #carousel-card .carousel-control-prev {
+          width: 5%;
+          background-color: #333;
+          }
+          </style>
+      br
+      br
+      .textcon(style='text-align: center; height: 50px; float: left;transform: rotate(90deg);margin-top: 60px;width: 150px;position: absolute;left: 0;')
+        h2 Practice
+      .textcon(style='text-align: center; height: 50px; float: right;margin-top: 90px;width: 150px;cursor: pointer;' onclick="location.href='#'")
+        h2 Practice
+        i.fas.fa-arrow-circle-right.fa-3x
+      .container
+        div
+          //- <div class="carousel-inner">
+          //- <div class="carousel-item px-5 active">
+          .row
+            .col-4
+              .card
+                img.card-img-top(src='https://placehold.it/400x300' alt='Card image cap')
+                .card-body
+                  h5.card-title Card title
+            .col-4
+              .card
+                img.card-img-top(src='https://placehold.it/400x300' alt='Card image cap')
+                .card-body
+                  h5.card-title Card title
+            .col-4
+              .card
+                img.card-img-top(src='https://placehold.it/400x300' alt='Card image cap')
+                .card-body
+                  h5.card-title Card title
+          //- row
+          //- </div>
+          //- </div>
+          //-
+            </div>
+            </div>
+          //-
+            <a class="carousel-control-prev" href="#carousel-card" role="button" data-slide="prev" >
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carousel-card" role="button" data-slide="next" >
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+            </a>
+        //-
+          <style>
+          #carousel-card .carousel-control-next,
+          #carousel-card .carousel-control-prev {
+          width: 5%;
+          background-color: #333;
+          }
+          </style>
+      script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js')
+      script.
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'bar',
+        // The data for our dataset
+        data: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [{
+        label: 'Signed Up',
+        backgroundColor: 'rgb(0, 99, 132)',
+        // borderColor: 'rgb(0, 99, 132)',
+        data: [0, 10, 5, 2, 20, 90, 45]
+        },{
+        label: 'Submission',
+        backgroundColor: 'rgb(200, 0, 0)',
+        // borderColor: 'rgb(0, 99, 132)',
+        data: [6, 2, 8, 6, 10, 12, 15]
+        }]
+        },
+        // Configuration options go here
+        options: {
+        tooltips:{
+        mode:'index',
+        },
+        // maintainAspectRatio:false;
+        }
+        });
+
+      script(src='/assets/js/chart.min.js')
+      script(src='/assets/js/bs-charts.js')
+      script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js')
+      script(src='/assets/js/theme.js')

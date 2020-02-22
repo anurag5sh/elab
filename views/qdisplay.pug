@@ -42,11 +42,14 @@ head
     }
     #countdown-wrap {
     width: 100%;
-    height: 300px;
+    height: auto;
     padding: 20px;
     font-family: arial;
     max-width: 650px;
     margin: 20px auto 300px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16), 0px 3px 6px rgba(0, 0, 0, 0.23);
+    border-radius: 1%;
+    background-color: white;
     }
     #goal {
     font-size: 20px;
@@ -117,9 +120,9 @@ head
     var minutes = Math.floor((distance % _hour) / _minute);
     var seconds = Math.floor((distance % _minute) / _second);
     document.getElementById(id).innerHTML = days /*+ ' days'*/;
-    document.getElementById(id).innerHTML += hours + 'hrs ';
-    document.getElementById(id).innerHTML += minutes + 'mins ';
-    document.getElementById(id).innerHTML += seconds + 'secs';
+    document.getElementById(id).innerHTML += hours + ' hrs ';
+    document.getElementById(id).innerHTML += minutes + ' mins ';
+    document.getElementById(id).innerHTML += seconds + ' secs ';
 
     const overall = end-starts;
     const elapsed = distance;
@@ -197,12 +200,12 @@ body()
 
     .col-lg-5.col-md-2(style='margin-top:23px;align-items: initial;')
       .box
-        #countdown-wrap(style='width: 60%;margin:auto; background-color: lavender; margin-bottom: 25px;')
+        #countdown-wrap(style='width: 60%;margin:auto;  margin-bottom: 25px;')
           -if(contest.timings.ends > new Date())
             #goal
-              i.fas.fa-hourglass-half
+              i.fal.fa-hourglass-half.fa-lg
               | &nbsp; 
-              | Time remaining
+              label(style="font-size:22px") Time remaining
             br
             #glass
               #progress
@@ -212,19 +215,26 @@ body()
                 #countdown.
                 //- span.goal-label Days to End
           -else
-            p Contest has ended.
+            div.text-center
+              i.fad.fa-lock-alt.fa-2x.text-danger(style="--fa-secondary-color: black;--fa-secondary-opacity: 1.0")
+            br
+            p.text-center(style="font-weight:bold") 
+              | Contest has ended.
           hr
-          h5 Created by: #{contest.createdByName}
-        #countdown-wrap(style='width: 60%;margin:auto; background-color: lavender; margin-bottom: 10px; height: 160px;')
+          div.text-center
+            i.fal.fa-user-edit.fa-2x
+          br
+          h5.text-center Created by: #{contest.createdByName}
+        #countdown-wrap(style='width: 60%;margin:auto;  margin-bottom: 10px;')
           .row
             .col.text-left
-              a.btn(href='#' style='font-size:15px;' data-toggle="modal" data-target="#myModal")
-                i.fas.fa-info
-                label(style='cursor: pointer;') &nbsp;&nbsp; Rules
+              a.btn(href='#' style='font-size:20px;' data-toggle="modal" data-target="#myModal")
+                i.fab.fa-readme
+                label(style='cursor: pointer;') &nbsp; Rules
           .row
             .col.text-left
-              a.btn(href="/contest/"+contest.url+"/leaderboard" style='font-size:15px;')
-                i.fas.fa-list
+              a.btn(href="/contest/"+contest.url+"/leaderboard" style='font-size:20px;')
+                i.fad.fa-poll-people
                 label(style='cursor: pointer;') &nbsp; Leaderboard
           -if(session.staff_id == contest.createdBy || (session.staff_id && contest.timings.ends < new Date()))
             .row

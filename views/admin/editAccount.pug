@@ -73,7 +73,7 @@ block content
                         .form-group.row
                             label.col-sm-2(for="active") Account active
                             .col-sm-4
-                                select#activeT.form-control.custom-select(name="active")
+                                select#active.form-control.custom-select(name="active")
                                     option(value="false") False
                                     option(value="true") True                        
                         br
@@ -85,7 +85,7 @@ block content
                                 .input-group
                                     input.form-control.password#password(type="password", value="" name="password")
                                     .input-group-append
-                                        button.btn#viewPass(type="Button")
+                                        button.btn.viewPass(type="Button")
                                             i.fas.fa-eye-slash(aria-hidden="true")
                     .modal-footer
                         input.btn.btn-success(type='Submit' value="Submit")
@@ -140,7 +140,7 @@ block content
                                 .input-group
                                     input.form-control.password#passwordT(type="password", value="" name="passwordT")
                                     .input-group-append
-                                        button.btn#viewPass(type="Button")
+                                        button.btn.viewPass(type="Button")
                                             i.fas.fa-eye-slash(aria-hidden="true")
                     .modal-footer
                         input.btn.btn-success(type='Submit' value="Submit")
@@ -287,7 +287,7 @@ block content
             })
             return false;
         }
-        $("#viewPass").on('click',function() {
+        $(".viewPass").on('click',function() {
         var $pwd = $(".password");
         if ($pwd.attr('type') === 'password') {
             $pwd.attr('type', 'text');

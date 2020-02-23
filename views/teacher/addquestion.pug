@@ -169,7 +169,7 @@ each i in ques
           .col-lg-4.col-md-3(style='color:black')
             label Difficulty: #{i.difficulty}
           .col-lg-3.col-md-3(style='color:black')
-            label(for='points') Points: 
+            label(for='points') Points: #{i.totalPoints}
           .col-lg-1
           .col-lg-4.col-md-4
             button.btn.btn-outline-danger(style='font-weight:bold;border-radius:20px;' data-toggle="modal" data-target="#deleteQuestion" data-id=i.qid data-name=i.name) 
@@ -217,17 +217,17 @@ each i in ques
                                               input#name-e(type='text' name='name' required style="width:50%").form-control
                                       tr
                                           td
-                                              label(for='difficult') Difficulty
+                                              label(for='difficult-e') Difficulty
                                           td
                                           
                                               .form-group
-                                                select#difficult.form-control(name='difficulty')
+                                                select#difficult-e.form-control(name='difficulty')
                                                   option(value='Easy') Easy
                                                   option(value='Medium') Medium
                                                   option(value='Difficult') Difficult
                                       tr
                                           td
-                                            label(for='description') Description:
+                                            label(for='description-e') Description:
                                           td
                                             input#description-e(type='text' name='description' required).form-control                                     
                                       tr

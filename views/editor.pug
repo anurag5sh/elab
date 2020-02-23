@@ -1,12 +1,9 @@
-doctype html
+include navbar
 html(lang='en')
   head
-    title ELAB HKBK
-    include navbar
+    title=question.name
     script(src='/src-min-noconflict/ace_modified.js' charset='utf-8')
     script(src='/src-min-noconflict/ext-language_tools.js')
-    script(src='/assets/js/jquery.min.js')
-    link(rel='stylesheet' href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css')
     link(rel="stylesheet", href="/css/nice-select.css")
     script(src="/js/jquery.nice-select.min.js")
     link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap")
@@ -16,7 +13,9 @@ html(lang='en')
     link(rel="stylesheet", href="/css/katex.min.css")
     script(src="/js/katex.min.js")
     link(href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap" rel="stylesheet")
-    
+    link(rel="stylesheet", href="/fontawesome/all.min.css")
+    script(src="/fontawesome/all.min.js")
+
     style(type='text/css').
       #editor {
       position: relative;
@@ -155,6 +154,7 @@ html(lang='en')
          
       }
   body
+    a.btn.btn-primary(href="/practice/"+question.qid+"/submissions") View Submissions
     br
     nav(aria-label='breadcrumb' style="color:black;width:65%;margin-left:40px")
       ol.breadcrumb(style="padding-left:20px")
@@ -190,15 +190,15 @@ html(lang='en')
         
     .card(style="width:90%; display:inline-block;")
       label.language(for="lang") Language
-      select.option-disp#lang(onchange='setup();')
+      select.option-disp#lang(onchange='setup().setLang();')
+        option(value='c50') C
+        option(value='c++54') C++
+        option(value='c#51') C#
         option(value='python71') Python
         option(value='java62') Java
         option(value='javascript63') Javascript
-        option(value='c_cpp50') C
-        option(value='c_cpp54') C++
-        option(value='csharp51') C#
       label.theme(for="theme") Theme
-      select.option-disp#theme(onchange='setup();')
+      select.option-disp#theme(onchange='setup().setTheme();')
         option(value='monokai') Monokai
         option(value='chaos') Chaos
         option(value='dracula') Dracula
@@ -208,7 +208,7 @@ html(lang='en')
         option(value='chrome') Chrome
         option(value='github') Github
       label.font_size Font Size
-      select.option-disp#fontsize( onchange='setup();')
+      select.option-disp#fontsize( onchange='setup().setFont();')
         option(value='18') &nbsp; &nbsp; 18 &nbsp; &nbsp;
         option(value='24') &nbsp; &nbsp; 24 &nbsp; &nbsp;
         option(value='30') &nbsp; &nbsp; 30 &nbsp; &nbsp;
@@ -246,21 +246,66 @@ html(lang='en')
       function setup(){const editor = ace.edit("editor");
       ace.config.set("basePath", "/src-min-noconflict");
       ace.require("ace/ext/language_tools");
-      editor.setTheme("ace/theme/"+$("#theme").val());
-      let l = $("#lang").val();
-      l=l.slice(0,-2);
-      editor.session.setMode("ace/mode/"+l);
       editor.getSession().setUseWrapMode(true);
-      
-
-      editor.setOptions({
+       editor.setOptions({
       enableBasicAutocompletion: true,
       enableSnippets: true,
       enableLiveAutocompletion: true,
       showPrintMargin: false,
-      fontSize:parseInt($("#fontsize").val()),
       indentedSoftWrap: false
       });
+
+      function source(lang){const con = window.location.pathname.split("/");
+        const pre = $("#lang").data('pre');
+        $.post(`/practice/source/${con[2]}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
+          $("#lang").data('pre', $("#lang").val());
+        
+          if(!lang) lang='';
+          $.get(`/practice/source/${con[2]}`,{lang:lang},function (data,status){
+              if(lang){
+              editor.setValue(data);
+              
+              }
+              else{
+              }
+          }).fail((err)=>{
+            toastr.error(err.responseText);
+          });
+        }).fail((err)=>{
+            toastr.error(err.responseText);
+          });
+        
+      }
+
+      function setLang(){ let m='';
+        const l = $("#lang").val();
+        switch (parseInt(l.substr(l.length-2))){
+          case 50 : m='c_cpp';break;
+          case 51 : m='csharp';break;
+          case 54 : m='c_cpp';break;
+          default: m=l.slice(0,-2); 
+        }
+        
+        editor.session.setMode("ace/mode/"+m);
+        source(l.substr(l.length-2));
+      }
+
+      setInterval(function(){
+        const con = window.location.pathname.split("/");
+        const pre = $("#lang").data('pre');
+        $.post(`/practice/source/${con[2]}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
+          $("#lang").data('pre', $("#lang").val());});
+      },60000*5);
+
+      function setTheme(){
+        editor.setTheme("ace/theme/"+$("#theme").val());
+      }
+      function setFont(){
+        editor.setFontSize(parseInt($("#fontsize").val()));
+      }
+
+      function setDefault(){$('#lang').data('pre', $("#lang").val());setLang();setTheme();setFont();setup.hh=true;}
+      (!setup.hh?setDefault():void(0))
 
      function readText() { window.location.href="#loader";
       let l = document.getElementById("lang").value;
@@ -315,6 +360,11 @@ html(lang='en')
       document.getElementById("loader").style.display="none";
       document.getElementById("out").style.display="block";
       window.location.href="#opbox";
+      //save
+      const con = window.location.pathname.split("/");
+      const pre = $("#lang").data('pre');
+      $.post(`/practice/source/${con[2]}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
+      $("#lang").data('pre', $("#lang").val());});
         }
       }).fail((err)=>{toastr.error(err.responseText)});
       
@@ -368,11 +418,16 @@ html(lang='en')
           
           document.getElementById("loader").style.display="none";
           document.getElementById("out").style.display="block";
-          
+          window.location.href="#opbox";
+          //save
+          const con = window.location.pathname.split("/");
+          const pre = $("#lang").data('pre');
+          $.post(`/practice/source/${con[2]}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
+          $("#lang").data('pre', $("#lang").val());});
         }).fail((err)=>{toastr.error(err.responseText)});
         });
       }
-      return {run:readText,submit:submission}
+      return {run:readText,submit:submission,setLang:setLang,setTheme:setTheme,setFont:setFont}
       }
 
       $(document).ready(function() {

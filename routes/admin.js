@@ -9,6 +9,9 @@ const {Student, validate} = require('../models/student');
 const {Teacher,validateTeacher} = require('../models/teacher');
 const {Assignment,validateAssignment} = require('../models/assignment');
 const {AssignmentQ,validateAQ} = require('../models/assignmentQ');
+const {ArchivedStudents} = require('../models/archivedStudents');
+const {Submission} = require('../models/submission');
+const {aSubmission} = require('../models/assignmentSubmission');
 const fs = require('fs');
 const Joi = require("@hapi/joi");
 const winston = require('winston');
@@ -23,7 +26,14 @@ let storage = multer.diskStorage({
     }
     })
    
-let upload = multer({ storage: storage })
+let upload = multer({ storage: storage,
+  fileFilter : async (req, file, cb) => { 
+    if (file.mimetype == "text/csv"){
+    cb(null, true);
+      } else { req.fileTypeError = 'Only .csv format allowed!';
+        cb(new Error('Only .csv format allowed!'));
+      }
+  } }).single('csv');
 
 router.get('/', admin, (req,res)=> {
     res.render('admin/admin',{name:req.session.fname});
@@ -205,7 +215,20 @@ router.get('/academic',admin, (req,res)=>{
   res.render('admin/academicYear');
 });
 
-router.post('/add', upload.single('csv'), admin,async (req, res, next) => {
+router.post('/add', admin,async (req, res, next) => {
+    let jsonArray = null;
+  upload(req, res, async function (err) {
+    if (err instanceof multer.MulterError) {
+        winston.error(err);
+    } else if (err) {
+      if(req.fileTypeError)
+      return res.status(400).send(req.fileTypeError);
+      else
+      {
+        winston.error(err);
+        return res.end();
+      }
+    }
     const file = req.file;
     if (!file) {
       const error = new Error('Please upload a file');
@@ -213,17 +236,15 @@ router.post('/add', upload.single('csv'), admin,async (req, res, next) => {
       return next(error.message);
     }
     
-    const jsonArray=await csv().fromFile(file.path);
+    jsonArray=await csv().fromFile(file.path);
     fs.unlink(file.path , async (err) => {
       if (err) {
         throw(err);
       }
     });
-    
+
     if(req.body.type_csv == "student"){
       let studentArray = [];
-
-      
 
       for(let i=0;i<jsonArray.length;i++){
 
@@ -272,7 +293,11 @@ router.post('/add', upload.single('csv'), admin,async (req, res, next) => {
       else{
         res.send("Select account type");
       }   
-  })
+
+  });
+    
+    
+  });
 //--------------------Accounts end------------------------------//
 
 
@@ -381,13 +406,106 @@ router.get('/promote',admin, async (req,res)=>{
   await Student.updateMany({},{$inc : {year:1}}).catch((err)=>{
     winston.error(err);
     res.status(400).send("Unable to perform this operation.");
-  }).then(()=>{
-    res.send("Operation Successful!")
+  }).then(async ()=>{
+    new Promise(async function (resolve,reject){
+      try{
+        const archive = await Student.find({year:5});
+        archive.forEach(async (item)=>{
+        let swap = new ArchivedStudents(item.toObject());
+        item.remove();
+        swap.save();
+
+        await Submission.deleteMany({usn:item.usn});
+        await aSubmission.deleteMany({usn:item.usn});
+        if(!item.profile_image.includes('default')){
+          fs.unlink('./public/'+item.profile_image, async (err) => {
+            if (err) {
+              throw(err);
+            }
+          });
+        }
+        });
+      }
+      catch(err){ winston.error(err);
+        reject();
+      }
+      resolve();
+    }).then(()=>{
+      res.send("Operation Successful!");
+    })
+    .catch((err)=>{
+      res.status(500).send("Something went wrong!");
+    });
+    
   });
 }); 
 
 router.post('/yearback',admin, async (req,res)=>{
-  
+  let jsonArray = null;
+  upload(req, res, async function (err) {
+    if (err instanceof multer.MulterError) {
+        winston.error(err);
+    } else if (err) {
+      if(req.fileTypeError)
+      return res.status(400).send(req.fileTypeError);
+      else
+      {
+        winston.error(err);
+        return res.end();
+      }
+    }
+    const file = req.file;
+    if (!file) {
+      const error = new Error('Please upload a file');
+      error.httpStatusCode = 400;
+      return next(error.message);
+    }
+    
+    jsonArray=await csv().fromFile(file.path);
+    fs.unlink(file.path , async (err) => {
+      if (err) {
+        throw(err);
+      }
+    });
+
+    
+    if(Object.keys(jsonArray[0])[0] != 'usn')
+      return res.status(400).send("Error! Please follow the template format.");
+    
+    let usnArray =[];
+    jsonArray.forEach((item)=>{
+      usnArray.push(item.usn.toUpperCase());
+    })
+
+    await Student.updateMany({usn:{$in:usnArray}},{$inc:{year:-1}}).then(async ()=>{
+      const archive = await ArchivedStudents.find({usn:{$in:usnArray}});
+      new Promise(async function(resolve,reject){
+        try{
+          archive.forEach(async (item)=>{
+            let swap = new Student(item.toObject());
+            item.remove();
+    
+            swap.profile_image = '/profileImage/default.png';
+            swap.year--;
+            swap.save();
+          });
+        }
+        catch(err){
+          winston.error(err);
+          reject();
+        }
+        resolve();
+      }).then(()=>{
+        res.send("Operation successful!");
+      })
+      .catch((err)=>{
+        res.send("Something went wrong!");
+      });
+    }).catch((err)=>{
+      res.status(500).send("Something went wrong!");
+    });
+  });
+
 });
 
 

@@ -34,7 +34,7 @@ html(lang='en')
             a.nav-link(data-widget='pushmenu' href='#')
               i.fas.fa-bars
           li.nav-item.d-none.d-sm-inline-block
-            a.nav-link(href='/') Home
+            a.nav-link(href='/') Teacher's Dashboard
           li.nav-item.d-none.d-sm-inline-block
             a.nav-link(href='/logout') Logout
       //  /.navbar 
@@ -49,7 +49,7 @@ html(lang='en')
           //  Sidebar user panel (optional) 
           .user-panel.mt-3.pb-3.mb-3.d-flex
             .image
-              img.img-circle.elevation-2(src='/adminLTE/dist/img/avatar5.png' alt='User Image')
+              img.img-circle.elevation-2(src=session.profile_image alt='User Image')
             .info
               a.d-block(href='#') Admin
           //  Sidebar Menu 

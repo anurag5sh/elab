@@ -406,12 +406,6 @@ html
           $(".custom").remove();  
           $('#opbox').append('<div class="card custom" style="width:650px;;"><label><b>Custom TestCase</b></label><hr style="width:25%;margin-top:0rem;"><label><b>Input</b></label><textarea readonly="readonly" class="bg-col" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:auto;">'+ document.getElementById("custom_input").value+'</textarea ><br><label><b>Output</b></label><textarea readonly="readonly" class="bg-col" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:125px;">'+data[0].output+'</textarea>') 
           document.getElementById("loader").style.display="none";  
-
-          //save
-          const con = window.location.pathname.split("/");
-          const pre = $("#lang").data('pre');
-          $.post(`/contest/source/${con[2]}/${con[3]}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
-          $("#lang").data('pre', $("#lang").val());});
         }
         else{
         if(!Array.isArray(data)){
@@ -452,6 +446,11 @@ html
       document.getElementById("out").style.display="block";
       window.location.href="#opbox";
         }
+      //save
+      const con = window.location.pathname.split("/");
+      const pre = $("#lang").data('pre');
+      $.post(`/contest/source/${con[2]}/${con[3]}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
+      $("#lang").data('pre', $("#lang").val());});
       }).fail((err)=>{
           toastr.error(err.responseText);
           document.getElementById("loader").style.display="none";
@@ -554,7 +553,7 @@ html
           
           document.getElementById("loader").style.display="none";
           document.getElementById("out").style.display="block";
-          
+           window.location.href="#opbox";
         }).fail((err)=>{
           toastr.error(err.responseText);
           document.getElementById("loader").style.display="none";

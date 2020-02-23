@@ -30,6 +30,7 @@ block append head
   - active.contest="active"
   
 block content
+  .WRAPPER
     section.module.parallax.parallax-1(data-type='background' data-speed='10')
       .parallax-container
         h2.typewrite(href='' data-period='2000' data-type='[ "CONTESTS" ]' style="font-weight:bold")
@@ -63,3 +64,7 @@ block content
             p.description=i.description
             footer.content__footer
                 a(href="/contest/"+i.url) View Contest
+    .push1
+    .push
+  footer.bg-dark(class="FOOTER")
+        div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020

@@ -135,130 +135,134 @@ head
     timer = setInterval(showRemaining, 1000);
     }
 body
-
-  .row(style="width:100%")
-    .col-lg-7
-      div(style="padding:25px;padding-bottom:0px")
-        nav(aria-label='breadcrumb' style="color:black;")
-          ol.breadcrumb(style="padding-left:20px")
-            li.breadcrumb-item
-              a(href='/contest') Contest
-            li.breadcrumb-item
-              a(href='/contest/'+contest.url)=contest.name
-  .row(style="width:100%")
-    .col-lg-7.pl-5.pr-4
-      h1(style="font-family: 'Palanquin Dark';color:#666666;letter-spacing:0.8px;font-size:43px")=contest.name
-      hr(style='border: 1px solid red;')
-  .row(style="width:100%")
-    .col-lg-7.col-md-10
-      each i,j in questions
-        -if(i.difficulty === 'Easy')
-          br
-          .row
-            .col-lg-8.col-md-8
-              .shadow.p-3.rounded(style='background-color: #8bc34a; width: 700px;  margin-left: 25px;')
-                h2.questions #{i.name} 
-                .row
-                  .col-lg-10.col-md-10
-                    p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;") #{i.description}
-                .row
-                  .col-lg-3.col-md-3(style='color:white')
-                    label(style="letter-spacing:0.5px;font-weight:bold" for='difficulty') Difficulty: 
-                    label(style="letter-spacing:0.5px;") #{i.difficulty}
-                  .col-lg-3.col-md-3(style='color:white')
-                    label(style="letter-spacing:0.5px;font-weight:bold" for='points') Points: 
-                    label(style="letter-spacing:0.5px") #{totalPoints[j]}
-                  .col-lg-4
-                  .col-lg-2.col-md-2
-                    a.btn.btn-outline-light.hovering(style='font-weight:bold;border-radius:20px;' href="/contest/"+contest.url+"/"+i.qid) Solve
-        -else if(i.difficulty === 'Medium')
-          br
-          .row
-            .col-lg-8.col-md-8
-              .shadow.p-3.rounded(style='background-color: #fbc02d; width: 700px; margin-left: 25px; ')
-                h2.questions #{i.name} 
-                .row
-                  .col-lg-10.col-md-10
-                    p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;") #{i.description}
-                .row
-                  .col-lg-3.col-md-3(style='color:white')
-                    label(for='difficulty') Difficulty: #{i.difficulty}
-                  .col-lg-3.col-md-3(style='color:white')
-                    label(for='points') Points: #{totalPoints[j]}
-                  .col-lg-4
-                  .col-lg-2.col-md-2
-                    a.btn.btn-outline-light.hovering2(style='font-weight:bold;border-radius:20px;' href="/contest/"+contest.url+"/"+i.qid) Solve
-        -else if(i.difficulty === 'Hard')
-          br
-          .row
-            .col-lg-8.col-md-8
-              .shadow.p-3.rounded(style='background-color: #ff4d4d;  width: 700px; margin-left: 25px; ')
-                h2.questions #{i.name} 
-                .row
-                  .col-lg-10.col-md-10
-                    p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;") #{i.description}
-                .row
-                  .col-lg-3.col-md-3(style='color:white')
-                    label(for='difficulty') Difficulty: #{i.difficulty}
-                  .col-lg-3.col-md-3(style='color:white')
-                    label(for='points') Points: #{totalPoints[j]}
-                  .col-lg-4
-                  .col-lg-2.col-md-2
-                    a.btn.btn-outline-light.hovering1(style='font-weight:bold;border-radius:20px;' href="/contest/"+contest.url+"/"+i.qid) Solve
-      br  
-
-    .col-lg-5.col-md-2(style='margin-top:23px;align-items: initial;')
-      .box
-        #countdown-wrap(style='width: 60%;margin:auto;  margin-bottom: 25px;')
-          -if(contest.timings.ends > new Date())
-            #goal
-              i.fal.fa-hourglass-half.fa-lg.fa-spin
-              | &nbsp; 
-              label(style="font-size:22px") Time remaining
+  .WRAPPER
+    .row(style="width:100%")
+      .col-lg-7
+        div(style="padding:25px;padding-bottom:0px")
+          nav(aria-label='breadcrumb' style="color:black;")
+            ol.breadcrumb(style="padding-left:20px")
+              li.breadcrumb-item
+                a(href='/contest') Contest
+              li.breadcrumb-item
+                a(href='/contest/'+contest.url)=contest.name
+    .row(style="width:100%")
+      .col-lg-7.pl-5.pr-4
+        h1(style="font-family: 'Palanquin Dark';color:#666666;letter-spacing:0.8px;font-size:43px")=contest.name
+        hr(style='border: 1px solid red;')
+    .row(style="width:100%")
+      .col-lg-7.col-md-10
+        each i,j in questions
+          -if(i.difficulty === 'Easy')
             br
-            #glass
-              #progress
-            .goal-stat(style="margin:auto;")
-              span.goal-number
-                br
-                #countdown(style="width:250px")
-                //- span.goal-label Days to End
-          -else
+            .row
+              .col-lg-8.col-md-8
+                .shadow.p-3.rounded(style='background-color: #8bc34a; width: 700px;  margin-left: 25px;')
+                  h2.questions #{i.name} 
+                  .row
+                    .col-lg-10.col-md-10
+                      p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;") #{i.description}
+                  .row
+                    .col-lg-3.col-md-3(style='color:white')
+                      label(style="letter-spacing:0.5px;font-weight:bold" for='difficulty') Difficulty: 
+                      label(style="letter-spacing:0.5px;") #{i.difficulty}
+                    .col-lg-3.col-md-3(style='color:white')
+                      label(style="letter-spacing:0.5px;font-weight:bold" for='points') Points: 
+                      label(style="letter-spacing:0.5px") #{totalPoints[j]}
+                    .col-lg-4
+                    .col-lg-2.col-md-2
+                      a.btn.btn-outline-light.hovering(style='font-weight:bold;border-radius:20px;' href="/contest/"+contest.url+"/"+i.qid) Solve
+          -else if(i.difficulty === 'Medium')
+            br
+            .row
+              .col-lg-8.col-md-8
+                .shadow.p-3.rounded(style='background-color: #fbc02d; width: 700px; margin-left: 25px; ')
+                  h2.questions #{i.name} 
+                  .row
+                    .col-lg-10.col-md-10
+                      p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;") #{i.description}
+                  .row
+                    .col-lg-3.col-md-3(style='color:white')
+                      label(for='difficulty') Difficulty: #{i.difficulty}
+                    .col-lg-3.col-md-3(style='color:white')
+                      label(for='points') Points: #{totalPoints[j]}
+                    .col-lg-4
+                    .col-lg-2.col-md-2
+                      a.btn.btn-outline-light.hovering2(style='font-weight:bold;border-radius:20px;' href="/contest/"+contest.url+"/"+i.qid) Solve
+          -else if(i.difficulty === 'Hard')
+            br
+            .row
+              .col-lg-8.col-md-8
+                .shadow.p-3.rounded(style='background-color: #ff4d4d;  width: 700px; margin-left: 25px; ')
+                  h2.questions #{i.name} 
+                  .row
+                    .col-lg-10.col-md-10
+                      p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;") #{i.description}
+                  .row
+                    .col-lg-3.col-md-3(style='color:white')
+                      label(for='difficulty') Difficulty: #{i.difficulty}
+                    .col-lg-3.col-md-3(style='color:white')
+                      label(for='points') Points: #{totalPoints[j]}
+                    .col-lg-4
+                    .col-lg-2.col-md-2
+                      a.btn.btn-outline-light.hovering1(style='font-weight:bold;border-radius:20px;' href="/contest/"+contest.url+"/"+i.qid) Solve
+        br  
+
+      .col-lg-5.col-md-2(style='margin-top:23px;align-items: initial;')
+        .box
+          #countdown-wrap(style='width: 60%;margin:auto;  margin-bottom: 25px;')
+            -if(contest.timings.ends > new Date())
+              #goal
+                i.fal.fa-hourglass-half.fa-lg.fa-spin
+                | &nbsp; 
+                label(style="font-size:22px") Time remaining
+              br
+              #glass
+                #progress
+              .goal-stat(style="margin:auto;")
+                span.goal-number
+                  br
+                  #countdown(style="width:250px")
+                  //- span.goal-label Days to End
+            -else
+              div.text-center
+                i.fad.fa-lock-alt.fa-2x.text-danger(style="--fa-secondary-color: black;--fa-secondary-opacity: 1.0")
+              br
+              p.text-center(style="font-weight:bold") 
+                | Contest has ended.
+            hr
             div.text-center
-              i.fad.fa-lock-alt.fa-2x.text-danger(style="--fa-secondary-color: black;--fa-secondary-opacity: 1.0")
+              i.fal.fa-user-edit.fa-2x
             br
-            p.text-center(style="font-weight:bold") 
-              | Contest has ended.
-          hr
-          div.text-center
-            i.fal.fa-user-edit.fa-2x
-          br
-          h5.text-center Created by: #{contest.createdByName}
-        #countdown-wrap(style='width: 60%;margin:auto;  margin-bottom: 10px;')
-          .row
-            .col.text-left
-              a.btn(href='#' style='font-size:20px;' data-toggle="modal" data-target="#myModal")
-                i.fab.fa-readme
-                label(style='cursor: pointer;') &nbsp; Rules
-          .row
-            .col.text-left
-              a.btn(href="/contest/"+contest.url+"/leaderboard" style='font-size:20px;')
-                i.fad.fa-poll-people
-                label(style='cursor: pointer;') &nbsp; Leaderboard
-          -if(session.staff_id == contest.createdBy || (session.staff_id && contest.timings.ends < new Date()))
+            h5.text-center Created by: #{contest.createdByName}
+          #countdown-wrap(style='width: 60%;margin:auto;  margin-bottom: 10px;')
             .row
               .col.text-left
-                a.btn(href='/contest/'+contest.url+'/submissions' style='font-size:15px;')
-                  i.fas.fa-chalkboard-teacher
-                  label(style='cursor: pointer;') &nbsp; View Submissions
-    br
-    #myModal.modal.fade
-      .modal-dialog(style="width:50%;max-width:70%")
-          .modal-content
-            .modal-header
-              h4.modal-title Rules
-              button.close(type='button' data-dismiss='modal') &times;
-            .modal-body
-              div(style="white-space:pre-wrap") #{contest.rules}
-            .modal-footer
-                button.btn.btn-danger(type='button' data-dismiss='modal') Close
+                a.btn(href='#' style='font-size:20px;' data-toggle="modal" data-target="#myModal")
+                  i.fab.fa-readme
+                  label(style='cursor: pointer;') &nbsp; Rules
+            .row
+              .col.text-left
+                a.btn(href="/contest/"+contest.url+"/leaderboard" style='font-size:20px;')
+                  i.fad.fa-poll-people
+                  label(style='cursor: pointer;') &nbsp; Leaderboard
+            -if(session.staff_id == contest.createdBy || (session.staff_id && contest.timings.ends < new Date()))
+              .row
+                .col.text-left
+                  a.btn(href='/contest/'+contest.url+'/submissions' style='font-size:15px;')
+                    i.fas.fa-chalkboard-teacher
+                    label(style='cursor: pointer;') &nbsp; View Submissions
+      br
+      #myModal.modal.fade
+        .modal-dialog(style="width:50%;max-width:70%")
+            .modal-content
+              .modal-header
+                h4.modal-title Rules
+                button.close(type='button' data-dismiss='modal') &times;
+              .modal-body
+                div(style="white-space:pre-wrap") #{contest.rules}
+              .modal-footer
+                  button.btn.btn-danger(type='button' data-dismiss='modal') Close
+    .push1
+    .push
+  footer.bg-dark(class="FOOTER")
+    div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020

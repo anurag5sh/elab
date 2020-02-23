@@ -110,14 +110,13 @@ section.module.parallax-3 {
   }
 }
 /*footer*/
-.footer .container-fluid {
+/*.footer .container-fluid {
   height: auto;
 }
 .footer {
   position: absolute;
   bottom: 0;
   width: 100%;
-  /* Set the fixed height of the footer here */
   height: 60px;
   line-height: 60px;
 }
@@ -132,7 +131,8 @@ footer .container-fluid p {
   color: #ddd;
   padding-left: 1em;
   padding-right: 2em;
-}
+}*/
+
 @media(max-width: 768px){
     .col-md-4 {
       text-align: center;

@@ -23,21 +23,25 @@ block append head
 block content
     //- .jumbotron.text-left.bg-light.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
     //-         h1 ASSIGNMENTS
-    section.module.parallax.parallax-1(data-type='background' data-speed='10')
-        .parallax-container
-            h2.typewrite(href='' data-period='2000' data-type='[ "ASSIGNMENT" ]' style="font-weight:bold")
-                span.wrap
-    br
-    .col-3(style="margin:auto;")
-        select#sem(name="sem").form-control.custom-select.type
-                option(selected,disabled) Select Semester
-                each i in current
-                    option(value=i.id) #{i.sem}, Set #{i.id.substr(9)}
-    main.page.projets-page
-        section.portfolio-block.project-no-images
-            .container1
-                .row1#quesList
-                    
+    .WRAPPER
+        section.module.parallax.parallax-1(data-type='background' data-speed='10')
+            .parallax-container
+                h2.typewrite(href='' data-period='2000' data-type='[ "ASSIGNMENT" ]' style="font-weight:bold")
+                    span.wrap
+        br
+        .col-3(style="margin:auto;")
+            select#sem(name="sem").form-control.custom-select.type
+                    option(selected,disabled) Select Semester
+                    each i in current
+                        option(value=i.id) #{i.sem}, Set #{i.id.substr(9)}
+        main.page.projets-page
+            section.portfolio-block.project-no-images
+                .container1
+                    .row1#quesList
+        .push1
+        .push
+    footer.bg-dark(class="FOOTER")
+        div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020                
 
 
     script.

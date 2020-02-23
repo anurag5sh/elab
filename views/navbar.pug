@@ -17,6 +17,26 @@ html
 			- let active = {practice:"",contest:"",assignment:"",profile:""} 
 			- let navClass = "bg-dark";
 			- let navStyle = "background-color:#1aa3ff!important";
+			style.
+				/* For Footer*/
+
+				html, body {
+					height: 100%;
+					margin: 0;
+				}
+				.WRAPPER {
+					min-height: 100%;
+
+					/* Equal to height of footer */
+					/* But also accounting for potential margin-bottom of last child */
+					margin-bottom: -50px;
+				}
+				.FOOTER,
+				.push,.push1 {
+					height: 50px!important;
+				}
+
+				/* End for Footer*/
 	body
 		div
 			nav.navbar.navbar-dark.navbar-expand-md.navigation-clean(style=navStyle,class=navClass)

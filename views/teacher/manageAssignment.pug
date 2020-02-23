@@ -1,6 +1,7 @@
 extends nav
 
 block append head
+    title Manage Assignment
     link(rel="stylesheet", href="/adminLTE/dist/css/daterangepicker.css")
     script(src="/adminLTE/dist/js/moment.min.js")
     script(src="/adminLTE/dist/js/daterangepicker.min.js")
@@ -17,13 +18,16 @@ block append head
             font-size:20px;
             font-weight:normal;
         }
+        body{
+            background-color:#f5f5f0;
+        }
     - active.assignment="active"
 
 block content
-    #editAssignment
+    #editAssignment.mt-5
         .card(style="width:90%").mx-auto
                 .card-header.bg-info.text-center
-                    h3.card-title Edit Assignment
+                    h3.card-title.text-light.lb_heading(style="letter-spacing:0.5px") Edit Assignment
                 .card-body
                     .col-3(style="margin:auto;")
                         select#sem(name="sem").form-control.custom-select.type
@@ -140,9 +144,9 @@ block content
                     .modal.fade#loading(data-backdrop="static" role="dialog" tabindex="-1" data-keyboard="false")
                         .modal-dialog.modal-dialog-centered.text-center(role="document")
                             span.fas.fa-circle-notch.fa-spin.fa-3x.w-100
-        .card(style="width:90%;").mx-auto
+        .card(style="width:90%;").mx-auto.mt-5
             .card-header.bg-info.text-center
-                h3.card-title Questions
+                h3.card-title.text-light.lb_heading(style="letter-spacing:0.5px") Questions
             .card-body.table-responsive.p-0
                 table.table.table-hover
                     thead

@@ -446,6 +446,8 @@ router.get('/submissions/:curl',authenticate,teacher,async (req,res) =>{
         data.time = time_noDays(contest.submissions[i].timestamp);
         data.points =contest.submissions[i].points;
         data.status = contest.submissions[i].status;
+        const l = lang(contest.submissions[i].language_id);
+        data.lang = l.substr(0,l.length-2); 
 
         SendData.push(data);
     }
@@ -453,7 +455,38 @@ router.get('/submissions/:curl',authenticate,teacher,async (req,res) =>{
     res.send(SendData);
 
 });
-  
+
+//adding solution to a question in contest
+router.get('/solution/:curl/:qid',authenticate,teacher, async (req,res)=>{
+    const contest = await Contest.findOne({url:req.params.curl}).lean().select('questions createdBy timings');
+    if(!contest) return res.status(404).send('Contest not found!');
+
+    const question = await ContestQ.findOne({qid:req.params.qid}).lean().select('solution');
+    if(!question) return res.status(400).send("Invalid ID");
+
+    if(contest.createdBy == req.session.staff_id || req.session.isAdmin || contest.timings.ends < new Date())
+    res.send(solution);
+    
+
+});
+
+router.post('/solution/:curl/:qid',authenticate,teacher, async (req,res)=>{
+    const contest = await Contest.findOne({url:req.params.curl}).lean().select('questions createdBy');
+    if(!contest) return res.status(404).send('Contest not found!');
+
+    const question = await ContestQ.findOne({qid:req.params.qid}).select('solution');
+    if(!question) return res.status(400).send("Invalid ID");
+
+    if(contest.createdBy == req.session.staff_id || req.session.isAdmin){
+        question.solution.language = req.body.language;
+        question.solution.sourceCode = req.body.sourceCode;
+        res.send("Saved");
+    }
+    else{
+        res.status(401).end();
+    }
+
+});
 //getting a question to edit
 router.get('/edit/:curl/:qid',authenticate,teacher, async (req,res)=>{
     const contest = await Contest.findOne({url:req.params.curl}).lean().select('questions');

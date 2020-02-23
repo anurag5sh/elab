@@ -12,11 +12,43 @@ html
         script(src='/assets/bootstrap/js/bootstrap.min.js')
         script(src="/js/toastr.min.js")
         link(rel="stylesheet", href="/css/toastr.min.css")
+        link(rel="stylesheet", href="/css/body-scrollbar.css")
+        link(href="https://fonts.googleapis.com/css?family=Palanquin+Dark:500&display=swap" rel="stylesheet")
         block head
             style.
                 .colo{
                     color:white;
                 }
+                .lb_heading{
+                    font-family: 'Palanquin Dark';
+                    color:#666666;
+                    /*padding-left:10px;*/
+                    letter-spacing:0.8px
+                }
+                @font-face {
+                font-family: OpenSans-Regular;
+                src: url('/fonts/OpenSans-Regular.ttf'); 
+                }
+                .fontStyle{
+                    font-family:OpenSans-Regular;
+                    font-size:1rem;
+                    color:#263238;
+                }
+                html, body {
+                    height: 100%;
+                    margin: 0;
+                    }
+                    .WRAPPER {
+                    min-height: 100%;
+
+                    /* Equal to height of footer */
+                    /* But also accounting for potential margin-bottom of last child */
+                    margin-bottom: -50px;
+                    }
+                    .FOOTER,
+                    .push,.push1 {
+                    height: 50px;
+                    }
             - let active={practice:"",contest:"",assignment:"",profile:""}
             - let navStyle = "background-color:#1aa3ff;";
             - let navClass = "";

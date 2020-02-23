@@ -131,17 +131,21 @@ head
     }
     timer = setInterval(showRemaining, 1000);
     }
-body()
+body
 
-  div(style="padding:25px;padding-bottom:10px")
-    nav(aria-label='breadcrumb' style="color:black;width:56.5%;")
-      ol.breadcrumb(style="padding-left:20px")
-        li.breadcrumb-item
-          a(href='/contest') Contest
-        li.breadcrumb-item
-          a(href='/contest/'+contest.url)=contest.name
-    h1(style="font-family: 'Open Sans', sans-serif;")=contest.name
-    hr(style='border: 1px solid red;width:56.5%;margin-left:0px')
+  .row
+    .col-lg-7
+      div(style="padding:25px;padding-bottom:0px")
+        nav(aria-label='breadcrumb' style="color:black;")
+          ol.breadcrumb(style="padding-left:20px")
+            li.breadcrumb-item
+              a(href='/contest') Contest
+            li.breadcrumb-item
+              a(href='/contest/'+contest.url)=contest.name
+  .row(style="width:100%")
+    .col-lg-7.pl-5.pr-4
+      h1(style="font-family: 'Palanquin Dark';color:#666666;letter-spacing:0.8px;font-size:43px")=contest.name
+      hr(style='border: 1px solid red;')
   .row(style="width:100%")
     .col-lg-7.col-md-10
       each i,j in questions
@@ -150,15 +154,17 @@ body()
           .row
             .col-lg-8.col-md-8
               .shadow.p-3.rounded(style='background-color: #00bcd4; width: 700px;  margin-left: 25px;')
-                h3(style="font-family: 'Vast Shadow', cursive;color:white")  #{i.name} 
+                h2(style="font-family: 'Palanquin Dark';color:white;font-size:34px;letter-spacing:0.4px")  #{i.name} 
                 .row
                   .col-lg-10.col-md-10
                     p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;") #{i.description}
                 .row
                   .col-lg-3.col-md-3(style='color:white')
-                    label(for='difficulty') Difficulty: #{i.difficulty}
+                    label(style="letter-spacing:0.5px;font-weight:bold" for='difficulty') Difficulty: 
+                    label(style="letter-spacing:0.5px;") #{i.difficulty}
                   .col-lg-3.col-md-3(style='color:white')
-                    label(for='points') Points: #{totalPoints[j]}
+                    label(style="letter-spacing:0.5px;font-weight:bold" for='points') Points: 
+                    label(style="letter-spacing:0.5px") #{totalPoints[j]}
                   .col-lg-4
                   .col-lg-2.col-md-2
                     a.btn.btn-outline-light.hovering3(style='font-weight:bold;border-radius:20px;' href="/contest/"+contest.url+"/"+i.qid) Solve

@@ -1,7 +1,11 @@
 include nav
 head
-  title Dashboard - Brand
-  link(rel='stylesheet' href='/assets/fonts/fontawesome-all.min.css')
+  title Dashboard
+  link(rel='stylesheet' href='fontawesome/all.min.css')
+  script(src='/js/Chart.min.js')
+  script(src='/js/jquery.easing.js')
+  script(src='/assets/js/theme.js')
+
 body
   br
   br
@@ -143,7 +147,7 @@ body
     .push          
   footer.bg-dark(class="FOOTER")
     div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
-script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js')
+
 script.
   var ctx = document.getElementById('myChart').getContext('2d');
   var chart = new Chart(ctx, {
@@ -173,7 +177,3 @@ script.
   }
   });
 
-script(src='/assets/js/chart.min.js')
-script(src='/assets/js/bs-charts.js')
-script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js')
-script(src='/assets/js/theme.js')

@@ -465,8 +465,10 @@ router.get('/solution/:curl/:qid',authenticate,teacher, async (req,res)=>{
     if(!question) return res.status(400).send("Invalid ID");
 
     if(contest.createdBy == req.session.staff_id || req.session.isAdmin || contest.timings.ends < new Date())
-    res.send(solution);
-    
+        if(question.solution) res.send(question.solution);
+        else res.send('');
+    else
+    res.status(404).end();
 
 });
 
@@ -480,6 +482,7 @@ router.post('/solution/:curl/:qid',authenticate,teacher, async (req,res)=>{
     if(contest.createdBy == req.session.staff_id || req.session.isAdmin){
         question.solution.language = req.body.language;
         question.solution.sourceCode = req.body.sourceCode;
+        question.save();
         res.send("Saved");
     }
     else{

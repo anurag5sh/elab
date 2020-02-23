@@ -184,7 +184,7 @@ each i in ques
             button.btn.btn-outline-primary(style='font-weight:bold;border-radius:20px;' data-toggle="modal" data-target="#edit" data-id=i.qid)
               i.fas.fa-edit 
               | &nbsp;Edit
-            button.btn.btn-outline-success(style="font-weight:bold;border-radius:20px;") Solution
+            button.btn.btn-outline-success(style="font-weight:bold;border-radius:20px;" data-toggle="modal" data-target="#solution" data-id=i.qid) Solution
   br
   //- .container
   //-   .card(style='background-color: rgba(171, 188, 219, 0.616);')
@@ -320,6 +320,33 @@ each i in ques
                 #dbodyQ
             .modal-footer
                 button.btn.btn-danger(type='button' data-dismiss='modal' onclick="deleteQ()") Delete
+                button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+
+.modal.fade#solution(tabindex ="-1" role="dialog" )
+    .modal-dialog.modal-lg
+        form#formSolution(onsubmit="return solution()")
+          .modal-content
+              .modal-header
+                h4.modal-title Add a Solution
+              .modal-body
+                .form-group.row
+                  label.col-sm-2(for="languageCode") Language:
+                  .col-sm-4
+                    select#languageCode.form-control(name='language' ,required)
+                      option(selected,disabled,value="") Select Language
+                      option(value='C') C
+                      option(value='C++') C++
+                      option(value='Java') Java
+                      option(value='Python') Python
+                      option(value='Javascript') Javascript
+                      option(value='C#') C#
+                .form-group.row
+                  label.col-sm-2(for="solutionCode") Source Code:
+                  .col-sm-4
+                    textarea#solutionCode.form-control( required cols="30", rows="3" value="" name="sourceCode")
+                p(style="display:none;")#qidForSolution
+              .modal-footer
+                input.btn.btn-success(type='submit' value="Save")
                 button.btn.btn-secondary(type='button' data-dismiss='modal') Close
 
 script.

@@ -64,6 +64,11 @@ const contestQSchema = new mongoose.Schema({
     },
     description:{
         type:String
+    },
+    solution:{
+        language:{type:String},
+        sourceCode:{type:String},
+        _id:false
     }
     
 });

@@ -248,7 +248,7 @@ body
           -if(session.staff_id == contest.createdBy || (session.staff_id && contest.timings.ends < new Date()))
             .row
               .col.text-left
-                a.btn(href='/contest/'+contest.url+'/submissions' style='font-size:15px;')
+                a.btn(href='/contest/'+contest.url+'/submissions' style='font-size:20px;')
                   i.fas.fa-chalkboard-teacher
                   label(style='cursor: pointer;') &nbsp; View Submissions
     br

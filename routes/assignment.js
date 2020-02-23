@@ -305,7 +305,7 @@ router.post('/:qid',authenticate,async (req,res)=>{
                     let leadObj = {};
                     leadObj.usn=usn;
                     leadObj.timestamp = new Date()- assignment.duration.starts;
-                    leadObj.name = req.session.fname;
+                    leadObj.name = req.session.fname + " " + req.session.lname;
                     leadObj.points = total_points; 
                     
                     assignment.leaderboard.push(leadObj);
@@ -362,7 +362,7 @@ router.post('/:qid',authenticate,async (req,res)=>{
                 let leadObj = {};
                 leadObj.usn=usn;
                 leadObj.timestamp = new Date()- assignment.duration.starts;
-                leadObj.name = req.session.fname;
+                leadObj.name = req.session.fname + " " + req.session.lname;
                 leadObj.points = total_points; 
                 
                 assignment.leaderboard.push(leadObj);
@@ -409,7 +409,7 @@ router.post('/:qid',authenticate,async (req,res)=>{
                 let leadObj = {};
                 leadObj.usn=usn;
                 leadObj.timestamp = new Date() -  assignment.duration.starts;
-                leadObj.name = req.session.fname;
+                leadObj.name = req.session.fname + " " + req.session.lname;
                 leadObj.points = total_points; 
                 
                 assignment.leaderboard.push(leadObj);

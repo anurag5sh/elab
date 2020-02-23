@@ -25,43 +25,44 @@ body
             a(href='/contest/'+contest.url)=contest.name
           li.breadcrumb-item.active(aria-current='page') Leaderboard
   h1.text-center.pb-3 Leaderboard
-  .limiter
-    .container-table100
-      .wrap-table100
-        .table100
-          table
-            thead
-              tr.table100-head
-                th.column1 
-                  i.fal.fa-flag-checkered 
-                  | &nbsp; RANK
-                th.column2 
-                  i.fal.fa-id-card
-                  | &nbsp; USN/ID
-                th.column3 
-                  i.fal.fa-user 
-                  | &nbsp; Name
-                th.column4
-                  i.fal.fa-bullseye-arrow
-                  | &nbsp; POINTS
-                th.column5 
-                  i.fal.fa-clock
-                  | &nbsp; TIME (HH:MM:SS:MS)
-                
-            tbody
-              each i,j in contest.leaderboard
-                tr
-                  td.column1
-                    if(j+1 == 1)
-                      i.fad.fa-trophy-alt.fa-2x(style="color:#FFDB19")
-                    else if(j+1 == 2)
-                      i.fad.fa-trophy-alt.fa-2x(style="color:#c6c6c6")
-                    else if(j+1 == 3)
-                      i.fad.fa-trophy-alt.fa-2x(style="color:#E67300")
-                    else
-                      div(style="padding-left:12px;font-weight:bold") #{j+1}
-                  td.column2
-                    a(href="viewProfile/"+i.usn+"") #{i.usn}
-                  td.column3 #{i.name} 
-                  td.column4 #{i.points}
-                  td.column5 #{time(i.timestamp)}
+  .lb
+    .limiter
+      .container-table100
+        .wrap-table100
+          .table100
+            table
+              thead
+                tr.table100-head
+                  th.column1 
+                    i.fal.fa-flag-checkered 
+                    | &nbsp; RANK
+                  th.column2 
+                    i.fal.fa-id-card
+                    | &nbsp; USN/ID
+                  th.column3 
+                    i.fal.fa-user 
+                    | &nbsp; Name
+                  th.column4
+                    i.fal.fa-bullseye-arrow
+                    | &nbsp; POINTS
+                  th.column5 
+                    i.fal.fa-clock
+                    | &nbsp; TIME (HH:MM:SS:MS)
+                  
+              tbody
+                each i,j in contest.leaderboard
+                  tr
+                    td.column1
+                      if(j+1 == 1)
+                        i.fad.fa-trophy-alt.fa-2x(style="color:#FFDB19")
+                      else if(j+1 == 2)
+                        i.fad.fa-trophy-alt.fa-2x(style="color:#c6c6c6")
+                      else if(j+1 == 3)
+                        i.fad.fa-trophy-alt.fa-2x(style="color:#E67300")
+                      else
+                        div(style="padding-left:12px;font-weight:bold") #{j+1}
+                    td.column2 #{i.usn}
+                    td.column3 
+                      a(href="/viewProfile/"+i.usn+"") #{i.name} 
+                    td.column4 #{i.points}
+                    td.column5 #{time(i.timestamp)}

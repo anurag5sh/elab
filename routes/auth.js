@@ -409,35 +409,23 @@ router.get('/forgotPassword',async (req,res)=>{
 router.post('/forgotPassword',async (req,res)=>{
 
   const schema = Joi.object({
-    email: Joi.string().min(5).max(255).required().email(),
-    type:Joi.string().required().error(new Error('Please select the account type'))
+    email: Joi.string().min(5).max(255).required().email()
   });
 
   const {error} = schema.validate(req.body);
   if(error ) return res.status(400).send(error.message);
 
   let user; let token;
-  if(req.body.type == 'student'){
     user = await Student.findOne({email:req.body.email});
-    if(!user) return res.status(400).send('User not found!');
+    if(!user) {
+      user = await Teacher.findOne({email:req.body.email});
+      if(!user) return res.status(400).send('User not found!');
+    }
 
-    token = crypto.randomBytes(20).toString('hex');
-    user.resetToken = token;
-    user.tokenExpires = Date.now() + 3600000;
-    await user.save();
-  }
-  else if(req.body.type == 'teacher'){
-
-    user = await Teacher.findOne({email:req.body.email});
-    if(!user) return res.status(400).send('User not found!');
-
-    token = crypto.randomBytes(20).toString('hex');
-    user.resetToken = token;
-    user.tokenExpires = Date.now() + 3600000;
-    await user.save();
-
-  }
-  else return res.status(400).send("Invalid account type");
+  token = crypto.randomBytes(20).toString('hex');
+  user.resetToken = token;
+  user.tokenExpires = Date.now() + 3600000;
+  await user.save();
 
   const transporter = nodemailer.createTransport({
     service: 'gmail',

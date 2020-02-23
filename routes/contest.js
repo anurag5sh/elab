@@ -63,11 +63,11 @@ router.get('/',authenticate, async (req,res)=> {
     res.render('teacher/trcontest',{contest:contest});
     }
     else{
-    let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn}],isReady:true}).select('name url description').lean();
+    let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn}],isReady:true}).select('name url description questions timings').lean();
     const grp = await CustomGroup.find({'usn':req.session.usn}).lean().select({id:1,_id:0});
     let gid=[];
     for(i of grp) gid.push(i.id);
-    contest = contest.concat(await Contest.find({customGroup:{$in:gid},isReady:true}).lean().select('name url description'));
+    contest = contest.concat(await Contest.find({customGroup:{$in:gid},isReady:true}).lean().select('name url description questions timings'));
     if(!contest) return res.render('contest',{contest:[]});
 
     res.render('contest',{contest:contest});

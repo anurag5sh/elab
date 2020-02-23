@@ -260,8 +260,13 @@ router.get('/manage/:name',authenticate,teacher, async (req,res) => {
     if(!custom) custom=[];
 
     let questions = [];
-    for(i of contest.questions){
-        questions.push(await ContestQ.findOne({qid:i}).lean());
+    for(i of contest.questions){ let points=0;
+        let q = await ContestQ.findOne({qid:i}).lean();
+        for(i of q.test_cases){
+            points+=i.points;
+        }
+        q.totalPoints = points;
+        questions.push(q);
     }
     let signed_up =[0,0,0,0];
     for(i of contest.signedUp){
@@ -973,7 +978,7 @@ if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
     req.session.code = req.body.source + req.params.qid;
     const usn = req.session.usn || req.session.staff_id.toString();
     const year = req.session.year || '-';
-    const user_submission = contest.submissions.find(i => i.usn === usn && i.qid === req.params.qid);
+    const user_submission = contest.submissions.find(i => i.usn == usn && i.qid == req.params.qid);
     
     if(!user_submission){ 
         

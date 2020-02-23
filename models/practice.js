@@ -63,7 +63,17 @@ const practiceSchema = new mongoose.Schema({
     },
     difficulty:{
         type:String
-    }
+    },
+    submissions:[{
+        timestamp:{type:Date},
+        language_id:{type:Number},
+        usn:{type:String},
+        year:{type:String},
+        sourceCode:{type:String},
+        status:{type:String},
+        points:{type: Number,default:0},
+        _id : false
+      }]
     
 });
 

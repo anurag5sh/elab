@@ -93,6 +93,11 @@ router.get('/source/:qid',authenticate,async (req,res) =>{
 
         const submission = await aSubmission.find({usn:req.session.usn,qid:req.params.qid,language_id:req.query.lang}).lean();
         source = assignment.submissions.concat(submission);
+        if(req.session.assignment){
+            const index = req.session.assignment.findIndex(i => {return i.curl == req.params.curl && i.qid == req.params.qid && i.lang == req.query.lang})
+            if(index != -1)
+            source = source.concat(req.session.assignment[index])
+        }
         if(source.length == 0){
             source=[{sourceCode:config.get(`source.${req.query.lang}`)}];
             return res.send(source);
@@ -110,7 +115,40 @@ router.get('/source/:qid',authenticate,async (req,res) =>{
         }
     }
   
-    res.send(source.sort((a,b)=>(a.timestamp>b.timestamp)?-1:1));
+    res.send(source.sort((a,b)=>(a.timestamp>b.timestamp)?1:-1));
+});
+
+router.post('/source/:qid',authenticate,async (req,res) =>{
+    req.body.sourceCode = req.body.sourceCode.substr(0,req.body.sourceCode.length-18);
+    if(req.body.sourceCode == '') return res.send('');
+    if(req.session.assignment){
+        const found = req.session.assignment.findIndex(i =>{return i.qid == req.params.qid && i.curl == req.params.curl && i.lang == req.body.lang.substr(req.body.lang.length-2) });
+        if(found!=-1){
+            req.session.assignment[found].sourceCode = req.body.sourceCode;
+            req.session.assignment[found].timestamp = new Date();
+        }
+        else{
+            let obj = {};
+            obj.curl = req.params.curl;
+            obj.qid=req.params.qid;
+            obj.lang = req.body.lang.substr(req.body.lang.length-2);
+            obj.sourceCode = req.body.sourceCode;
+            obj.timestamp = new Date();
+            req.session.assignment.push(obj);
+        }
+    }
+    else{
+        let obj = {};
+        obj.curl = req.params.curl;
+        obj.qid=req.params.qid;
+        obj.lang = req.body.lang.substr(req.body.lang.length-2);
+        obj.sourceCode = req.body.sourceCode;
+        obj.timestamp = new Date();
+        req.session.assignment = [];
+        req.session.assignment.push(obj);
+    }
+
+    res.send('');
 });
 
 //teacher editing details

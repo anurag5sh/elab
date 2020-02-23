@@ -353,7 +353,7 @@ router.post('/', async (req, res) => {
     return res.send('/dashboard');
   }
 
-  let teacher = await Teacher.findOne({ email: req.body.email }).select('fname lname password staff_id isAdmin active lastLogin recovery_email');
+  let teacher = await Teacher.findOne({ email: req.body.email }).select('fname lname password staff_id isAdmin active lastLogin recovery_email profile_image');
   if (!teacher) return res.status(400).send("Invalid Email or Password.");
 
   const validPassword = await bcrypt.compare(req.body.password, teacher.password);
@@ -365,6 +365,7 @@ router.post('/', async (req, res) => {
   req.session.lname = teacher.lname;
   req.session.staff_id = teacher.staff_id;
   req.session.isAdmin = teacher.isAdmin;
+  req.session.profile_image = teacher.profile_image;
 
   if(teacher.recovery_email == null){ req.session.incomplete = true;
     if(teacher.lastLogin == null){

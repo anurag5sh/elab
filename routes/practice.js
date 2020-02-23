@@ -8,6 +8,8 @@ const {Practice,validatePractise} = require('../models/practice');
 const moment = require('moment');
 const request = require("request-promise");
 const teacher = require('../middleware/teacher');
+const config = require('config');
+const {Student} = require('../models/student');
 
 
 
@@ -31,18 +33,116 @@ router.get('/', authenticate,async (req,res)=> {
   });
 
 
+//fetch source code for student
+router.get('/source/:qid',authenticate,async (req,res)=>{
+  const question = await Practice.findOne({qid:req.params.qid}).lean().select('submissions');
+  if(!question) return res.status(400).send("Question not found!!");
+
+  let temp=null;
+  let source = question.submissions.find( i => i.usn == req.session.usn && i.lang == req.query.lang);
+  if(req.session.practice){
+    temp = req.session.practice.find(i => i.usn == req.session.usn && i.lang==req.query.lang);
+  }
+  if(!source) {
+    source=config.get(`source.${req.query.lang}`);
+    if(temp) source = temp.sourceCode;
+    return res.send(source);
+  }
+  else{
+    if(temp && temp.timestamp>source.timestamp)
+    source=temp;
+    res.send(source.sourceCode);
+  }
+});
+
+//temp saving code
+router.post('/source/:qid',authenticate,async (req,res)=>{
+  req.body.sourceCode = req.body.sourceCode.substr(0,req.body.sourceCode.length-18);
+  if(req.body.sourceCode == '') return res.send('');
+  if(req.session.practice){
+    const found = req.session.practice.findIndex(i =>{return i.qid == req.params.qid && i.lang == req.body.lang.substr(req.body.lang.length-2) });
+    if(found!=-1){
+        req.session.practice[found].sourceCode = req.body.sourceCode;
+        req.session.practice[found].timestamp = new Date();
+    }
+    else{
+        let obj = {};
+        obj.qid=req.params.qid;
+        obj.usn = req.session.usn;
+        obj.lang = req.body.lang.substr(req.body.lang.length-2);
+        obj.sourceCode = req.body.sourceCode;
+        obj.timestamp = new Date();
+        req.session.practice.push(obj);
+    }
+}
+else{
+    let obj = {};
+    obj.qid=req.params.qid;
+    obj.usn = req.session.usn;
+    obj.lang = req.body.lang.substr(req.body.lang.length-2);
+    obj.sourceCode = req.body.sourceCode;
+    obj.timestamp = new Date();
+    req.session.practice = [];
+    req.session.practice.push(obj);
+}
+res.send('');
+});
+
 router.get('/:qid', authenticate, async (req,res)=>{
   const question = await Practice.findOne({qid: req.params.qid}).lean();
   if(!question) return res.send("Question not found!!");
 
   if(req.session.staff_id){
-    res.render('teacher/editor', {question : _.pick(question,['name','statement','constraints', 'input_format','output_format','sample_cases'])});
+    res.render('teacher/editor', {question : _.pick(question,['qid','name','statement','constraints', 'input_format','output_format','sample_cases'])});
 
   }
   else{
-    res.render('editor', {question : _.pick(question,['name','statement','constraints', 'input_format','output_format','sample_cases'])});
+    res.render('editor', {question : _.pick(question,['name','statement','constraints', 'input_format','output_format','sample_cases','qid'])});
 
   }
+});
+
+//source code of a submission
+router.get('/source/:qid/:usn',authenticate,async (req,res)=>{
+  const question = await Practice.findOne({qid:req.params.qid},{submissions:{$elemMatch:{usn:req.params.usn,status:"Accepted"}}},{_id:0,'submissions.$':1}).lean();
+  if(!question) return res.status(404).send("Not found!");
+
+  res.send(question.submissions[0].sourceCode);
+});
+
+//submissions view page
+router.get('/:qid/submissions',authenticate,async (req,res)=>{
+  const question = await Practice.findOne({qid:req.params.qid}).lean().select('name qid');
+  res.render('practiceSub',{question:question});
+});
+
+//data for submission table
+router.get('/:qid/submissions/list',authenticate,async (req,res)=>{
+  const question = await Practice.findOne({qid:req.params.qid},{submissions:{$elemMatch:{status:"Accepted"}}}).lean().select('submissions');
+  if(!question) return res.status(400).send("Invalid ID");
+
+  if(question.submissions == []) res.send([]);
+
+  let students=[];
+  question.submissions.forEach((item)=>{
+    students.push(item.usn);
+  });
+
+  let studentData = await Student.find({usn:{$in:students}}).select('usn fname lname -_id').lean();
+  if(!studentData) studentData = [];
+
+  let SendData=[];
+  for(i=0;i<question.submissions.length;i++){ let data={};
+    data.usn = question.submissions[i].usn;
+    data.name = studentData[i].fname + " " + studentData[i].lname;
+    data.time = question.submissions[i].timestamp.toLocaleString();
+    data.points = question.submissions[i].points;
+    data.status = question.submissions[i].status;
+    data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+studentData[i].usn+'"  href="#">View Code</a>';
+  
+    SendData.push(data);
+  }
+  res.send(SendData);
 });
 
 router.post('/:qid',authenticate,async (req,res) => {
@@ -50,6 +150,10 @@ router.post('/:qid',authenticate,async (req,res) => {
   if(!question) return res.send("Question not found!!");
   
   const testcase = question.test_cases;
+  let question_points = 0;
+  testcase.forEach((item,index) =>{
+    question_points +=item.points;
+  });
 
   if(req.body.source.substr(req.body.source.length-18) == "undefinedundefined")
   req.body.source = req.body.source.substr(0,req.body.source.length-18);
@@ -83,7 +187,49 @@ router.post('/:qid',authenticate,async (req,res) => {
         }
         desc.push({id:data.status.id,description:data.status.description,points:point}); 
       }
-      
+    
+    let total_points  = 0;
+    desc.forEach((item,index) =>{
+            total_points+= item.points;
+    });
+    const user_submission = question.submissions.findIndex(i => i.usn == req.session.usn);
+    if(user_submission == -1){
+      let obj = {};
+      obj.usn = req.session.usn;
+      obj.timestamp = new Date();
+      obj.sourceCode = req.body.source;
+      obj.language_id = req.body.language;
+      obj.year  = req.session.year;
+      obj.points = total_points;
+      if(total_points == question_points){
+        obj.status = "Accepted";
+      }
+      else if(total_points == 0 ){
+          obj.status = "Wrong Answer";
+      }
+      else{
+          obj.status = "Partially Accepted";
+      }
+      question.submissions.push(obj);
+      question.save();
+    }
+    else{
+      if(total_points >= question.submissions[user_submission].points){
+        question.submissions[user_submission].points = total_points;
+        question.submissions[user_submission].sourceCode = req.body.source;
+        question.submissions[user_submission].timestamp = new Date();
+        if(total_points == question_points){
+          question.submissions[user_submission].status = "Accepted";
+        }
+        else if(total_points == 0 ){
+            question.submissions[user_submission].status = "Wrong Answer";
+        }
+        else{
+            question.submissions[user_submission].status = "Partially Accepted";
+        }
+        question.save();
+      }
+    }
       res.send(desc);
 
     }).catch(err => {

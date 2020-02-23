@@ -42,12 +42,17 @@ style.
         background-color:white;
         border-color:#00bcd4;
       }
+      .mq_card{
+        font-family:'Nunito', sans-serif!important;
+        font-size:15px!important;
+        letter-spacing:0.5px!important;
+      }
 
   
 .container
   
   //  Button to Open the Modal 
-  button.btn.btn-primary(type='button' data-toggle='modal' data-target='#myModal').
+  button.btn.btn-primary.ml-2.mb-4.font-weight-bold(type='button' data-toggle='modal' data-target='#myModal').
     Add Question
     
   //  The Modal 
@@ -158,26 +163,28 @@ style.
 
 - const ques=questions;
 each i in ques
-  .row
-    .col-lg-8.col-md-8
-      .shadow.p-3.rounded(style='width: 700px;  margin-left: 25px;')
-        h3(style="font-family: 'Vast Shadow', cursive;color:black")  #{i.name} 
+  .row(style="margin-bottom:15px")
+    .col-lg-9.col-md-9(style="color:#616161")
+      .shadow.p-3.rounded(style='width:700px; margin-left: 25px;background-color:#ECEFF1;')
+        h3(style="font-family: 'Palanquin Dark';font-size:34px;letter-spacing:0.4px")  #{i.name} 
         .row
           .col-lg-10.col-md-10
-            p(style="font-family: 'Pompiere', cursive;color:black;font-size:20px;") #{i.description}
+            p(style="font-family: 'Pompiere', cursive;font-size:20px;padding-top:8px") #{i.description}
         .row
-          .col-lg-4.col-md-3(style='color:black')
-            label Difficulty: #{i.difficulty}
-          .col-lg-3.col-md-3(style='color:black')
-            label(for='points') Points: 
-          .col-lg-1
-          .col-lg-4.col-md-4
+          .col-lg-3.col-md-3(style='')
+            label.mq_card(style="font-weight:bold") Difficulty: 
+            label.mq_card #{i.difficulty}
+          .col-lg-3.col-md-3(style='')
+            label.mq_card(style="font-weight:bold" for='points') Points:
+            label.mq_card  
+          .col-lg-6.col-md-6
             button.btn.btn-outline-danger(style='font-weight:bold;border-radius:20px;' data-toggle="modal" data-target="#deleteQuestion" data-id=i.qid data-name=i.name) 
               i.fas.fa-trash 
               | &nbsp; Delete
             button.btn.btn-outline-primary(style='font-weight:bold;border-radius:20px;' data-toggle="modal" data-target="#edit" data-id=i.qid)
               i.fas.fa-edit 
               | &nbsp;Edit
+            button.btn.btn-outline-success(style="font-weight:bold;border-radius:20px;") Solution
   br
   //- .container
   //-   .card(style='background-color: rgba(171, 188, 219, 0.616);')
@@ -224,7 +231,7 @@ each i in ques
                                                 select#difficult.form-control(name='difficulty')
                                                   option(value='Easy') Easy
                                                   option(value='Medium') Medium
-                                                  option(value='Difficult') Difficult
+                                                  option(value='Hard') Hard
                                       tr
                                           td
                                             label(for='description') Description:

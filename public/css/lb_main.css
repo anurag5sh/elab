@@ -195,7 +195,7 @@ body, html {
 
 .column1 {
   width: 100px;
-  padding-left: 40px;
+  padding-left: 40px!important;
 }
 
 .column2 {
@@ -213,7 +213,7 @@ body, html {
 
 .column5 {
   width: 170px;
-  text-align: center;
+  text-align: center!important;
 }
 
 .column6 {

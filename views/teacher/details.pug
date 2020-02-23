@@ -13,7 +13,6 @@ html
       }
       .contestform{
       /*border: 2px solid black;*/
-      margin: 30px;
       padding: 10px;
       margin-top: 20px;
       }
@@ -42,14 +41,14 @@ html
         margin-right:30px;
       }
       .contestform{
-        width: 65%;
-        //- box-shadow: 0 0.5px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        width: 100%;
+        /*box-shadow: 0 0.5px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);*/
         text-align: left;
         left: 10px;
-        //- padding: 10px;
-        margin: 10px;
+        /*padding: 10px;*/
+        margin-bottom: 10px;
         position: relative;
-        //- display: -ms-flexbox;
+        /*display: -ms-flexbox;*/
         display: flex;
         -ms-flex-direction: column;
         flex-direction: column;
@@ -60,43 +59,43 @@ html
         border: 1px solid rgba(0,0,0,.125);
         border-radius: .25rem;
       }
-      .row{
+      .Row{
         margin-left:10px;
       }
   body
     .contestform
-      div(class = detail)
+      div(class = detail).pl-3.pt-3
         form#con(onsubmit="return submitForm()")
-          label(for='Contest') Contest Name
+          label.fontStyle.font-weight-bold(for='Contest') Contest Name
           input.form-control.mwidth#Contest(type='text', name='name', placeholder='Contest', required ,value=contest.name)
           br
-          label(for='Start Time') Date
+          label.fontStyle.font-weight-bold(for='Start Time') Date
           input#timings.form-control.mwidth(type='text' name='timings' )
           br
-          label(for='descrip') Description
+          label.fontStyle.font-weight-bold(for='descrip') Description
           input.form-control.mwidth#descrip(type='text', name='description', placeholder='Description', required ,value = contest.description)
           br
           br
-          .row
-            label(for='select') For:&nbsp;&nbsp;&nbsp;
+          .row.Row
+            label.fontStyle.font-weight-bold(for='select') For:&nbsp;&nbsp;&nbsp;
             - let y = [false,false,false,false,false];
             - for(i=1;i<=contest.year.length;i++) y[contest.year[i-1]]=true;
             .col-1.custom-control.custom-checkbox
               input(type='checkbox',class= "custom-control-input", name='year', id="1-year", value='1',checked=y[1])
-              label(class="custom-control-label" for="1-year") 1st Year
+              label.fontStyle(class="custom-control-label" for="1-year") 1st Year
             .col-1.custom-control.custom-checkbox
               input(type='checkbox', class= "custom-control-input",name='year',id="2-year" ,value='2',checked=y[2])
-              label(class="custom-control-label" for="2-year") 2nd Year
+              label.fontStyle(class="custom-control-label" for="2-year") 2nd Year
             .col-1.custom-control.custom-checkbox
               input(type='checkbox', class= "custom-control-input",name='year',id="3-year", value='3',checked=y[3])
-              label(class="custom-control-label" for="3-year") 3rd Year
+              label.fontStyle(class="custom-control-label" for="3-year") 3rd Year
             .col-1.custom-control.custom-checkbox
               input(type='checkbox', class= "custom-control-input",name='year',id="4-year", value='4', checked=y[4])
-              label(class="custom-control-label" for="4-year") 4th Year
+              label.fontStyle(class="custom-control-label" for="4-year") 4th Year
           br
           br
-          label(style = "margin-left:10px;") Status:&nbsp;&nbsp;&nbsp;
-          input#status(type="checkbox" checked=contest.isReady data-toggle="toggle" data-on="Ready" data-off="Not Ready" data-onstyle="success" data-offstyle="danger" name ="status" )
+          label.fontStyle.font-weight-bold(style = "margin-left:10px;") Status:&nbsp;&nbsp;&nbsp;
+          input.fontStyle#status(type="checkbox" checked=contest.isReady data-toggle="toggle" data-on="Ready" data-off="Not Ready" data-onstyle="success" data-offstyle="danger" name ="status" )
           br
           div(class="foot")
             btn.btn.btn-labeled.btn-success#btn-submit(role='submit' style="cursor:pointer" )

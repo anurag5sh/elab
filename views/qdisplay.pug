@@ -16,11 +16,11 @@ head
     color:white;
     border-color:white;
     }
-    /*.hovering:hover{
+    .hovering:hover{
     color:#8bc34a;
     background-color:white;
     border-color:#8bc34a;
-    }*/
+    }
     .hovering1:hover{
     color:#ff4d4d;
     background-color:white;
@@ -96,6 +96,9 @@ head
     .goal-number {
     font-weight: bold;
     }
+    .questions{
+      font-family: 'Palanquin Dark';color:white;font-size:34px;letter-spacing:0.4px";
+    }
   script.
     CountDownTimer('#{contest.timings.ends.toString()}', 'countdown');
     const starts = new Date('#{contest.timings.starts.toString()}');
@@ -133,7 +136,7 @@ head
     }
 body
 
-  .row
+  .row(style="width:100%")
     .col-lg-7
       div(style="padding:25px;padding-bottom:0px")
         nav(aria-label='breadcrumb' style="color:black;")
@@ -153,8 +156,8 @@ body
           br
           .row
             .col-lg-8.col-md-8
-              .shadow.p-3.rounded(style='background-color: #00bcd4; width: 700px;  margin-left: 25px;')
-                h2(style="font-family: 'Palanquin Dark';color:white;font-size:34px;letter-spacing:0.4px")  #{i.name} 
+              .shadow.p-3.rounded(style='background-color: #8bc34a; width: 700px;  margin-left: 25px;')
+                h2.questions #{i.name} 
                 .row
                   .col-lg-10.col-md-10
                     p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;") #{i.description}
@@ -167,13 +170,13 @@ body
                     label(style="letter-spacing:0.5px") #{totalPoints[j]}
                   .col-lg-4
                   .col-lg-2.col-md-2
-                    a.btn.btn-outline-light.hovering3(style='font-weight:bold;border-radius:20px;' href="/contest/"+contest.url+"/"+i.qid) Solve
+                    a.btn.btn-outline-light.hovering(style='font-weight:bold;border-radius:20px;' href="/contest/"+contest.url+"/"+i.qid) Solve
         -else if(i.difficulty === 'Medium')
           br
           .row
             .col-lg-8.col-md-8
               .shadow.p-3.rounded(style='background-color: #fbc02d; width: 700px; margin-left: 25px; ')
-                h3(style="font-family: 'Vast Shadow', cursive;color:white") #{i.name} 
+                h2.questions #{i.name} 
                 .row
                   .col-lg-10.col-md-10
                     p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;") #{i.description}
@@ -190,7 +193,7 @@ body
           .row
             .col-lg-8.col-md-8
               .shadow.p-3.rounded(style='background-color: #ff4d4d;  width: 700px; margin-left: 25px; ')
-                h3(style="font-family: 'Vast Shadow', cursive;color:white") #{i.name} 
+                h2.questions #{i.name} 
                 .row
                   .col-lg-10.col-md-10
                     p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;") #{i.description}

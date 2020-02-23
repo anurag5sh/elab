@@ -21,6 +21,7 @@ body
                             th USN / ID
                             th Name
                             th Question Name
+                            th Language
                             th Source Code
                             th Time (HH:MM:SS:MS)
                             th Points
@@ -46,6 +47,7 @@ body
                             { "data": "usn" },
                             { "data": "name" },
                             { "data": "qname" },
+                            { "data": "lang" },
                             { "data": "code" },
                             { "data": "time" },
                             { "data": "points" },
@@ -54,11 +56,12 @@ body
                         "order": [[ 5, 'asc' ]],
                         "columnDefs": [ {"searchable": false,"orderable": false,"targets": 0},
                                         { "width": "1%", "targets": 0 },
-                                        {"searchable": false,"orderable": false,"targets": 4},
+                                        {"searchable": false,"orderable": false,"targets": 5},
+                                        {"searchable": false,"targets": 4},
                                         {"searchable": false,"targets": 3},
-                                        {"searchable": false,"targets": 5},
                                         {"searchable": false,"targets": 6},
-                                        {"searchable": false,"targets": 7} ]
+                                        {"searchable": false,"targets": 7},
+                                        {"searchable": false,"targets": 8} ]
                     } );
                      submissions.on( 'order.dt search.dt', function () {
                         submissions.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {

@@ -21,7 +21,8 @@ html(lang='en')
   body
     br
     .container
-      h2 #{contest.name}
+      h2
+        a(href="/contest/"+contest.url) #{contest.name}
       div#alertForm
       br
       // Nav tabs

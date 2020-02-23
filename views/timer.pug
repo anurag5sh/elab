@@ -28,50 +28,54 @@ head
       background-color: rgba(217, 217, 217,1.0);
       outline: 1px solid slategrey;
     }
-.main-area
-  section.left-section(style='background-image: url(/images/countdown-2-1000x1000.jpg)')
-    .display-table.center-text
-      .display-table-cell
-        - var x = date(time);
-          if(x)
-            #normal-countdown(data-date=date(time))
-          else
-            #normal-countdown(data-date='0001/01/01')
-            .main-content(style="margin:25px")
-              .email-input-area(style="margin:auto")
-                if(attempt)
-                  a(href=attempt)
-                    button.submit-btn(type='button')
-                      b(style="font-weight:bold") ENTER 
-  section.right-section.full-height
-    .display-table
-      .display-table-cell
-        .main-content
-          h1.title
-            b #{contest.name}
-          p.pl-2 #{contest.description}
-          - let startTime = (contest.timings.starts).toString()
-          - let G = startTime.indexOf("G")
-          - startTime = startTime.slice(0,G-1)
-          - let endTime = (contest.timings.ends).toString()
-          - G = endTime.indexOf("G")
-          - endTime = endTime.slice(0,G-1)
-          p.p-2(style="font-weight:bold") #{startTime} - #{endTime}
-          .email-input-area
-            // <input class="email-input" name="email" type="text" placeholder="Enter your email"/>
-            button.submit-btn(name='submit' type='submit' data-toggle="modal" data-target="#rules_modal")
-              b(style="font-weight:bold") RULES
-          
-    #rules_modal.modal.fade
-      .modal-dialog(style="width:50%;max-width:70%")
-          .modal-content
-            .modal-header
-              h4.modal-title Rules
-              button.close(type='button' data-dismiss='modal') &times;
-            .modal-body
-              div(style="white-space:pre-wrap") #{rules}
-            .modal-footer
-                button.btn.btn-danger(type='button' data-dismiss='modal') Close
-
+.WRAPPER
+  .main-area
+    section.left-section(style='background-image: url(/images/countdown-2-1000x1000.jpg)')
+      .display-table.center-text
+        .display-table-cell
+          - var x = date(time);
+            if(x)
+              #normal-countdown(data-date=date(time))
+            else
+              #normal-countdown(data-date='0001/01/01')
+              .main-content(style="margin:25px")
+                .email-input-area(style="margin:auto")
+                  if(attempt)
+                    a(href=attempt)
+                      button.submit-btn(type='button')
+                        b(style="font-weight:bold") ENTER 
+    section.right-section.full-height
+      .display-table
+        .display-table-cell
+          .main-content
+            h1.title
+              b #{contest.name}
+            p.pl-2 #{contest.description}
+            - let startTime = (contest.timings.starts).toString()
+            - let G = startTime.indexOf("G")
+            - startTime = startTime.slice(0,G-1)
+            - let endTime = (contest.timings.ends).toString()
+            - G = endTime.indexOf("G")
+            - endTime = endTime.slice(0,G-1)
+            p.p-2(style="font-weight:bold") #{startTime} - #{endTime}
+            .email-input-area
+              // <input class="email-input" name="email" type="text" placeholder="Enter your email"/>
+              button.submit-btn(name='submit' type='submit' data-toggle="modal" data-target="#rules_modal")
+                b(style="font-weight:bold") RULES
+            
+      #rules_modal.modal.fade
+        .modal-dialog(style="width:50%;max-width:70%")
+            .modal-content
+              .modal-header
+                h4.modal-title Rules
+                button.close(type='button' data-dismiss='modal') &times;
+              .modal-body
+                div(style="white-space:pre-wrap") #{rules}
+              .modal-footer
+                  button.btn.btn-danger(type='button' data-dismiss='modal') Close
+  .push1
+  .push
+footer.bg-dark(class="FOOTER")
+  div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
 script(src='/js/jquery.countdown.min.js')
 script(src='/js/timer_scripts.js')

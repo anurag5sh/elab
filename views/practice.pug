@@ -28,8 +28,7 @@ block append head
         }
         
 block content
-        //- .jumbotron.text-left.bg-info.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
-        //-     h1 PRACTICE
+    .WRAPPER
         section.module.parallax.parallax-1(data-type='background' data-speed='10')
             .parallax-container
                 h2.typewrite(href='' data-period='2000' data-type='[ "PRACTICE" ]' style="font-weight:bold")
@@ -46,6 +45,9 @@ block content
                                         h3(style="font-family:Lato,sanf-serif")=i.name
                                             br
                                             a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' href='/practice/'+i.qid) SOLVE
-                        
+        .push1
+        .push
+    footer.bg-dark(class="FOOTER")
+        div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
         script(src='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js')
         script(src='list_style/js/theme.js')

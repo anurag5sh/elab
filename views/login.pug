@@ -28,75 +28,98 @@ html(lang='en')
       left:0;
       bottom:0;
     }
+    /* For Footer*/
+
+      html, body {
+        height: 100%;
+        margin: 0;
+      }
+      .WRAPPER {
+        min-height: 100%;
+
+        /* Equal to height of footer */
+        /* But also accounting for potential margin-bottom of last child */
+        margin-bottom: -50px;
+      }
+      .FOOTER,
+      .push,.push1 {
+        height: 50px;
+      }
+    /* End for Footer*/
     
   body
-    .limiter
-      .container-login100
-        .pi(style="posititon:relative;height:513px;background-color:white;width:40%;color:orange;margin-right:390px;margin-top:-10px; ")
-          #demo.carousel.slide(data-ride='carousel' style='width:100%;height:550px;' data-interval="2000")
-            ul.carousel-indicators
-              li.active(data-target='#demo' data-slide-to='0')
-              li(data-target='#demo' data-slide-to='1')
-              li(data-target='#demo' data-slide-to='2')
-            .carousel-inner
-              .carousel-item.active
-                img(src='/images/slide1.jpg' alt='Practice' width='1100' height='500')
-                .carousel-caption(style="background-color: #0c2970; width: 100%;height:70px;")
-                  h3 Practice
-                  p 
-              .carousel-item
-                img(src='/images/slider6.jpg' alt='Compete' width='1100' height='500')
-                .carousel-caption(style="background-color: #c6a4eb; width: 100%;margin-left:0;height:70px;")
-                  h3 
-                    i.fad.fa-trophy-alt
-                    | &nbsp; Compete
-                  p 
-              .carousel-item
-                img(src='/images/slider8.jpg' alt='Code' width='1100' height='500')
-                .carousel-caption(style="background-color: #3a0da3; width: 100%;margin-left:0;height:70px;")
-                  h3
-                    i.fad.fa-code 
-                    | &nbsp; Code
-            a.carousel-control-prev(href='#demo' data-slide='prev' style="opacity:0")
-              span.carousel-control-prev-icon
-            a.carousel-control-next(href='#demo' data-slide='next' style="opacity:0")
-              span.carousel-control-next-icon
+    .WRAPPER
+      .limiter
+        .container-login100
+          .pi(style="posititon:relative;height:513px;background-color:white;width:40%;color:orange;margin-right:390px;margin-top:-10px; ")
+            #demo.carousel.slide(data-ride='carousel' style='width:100%;height:550px;' data-interval="2000")
+              ul.carousel-indicators
+                li.active(data-target='#demo' data-slide-to='0')
+                li(data-target='#demo' data-slide-to='1')
+                li(data-target='#demo' data-slide-to='2')
+              .carousel-inner
+                .carousel-item.active
+                  img(src='/images/slide1.jpg' alt='Practice' width='1100' height='500')
+                  .carousel-caption(style="background-color: #0c2970; width: 100%;height:70px;")
+                    h3 Practice
+                    p 
+                .carousel-item
+                  img(src='/images/slider6.jpg' alt='Compete' width='1100' height='500')
+                  .carousel-caption(style="background-color: #c6a4eb; width: 100%;margin-left:0;height:70px;")
+                    h3 
+                      i.fad.fa-trophy-alt
+                      | &nbsp; Compete
+                    p 
+                .carousel-item
+                  img(src='/images/slider8.jpg' alt='Code' width='1100' height='500')
+                  .carousel-caption(style="background-color: #3a0da3; width: 100%;margin-left:0;height:70px;")
+                    h3
+                      i.fad.fa-code 
+                      | &nbsp; Code
+              a.carousel-control-prev(href='#demo' data-slide='prev' style="opacity:0")
+                span.carousel-control-prev-icon
+              a.carousel-control-next(href='#demo' data-slide='next' style="opacity:0")
+                span.carousel-control-next-icon
 
-        .wrap-login100.p-l-50.p-r-50.p-t-77.p-b-30(style= "margin-left:20%;z-index:1;position:absolute;height:82%;")
-          form.login100-form.validate-form#login(onsubmit="return login()")
-            span.login100-form-title.p-b-55
-              | Login
-            .wrap-input100.validate-input.m-b-16(data-validate='Valid email is required: ex@abc.xyz')
-              input.input100(type='text', name='email', placeholder='Email')
-              span.focus-input100
-              span.symbol-input100
-                span.fa.fa-envelope
-            .wrap-input100.validate-input.m-b-16(data-validate='Password is required')
-              input.input100(type='password', name='password', placeholder='Password')
-              span.focus-input100
-              span.symbol-input100
-                
-                span.fa.fa-lock
-            //- input.form-radio(type='radio', name='type', value='student',checked="checked")
-            //- | Student
-            //- .row#row
-            //-   .col-6  
-            //-     .custom-control.custom-radio
-            //-       input#student.custom-control-input(type='radio', name='type', value='student', checked="checked")
-            //-       label.custom-control-label(for='student') Student
-            //-   .col-6
-            //-     .custom-control.custom-radio
-            //-       input#teacher.custom-control-input(type='radio', name='type', value='teacher')
-            //-       label.custom-control-label(for='teacher') Teacher
+          .wrap-login100.p-l-50.p-r-50.p-t-77.p-b-30(style= "margin-left:20%;z-index:1;position:absolute;height:82%;")
+            form.login100-form.validate-form#login(onsubmit="return login()")
+              span.login100-form-title.p-b-55
+                | Login
+              .wrap-input100.validate-input.m-b-16(data-validate='Valid email is required: ex@abc.xyz')
+                input.input100(type='text', name='email', placeholder='Email')
+                span.focus-input100
+                span.symbol-input100
+                  span.fa.fa-envelope
+              .wrap-input100.validate-input.m-b-16(data-validate='Password is required')
+                input.input100(type='password', name='password', placeholder='Password')
+                span.focus-input100
+                span.symbol-input100
+                  
+                  span.fa.fa-lock
+              //- input.form-radio(type='radio', name='type', value='student',checked="checked")
+              //- | Student
+              //- .row#row
+              //-   .col-6  
+              //-     .custom-control.custom-radio
+              //-       input#student.custom-control-input(type='radio', name='type', value='student', checked="checked")
+              //-       label.custom-control-label(for='student') Student
+              //-   .col-6
+              //-     .custom-control.custom-radio
+              //-       input#teacher.custom-control-input(type='radio', name='type', value='teacher')
+              //-       label.custom-control-label(for='teacher') Teacher
 
-            //- input.form-radio(type='radio', name='type', value='teacher')
-            //- | Teacher
-          
-            .container-login100-form-btn.p-t-25
-              input.login100-form-btn(type="Submit" value="Login")
-            .forgot-password
-              br
-              a(href='/forgotPassword') Forgot password?
+              //- input.form-radio(type='radio', name='type', value='teacher')
+              //- | Teacher
+            
+              .container-login100-form-btn.p-t-25
+                input.login100-form-btn(type="Submit" value="Login")
+              .forgot-password
+                br
+                a(href='/forgotPassword') Forgot password?
+      //- .push1
+      .push
+    footer.bg-dark(class="FOOTER")
+        div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
             
     // ===============================================================================================
     script(src='/vendor/bootstrap/js/popper.js')

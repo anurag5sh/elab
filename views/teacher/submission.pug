@@ -12,6 +12,7 @@ body
     .WRAPPER
         h2.text-center.m-3 Submissions
 
+<<<<<<< HEAD
         .container.main-section
             .row
                 .col-lg-12
@@ -27,6 +28,34 @@ body
                                 th Points
                                 th Status
                         tbody
+=======
+    .container.main-section
+        .row
+            .col-lg-12
+                table#submission.table.table-hover
+                    thead
+                        tr
+                            th No.
+                            th USN / ID
+                            th Name
+                            th Question Name
+                            th Language
+                            th Source Code
+                            th Time (HH:MM:SS:MS)
+                            th Points
+                            th Status
+                    tbody
+
+    .modal.fade#source(tabindex ="-1" role="dialog" )
+        .modal-dialog.modal-lg
+            .modal-content
+                .modal-header
+                    h4.modal-title Code 
+                .modal-body
+                    #sourceBody(style="font-family: 'Source Code Pro', ;white-space: pre-wrap;")
+                .modal-footer
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+>>>>>>> c0b121b7e49a5775e5b8725b8be6eff25307939e
 
         .modal.fade#source(tabindex ="-1" role="dialog" )
             .modal-dialog.modal-lg
@@ -51,6 +80,7 @@ body
                             { "data": "usn" },
                             { "data": "name" },
                             { "data": "qname" },
+                            { "data": "lang" },
                             { "data": "code" },
                             { "data": "time" },
                             { "data": "points" },
@@ -59,11 +89,12 @@ body
                         "order": [[ 5, 'asc' ]],
                         "columnDefs": [ {"searchable": false,"orderable": false,"targets": 0},
                                         { "width": "1%", "targets": 0 },
-                                        {"searchable": false,"orderable": false,"targets": 4},
+                                        {"searchable": false,"orderable": false,"targets": 5},
+                                        {"searchable": false,"targets": 4},
                                         {"searchable": false,"targets": 3},
-                                        {"searchable": false,"targets": 5},
                                         {"searchable": false,"targets": 6},
-                                        {"searchable": false,"targets": 7} ]
+                                        {"searchable": false,"targets": 7},
+                                        {"searchable": false,"targets": 8} ]
                     } );
                      submissions.on( 'order.dt search.dt', function () {
                         submissions.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {

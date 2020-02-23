@@ -63,7 +63,8 @@ html(lang='en')
     br
     .WRAPPER
       .container
-        h2.lb_heading(style="font-size:45px;letter-spacing:1px") #{contest.name}
+        h2.lb_heading(style="font-size:45px;letter-spacing:1px")
+          a(href="/contest/"+contest.url) #{contest.name}
         div#alertForm
         br
         // Nav tabs

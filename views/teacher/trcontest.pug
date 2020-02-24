@@ -6,6 +6,7 @@ block append head
   - navStyle = "";
   link(rel="stylesheet", href="/css/contest_card.css")
   link(rel="stylesheet", href="/assets/css/n.css")
+  link(rel='stylesheet' type='text/css' href='card.css')
   script(src="/js/contest_card.js")
   script(src="/js/typewriter.js ")
   script.
@@ -114,6 +115,43 @@ block append head
     left: 50%;
     transform: translate(-50%, -50%);
     }
+    .navbar1 {
+      margin-left:30px;
+    }
+
+    .nav-link1 {
+      font-weight: bold;
+      font-size: 18px;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: #031D44;
+      padding: 20px 0px;
+      margin: 0px 20px;
+      display: inline-block;
+      position: relative;
+      opacity: 0.75;
+    }
+
+    .nav-link1:hover {
+      opacity: 1;
+    }
+
+    .nav-link1::before {
+      transition: 300ms;
+      height: 5px;
+      content: "";
+      position: absolute;
+      background-color: #031D44;
+    }
+
+    .nav-link-ltr1::before {
+      width: 0%;
+      bottom: 10px;
+    }
+
+    .nav-link-ltr1:hover::before {
+      width: 100%;
+    }
 
     
 
@@ -143,20 +181,43 @@ block content
       .parallax-container
         h2.typewrite(href='' data-period='2000' data-type='[ "CONTEST" ]' style="font-weight:bold")
           span.wrap
-    .row(style="width:100%")
-      
-      .col-lg-9.col-md-10  
-        .row
-          each i in contest 
-            .col-lg-4(style="padding:0px;padding-left:30px")
-              .container_card
-                .c-card-block
-                  a(href="/contest/"+i.url)
-                    .cheader
-                      h4 #{ i.name}
-                      br
-                    p.block-with-text=i.description
-                    button.attem.btn.btn-info(type='button' onclick="location.href=/contest/"+i.url+"") View
+    
+    .navbar1
+      a.nav-link1.nav-link-ltr1.active(href='?l=ongoing') Ongoing
+      a.nav-link1.nav-link-ltr1(href='?l=upcoming') Upcoming
+      a.nav-link1.nav-link-ltr1(href='?l=past') Past
+    
+    - const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    -function nth(n){return n+([,'st','nd','rd'][n%100>>3^1&&n%10]||'th')}
+    .row.flex-container(style="width:100%")
+      each i in contest
+        .ft-contest 
+          .ft-contest__thumb
+            //-span(id="close-modal")
+                i.ion.ion-md-close
+            //-h3 Today's Featured contest
+            img(src="download.png", alt=contest.name)
+          .ft-contest__content
+            header.content__header
+              .row-wrapper
+                  h2(class="contest-title") #{ i.name}
+                  .user-rating
+              ul.contest-details
+                  li.contest-details-item
+                      i.ion.ion-ios-clock-outline
+                      span.value=Math.abs(i.timings.ends - i.timings.starts) / 36e5
+                      span.title Hours
+                  li.contest-details-item
+                      i.ion.ion-ios-book-outline
+                      span.value #{i.questions.length}
+                      span.title Questions
+                  li.contest-details-item
+                      i.ion.ion-ios-person-outline
+                      span.value=nth(i.timings.starts.getDate())
+                      span.title=month[i.timings.starts.getMonth()]
+            p.description=i.description
+            footer.content__footer
+                a(href="/contest/"+i.url) View Contest
 
       .col-lg-3.col-md-2(style="padding-left:30px")
         div(style="margin-top:50px;")
@@ -172,6 +233,16 @@ block content
               a.btn(href='/contest/manage' style="font-size:20px;")
                 i.fas.fa-cogs 
                 label(style="cursor: pointer") &nbsp; Manage Contest
+    -if(count!=0)
+      ul.pagination.justify-content-center
+        li.page-item(class=(page==1?'disabled':''))
+            a.page-link(href='?l='+type+"&page="+(page-1)) Previous
+        -for(let i=1;i<=Math.ceil(count/12);i++)
+          li.page-item(class=(page==i?'active':''))
+            a.page-link(href='?l='+type+"&page="+i)=i
+        li.page-item(class=(page==Math.ceil(count/12)?'disabled':''))
+            a.page-link(href='?l='+type+"&page="+(page+1) ) Next
+    
     .push1
     .push
   footer.bg-dark(class="FOOTER")

@@ -27,6 +27,51 @@ block append head
     flex-flow: row wrap;
     align-content:flex-start;
     }
+    /*body {
+    padding: 0;
+    margin: 0;
+    
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #DDD;
+    }*/
+
+    .navbar1 {
+      margin-left:30px;
+    }
+
+    .nav-link1 {
+      font-weight: bold;
+      font-size: 18px;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: #031D44;
+      padding: 20px 0px;
+      margin: 0px 20px;
+      display: inline-block;
+      position: relative;
+      opacity: 0.75;
+    }
+
+    .nav-link1:hover {
+      opacity: 1;
+    }
+
+    .nav-link1::before {
+      transition: 300ms;
+      height: 5px;
+      content: "";
+      position: absolute;
+      background-color: #031D44;
+    }
+
+    .nav-link-ltr1::before {
+      width: 0%;
+      bottom: 10px;
+    }
+
+    .nav-link-ltr1:hover::before {
+      width: 100%;
+    }
 
   - active.contest="active"
   
@@ -36,9 +81,17 @@ block content
       .parallax-container
         h2.typewrite(href='' data-period='2000' data-type='[ "CONTESTS" ]' style="font-weight:bold")
           span.wrap
+    
+    
+    .navbar1
+      a.nav-link1.nav-link-ltr1.active(href='?l=ongoing') Ongoing
+      a.nav-link1.nav-link-ltr1(href='?l=upcoming') Upcoming
+      a.nav-link1.nav-link-ltr1(href='?l=past') Past
+
+
     - const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     -function nth(n){return n+([,'st','nd','rd'][n%100>>3^1&&n%10]||'th')}
-    .row.flex-container(style="width:100%")
+    .row(style="width:100%;margin:0px;")
       each i in contest
         .ft-contest 
           .ft-contest__thumb
@@ -67,6 +120,19 @@ block content
             p.description=i.description
             footer.content__footer
                 a(href="/contest/"+i.url) View Contest
+    
+    -if(count>0)
+      ul.pagination.justify-content-center
+        li.page-item(class=(page==1?'disabled':''))
+            a.page-link(href='?l='+type+"&page="+(page-1)) Previous
+        -for(let i=1;i<=Math.ceil(count/12);i++)
+          li.page-item(class=(page==i?'active':''))
+            a.page-link(href='?l='+type+"&page="+i)=i
+        li.page-item(class=(page==Math.ceil(count/12)?'disabled':''))
+            a.page-link(href='?l='+type+"&page="+(page+1) ) Next
+
+      
+
     .push1
     .push
   footer.bg-dark(class="FOOTER")

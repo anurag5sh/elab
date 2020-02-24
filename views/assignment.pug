@@ -20,8 +20,7 @@ block append head
         }
     
 block append content
-        //- .jumbotron.text-left.bg-info.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
-        //-     h1 ASSIGNMENT
+    .WRAPPER
         section.module.parallax.parallax-1(data-type='background' data-speed='10')
             .parallax-container
                 h2.typewrite(href='' data-period='2000' data-type='[ "ASSIGNMENT" ]' style="font-weight:bold")
@@ -35,7 +34,11 @@ block append content
                                 .project-card-no-image
                                     h5()=i.name
                                     a.btn1.btn1-outline-primary.btn1-sm(role='button' href='/assignment/'+i.qid) SOLVE
-                        
+        .push1
+        .push
+    footer.bg-dark(class="FOOTER")
+        div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020  
+             
         //- script(src='list_style/js/jquery.min.js')
         //- script(src='list_style/bootstrap/js/bootstrap.min.js')
         script(src='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js')

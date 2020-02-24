@@ -2,6 +2,7 @@ doctype html
 include navbar
 html   
     head
+<<<<<<< HEAD
       meta(name='viewport' content='width=device-width, initial-scale=1.0, shrink-to-fit=no')
       title Dashboard
       link(rel='stylesheet' href='list_style/bootstrap/css/new.css')
@@ -86,6 +87,34 @@ body
         button.btn.btn-primary.btn-block(type='button' style='margin-left: 50%;width: 90px;height: 40px;') Register
 //-   
 
+=======
+    body
+        meta(name='viewport' content='width=device-width, initial-scale=1.0, shrink-to-fit=no')
+        title Dashboard
+        link(rel='stylesheet' href='list_style/bootstrap/css/new.css')
+        link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,400,700')
+        link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css')
+        body
+            .WRAPPER
+                .card.bg-light(style="height:100px")
+                    .card-body
+                        main.page.projets-page
+                            section.portfolio-block.project-no-images
+                                .container1
+                                    .row1    
+                                        h1 Practice
+                                    .row1
+                                        - let questions=q
+                                        each i in questions
+                                            .col-md-6.col-lg-4
+                                                .project-card-no-image
+                                                    h3(style="font-family:Lato,sanf-serif")=i.name
+                                                    a.btn1.btn1-outline-primary.btn1-sm(role='button' href='/practice/'+i.qid) SOLVE
+                .push1
+                .push
+            footer.bg-dark(class="FOOTER")
+                div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
+>>>>>>> e57b01a74db63255784601458f2f93fd9b54d276
     //-script(src='list_style/js/jquery.min.js')
     //-script(src='list_style/bootstrap/js/bootstrap.min.js')
     //-script(src='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js')

@@ -1,6 +1,7 @@
 extends nav
 
 block append head
+    title Manage Assignment
     link(rel="stylesheet", href="/adminLTE/dist/css/daterangepicker.css")
     script(src="/adminLTE/dist/js/moment.min.js")
     script(src="/adminLTE/dist/js/daterangepicker.min.js")
@@ -17,303 +18,310 @@ block append head
             font-size:20px;
             font-weight:normal;
         }
+        body{
+            background-color:#f5f5f0;
+        }
     - active.assignment="active"
 
 block content
-    #editAssignment
-        .card(style="width:90%").mx-auto
-                .card-header.bg-info.text-center
-                    h3.card-title Edit Assignment
-                .card-body
-                    .col-3(style="margin:auto;")
-                        select#sem(name="sem").form-control.custom-select.type
-                             option(selected,disabled) Select Semester
-                             each i in current
-                                option(value=i.id) #{i.sem}, Set #{i.id.substr(9)}
-                    br
-                    br
-                    form.form-horizontal#form_details(onsubmit="return saveDetails()")
-                        #details
-                    .container
-                        .modal#myModal
-                            .modal-dialog.modal-xl
-                                form#ques(onsubmit="return submitFormAdd()")
-                                    .modal-content
-                                        .modal-header
-                                            h4.modal-title New Question  
-                                            button.close(type='button' data-dismiss='modal') ×
-                                            
-                                        .modal-body
-                                                .box
-                                                    table.table
-                                                        tbody
-                                                            tr
-                                                                td(style="width:150px;")
-                                                                    label Question name:
-                                                                td
-                                                                    input#name(type='text' name='name' required style="width:50%").form-control
-                                                            tr
-                                                                td
-                                                                    label(for='difficulty') Difficulty:
-                                                                td
-                                                                    //- input#difficulty(type='text' name='description' required).form-control
-                                                                    .form-group(style="width:50%")
-                                                                    select#difficulty.form-control(name='difficulty')
-                                                                        option(value='Easy') Easy
-                                                                        option(value='Medium') Medium
-                                                                        option(value='Hard') Hard
-                                                            tr
-                                                                td
-                                                                    label(for='description') Description:
-                                                                td
-                                                                    input#description(type='text' name='description' required).form-control
-                                                            tr
-                                                                td(style="width:150px;")
-                                                                    label Problem Statement:
-                                                                td
-                                                                    div#statement-editor(style="min-height:120px;height:auto;")
-                                                                    script.
-                                                                        const editor = new Quill('#statement-editor', {
-                                                                        modules: { toolbar: [
-                                                                        [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-                                                                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],    
-                                                                        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-                                                                        ['blockquote'],
-                                                                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                                                                        [{ 'script': 'sub'}, { 'script': 'super' }], 
-                                                                        ['image', 'code-block','formula'],     			                // superscript/subscript
-                                                                        [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-                                                                        [{ 'direction': 'rtl' }],                         // text direction
-                                                                        [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-                                                                        [{ 'font': [] }],
-                                                                        [{ 'align': [] }],
-                                                                        ['clean'] 
-                                                                            ] },
-                                                                            theme: 'snow'
-                                                                            });
-                                                                
-                                                            tr
-                                                                td(style="width:150px;")
-                                                                    label Constraints:
-                                                                td
-                                                                    textarea.form-control#constraints(rows='5' name='constraints' cols='50')
+    .WRAPPER
+        #editAssignment.mt-5
+            .card(style="width:90%").mx-auto
+                    .card-header.bg-info.text-center
+                        h3.card-title.text-light.lb_heading(style="letter-spacing:0.5px") Edit Assignment
+                    .card-body
+                        .col-3(style="margin:auto;")
+                            select#sem(name="sem").form-control.custom-select.type
+                                option(selected,disabled) Select Semester
+                                each i in current
+                                    option(value=i.id) #{i.sem}, Set #{i.id.substr(9)}
+                        br
+                        br
+                        form.form-horizontal#form_details(onsubmit="return saveDetails()")
+                            #details
+                        .container
+                            .modal#myModal
+                                .modal-dialog.modal-xl
+                                    form#ques(onsubmit="return submitFormAdd()")
+                                        .modal-content
+                                            .modal-header
+                                                h4.modal-title New Question  
+                                                button.close(type='button' data-dismiss='modal') ×
+                                                
+                                            .modal-body
+                                                    .box
+                                                        table.table
+                                                            tbody
+                                                                tr
+                                                                    td(style="width:150px;")
+                                                                        label Question name:
+                                                                    td
+                                                                        input#name(type='text' name='name' required style="width:50%").form-control
+                                                                tr
+                                                                    td
+                                                                        label(for='difficulty') Difficulty:
+                                                                    td
+                                                                        //- input#difficulty(type='text' name='description' required).form-control
+                                                                        .form-group(style="width:50%")
+                                                                        select#difficulty.form-control(name='difficulty')
+                                                                            option(value='Easy') Easy
+                                                                            option(value='Medium') Medium
+                                                                            option(value='Hard') Hard
+                                                                tr
+                                                                    td
+                                                                        label(for='description') Description:
+                                                                    td
+                                                                        input#description(type='text' name='description' required).form-control
+                                                                tr
+                                                                    td(style="width:150px;")
+                                                                        label Problem Statement:
+                                                                    td
+                                                                        div#statement-editor(style="min-height:120px;height:auto;")
+                                                                        script.
+                                                                            const editor = new Quill('#statement-editor', {
+                                                                            modules: { toolbar: [
+                                                                            [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+                                                                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],    
+                                                                            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                                                                            ['blockquote'],
+                                                                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                                                            [{ 'script': 'sub'}, { 'script': 'super' }], 
+                                                                            ['image', 'code-block','formula'],     			                // superscript/subscript
+                                                                            [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+                                                                            [{ 'direction': 'rtl' }],                         // text direction
+                                                                            [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+                                                                            [{ 'font': [] }],
+                                                                            [{ 'align': [] }],
+                                                                            ['clean'] 
+                                                                                ] },
+                                                                                theme: 'snow'
+                                                                                });
+                                                                    
+                                                                tr
+                                                                    td(style="width:150px;")
+                                                                        label Constraints:
+                                                                    td
+                                                                        textarea.form-control#constraints(rows='5' name='constraints' cols='50')
+                                                            
+                                                                tr
+                                                                    td(style="width:150px;")
+                                                                        label Input format:
+                                                                    td
+                                                                        textarea.form-control#i_format(rows='5' name='i_format' cols='50' required)
                                                         
-                                                            tr
-                                                                td(style="width:150px;")
-                                                                    label Input format:
-                                                                td
-                                                                    textarea.form-control#i_format(rows='5' name='i_format' cols='50' required)
+                                                                tr
+                                                                    td(style="width:150px;")
+                                                                        label Output format:
+                                                                    td
+                                                                        textarea.form-control#o_format(rows='5' name='o_format' cols='50' required)
+                                                        hr    
                                                     
-                                                            tr
-                                                                td(style="width:150px;")
-                                                                    label Output format:
-                                                                td
-                                                                    textarea.form-control#o_format(rows='5' name='o_format' cols='50' required)
-                                                    hr    
+                                                        #samplecase
+                                                            label.tc Sample Testcases:
+                                                            input#btSampleAdd.bt.btn.btn-info.btn-sm(type='button' value='Add Sample Case' style="margin-right:20px;margin-left:20px;")
+                                                            input#btSampleRemove.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
+                                                            .t_case
+                                                                p Sample Testcase 1
+                                                                textarea.form-control.input#i_sample1(rows='5' name='i_sample1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
+                                                                textarea.form-control.input#o_sample1(rows='5' name='o_sample1' cols='50' required placeholder='Output')
+                                                                p Explanation
+                                                                textarea.form-control.ex_box#explaination(name='explanation' rows='5' cols='107' style="margin-bottom:10px" required)
+                                                        #testcase
+                                                            label.tc Testcases:
+                                                            input#btAdd.bt.btn.btn-info.btn-sm(type='button' value='Add Testcase' style="margin-right:20px;margin-left:20px;")
+                                                            input#btRemove.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
+                                                            br
+                                                            .t_case
+                                                                p Testcase 1
+                                                                textarea.form-control.input#i_testcase1(rows='5' name='i_testcase1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
+                                                                textarea.form-control.input#o_testcase1(rows='5' name='o_testcase1' cols='50' required placeholder='Output')
+                                                                p Points
+                                                                input.form-control(style="width:15%;" name="points" id="points1" type="text" placeholder="Ex: 10" required)
+                                                        textarea(name="statement" id="es" style="display:none;")
                                                 
-                                                    #samplecase
-                                                        label.tc Sample Testcases:
-                                                        input#btSampleAdd.bt.btn.btn-info.btn-sm(type='button' value='Add Sample Case' style="margin-right:20px;margin-left:20px;")
-                                                        input#btSampleRemove.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
-                                                        .t_case
-                                                            p Sample Testcase 1
-                                                            textarea.form-control.input#i_sample1(rows='5' name='i_sample1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
-                                                            textarea.form-control.input#o_sample1(rows='5' name='o_sample1' cols='50' required placeholder='Output')
-                                                            p Explanation
-                                                            textarea.form-control.ex_box#explaination(name='explanation' rows='5' cols='107' style="margin-bottom:10px" required)
-                                                    #testcase
-                                                        label.tc Testcases:
-                                                        input#btAdd.bt.btn.btn-info.btn-sm(type='button' value='Add Testcase' style="margin-right:20px;margin-left:20px;")
-                                                        input#btRemove.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
-                                                        br
-                                                        .t_case
-                                                            p Testcase 1
-                                                            textarea.form-control.input#i_testcase1(rows='5' name='i_testcase1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
-                                                            textarea.form-control.input#o_testcase1(rows='5' name='o_testcase1' cols='50' required placeholder='Output')
-                                                            p Points
-                                                            input.form-control(style="width:15%;" name="points" id="points1" type="text" placeholder="Ex: 10" required)
-                                                    textarea(name="statement" id="es" style="display:none;")
-                                            
-                                        .modal-footer
-                                            input.btn.btn-success(type='submit' value="ADD")
-                                            button.btn.btn-secondary(type='button' data-dismiss='modal') Close
-                    .modal.fade#loading(data-backdrop="static" role="dialog" tabindex="-1" data-keyboard="false")
-                        .modal-dialog.modal-dialog-centered.text-center(role="document")
-                            span.fas.fa-circle-notch.fa-spin.fa-3x.w-100
-        .card(style="width:90%;").mx-auto
-            .card-header.bg-info.text-center
-                h3.card-title Questions
-            .card-body.table-responsive.p-0
-                table.table.table-hover
-                    thead
-                        tr
-                            th ID
-                            th Question Name
-                            th Edit
-                            th Delete
-                    tbody#qlist
-    
-    .container
-        .modal#edit(role="dialog" tabindex ="-1" style="z-index:100000")
-            .modal-dialog.modal-xl
-                form#ques-edit(onsubmit="return editForm()")
-                    .modal-content
-                        .modal-header
-                            h4.modal-title New Question  
-                            button.close(type='button' data-dismiss='modal') ×
-                            
-                        .modal-body
-                                p#edit_info(style="float:center;")
-                                .box
-                                    table.table
-                                        tbody
-                                            tr
-                                                td(style="width:150px;")
-                                                    label Question name:
-                                                td
-                                                    input#name-e(type='text' name='name' required style="width:50%").form-control
-                                            tr
-                                                td
-                                                    label(for='edifficulty') Difficulty:
-                                                td
-                                                    //- input#difficulty(type='text' name='description' required).form-control
-                                                    .form-group(style="width:50%")
-                                                        select#edifficulty.form-control(name='difficulty')
-                                                            option(value='Easy') Easy
-                                                            option(value='Medium') Medium
-                                                            option(value='Hard') Hard
-                                            tr
-                                                td
-                                                    label(for='edescription') Description:
-                                                td
-                                                    input#edescription(type='text' name='description' required).form-control
-                                            tr
-                                                td(style="width:150px;")
-                                                    label Problem Statement:
-                                                td
-                                                    div#statement-editor-edit(style="min-height:120px;height:auto;")
-                                                    script.
-                                                        const editor_edit = new Quill('#statement-editor-edit', {
-                                                        modules: { toolbar: [
-                                                        [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-                                                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],    
-                                                        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-                                                        ['blockquote'],
-                                                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                                                        [{ 'script': 'sub'}, { 'script': 'super' }], 
-                                                        ['image', 'code-block','formula'],     			                // superscript/subscript
-                                                        [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-                                                        [{ 'direction': 'rtl' }],                         // text direction
-                                                        [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-                                                        [{ 'font': [] }],
-                                                        [{ 'align': [] }],
-                                                        ['clean'] 
-                                                            ] },
-                                                            theme: 'snow'
-                                                            });
-                                                
-                                            tr
-                                                td(style="width:150px;")
-                                                    label Constraints:
-                                                td
-                                                    textarea#constraints-e.form-control(rows='5' name='constraints' cols='50')
-                                        
-                                            tr
-                                                td(style="width:150px;")
-                                                    label Input format:
-                                                td
-                                                    textarea.form-control#i_format-e(rows='5' name='i_format' cols='50' required)
-                                    
-                                            tr
-                                                td(style="width:150px;")
-                                                    label Output format:
-                                                td
-                                                    textarea.form-control#o_format-e(rows='5' name='o_format' cols='50' required)
-                                    hr    
-                                    #samplecase-e
-                                        label.tc Sample Testcases:
-                                        input#btSampleAdd_e.bt.btn.btn-info.btn-sm(type='button' value='Add Sample Case' style="margin-right:20px;margin-left:20px;")
-                                        input#btSampleRemove_e.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
-                                        .t_case
-                                            p Sample Testcase 1
-                                            textarea.form-control.input#ei_sample1(rows='5' name='i_sample1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
-                                            textarea.form-control.input#eo_sample1(rows='5' name='o_sample1' cols='50' required placeholder='Output')
-                                            p Explanation
-                                            textarea.form-control.ex_box#explanation_edit(name='explanation' rows='5' cols='107' style="margin-bottom:10px" required)
-                                    #testcase-e
-                                        label.tc Testcases:
-                                        input#btAdd-e.bt.btn.btn-info.btn-sm(type='button' value='Add Testcase' style="margin-right:20px;margin-left:20px;")
-                                        input#btRemove-e.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
-                                        br
-                                        .t_case
-                                            p Testcase 1
-                                            textarea.form-control.input#ei_testcase1(rows='5' name='i_testcase1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
-                                            textarea.form-control.input#eo_testcase1(rows='5' name='o_testcase1' cols='50' required placeholder='Output')
-                                            p Points
-                                            input.form-control(style="width:15%;" name="points" id="epoints1" type="text" placeholder="Ex: 10" required)
-                                    
-                                    textarea(name="statement" id="es_edit" style="display:none;")
-                                    input#qid(type="text", style="display:none;" value="")
-                            
-                        .modal-footer
-                            input.btn.btn-success(type='submit' value="SAVE")
-                            button.btn.btn-secondary(type='button' data-dismiss='modal') Cancel
-                            
-
-    .modal.fade#delete(tabindex ="-1" role="dialog" )
-        .modal-dialog.modal-sm
-            .modal-content
-                .modal-header
-                    h4.modal-title Delete Question
-                .modal-body
-                    p Delete the following question?
-                    #dbody
-                .modal-footer
-                    button.btn.btn-danger(type='button' data-dismiss='modal' onclick="deleteQ()") Delete
-                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
-    
-    .modal.fade#oldQues(tabindex ="-1" role="dialog" )
-        .modal-dialog.modal-xl
-            .modal-content
-                .modal-header
-                    h4.modal-title Insert Old Questions
-                .modal-body
-                    .container
-                        .row.justify-content-md-center
-                            .col.col-md-2
-                                select#oldSelect.custom-select
-                                    option(selected,disabled,value=0) Select Semester
-                                    option(value=1) 1
-                                    option(value=2) 2
-                                    option(value=3) 3
-                                    option(value=4) 4
-                                    option(value=5) 5
-                                    option(value=6) 6
-                                    option(value=7) 7
-                                    option(value=8) 8
-                            .col.col-md-2
-                                .input-group.input-group(style="width:200px;")
-                                    input#oldSearch.form-control.float-right(type="text", name="old_search" , placeholder="Search a question") 
-                                    .input-group-append
-                                        button.btn.btn-default(onclick="javascript:$('#oldSearch').keyup()")
-                                            i.fas.fa-search
-                    br
-                    
+                                            .modal-footer
+                                                input.btn.btn-success(type='submit' value="ADD")
+                                                button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+                        .modal.fade#loading(data-backdrop="static" role="dialog" tabindex="-1" data-keyboard="false")
+                            .modal-dialog.modal-dialog-centered.text-center(role="document")
+                                span.fas.fa-circle-notch.fa-spin.fa-3x.w-100
+            .card(style="width:90%;").mx-auto.mt-5
+                .card-header.bg-info.text-center
+                    h3.card-title.text-light.lb_heading(style="letter-spacing:0.5px") Questions
+                .card-body.table-responsive.p-0
                     table.table.table-hover
                         thead
                             tr
-                                th Select
-                                th Batch
                                 th ID
                                 th Question Name
-                                th View
-                        tbody#oldQlist
-                    br
-                    #pagination
-                    
-                .modal-footer
-                    button.btn.btn-success(type='button' onclick="oldQuesInsert()") Insert
-                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
-    
+                                th Edit
+                                th Delete
+                        tbody#qlist
+        
+        .container
+            .modal#edit(role="dialog" tabindex ="-1" style="z-index:100000")
+                .modal-dialog.modal-xl
+                    form#ques-edit(onsubmit="return editForm()")
+                        .modal-content
+                            .modal-header
+                                h4.modal-title New Question  
+                                button.close(type='button' data-dismiss='modal') ×
+                                
+                            .modal-body
+                                    p#edit_info(style="float:center;")
+                                    .box
+                                        table.table
+                                            tbody
+                                                tr
+                                                    td(style="width:150px;")
+                                                        label Question name:
+                                                    td
+                                                        input#name-e(type='text' name='name' required style="width:50%").form-control
+                                                tr
+                                                    td
+                                                        label(for='edifficulty') Difficulty:
+                                                    td
+                                                        //- input#difficulty(type='text' name='description' required).form-control
+                                                        .form-group(style="width:50%")
+                                                            select#edifficulty.form-control(name='difficulty')
+                                                                option(value='Easy') Easy
+                                                                option(value='Medium') Medium
+                                                                option(value='Hard') Hard
+                                                tr
+                                                    td
+                                                        label(for='edescription') Description:
+                                                    td
+                                                        input#edescription(type='text' name='description' required).form-control
+                                                tr
+                                                    td(style="width:150px;")
+                                                        label Problem Statement:
+                                                    td
+                                                        div#statement-editor-edit(style="min-height:120px;height:auto;")
+                                                        script.
+                                                            const editor_edit = new Quill('#statement-editor-edit', {
+                                                            modules: { toolbar: [
+                                                            [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+                                                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],    
+                                                            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                                                            ['blockquote'],
+                                                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                                            [{ 'script': 'sub'}, { 'script': 'super' }], 
+                                                            ['image', 'code-block','formula'],     			                // superscript/subscript
+                                                            [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+                                                            [{ 'direction': 'rtl' }],                         // text direction
+                                                            [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+                                                            [{ 'font': [] }],
+                                                            [{ 'align': [] }],
+                                                            ['clean'] 
+                                                                ] },
+                                                                theme: 'snow'
+                                                                });
+                                                    
+                                                tr
+                                                    td(style="width:150px;")
+                                                        label Constraints:
+                                                    td
+                                                        textarea#constraints-e.form-control(rows='5' name='constraints' cols='50')
+                                            
+                                                tr
+                                                    td(style="width:150px;")
+                                                        label Input format:
+                                                    td
+                                                        textarea.form-control#i_format-e(rows='5' name='i_format' cols='50' required)
+                                        
+                                                tr
+                                                    td(style="width:150px;")
+                                                        label Output format:
+                                                    td
+                                                        textarea.form-control#o_format-e(rows='5' name='o_format' cols='50' required)
+                                        hr    
+                                        #samplecase-e
+                                            label.tc Sample Testcases:
+                                            input#btSampleAdd_e.bt.btn.btn-info.btn-sm(type='button' value='Add Sample Case' style="margin-right:20px;margin-left:20px;")
+                                            input#btSampleRemove_e.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
+                                            .t_case
+                                                p Sample Testcase 1
+                                                textarea.form-control.input#ei_sample1(rows='5' name='i_sample1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
+                                                textarea.form-control.input#eo_sample1(rows='5' name='o_sample1' cols='50' required placeholder='Output')
+                                                p Explanation
+                                                textarea.form-control.ex_box#explanation_edit(name='explanation' rows='5' cols='107' style="margin-bottom:10px" required)
+                                        #testcase-e
+                                            label.tc Testcases:
+                                            input#btAdd-e.bt.btn.btn-info.btn-sm(type='button' value='Add Testcase' style="margin-right:20px;margin-left:20px;")
+                                            input#btRemove-e.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
+                                            br
+                                            .t_case
+                                                p Testcase 1
+                                                textarea.form-control.input#ei_testcase1(rows='5' name='i_testcase1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
+                                                textarea.form-control.input#eo_testcase1(rows='5' name='o_testcase1' cols='50' required placeholder='Output')
+                                                p Points
+                                                input.form-control(style="width:15%;" name="points" id="epoints1" type="text" placeholder="Ex: 10" required)
+                                        
+                                        textarea(name="statement" id="es_edit" style="display:none;")
+                                        input#qid(type="text", style="display:none;" value="")
+                                
+                            .modal-footer
+                                input.btn.btn-success(type='submit' value="SAVE")
+                                button.btn.btn-secondary(type='button' data-dismiss='modal') Cancel
+                                
+
+        .modal.fade#delete(tabindex ="-1" role="dialog" )
+            .modal-dialog.modal-sm
+                .modal-content
+                    .modal-header
+                        h4.modal-title Delete Question
+                    .modal-body
+                        p Delete the following question?
+                        #dbody
+                    .modal-footer
+                        button.btn.btn-danger(type='button' data-dismiss='modal' onclick="deleteQ()") Delete
+                        button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+        
+        .modal.fade#oldQues(tabindex ="-1" role="dialog" )
+            .modal-dialog.modal-xl
+                .modal-content
+                    .modal-header
+                        h4.modal-title Insert Old Questions
+                    .modal-body
+                        .container
+                            .row.justify-content-md-center
+                                .col.col-md-2
+                                    select#oldSelect.custom-select
+                                        option(selected,disabled,value=0) Select Semester
+                                        option(value=1) 1
+                                        option(value=2) 2
+                                        option(value=3) 3
+                                        option(value=4) 4
+                                        option(value=5) 5
+                                        option(value=6) 6
+                                        option(value=7) 7
+                                        option(value=8) 8
+                                .col.col-md-2
+                                    .input-group.input-group(style="width:200px;")
+                                        input#oldSearch.form-control.float-right(type="text", name="old_search" , placeholder="Search a question") 
+                                        .input-group-append
+                                            button.btn.btn-default(onclick="javascript:$('#oldSearch').keyup()")
+                                                i.fas.fa-search
+                        br
+                        
+                        table.table.table-hover
+                            thead
+                                tr
+                                    th Select
+                                    th Batch
+                                    th ID
+                                    th Question Name
+                                    th View
+                            tbody#oldQlist
+                        br
+                        #pagination
+                        
+                    .modal-footer
+                        button.btn.btn-success(type='button' onclick="oldQuesInsert()") Insert
+                        button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+        .push1
+        .push
+    footer.bg-dark(class="FOOTER")
+        div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
 
     script(src="/js/Tassignment.js")

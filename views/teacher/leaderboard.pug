@@ -2,6 +2,14 @@ link(rel='stylesheet' type='text/css' href='/css/lb_util.css')
 link(rel='stylesheet' type='text/css' href='/css/lb_main.css')
 link(rel="stylesheet", href="/fontawesome/all.min.css")
 script(src="/fontawesome/all.min.js")
+style.
+  .lb_heading{
+        /*font-family: 'Patua One';*/
+        font-family: 'Palanquin Dark';
+        color:#666666;
+        /*padding-left:10px;*/
+        letter-spacing:0.8px
+      }
 
 -function two(x) {return ((x>9)?"":"0")+x}
 -function three(x) {return ((x>99)?"":"0")+((x>9)?"":"0")+x}
@@ -11,7 +19,7 @@ script(src="/fontawesome/all.min.js")
 
 
 body
-  h1.text-center.pb-3 Leaderboard
+  h1.text-center.mb-0.lb_heading Leaderboard
   .lb
     .limiter
       .container-table100

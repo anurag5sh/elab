@@ -1,9 +1,12 @@
-include nav
+-if(session.usn) 
+    include navbar 
+-else 
+    include teacher/nav
 
 head
-    link(rel="stylesheet", href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css")
-    script(src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js")
-    script(src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js")
+    link(rel="stylesheet", href="/css/dataTables.bootstrap4.min.css")
+    script(src="/js/jquery.dataTables.min.js")
+    script(src="/js/dataTables.bootstrap4.min.js")
     link(href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap" rel="stylesheet")
     link(rel="stylesheet", href="/css/lb_main.css")
     style.
@@ -15,8 +18,6 @@ head
             font-weight: unset;
         }
 
-        
-        
 body
     .WRAPPER
         h1.text-center.m-3.lb_heading Submissions
@@ -28,56 +29,52 @@ body
                         table#submission.table.table-hover
                             thead
                                 tr
-                                    th.column1 No.
-                                    th USN / ID
-                                    th Name
-                                    th Question Name
-                                    th Language
-                                    th Source Code
-                                    th Time (HH:MM:SS:MS)
-                                    th Points
-                                    th Status
+                                    th.column1.text-center(style="padding-top:5px!important") No.
+                                    th.text-center USN
+                                    th.text-center Name
+                                    th.text-center Source Code
+                                    th.text-center Time
+                                    th.text-center Points
+                                    th.text-center Status
                             tbody
-        .modal.fade#source(tabindex ="-1" role="dialog" )
-            .modal-dialog.modal-lg
-                .modal-content
-                    .modal-header
-                        h4.modal-title Code 
-                    .modal-body
-                        #sourceBody(style="font-family: 'Source Code Pro', ;white-space: pre-wrap;")
-                    .modal-footer
-                        button.btn.btn-secondary(type='button' data-dismiss='modal') Close
         .push1
         .push
     footer.bg-dark(class="FOOTER")
         div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
-        
+
+    .modal.fade#source(tabindex ="-1" role="dialog" )
+        .modal-dialog.modal-lg
+            .modal-content
+                .modal-header
+                    h4.modal-title Code 
+                .modal-body
+                    #sourceBody(style="font-family: 'Source Code Pro', ;white-space: pre-wrap;")
+                .modal-footer
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+
     script.
-        $.get('/contest/submissions/#{contest.url}',function(data,status){
+        $.get('/practice/#{question.qid}/submissions/list',function(data,status){
                     const submissions = $('#submission').DataTable( {
                         "data":data,
                         "columns": [
                             { "data": null },
                             { "data": "usn" },
                             { "data": "name" },
-                            { "data": "qname" },
-                            { "data": "lang" },
                             { "data": "code" },
                             { "data": "time" },
                             { "data": "points" },
                             { "data": "status" },
                         ],
-                        "order": [[ 5, 'asc' ]],
+                        "order": [[ 4, 'asc' ]],
                         "columnDefs": [ {"searchable": false,"orderable": false,"targets": 0},
                                         { "width": "1%", "targets": 0 },
-                                        {"searchable": false,"orderable": false,"targets": 5},
+                                        {"width":"20%", "targets": 3},
+                                        {"searchable": false,"orderable": false,"targets": 3},
                                         {"searchable": false,"targets": 4},
-                                        {"searchable": false,"targets": 3},
-                                        {"searchable": false,"targets": 6},
-                                        {"searchable": false,"targets": 7},
-                                        {"searchable": false,"targets": 8} ]
+                                        {"searchable": false,"targets": 5},
+                                        {"searchable": false,"targets": 6} ]
                     } );
-                     submissions.on( 'order.dt search.dt', function () {
+                    submissions.on( 'order.dt search.dt', function () {
                         submissions.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
                             cell.innerHTML = i+1;
                         } );
@@ -88,8 +85,10 @@ body
 
         
         $("#source").on('show.bs.modal',function (e){
-            $.get('/contest/source/#{contest.url}/'+$(e.relatedTarget).data('usn')+'/'+$(e.relatedTarget).data('qid'),function(data,status){
+            $.get('/practice/source/#{question.qid}/'+$(e.relatedTarget).data('usn'),function(data,status){
                 $("#sourceBody").html(data);
+            }).fail((err)=>{
+                toastr.error(err.responseText);
             });
 
         });

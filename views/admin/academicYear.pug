@@ -22,8 +22,59 @@ block content
                 .modal-footer
                     button.btn.btn-success(type='button' data-dismiss='modal' onclick="promote()") Proceed
                     button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+    
+    form(enctype="multipart/form-data" ,method="POST")#csv
+        .card.card-primary
+            .card-header 
+                h3.card-title Year Back Students
+            .card-body
+                .row
+                    .col-md-4
+                        .form-group
+                            p Upload the list of USN in the below template file.
+                            p Download CSV Template file
+                            a#download.btn.btn-info(href="/yearback.csv") Download
+                        br
+                        br
+                        .form-group
+                            input(type="file", name="csv")
+                        .form-group
+                            input.btn.btn-success(type="button", value="Upload", onclick="submitCSV()")
+    
+    .modal.fade#error_csv(tabindex ="-1" role="dialog" )
+        .modal-dialog.modal-lg
+            .modal-content
+                .modal-header
+                    h4.modal-title Error
+                .modal-body
+                    #ebody
+                .modal-footer
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
 
-    .card.card-primary
-        .card-header 
-            h3.card-title Year Back Students
-        .card-body
+    script.
+        function submitCSV(){
+             $.ajax({
+                url: '/admin/yearback/',
+                type: 'post',
+                data: new FormData($('#csv')[0]),
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function( data, textStatus, jQxhr ){
+                    toastr.success(data);
+                },
+                error: function(error){
+                    //toastr.error(error.responseText);
+                    $("#ebody").html(error.responseText);
+                    $('#error_csv').modal('show');
+                }
+            });
+        }
+
+        function promote(){
+            $.get('/admin/promote',function(data,status){
+                toastr.success(data);
+            }).fail((err)=>{
+                toastr.error(err.responseText);
+            })
+        }

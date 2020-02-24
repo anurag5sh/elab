@@ -13,53 +13,77 @@ head
             display:grid;
             height:100%;
         }
+        /* For Footer*/
+
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        .WRAPPER {
+            min-height: 100%;
+
+            /* Equal to height of footer */
+            /* But also accounting for potential margin-bottom of last child */
+            margin-bottom: -50px;
+        }
+        .FOOTER,
+        .push,.push1 {
+            height: 50px;
+        }
+
+        /* End for Footer*/
 body
     //- .content(style="margin:auto;width:25%;color:#9A9A9A;")
     //-     .container-fluid
     //-         .row
     //-             .col-md-3
-    .card(style="margin:auto;width:25%;color:#9A9A9A;")
-        .header
-            h4.title(style="margin-top:15px;margin-left:15px;margin-bottom:8px;")=title
-        .content
-            form#first(onsubmit="return subNext()")
-                -if(select == 'both')
-                    .row
-                        .col-lg-11.col-md-11
-                            .form-group
-                                label New Password
-                                input.form-control(type='password' name = 'password' placeholder='' value="" required)
-                    .row
-                        .col-lg-11.col-md-11
-                            .form-group
-                                label Confirm Password
-                                input.form-control(type='password' name = 'cnf_password'  placeholder='' value="" required)
-                    .row
-                        .col-lg-11.col-md-11
-                            .form-group
-                                label Recovery Email
-                                input.form-control(type='email' name = 'recovery_email' value="" required)
-                -else if(select == 'password')
-                    .row
-                        .col-lg-11.col-md-11
-                            .form-group
-                                label New Password
-                                input.form-control(type='password' name = 'password' placeholder='' value="" required)
-                    .row
-                        .col-lg-11.col-md-11
-                            .form-group
-                                label Confirm Password
-                                input.form-control(type='password' name = 'cnf_password'  placeholder='' value="" required)
+    .WRAPPER
+        .card(style="margin:auto;width:25%;color:#9A9A9A;")
+            .header
+                h4.title(style="margin-top:15px;margin-left:15px;margin-bottom:8px;")=title
+            .content
+                form#first(onsubmit="return subNext()")
+                    -if(select == 'both')
+                        .row
+                            .col-lg-11.col-md-11
+                                .form-group
+                                    label New Password
+                                    input.form-control(type='password' name = 'password' placeholder='' value="" required)
+                        .row
+                            .col-lg-11.col-md-11
+                                .form-group
+                                    label Confirm Password
+                                    input.form-control(type='password' name = 'cnf_password'  placeholder='' value="" required)
+                        .row
+                            .col-lg-11.col-md-11
+                                .form-group
+                                    label Recovery Email
+                                    input.form-control(type='email' name = 'recovery_email' value="" required)
+                    -else if(select == 'password')
+                        .row
+                            .col-lg-11.col-md-11
+                                .form-group
+                                    label New Password
+                                    input.form-control(type='password' name = 'password' placeholder='' value="" required)
+                        .row
+                            .col-lg-11.col-md-11
+                                .form-group
+                                    label Confirm Password
+                                    input.form-control(type='password' name = 'cnf_password'  placeholder='' value="" required)
+                                
+                    -else if(select == 'recovery')
+                        .row
+                            .col-lg-11.col-md-11
+                                .form-group
+                                    label Recovery Email
+                                    input.form-control(type='email' name = 'recovery_email' value="" required)
                             
-                -else if(select == 'recovery')
-                    .row
-                        .col-lg-11.col-md-11
-                            .form-group
-                                label Recovery Email
-                                input.form-control(type='email' name = 'recovery_email' value="" required)
-                        
-                button.btn.btn-info.btn-fill.pull-right(id="update-password") Next
-                .clearfix
+                    button.btn.btn-info.btn-fill.pull-right(id="update-password") Next
+                    .clearfix
+        .push1
+        .push
+    footer.bg-dark(class="FOOTER")
+        div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
 
     script.
         function subNext(){

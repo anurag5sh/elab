@@ -236,6 +236,7 @@ $(document).ready(function() {
         $("#ei_testcase1").val(data.test_cases[0].input);
         $("#eo_testcase1").val(data.test_cases[0].output);
         $("#epoints1").val(data.test_cases[0].points);
+        $("#difficulty-e").val(data.difficulty);
 
         for(let i=1;i<data.sample_cases.length;i++){
             sampleAdd();
@@ -259,6 +260,19 @@ $(document).ready(function() {
         $("#dbodyQ").empty();
         $("#dbodyQ").append("<p>"+e.relatedTarget.dataset.name+"</p><p style='display:none;' id='del_qid'>"+e.relatedTarget.dataset.id+"</p>");
 
+    });
+
+    $("#solution").on('show.bs.modal', function(e){
+        $("#formSolution")[0].reset();
+        $("#qidForSolution").text(e.relatedTarget.dataset.id);
+        $.get('/contest/solution/'+curl+"/"+e.relatedTarget.dataset.id,function(data,status){
+            if(data != ''){
+                $("#languageCode").val(data.language);
+                $('#solutionCode').val(data.sourceCode);
+            }
+        }).fail((err)=>{
+            toastr.error(err.responseText);
+        })
     });
 
     
@@ -295,4 +309,14 @@ $.get('/contest/delete/'+curl+'/'+qid,function(data,status){
     toastr.error(err.responseText);
 })
 
+}
+
+function solution(){
+    $.post('/contest/solution/'+curl+"/"+$("#qidForSolution").text(),$("#formSolution").serialize(),function(data,status){
+        toastr.success(data);
+    }).fail((err)=>{
+        toastr.error(err.responseText);
+    });
+
+    return false;
 }

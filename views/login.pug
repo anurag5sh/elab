@@ -8,6 +8,8 @@ html(lang='en')
     link(rel='icon', type='image/png', href='/images/icons/favicon.ico')
     link(rel='stylesheet', type='text/css', href='/vendor/bootstrap/css/bootstrap.min.css')
     link(rel='stylesheet', type='text/css', href='/fonts/font-awesome-4.7.0/css/font-awesome.min.css')
+    link(rel="stylesheet", href="fontawesome/all.min.css")
+    script(src="/fontawesome/all.min.js")
     link(rel='stylesheet', type='text/css', href='/fonts/Linearicons-Free-v1.0.0/icon-font.min.css')
     link(rel='stylesheet', type='text/css', href='/vendor/animate/animate.css')
     link(rel='stylesheet', type='text/css', href='/vendor/css-hamburgers/hamburgers.min.css')
@@ -26,6 +28,24 @@ html(lang='en')
       left:0;
       bottom:0;
     }
+    /* For Footer*/
+
+      html, body {
+        height: 100%;
+        margin: 0;
+      }
+      .WRAPPER {
+        min-height: 100%;
+
+        /* Equal to height of footer */
+        /* But also accounting for potential margin-bottom of last child */
+        margin-bottom: -50px;
+      }
+      .FOOTER,
+      .push,.push1 {
+        height: 50px;
+      }
+    /* End for Footer*/
     
   body
     .limiter
@@ -83,14 +103,18 @@ html(lang='en')
             //-       input#teacher.custom-control-input(type='radio', name='type', value='teacher')
             //-       label.custom-control-label(for='teacher') Teacher
 
-            //- input.form-radio(type='radio', name='type', value='teacher')
-            //- | Teacher
-          
-            .container-login100-form-btn.p-t-25
-              input.login100-form-btn(type="Submit" value="Login")
-            .forgot-password
-              br
-              a(href='/forgotPassword') Forgot password?
+              //- input.form-radio(type='radio', name='type', value='teacher')
+              //- | Teacher
+            
+              .container-login100-form-btn.p-t-25
+                input.login100-form-btn(type="Submit" value="Login")
+              .forgot-password
+                br
+                a(href='/forgotPassword') Forgot password?
+      //- .push1
+      .push
+    footer.bg-dark(class="FOOTER")
+        div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
             
     // ===============================================================================================
     script(src='/vendor/bootstrap/js/popper.js')

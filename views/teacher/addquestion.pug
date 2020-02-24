@@ -1,6 +1,9 @@
 link(href="https://fonts.googleapis.com/css?family=Crimson+Text&display=swap" rel="stylesheet")
 link(rel="stylesheet", href="/css/dracula.css")
 link(href='https://fonts.googleapis.com/css?family=Pompiere|Vast+Shadow&display=swap' rel='stylesheet')
+link(rel="stylesheet", href="/css/nice-select.css")
+script(src="/js/jquery.nice-select.min.js")
+
 script.  
   hljs.configure({   
       languages: ['javascript', 'python','c','c++','c#']
@@ -42,12 +45,26 @@ style.
         background-color:white;
         border-color:#00bcd4;
       }
+      .mq_card{
+        font-family:'Nunito', sans-serif!important;
+        font-size:15px!important;
+        letter-spacing:0.5px!important;
+      }
+      .option-disp {
+        position:relative;
+        border-radius:20px;
+        width:auto;
+        height:35px;
+        font-size:15px;
+        text-align:center;
+        left:5px;
+      }
 
   
 .container
   
   //  Button to Open the Modal 
-  button.btn.btn-primary(type='button' data-toggle='modal' data-target='#myModal').
+  button.btn.btn-primary.ml-2.mb-4.font-weight-bold(type='button' data-toggle='modal' data-target='#myModal').
     Add Question
     
   //  The Modal 
@@ -158,26 +175,30 @@ style.
 
 - const ques=questions;
 each i in ques
-  .row
-    .col-lg-8.col-md-8
-      .shadow.p-3.rounded(style='width: 700px;  margin-left: 25px;')
-        h3(style="font-family: 'Vast Shadow', cursive;color:black")  #{i.name} 
+  .row(style="margin-bottom:15px")
+    .col-lg-9.col-md-9(style="color:#616161")
+      .shadow.p-3.rounded(style='width:700px; margin-left: 25px;background-color:#ECEFF1;')
+        h3(style="font-family: 'Palanquin Dark';font-size:34px;letter-spacing:0.4px")  #{i.name} 
         .row
           .col-lg-10.col-md-10
-            p(style="font-family: 'Pompiere', cursive;color:black;font-size:20px;") #{i.description}
+            p(style="font-family: 'Pompiere', cursive;font-size:20px;padding-top:8px") #{i.description}
         .row
-          .col-lg-4.col-md-3(style='color:black')
-            label Difficulty: #{i.difficulty}
-          .col-lg-3.col-md-3(style='color:black')
-            label(for='points') Points: 
-          .col-lg-1
-          .col-lg-4.col-md-4
+          .col-lg-3.col-md-3(style='')
+            label.mq_card(style="font-weight:bold") Difficulty: 
+            label.mq_card #{i.difficulty}
+          .col-lg-3.col-md-3(style='')
+            label.mq_card(style="font-weight:bold" for='points') Points:
+            label.mq_card #{i.totalPoints}
+          .col-lg-6.col-md-6
             button.btn.btn-outline-danger(style='font-weight:bold;border-radius:20px;' data-toggle="modal" data-target="#deleteQuestion" data-id=i.qid data-name=i.name) 
               i.fas.fa-trash 
               | &nbsp; Delete
             button.btn.btn-outline-primary(style='font-weight:bold;border-radius:20px;' data-toggle="modal" data-target="#edit" data-id=i.qid)
               i.fas.fa-edit 
               | &nbsp;Edit
+            button.btn.btn-outline-success(style="font-weight:bold;border-radius:20px;" data-toggle="modal" data-target="#solution" data-id=i.qid)
+              i.fad.fa-key
+              | &nbsp; Solution
   br
   //- .container
   //-   .card(style='background-color: rgba(171, 188, 219, 0.616);')
@@ -217,17 +238,17 @@ each i in ques
                                               input#name-e(type='text' name='name' required style="width:50%").form-control
                                       tr
                                           td
-                                              label(for='difficult') Difficulty
+                                              label(for='difficult-e') Difficulty
                                           td
                                           
                                               .form-group
-                                                select#difficult.form-control(name='difficulty')
+                                                select#difficult-e.form-control(name='difficulty')
                                                   option(value='Easy') Easy
                                                   option(value='Medium') Medium
-                                                  option(value='Difficult') Difficult
+                                                  option(value='Hard') Hard
                                       tr
                                           td
-                                            label(for='description') Description:
+                                            label(for='description-e') Description:
                                           td
                                             input#description-e(type='text' name='description' required).form-control                                     
                                       tr
@@ -315,7 +336,42 @@ each i in ques
                 button.btn.btn-danger(type='button' data-dismiss='modal' onclick="deleteQ()") Delete
                 button.btn.btn-secondary(type='button' data-dismiss='modal') Close
 
+.modal.fade#solution(tabindex ="-1" role="dialog" )
+    .modal-dialog.modal-lg
+        form#formSolution(onsubmit="return solution()")
+          .modal-content
+              .modal-header
+                h4.modal-title Add a Solution
+              .modal-body
+                .form-group.row
+                  label.col-sm-2.fontStyle(for="languageCode") Language:
+                  .col-sm-4
+                    select#languageCode.option-disp(name='language' ,required)
+                      option(selected,disabled,value="") Select Language
+                      option(value='C') C
+                      option(value='C++') C++
+                      option(value='Java') Java
+                      option(value='Python') Python
+                      option(value='Javascript') Javascript
+                      option(value='C#') C#
+                .form-group.row
+                  label.fontStyle.col-sm-2(for="solutionCode") Source Code:
+                  .col-sm-9
+                    textarea#solutionCode.form-control(style="min-height:150px;resize:none;overflow:hidden" oninput="auto_grow(this)" required cols="30", rows="3" value="" name="sourceCode")
+                p(style="display:none;")#qidForSolution
+              .modal-footer
+                input.btn.btn-success(type='submit' value="Save")
+                button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+
 script.
+  function auto_grow(element) {
+      element.style.height = "150px";
+      element.style.height = (element.scrollHeight)+"px";
+  }
+  $(document).ready(function() {
+      $('select').niceSelect();
+      setup();
+      });
   const curl = "#{contest.url}"
 script(src="/js/addquestion.js")
   

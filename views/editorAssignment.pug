@@ -160,87 +160,91 @@ html
       }
   body
     br
-    nav(aria-label='breadcrumb' style="color:black;width:65%;margin-left:40px")
-      ol.breadcrumb(style="padding-left:20px")
-        li.breadcrumb-item
-          a(href='/assignment') Assignment
-        li.breadcrumb-item.active(aria-current='page') #{question.name}
-    h1(style="margin-left:40px;") #{question.name}
-    .card#card(style="padding-left:25px;padding-right:25px;")
-      //- p #{question.name}
-      
-      p.headings Problem Statement
-      div#statement(style="font-family: 'Source Sans Pro', sans-serif;font-size:18px;margin-bottom:10px;")
-        //- p #{question.statement}
-      
-          
-      p.headings Input Format
-      p(style="font-family: 'Source Sans Pro', sans-serif;font-size:18px;") #{question.input_format}
-      |
-    
-      p.headings Output Format
-      p(style="font-family: 'Source Sans Pro', sans-serif;font-size:18px;") #{question.output_format}
-      |
-      - if(question.constraints) 
-          p.headings Constraints
-          p #{question.constraints}
-          |
-      each i,j in question.sample_cases
-        p.headings Sample Input #{j+1}
-        p.bg-col(class="sa" id="sam_i"+j) #{i.input}
-        p.headings Sample Output #{j+1}
-        p.bg-col(id="sam_o"+j) #{i.output}
-   
+    .WRAPPER
+      nav(aria-label='breadcrumb' style="color:black;width:65%;margin-left:40px")
+        ol.breadcrumb(style="padding-left:20px")
+          li.breadcrumb-item
+            a(href='/assignment') Assignment
+          li.breadcrumb-item.active(aria-current='page') #{question.name}
+      h1(style="margin-left:40px;") #{question.name}
+      .card#card(style="padding-left:25px;padding-right:25px;")
+        //- p #{question.name}
         
-    .card(style="width:90%; display:inline-block;")
-      label.language(for="lang") Language
-      select.option-disp#lang(onchange='setup().setLang()')
-        option(value='c50') C
-        option(value='c++54') C++
-        option(value='c#51') C#
-        option(value='python71') Python
-        option(value='java62') Java
-        option(value='javascript63') Javascript
-      label.theme(for="theme") Theme
-      select.option-disp#theme(onchange='setup().setTheme()')
-        option(value='monokai') Monokai
-        option(value='chaos') Chaos
-        option(value='dracula') Dracula
-        option(value='cobalt') Cobalt
-        option(value='gob') Green on Black
-        option(value='xcode') XCode
-        option(value='chrome') Chrome
-        option(value='github') Github
-      label.font_size Font Size
-      select.option-disp#fontsize( onchange='setup().setFont()')
-        option(value='18') &nbsp; &nbsp; 18 &nbsp; &nbsp;
-        option(value='24') &nbsp; &nbsp; 24 &nbsp; &nbsp;
-        option(value='30') &nbsp; &nbsp; 30 &nbsp; &nbsp;
-        option(value='36') &nbsp; &nbsp; 36 &nbsp; &nbsp;
+        p.headings Problem Statement
+        div#statement(style="font-family: 'Source Sans Pro', sans-serif;font-size:18px;margin-bottom:10px;")
+          //- p #{question.statement}
+        
+            
+        p.headings Input Format
+        p(style="font-family: 'Source Sans Pro', sans-serif;font-size:18px;") #{question.input_format}
+        |
       
-      -if(session.usn)
-        a(style='float:right' href="" data-toggle="modal" data-target="#sourceModal") View Code history
-
-
-      div#editor
-      -if(session.usn)
-        button#button_submit.btn.btn-success(value='Submit', onclick='setup().submit()', style='float:right;width:100px;left:20px;') 
-          a(href='#opbox' style="color:white;font-weight:bold") Submit
-      button#button.btn.btn-primary(value='Run', onclick='setup().run()', style='font-weight:bold;color:white;float:right;margin-right:20px;width:100px;')
-        a(href='#loader' style="color:white;font-weight:bold") Run
-    .row(style="margin:30px;")
-      .col-lg-5.col-md-4
-        .custom-control.custom-checkbox
-          input#custom_i.custom-control-input(type='checkbox' name='')
-          label.custom-control-label(for='custom_i') Custom Input
-                  
-        textarea.form-control(rows="5" id="custom_input" style="display:none")
-      
+        p.headings Output Format
+        p(style="font-family: 'Source Sans Pro', sans-serif;font-size:18px;") #{question.output_format}
+        |
+        - if(question.constraints) 
+            p.headings Constraints
+            p #{question.constraints}
+            |
+        each i,j in question.sample_cases
+          p.headings Sample Input #{j+1}
+          p.bg-col(class="sa" id="sam_i"+j) #{i.input}
+          p.headings Sample Output #{j+1}
+          p.bg-col(id="sam_o"+j) #{i.output}
     
-    #opbox.output_box(style="width:650px; display:inline-block;")
-    #loader(style="height:600px;display:none;")
-      .loader(style="")  
+          
+      .card(style="width:90%; display:inline-block;")
+        label.language(for="lang") Language
+        select.option-disp#lang(onchange='setup().setLang()')
+          option(value='c50') C
+          option(value='c++54') C++
+          option(value='c#51') C#
+          option(value='python71') Python
+          option(value='java62') Java
+          option(value='javascript63') Javascript
+        label.theme(for="theme") Theme
+        select.option-disp#theme(onchange='setup().setTheme()')
+          option(value='monokai') Monokai
+          option(value='chaos') Chaos
+          option(value='dracula') Dracula
+          option(value='cobalt') Cobalt
+          option(value='gob') Green on Black
+          option(value='xcode') XCode
+          option(value='chrome') Chrome
+          option(value='github') Github
+        label.font_size Font Size
+        select.option-disp#fontsize( onchange='setup().setFont()')
+          option(value='18') &nbsp; &nbsp; 18 &nbsp; &nbsp;
+          option(value='24') &nbsp; &nbsp; 24 &nbsp; &nbsp;
+          option(value='30') &nbsp; &nbsp; 30 &nbsp; &nbsp;
+          option(value='36') &nbsp; &nbsp; 36 &nbsp; &nbsp;
+        
+        -if(session.usn)
+          a(style='float:right' href="" data-toggle="modal" data-target="#sourceModal") View Code history
 
+
+        div#editor
+        -if(session.usn)
+          button#button_submit.btn.btn-success(value='Submit', onclick='setup().submit()', style='float:right;width:100px;left:20px;') 
+            a(href='#opbox' style="color:white;font-weight:bold") Submit
+        button#button.btn.btn-primary(value='Run', onclick='setup().run()', style='font-weight:bold;color:white;float:right;margin-right:20px;width:100px;')
+          a(href='#loader' style="color:white;font-weight:bold") Run
+      .row(style="margin:30px;")
+        .col-lg-5.col-md-4
+          .custom-control.custom-checkbox
+            input#custom_i.custom-control-input(type='checkbox' name='')
+            label.custom-control-label(for='custom_i') Custom Input
+                    
+          textarea.form-control(rows="5" id="custom_input" style="display:none")
+        
+      
+      #opbox.output_box(style="width:650px; display:inline-block;")
+      #loader(style="height:600px;display:none;")
+        .loader(style="")  
+      .push1
+      .push
+    footer.bg-dark(class="FOOTER")
+        div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
     .modal.fade#sourceModal(tabindex ="-1" role="dialog" )
         .modal-dialog.modal-lg
             .modal-content
@@ -288,6 +292,10 @@ html
       setup.sourceArray=[];
       function source(lang){
         const con = window.location.pathname.split("/");
+        const pre = $("#lang").data('pre');
+        $.post(`/assignment/source/${con[2]}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
+          $("#lang").data('pre', $("#lang").val());
+        
         if(!lang) lang='';
         $.get(`/assignment/source/${con[2]}`,{lang:lang},function (data,status){
             if(lang){
@@ -302,6 +310,9 @@ html
         }).fail((err)=>{
           toastr.error(err.responseText);
         })
+        }).fail((err)=>{
+          toastr.error(err.responseText);
+        });
       }
       function sourceInsert(i){
         editor.setValue(sourceArray[i].sourceCode);
@@ -322,6 +333,14 @@ html
         editor.session.setMode("ace/mode/"+m);
         source(l.substr(l.length-2));
       }
+
+      setInterval(function(){
+        const con = window.location.pathname.split("/");
+        const pre = $("#lang").data('pre');
+        $.post(`/assignment/source/${con[2]}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
+          $("#lang").data('pre', $("#lang").val());});
+      },60000*5);
+
       function setTheme(){
         editor.setTheme("ace/theme/"+$("#theme").val());
       }
@@ -329,7 +348,7 @@ html
         editor.setFontSize(parseInt($("#fontsize").val()));
       }
 
-      function setDefault(){setLang();setTheme();setFont();setup.hh=true;}
+      function setDefault(){$('#lang').data('pre', $("#lang").val());setLang();setTheme();setFont();setup.hh=true;}
       (!setup.hh?setDefault():void(0));
 
      function readText() { window.location.href="#loader";
@@ -386,6 +405,11 @@ html
       document.getElementById("out").style.display="block";
       window.location.href="#opbox";
         }
+      //save
+        const con = window.location.pathname.split("/");
+        const pre = $("#lang").data('pre');
+        $.post(`/assignment/source/${con[2]}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
+        $("#lang").data('pre', $("#lang").val());});
       }).fail((err)=>{
           toastr.error(err.responseText);
           document.getElementById("loader").style.display="none";
@@ -441,7 +465,7 @@ html
           
           document.getElementById("loader").style.display="none";
           document.getElementById("out").style.display="block";
-          
+           window.location.href="#opbox";
         }).fail((err)=>{
           toastr.error(err.responseText);
           document.getElementById("loader").style.display="none";

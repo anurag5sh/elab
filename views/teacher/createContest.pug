@@ -32,7 +32,7 @@ html(lang='en')
       .at{
         width:100px;
       }
-      .row{
+      .Row{
         margin-left:10px;    
       }
       .contestform{
@@ -68,56 +68,60 @@ html(lang='en')
       
 
   body
-    .contestform
-      div#errorForm
-      // The Modal
-      #manageModal.modal.fade(data-backdrop="static", data-keyboard="false")
-        .modal-dialog.modal-dialog-centered
-          .modal-content
-            // Modal Header
-            .modal-header
-              h4.modal-title Contest Created
-            // Modal body
-            .modal-body
-              | Click on Next to manage your contest
-            // Modal footer
-            .modal-footer
-              button.btn.btn-success(type='button' , onclick="location.href='./manage/'+u") Next
+    .WRAPPER
+      .contestform
+        div#errorForm
+        // The Modal
+        #manageModal.modal.fade(data-backdrop="static", data-keyboard="false")
+          .modal-dialog.modal-dialog-centered
+            .modal-content
+              // Modal Header
+              .modal-header
+                h4.modal-title Contest Created
+              // Modal body
+              .modal-body
+                | Click on Next to manage your contest
+              // Modal footer
+              .modal-footer
+                button.btn.btn-success(type='button' , onclick="location.href='./manage/'+u") Next
 
-      h2 Create Contest
-      div
-        form#con
-          label(for='Contest') Contest Name 
-          input.form-control.mwidth#Contest(type='text', name='name', placeholder='Contest', required='true')
-          br
-          br
-          label(for='descrip') Description
-          input.form-control.mwidth#descrip(type='text', name='description', placeholder='Description', required='true')
-          br
-          br
-          label(for='timings') Date
-          input#timings.form-control.mwidth(type='text' name='timings' )
-          
-          br
-          br
-          .row
-            label For: &nbsp;
-            .col-1.custom-control.custom-checkbox
-              input(type='checkbox',class= "custom-control-input", name='year', id="1-year", value='1')
-              label(class="custom-control-label" for="1-year") 1st Year
-            .col-1.custom-control.custom-checkbox
-              input(type='checkbox', class= "custom-control-input",name='year',id="2-year" ,value='2')
-              label(class="custom-control-label" for="2-year") 2nd Year
-            .col-1.custom-control.custom-checkbox
-              input(type='checkbox', class= "custom-control-input",name='year',id="3-year", value='3')
-              label(class="custom-control-label" for="3-year") 3rd Year
-            .col-1.custom-control.custom-checkbox
-              input(type='checkbox', class= "custom-control-input",name='year',id="4-year", value='4')
-              label(class="custom-control-label" for="4-year") 4th Year
-          br 
-          input.btn.btn-outline-danger.btn-sm(type='button', value='CANCEL', onclick="",style="float:right;margin-right:70px;") 
-          input.btn.btn-outline-primary.btn-sm(type='button', value='GET STARTED', onclick="submitForm()",style="float:right;margin-right:10px;")
-         
+        h2 Create Contest
+        div
+          form#con
+            label(for='Contest') Contest Name 
+            input.form-control.mwidth#Contest(type='text', name='name', placeholder='Contest', required='true')
+            br
+            br
+            label(for='descrip') Description
+            input.form-control.mwidth#descrip(type='text', name='description', placeholder='Description', required='true')
+            br
+            br
+            label(for='timings') Date
+            input#timings.form-control.mwidth(type='text' name='timings' )
+            
+            br
+            br
+            .row.Row
+              label For: &nbsp;
+              .col-1.custom-control.custom-checkbox
+                input(type='checkbox',class= "custom-control-input", name='year', id="1-year", value='1')
+                label(class="custom-control-label" for="1-year") 1st Year
+              .col-1.custom-control.custom-checkbox
+                input(type='checkbox', class= "custom-control-input",name='year',id="2-year" ,value='2')
+                label(class="custom-control-label" for="2-year") 2nd Year
+              .col-1.custom-control.custom-checkbox
+                input(type='checkbox', class= "custom-control-input",name='year',id="3-year", value='3')
+                label(class="custom-control-label" for="3-year") 3rd Year
+              .col-1.custom-control.custom-checkbox
+                input(type='checkbox', class= "custom-control-input",name='year',id="4-year", value='4')
+                label(class="custom-control-label" for="4-year") 4th Year
+            br 
+            input.btn.btn-outline-danger.btn-sm(type='button', value='CANCEL', onclick="",style="float:right;margin-right:70px;") 
+            input.btn.btn-outline-primary.btn-sm(type='button', value='GET STARTED', onclick="submitForm()",style="float:right;margin-right:10px;")
+      .push1
+      .push
+    footer.bg-dark(class="FOOTER")
+      div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020    
         script.
           $(function() {
             $('#timings').daterangepicker({

@@ -25,27 +25,19 @@ block append head
     .flex-container {
     display: flex;
     flex-flow: row wrap;
-    }
-
-    body::-webkit-scrollbar {
-      width: 5px;
-    }
-    
-    body::-webkit-scrollbar-track {
-      background: #ddd;
-    }
-    
-    body::-webkit-scrollbar-thumb {
-      background: #666; 
+    align-content:flex-start;
     }
 
   - active.contest="active"
   
 block content
+  .WRAPPER
     section.module.parallax.parallax-1(data-type='background' data-speed='10')
       .parallax-container
         h2.typewrite(href='' data-period='2000' data-type='[ "CONTESTS" ]' style="font-weight:bold")
           span.wrap
+    - const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    -function nth(n){return n+([,'st','nd','rd'][n%100>>3^1&&n%10]||'th')}
     .row.flex-container(style="width:100%")
       each i in contest
         .ft-contest 
@@ -60,18 +52,22 @@ block content
                   h2(class="contest-title") #{ i.name}
                   .user-rating
               ul.contest-details
-                  li.contest-details-item.time
+                  li.contest-details-item
                       i.ion.ion-ios-clock-outline
-                      span.value 2
+                      span.value=Math.abs(i.timings.ends - i.timings.starts) / 36e5
                       span.title Hours
-                  li.contest-details-item.ingredients
+                  li.contest-details-item
                       i.ion.ion-ios-book-outline
-                      span.value 5
+                      span.value #{i.questions.length}
                       span.title Questions
-                  li.contest-details-item.servings
+                  li.contest-details-item
                       i.ion.ion-ios-person-outline
-                      span.value 3rd
-                      span.title March
+                      span.value=nth(i.timings.starts.getDate())
+                      span.title=month[i.timings.starts.getMonth()]
             p.description=i.description
             footer.content__footer
                 a(href="/contest/"+i.url) View Contest
+    .push1
+    .push
+  footer.bg-dark(class="FOOTER")
+        div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020

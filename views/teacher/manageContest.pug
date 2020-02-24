@@ -13,67 +13,119 @@ html(lang='en')
     link(rel="stylesheet", href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css")
     script(src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js")
     script(src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js")
-    
+    style.
+      .lb_heading{
+        font-family: 'Palanquin Dark';
+        color:#666666;
+        /*padding-left:10px;*/
+        letter-spacing:0.8px
+      }
+      .nav-tabs {
+      border-bottom: none;
+      border:1px solid #E0E0E0!important;
+      }
+
+      .nav-tabs .nav-link {
+          border: none;
+          border-radius: .25rem;
+          
+      }
+
+      .nav-tabs .nav-link.active {
+        color: white!important;
+        font-weight:bold;
+        background-color: rgba(67,160,71 ,1)!important;
+        border-color: #dee2e6 #dee2e6 #fff;
+        opacity:0.8;
+      }
+
+      .a_nav{
+        color:#424242!important;
+        margin:7px;
+      }
+
+      .a_nav:hover{
+        color:rgba(67,160,71 ,1)!important;
+      }
+
+      .fontStyle{
+        font-family:OpenSans-Regular;
+        font-size:1rem;
+        color:#263238;
+      }
+
+      .con.lb_heading:hover{
+        color:#1AA3FF;
+        cursor:pointer!important;
+        text-decoration:none;
+      }
+
+
 
 
     
    
   body
     br
-    .container
-      h2 #{contest.name}
-      div#alertForm
-      br
-      // Nav tabs
-      ul.nav.nav-tabs(role='tablist')#myTab
-        li.nav-item
-          a.nav-link.active(data-toggle='tab', href='#home') DETAILS
-        li.nav-item
-          a.nav-link(data-toggle='tab', href='#menu1') QUESTIONS
-        li.nav-item
-          a.nav-link(data-toggle='tab', href='#menu2') SIGNED UP
-        li.nav-item
-          a.nav-link(data-toggle='tab', href='#menu3') ACCESS
-        li.nav-item
-          a.nav-link(data-toggle='tab', href='#menu4') GROUPS
-        li.nav-item
-          a.nav-link(data-toggle='tab', href='#menu5') LEADERBOARD
-        li.nav-item
-          a.nav-link(data-toggle='tab', href='#menu6') STATISTICS
-        li.nav-item
-          a.nav-link(data-toggle='tab', href='#menu7') RULES
-      // Tab panes
-      .tab-content
-        #home.container.tab-pane.active
-          br
-          h3 DETAILS
-          include details
-        #menu1.container.tab-pane.fade
-          br
-          include addquestion
-        #menu2.container.tab-pane.fade
-          br
-          h3 STUDENTS
-          include studtab
-        #menu3.container.tab-pane.fade
-          br
-          include access
-        #menu4.container.tab-pane.fade
-          br
-          include customGroup
-        #menu5.container.tab-pane.fade
-          br
-          //- h3 LEADERBOARD
-          include leaderboard
-        #menu6.container.tab-pane.fade
-          br
-          h3 STATISTICS
-          include statistics
-        #menu7.container.tab-pane.fade
-          br
-          h3 RULES
-          include rules
-    
+    .WRAPPER
+      .container
+        h2.lb_heading(style="font-size:45px;letter-spacing:1px")
+          a.con.lb_heading(href="/contest/"+contest.url) #{contest.name}
+        div#alertForm
+        br
+        // Nav tabs
+        ul.nav.nav-tabs.p-2(role='tablist')#myTab
+          li.nav-item
+            a.a_nav.nav-link.active(data-toggle='tab', href='#home') DETAILS
+          li.nav-item
+            a.a_nav.nav-link(data-toggle='tab', href='#menu1') QUESTIONS
+          li.nav-item
+            a.a_nav.nav-link(data-toggle='tab', href='#menu2') SIGNED UP
+          li.nav-item
+            a.a_nav.nav-link(data-toggle='tab', href='#menu3') ACCESS
+          li.nav-item
+            a.a_nav.nav-link(data-toggle='tab', href='#menu4') GROUPS
+          li.nav-item
+            a.a_nav.nav-link(data-toggle='tab', href='#menu5') LEADERBOARD
+          li.nav-item
+            a.a_nav.nav-link(data-toggle='tab', href='#menu6') STATISTICS
+          li.nav-item
+            a.a_nav.nav-link(data-toggle='tab', href='#menu7') RULES
+        // Tab panes
+        .tab-content
+          #home.container.tab-pane.active.pl-0
+            br
+            h3.lb_heading.ml-2.mb-3 DETAILS
+            include details
+          #menu1.container.tab-pane.fade.pl-0
+            br
+            include addquestion
+          #menu2.container.tab-pane.fade
+            br
+            h3.lb_heading.mb-3 STUDENTS
+            include studtab
+          #menu3.container.tab-pane.fade
+            br
+            include access
+          #menu4.container.tab-pane.fade
+            br
+            include customGroup
+          #menu5.container.tab-pane.fade
+            br
+            //- h3 LEADERBOARD
+            include leaderboard
+          #menu6.container.tab-pane.fade
+            br
+            h3.lb_heading.mb-3.ml-3 STATISTICS
+            include statistics
+          #menu7.container.tab-pane.fade
+            br
+            h3.lb_heading.mb-3.ml-2.pl-1 RULES
+            include rules
+      .push1
+      .push
+    footer.bg-dark(class="FOOTER")
+      div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
     script.
       $(function() {
       $('a[data-toggle="tab"]').on('click', function(e) {

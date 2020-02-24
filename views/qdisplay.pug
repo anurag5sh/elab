@@ -245,12 +245,18 @@ body
                 a.btn(href="/contest/"+contest.url+"/leaderboard" style='font-size:20px;')
                   i.fad.fa-poll-people
                   label(style='cursor: pointer;') &nbsp; Leaderboard
-            -if(session.staff_id == contest.createdBy || (session.staff_id && contest.timings.ends < new Date()))
+            -if(session.staff_id == contest.createdBy || (session.staff_id && contest.timings.ends < new Date()) || session.isAdmin)
               .row
                 .col.text-left
                   a.btn(href='/contest/'+contest.url+'/submissions' style='font-size:20px;')
                     i.fas.fa-chalkboard-teacher
                     label(style='cursor: pointer;') &nbsp; View Submissions
+              .row
+                | &nbsp;
+                .col.text-left
+                  a.btn(href='/contest/'+contest.url+'/report' style='font-size:20px;')
+                    i.fad.fa-file-chart-line
+                    label(style='cursor: pointer;') &nbsp; View Report
       br
       #myModal.modal.fade
         .modal-dialog(style="width:50%;max-width:70%")

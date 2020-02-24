@@ -52,7 +52,7 @@ const contestSchema = new mongoose.Schema({
     usn:{type : String},
     name:{type:String},
     time:{ type: Date, default:new Date()},
-    year:{type:Number},
+    year:{type:String},
     _id : false
   }],
   questions:{

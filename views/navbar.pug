@@ -17,26 +17,33 @@ html
 			- let active = {practice:"",contest:"",assignment:"",profile:""} 
 			- let navClass = "bg-dark";
 			- let navStyle = "background-color:#1aa3ff!important";
-			style.
-				/* For Footer*/
+		style.
+			.lb_heading{
+				font-family: 'Palanquin Dark';
+				color:#666666;
+				cursor:default;
+				/*padding-left:10px;*/
+				letter-spacing:0.8px
+			}
+			/* For Footer*/
 
-				html, body {
-					height: 100%;
-					margin: 0;
-				}
-				.WRAPPER {
-					min-height: 100%;
+			html, body {
+				height: 100%;
+				margin: 0;
+			}
+			.WRAPPER {
+				min-height: 100%;
 
-					/* Equal to height of footer */
-					/* But also accounting for potential margin-bottom of last child */
-					margin-bottom: -50px;
-				}
-				.FOOTER,
-				.push,.push1 {
-					height: 50px!important;
-				}
+				/* Equal to height of footer */
+				/* But also accounting for potential margin-bottom of last child */
+				margin-bottom: -50px;
+			}
+			.FOOTER,
+			.push,.push1 {
+				height: 50px!important;
+			}
 
-				/* End for Footer*/
+			/* End for Footer*/
 	body
 		div
 			nav.navbar.navbar-dark.navbar-expand-md.navigation-clean(style=navStyle,class=navClass)

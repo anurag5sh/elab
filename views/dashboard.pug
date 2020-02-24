@@ -2,29 +2,91 @@ doctype html
 include navbar
 html   
     head
-    body
-        meta(name='viewport' content='width=device-width, initial-scale=1.0, shrink-to-fit=no')
-        title Dashboard
-        link(rel='stylesheet' href='list_style/bootstrap/css/new.css')
-        link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,400,700')
-        link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css')
-        body
-            
-            .card.bg-light(style="height:100px")
-                .card-body
-                    main.page.projets-page
-                        section.portfolio-block.project-no-images
-                            .container1
-                                .row1    
-                                    h1 Practice
-                                .row1
-                                    - let questions=q
-                                    each i in questions
-                                        .col-md-6.col-lg-4
-                                            .project-card-no-image
-                                                h3(style="font-family:Lato,sanf-serif")=i.name
-                                                a.btn1.btn1-outline-primary.btn1-sm(role='button' href='/practice/'+i.qid) SOLVE
+      meta(name='viewport' content='width=device-width, initial-scale=1.0, shrink-to-fit=no')
+      title Dashboard
+      link(rel='stylesheet' href='list_style/bootstrap/css/new.css')
+      link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,400,700')
+      link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css')
+      link(rel="stylesheet", href="/css/stdash.css")
+body
+  .row.w-100
+    .col-lg-4
+      div.pl-4
+        br
+        h2 Practice
+        hr(style='width: 50%;float: left;')
+        br
+        br
+        h4 Practice everyday to excel in interviews
+        br
+        p
+          | Explore different programming Languages, solve coding problems, and crack your coding interview.
+        button.btn.btn-success(type='button') View All
+    .col-lg-4  
+      .card1.one.shadows.shadows-interact(style='float: right;')
+        .header
+        .body
+          h2 Experience title 2
+          b Mildly Rounded - large  shadows - no interaction
+          br
+          br
+          br
+          br
+        .footer
+          span.price
+            button.btn.btn-primary.btn-block(type='button' style='margin-left: 50%;width: 90px;height: 40px;') Solve
+    //- .col-lg-4  
+    //-   .card1.one.shadows.shadows-interact(style='float: right;')
+    //-     .header
+    //-     .body
+    //-       h2 Experience title 3
+    //-       b Mildly Rounded - small  shadows with interaction
+    //-       br
+    //-       br
+    //-       br
+    //-       br
+    //-     .footer
+    //-       span.price
+    //-         button.btn.btn-primary.btn-block(type='button' style='margin-left: 50%;width: 90px;height: 40px;') Solve
+  div(style='width: 100%; height: auto;')
+    .descrip(style='float: right;width: 430px;')
+      br
+      h2 Contest
+      hr(style='width: 50%;float: left;')
+      br
+      br
+      h4 Participate in coding contests
+      br
+      p
+        | Explore different programming Languages, solve coding problems, and crack your coding interview.
+      button.btn.btn-success(type='button') View All
+  .card1.one.shadows.shadows-interact(style='float:left;')
+    .header
+    .body
+      h2 Experience title 2
+      b Mildly Rounded - large  shadows - no interaction
+      br
+      br
+      br
+      br
+    .footer
+      span.price
+        button.btn.btn-primary.btn-block(type='button' style='margin-left: 50%;width: 90px;height: 40px;') Register
+  .card1.one.shadows.shadows-interact(style='float: left;')
+    .header
+    .body
+      h2 Experience title 3
+      b Mildly Rounded - small  shadows with interaction
+      br
+      br
+      br
+      br
+    .footer
+      span.price
+        button.btn.btn-primary.btn-block(type='button' style='margin-left: 50%;width: 90px;height: 40px;') Register
+//-   
+
     //-script(src='list_style/js/jquery.min.js')
     //-script(src='list_style/bootstrap/js/bootstrap.min.js')
     //-script(src='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js')
-    script(src='list_style/js/theme.js')
+    //- script(src='list_style/js/theme.js')

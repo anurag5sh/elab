@@ -1,0 +1,65 @@
+
+@import url("https://fonts.googleapis.com/css?family=Quicksand:300,400,700");
+ body {
+  /* padding: 25px 25px 80px; */
+  background: #EEE;
+  font-family: 'Quicksand', sans-serif;
+}
+
+  h1,   h2,   h3,  h4,  h5,  h6,  p,  small,  em,  b,  span {
+  color: #424242;
+}
+
+
+  .card1 {
+  display: inline-block;
+  width: 350px;
+  margin: 20px;
+  overflow: hidden;
+}
+  .card1:hover {
+  cursor: pointer;
+}
+  .card1 .header {
+  background: url(http://via.placeholder.com/300x200) center;
+  background-size: cover;
+  width: 100%;
+  height: 200px;
+}
+  .card1 .body {
+  padding: 15px 20px 5px;
+  /* background: #FFF; */
+}
+  .card1 .body p {
+  margin-bottom: 0;
+  margin-left: 10px;
+}
+  .card1 .footer {
+  /* background: #FFF; */
+  padding: 20px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+  .card1 .footer .price {
+  font-size: 22px;
+}
+  .card1.one {
+  border-radius: 15px;
+}
+  .card1.two {
+  border-radius: 30px;
+}
+
+  /* . shadows.large {
+  box- shadows: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+} */
+  .shadows.shadows-interact {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+  .shadows.shadows-interact:hover {
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}

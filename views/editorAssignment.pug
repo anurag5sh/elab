@@ -10,8 +10,9 @@ html
     -else
       script(src='/src-min-noconflict/ace.js' charset='utf-8')
     script(src='/src-min-noconflict/ext-language_tools.js')
-    link(rel='stylesheet' href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css')
+    //- link(rel='stylesheet' href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css')
     link(rel="stylesheet", href="/css/nice-select.css")
+    link(rel="stylesheet", href="/fontawesome/all.min.css")
     script(src="/js/jquery.nice-select.min.js")
     link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap")
     link(href="https://fonts.googleapis.com/css?family=Open+Sans:700&display=swap" rel="stylesheet")
@@ -20,6 +21,7 @@ html
     link(rel="stylesheet", href="/css/katex.min.css")
     script(src="/js/katex.min.js")
     link(href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap" rel="stylesheet")
+    script(src="/fontawesome/all.min.js")
 
     style(type='text/css').
       #editor {
@@ -31,7 +33,7 @@ html
       }
 
       .card {
-      width: 65%;
+      width: 90%;
       box-shadow: 0 0.5px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
       text-align: left;
       left: 20px;
@@ -47,7 +49,10 @@ html
       
       .option-disp {
         position:relative;
-        border-radius:20px;width:auto;height:35px;font-size:15px;
+        border-radius:20px;
+        width:auto;
+        height:35px;
+        font-size:15px;
         text-align:center;
         left:5px;
       }
@@ -102,21 +107,35 @@ html
         font-weight:bold;
         color:green;        
       }
+
+      .nav-tabs .nav-link.active.yellow-exclamation{
+        font-weight:bold;
+        color:#ffc107;        
+      }
+
+      .yellow-exclamation:hover{
+        color:white;
+        background-color:#ffc107;
+      }
+
+      .yellow-exclamation{
+        font-weight:bold;
+        color:#ffc107;
+      }
       /*.nav-tabs .nav-item.show .nav-link,.nav-tabs .nav-link.active{  
       
       background-color:#fff;
       border-color:#dee2e6 #dee2e6 #fff;
       }*/
       .loader {
-    
-      margin:auto;
-      border: 16px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 16px solid #3498db;
-      width: 150px;
-      height: 150px;
-      -webkit-animation: spin 2s linear infinite; /* Safari */
-      animation: spin 2s linear infinite;
+        margin:auto;
+        border: 16px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 16px solid #3498db;
+        width: 150px;
+        height: 150px;
+        -webkit-animation: spin 2s linear infinite; /* Safari */
+        animation: spin 2s linear infinite;
       }
       @-webkit-keyframes spin {
         0% { -webkit-transform: rotate(0deg); }
@@ -149,49 +168,126 @@ html
         font-family: 'Source Code Pro', monospace;
       }
       .headings{
-        font-family: 'Open Sans', sans-serif;
+        font-family:OpenSans-Regular;
+        font-weight:bold;
         margin-top:4px;
         margin-bottom:0px;
-        font-size:18px;
+        font-size:1.05rem;
+        color:#404040;
+        letter-spacing:0.5px;
       }
       .ql-editor{
-        padding:0px 0px;
-         
+        padding:0px 0px; 
       }
+
+      @font-face {
+      font-family: OpenSans-Regular;
+      src: url('/fonts/OpenSans-Regular.ttf'); 
+      }
+
+      #TestCases,td{
+        font-family: 'OpenSans-Regular';
+        color:#666666;
+      }
+      table:hover{
+        cursor:default;
+      }
+      .tCase{
+        font-weight:bold;
+      }
+      .pre{
+        font-family: 'Source Sans Pro', sans-serif;
+        font-size:16px;
+        padding:5px;
+        padding-left:12px;
+        white-space:pre-wrap;
+      }
+      .q_name{
+        /*font-family: 'Patua One';*/
+        font-family: 'Palanquin Dark';
+        color:#666666;
+        padding-left:10px;
+        letter-spacing:0.8px
+      }
+
+      .editor-right{
+        color:#263238;
+      }
+      .editor-right:hover{
+        color:#1E88E5;
+        cursor:pointer;
+      }
+
   body
     br
     .WRAPPER
-      nav(aria-label='breadcrumb' style="color:black;width:65%;margin-left:40px")
-        ol.breadcrumb(style="padding-left:20px")
-          li.breadcrumb-item
-            a(href='/assignment') Assignment
-          li.breadcrumb-item.active(aria-current='page') #{question.name}
-      h1(style="margin-left:40px;") #{question.name}
-      .card#card(style="padding-left:25px;padding-right:25px;")
-        //- p #{question.name}
-        
-        p.headings Problem Statement
-        div#statement(style="font-family: 'Source Sans Pro', sans-serif;font-size:18px;margin-bottom:10px;")
-          //- p #{question.statement}
-        
-            
-        p.headings Input Format
-        p(style="font-family: 'Source Sans Pro', sans-serif;font-size:18px;") #{question.input_format}
-        |
+      .row.w-100
+        .col-lg-10
+          nav(aria-label='breadcrumb' style="color:black;width:65%;margin-left:40px")
+            ol.breadcrumb(style="padding-left:20px")
+              li.breadcrumb-item
+                a(href='/assignment') Assignment
+              li.breadcrumb-item.active(aria-current='page') #{question.name}
       
-        p.headings Output Format
-        p(style="font-family: 'Source Sans Pro', sans-serif;font-size:18px;") #{question.output_format}
-        |
-        - if(question.constraints) 
-            p.headings Constraints
-            p #{question.constraints}
+      h1.q_name(style="margin-left:40px;font-size:35px;") #{question.name}
+      .row.w-100
+        .col-lg-9.col-md-8.col-md-8
+          .card#card(style="padding-left:25px;padding-right:25px;")
+            //- p #{question.name}
+            
+            p.headings Problem Statement
+            div#statement(style="font-family: 'Source Sans Pro', sans-serif;font-size:18px;margin-bottom:10px;padding:8px;padding-left:10px")
+              //- p #{question.statement}
+            
+                
+            p.headings Input Format
+            div(class="pre") #{question.input_format}
             |
-        each i,j in question.sample_cases
-          p.headings Sample Input #{j+1}
-          p.bg-col(class="sa" id="sam_i"+j) #{i.input}
-          p.headings Sample Output #{j+1}
-          p.bg-col(id="sam_o"+j) #{i.output}
-    
+          
+            p.headings Output Format
+            div(class="pre") #{question.output_format}
+            |
+            - if(question.constraints) 
+                p.headings Constraints
+                div(class="pre") #{question.constraints}
+                |
+            each i,j in question.sample_cases
+              p.headings Sample Input #{j+1}
+              div.bg-col.m-1(class="pre" class="sa" id="sam_i"+j) #{i.input}
+              p.headings Sample Output #{j+1}
+              div.bg-col.m-1(class="pre" id="sam_o"+j) #{i.output}
+        .col-lg-3.col-md-4.col-sm-4.pl-0
+          .card.m-0.mt-4(style="width:95%;height:auto")
+            //- div.text-left.m-3.mb-2
+            //-   a.editor-right(style="border-radius:20px;" href="/practice/"+question.qid+"/submissions") 
+            //-     i.fad.fa-eye(style="font-size:17px")
+            //-     | &nbsp; 
+            //-     label.editor-right(style="font-size:18px") View Submissions
+            //- div.text-left.ml-3.mr-3.mb-2
+            //-   a.editor-right( href="") 
+            //-     i.fad.fa-user-check(style="font-size:17px")
+            //-     | &nbsp; 
+            //-     label.editor-right(style="font-size:18px") Correct Submmissions
+            div.text-left.m-3.mb-2
+              a.editor-right( href="") 
+                i.fad.fa-poll-people(style="font-size:17px")
+                | &nbsp; 
+                label.editor-right(style="font-size:18px") Leaderboard
+            div.text-left.ml-3.mr-3.mb-2
+              a.editor-right( href="") 
+                i.fas.fa-puzzle-piece(style="font-size:17px")
+                | &nbsp; 
+                label.editor-right(style="font-size:18px") Difficulty :
+            div.text-left.ml-3.mr-3.mb-2
+              a.editor-right( href="") 
+                i.fad.fa-user-edit(style="font-size:17px")
+                | &nbsp; 
+                label.editor-right(style="font-size:18px") Created By :
+            div.text-left.ml-3.mr-3.mb-2
+              a.editor-right( href="") 
+                i.fad.fa-eye(style="font-size:17px")
+                | &nbsp; 
+                label.editor-right(style="font-size:18px") View Solution
           
       .card(style="width:90%; display:inline-block;")
         label.language(for="lang") Language
@@ -220,7 +316,7 @@ html
           option(value='36') &nbsp; &nbsp; 36 &nbsp; &nbsp;
         
         -if(session.usn)
-          a(style='float:right' href="" data-toggle="modal" data-target="#sourceModal") View Code history
+          a.btn.btn-outline-primary.btn-sm(style='float:right;margin-right:12px;margin-top:5px;border-radius:20px' href="" data-toggle="modal" data-target="#sourceModal") View Code history
 
 
         div#editor
@@ -381,18 +477,24 @@ html
 
       for(let i=0;i<data.length;i++)
       {
-      if(data[i].id==3){
-        $('#color'+(i+1)+'').removeClass('red-cross');
-        $('#color'+(i+1)+'').addClass('green-tick');
-        $('#icon'+(i+1)+'').removeClass('fa fa-close');
-        $('#icon'+(i+1)+'').addClass('fa fa-check');
-      }
-      else{
-        $('#color'+(i+1)+'').removeClass('green-tick');
-        $('#color'+(i+1)+'').addClass('red-cross');
-        $('#icon'+(i+1)+'').removeClass('fa fa-check');
-        $('#icon'+(i+1)+'').addClass('fa fa-close');
-      }
+        if(data[i].id==3){
+          $('#color'+(i+1)+'').removeClass('red-cross yellow-exclamation');
+          $('#color'+(i+1)+'').addClass('green-tick');
+          $('#icon'+(i+1)+'').removeClass('fad fa-times fad fa-exclamation-triangle');
+          $('#icon'+(i+1)+'').addClass('fad fa-check');
+        }
+        else if(data[i].id == 4){
+          $('#color'+(i+1)+'').removeClass('green-tick yellow-exclamation');
+          $('#color'+(i+1)+'').addClass('red-cross');
+          $('#icon'+(i+1)+'').removeClass('fad fa-check fad fa-exclamation-triangle');
+          $('#icon'+(i+1)+'').addClass('fad fa-times');
+        }
+        else{
+          $('#color'+(i+1)+'').removeClass('green-tick red-cross');
+          $('#color'+(i+1)+'').addClass('yellow-exclamation');
+          $('#icon'+(i+1)+'').removeClass('fad fa-check fad fa-times');
+          $('#icon'+(i+1)+'').addClass('fad fa-exclamation-triangle');
+        }
       }
       for(let i=0;i<$('#card .sa').length;i++){
       document.getElementById("message"+(i+1)+"").innerHTML=data[i].description;
@@ -432,36 +534,70 @@ html
         document.getElementById("loader").style.display="none";
         return;
       }
-          $(".points").remove();
-          $(".green-tick-t").remove();
-            $(".red-cross-t").remove();
-            let total =0;
+          //- $(".points").remove();
+          //- $(".green-tick-t").remove();
+          //-   $(".red-cross-t").remove();
+          $("#TestCases").empty();
+
+          let total =0;
+
+          let table = document.createElement("TABLE");
+          table.setAttribute("id", "table");
+          table.setAttribute("class","table table-borderless");
+          document.getElementById("TestCases").appendChild(table);
+
           for(let i=0;i<data.length;i++){
             
-            let node =document.createElement("P");
-            node.setAttribute("id","t"+(i+1)+"");
-            let textnode=document.createTextNode("Testcase "+(i+1)+""+" ");
-            let n1=document.createElement("I");
+            let row = document.createElement("TR");
+            row.setAttribute("id", "myTr"+(i+1)+"");
+            document.getElementById("table").appendChild(row);
 
-          if(data[i].id==3){
-            node.setAttribute("class","green-tick-t");
-            n1.setAttribute("class","fa fa-check");
-          }
-          else{
-            node.setAttribute("class","red-cross-t");
-            n1.setAttribute("class","fa fa-close");
+
+            let test_no = document.createElement("TD");
+            let t = document.createTextNode("Testcase "+(i+1)+" ");
+            test_no.appendChild(t);
+
+            let icon = document.createElement("I");
+
+            if(data[i].id==3){
+            test_no.setAttribute("class","green-tick-t tCase");
+            icon.setAttribute("class","fad fa-check");
+            }
+            else if(data[i].id == 4){
+              test_no.setAttribute("class","red-cross-t tCase");
+              icon.setAttribute("class","fad fa-times ");
+            }
+            else{
+              test_no.setAttribute("class","text-warning tCase");
+              icon.setAttribute("class","fad fa-exclamation-triangle");
+            }
+            test_no.appendChild(icon);
+
+            document.getElementById("myTr"+(i+1)+"").appendChild(test_no);
+            let message = document.createElement("TD");
+            t = document.createTextNode(data[i].description);
+            message.appendChild(t);
+            document.getElementById("myTr"+(i+1)+"").appendChild(message);
+            
+            let points = document.createElement("TD");
+            t = document.createTextNode(data[i].points);
+            points.appendChild(t);
+            document.getElementById("myTr"+(i+1)+"").appendChild(points);
+
+            total+=data[i].points;
+
           }
           
-          node.appendChild(textnode);
-          node.appendChild(n1);
-          n1=document.createTextNode(" "+data[i].description);
-          node.appendChild(n1);
-          let points = document.createTextNode("  "+data[i].points);
-          total+=data[i].points;
-          node.appendChild(points);
-          document.getElementById("TestCases").appendChild(node);
-          }
-          $("#out").append('<p class="points"> Total Points = '+ total +'</p>');
+          //- node.appendChild(textnode);
+          //- node.appendChild(n1);
+          //- n1=document.createTextNode(" "+data[i].description);
+          //- node.appendChild(n1);
+          //- let points = document.createTextNode("  "+data[i].points);
+          //- total+=data[i].points;
+          //- node.appendChild(points);
+          //- document.getElementById("TestCases").appendChild(node);
+          //- }
+          $("#TestCases").append('<p class="points" style="padding:10px;font-weight:bold"> Total Points = '+ total +'</p>');
           
           document.getElementById("loader").style.display="none";
           document.getElementById("out").style.display="block";

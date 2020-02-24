@@ -54,6 +54,12 @@ html(lang='en')
         color:#263238;
       }
 
+      .con.lb_heading:hover{
+        color:#1AA3FF;
+        cursor:pointer!important;
+        text-decoration:none;
+      }
+
 
 
 
@@ -64,7 +70,7 @@ html(lang='en')
     .WRAPPER
       .container
         h2.lb_heading(style="font-size:45px;letter-spacing:1px")
-          a(href="/contest/"+contest.url) #{contest.name}
+          a.con.lb_heading(href="/contest/"+contest.url) #{contest.name}
         div#alertForm
         br
         // Nav tabs

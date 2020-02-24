@@ -954,8 +954,8 @@ router.get('/:curl/submissions',authenticate,teacher, async (req,res)=>{
     else return res.status(401).send("Unauthorized");
 });
 
-router.get('/:curl/report',authenticate,teacher,async (req,res)=>{
-    const html = pug.renderFile('./views/login.pug');
+router.get('/:curl/reportDownload',authenticate,teacher,async (req,res)=>{
+
     (async function() {
         try {
         // launch puppeteer API
@@ -963,7 +963,8 @@ router.get('/:curl/report',authenticate,teacher,async (req,res)=>{
         const page = await browser.newPage();
         // await page.setContent(html);
         // await page.emulateMedia('screen');
-        await page.goto('http://localhost:4000/',{waitUntil:'networkidle0'});
+        await page.setCookie({name:"elab",value:req.headers.cookie.substr(5),domain:"localhost",path:"/"+req.params.curl+"/reportDownload"});
+        await page.goto('http://localhost:4000/contest/sas/report',{waitUntil:'networkidle0'});
         await page.pdf({
             // name of your pdf file in directory
 			path: './public/testpdf.pdf', 
@@ -981,6 +982,54 @@ router.get('/:curl/report',authenticate,teacher,async (req,res)=>{
         res.download('./public/testpdf.pdf');
     });
 
+});
+
+
+router.get('/:curl/report',async (req,res)=>{
+    let contest = await Contest.findOne({url:req.params.curl}).lean();
+    if(!contest)    return res.status(404).end();
+
+    let signed_up =[0,0,0,0];
+    for(i of contest.signedUp){
+         signed_up[i.year-1]++;
+    }
+    let submissions = [0,0,0,0];
+    for(i of contest.submissions){
+        submissions[i.year - 1]++;
+    }
+    let questions = [];
+    for(i of contest.questions){ let points=0;
+        let q = await ContestQ.findOne({qid:i}).lean();
+        for(i of q.test_cases){
+            points+=i.points;
+        }
+        q.totalPoints = points;
+        questions.push(q);
+    }
+
+    let questionNo = [];
+    for( i of questions){
+        questionNo.push({qid:i.qid,name:i.name, Accepted: 0,Partially_Accepted: 0,Wrong_Answer: 0});
+    }
+
+    for (i of contest.submissions){
+        if(i.status === "Accepted" ){
+            const index = questionNo.findIndex( j => j.qid === i.qid);
+            questionNo[index].Accepted++;
+        }
+        else if(i.status === "Partially Accepted"){
+            const index = questionNo.findIndex( j => j.qid === i.qid);
+            questionNo[index].Partially_Accepted++;
+        }
+        else{
+            const index = questionNo.findIndex( j => j.qid === i.qid);
+            questionNo[index].Wrong_Answer++;
+        }
+    }
+
+    let stats ={signed_up:signed_up , submissions:submissions};
+
+res.render('teacher/reports',{contest:contest,stats:stats,questionNo:questionNo});
 });
 
 

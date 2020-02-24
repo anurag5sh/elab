@@ -53,11 +53,11 @@ body, html {
 
 
 /* ------------------------------------ */
-.lb input {
+/* .lb input {
   display: block;
 	outline: none;
 	border: none !important;
-}
+} */
 
 .lb textarea {
   display: block;
@@ -129,7 +129,7 @@ body, html {
 
 .lb table {
   border-spacing: 1;
-  border-collapse: collapse;
+  border-collapse: collapse!important;
   background: white;
   border-radius: 10px;
   overflow: hidden;

@@ -1,6 +1,9 @@
 link(href="https://fonts.googleapis.com/css?family=Crimson+Text&display=swap" rel="stylesheet")
 link(rel="stylesheet", href="/css/dracula.css")
 link(href='https://fonts.googleapis.com/css?family=Pompiere|Vast+Shadow&display=swap' rel='stylesheet')
+link(rel="stylesheet", href="/css/nice-select.css")
+script(src="/js/jquery.nice-select.min.js")
+
 script.  
   hljs.configure({   
       languages: ['javascript', 'python','c','c++','c#']
@@ -46,6 +49,15 @@ style.
         font-family:'Nunito', sans-serif!important;
         font-size:15px!important;
         letter-spacing:0.5px!important;
+      }
+      .option-disp {
+        position:relative;
+        border-radius:20px;
+        width:auto;
+        height:35px;
+        font-size:15px;
+        text-align:center;
+        left:5px;
       }
 
   
@@ -184,7 +196,9 @@ each i in ques
             button.btn.btn-outline-primary(style='font-weight:bold;border-radius:20px;' data-toggle="modal" data-target="#edit" data-id=i.qid)
               i.fas.fa-edit 
               | &nbsp;Edit
-            button.btn.btn-outline-success(style="font-weight:bold;border-radius:20px;" data-toggle="modal" data-target="#solution" data-id=i.qid) Solution
+            button.btn.btn-outline-success(style="font-weight:bold;border-radius:20px;" data-toggle="modal" data-target="#solution" data-id=i.qid)
+              i.fad.fa-key
+              | &nbsp; Solution
   br
   //- .container
   //-   .card(style='background-color: rgba(171, 188, 219, 0.616);')
@@ -330,9 +344,9 @@ each i in ques
                 h4.modal-title Add a Solution
               .modal-body
                 .form-group.row
-                  label.col-sm-2(for="languageCode") Language:
+                  label.col-sm-2.fontStyle(for="languageCode") Language:
                   .col-sm-4
-                    select#languageCode.form-control(name='language' ,required)
+                    select#languageCode.option-disp(name='language' ,required)
                       option(selected,disabled,value="") Select Language
                       option(value='C') C
                       option(value='C++') C++
@@ -341,15 +355,23 @@ each i in ques
                       option(value='Javascript') Javascript
                       option(value='C#') C#
                 .form-group.row
-                  label.col-sm-2(for="solutionCode") Source Code:
-                  .col-sm-4
-                    textarea#solutionCode.form-control( required cols="30", rows="3" value="" name="sourceCode")
+                  label.fontStyle.col-sm-2(for="solutionCode") Source Code:
+                  .col-sm-9
+                    textarea#solutionCode.form-control(style="min-height:150px;resize:none;overflow:hidden" oninput="auto_grow(this)" required cols="30", rows="3" value="" name="sourceCode")
                 p(style="display:none;")#qidForSolution
               .modal-footer
                 input.btn.btn-success(type='submit' value="Save")
                 button.btn.btn-secondary(type='button' data-dismiss='modal') Close
 
 script.
+  function auto_grow(element) {
+      element.style.height = "150px";
+      element.style.height = (element.scrollHeight)+"px";
+  }
+  $(document).ready(function() {
+      $('select').niceSelect();
+      setup();
+      });
   const curl = "#{contest.url}"
 script(src="/js/addquestion.js")
   

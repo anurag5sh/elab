@@ -5,28 +5,39 @@ head
     script(src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js")
     script(src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js")
     link(href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap" rel="stylesheet")
+    link(rel="stylesheet", href="/css/lb_main.css")
+    style.
+        th{
+            font-family: OpenSans-Regular;
+            font-size: 16px;
+            color: #fff;
+            line-height: 1.2;
+            font-weight: unset;
+        }
 
         
         
 body
     .WRAPPER
-        h2.text-center.m-3 Submissions
+        h1.text-center.m-3.lb_heading Submissions
 
-        .container.main-section
+        .container-fluid
             .row
                 .col-lg-12
-                    table#submission.table.table-hover
-                        thead
-                            tr
-                                th No.
-                                th USN / ID
-                                th Name
-                                th Question Name
-                                th Source Code
-                                th Time (HH:MM:SS:MS)
-                                th Points
-                                th Status
-                        tbody
+                    .lb
+                        table#submission.table.table-hover
+                            thead
+                                tr
+                                    th.column1 No.
+                                    th USN / ID
+                                    th Name
+                                    th Question Name
+                                    th Language
+                                    th Source Code
+                                    th Time (HH:MM:SS:MS)
+                                    th Points
+                                    th Status
+                            tbody
         .modal.fade#source(tabindex ="-1" role="dialog" )
             .modal-dialog.modal-lg
                 .modal-content

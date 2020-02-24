@@ -17,55 +17,54 @@ head
  
 body
   .WRAPPER
-    div(style="margin-left:25px;margin-top:25px")
+    div(style="margin-left:75px;margin-top:25px")
       nav(aria-label='breadcrumb' style="color:black;width:56.5%;")
-          ol.breadcrumb(style="padding-left:20px;background-color:white")
+          ol.mb-0.breadcrumb(style="padding-left:20px;background-color:white")
             li.breadcrumb-item
-              a(href='/contest') Assignment
-            li.breadcrumb-item
-              a(href='/contest/'+contest.url)=contest.name
-            li.breadcrumb-item.active(aria-current='page') Assignment Leaderboard
-    h1.text-center.pb-3 Assignment Leaderboard
-    .limiter
-      .container-table100
-        .wrap-table100
-          .table100
-            table
-              thead
-                tr.table100-head
-                  th.column1 
-                    i.fal.fa-flag-checkered 
-                    | &nbsp; RANK
-                  th.column2 
-                    i.fal.fa-id-card
-                    | &nbsp; USN/ID
-                  th.column3 
-                    i.fal.fa-user 
-                    | &nbsp; Name
-                  th.column4
-                    i.fal.fa-bullseye-arrow
-                    | &nbsp; POINTS
-                  th.column5 
-                    i.fal.fa-clock
-                    | &nbsp; TIME (HH:MM:SS:MS)
-                  // <th class="column6">Total</th>
-              tbody
-                each i,j in assignment.leaderboard
-                  tr
-                    td.column1
-                      if(j+1 == 1)
-                        i.fad.fa-trophy-alt.fa-2x(style="color:#FFDB19")
-                      else if(j+1 == 2)
-                        i.fad.fa-trophy-alt.fa-2x(style="color:#c6c6c6")
-                      else if(j+1 == 3)
-                        i.fad.fa-trophy-alt.fa-2x(style="color:#E67300")
-                      else
-                        div(style="padding-left:12px;font-weight:bold") #{j+1}
-                    td.column2
-                      a(href="viewProfile/"+i.usn+"") #{i.usn}
-                    td.column3 #{i.name} 
-                    td.column4 #{i.points}
-                    td.column5 #{time(i.timestamp)}
+              a(href='/assignment') Assignment
+            li.breadcrumb-item.active(aria-current='page') Assignment leaderboard
+    h1.text-center.lb_heading Assignment Leaderboard
+      .limiter
+        .container-table100
+          .wrap-table100
+            .table100
+              .lb
+                table
+                  thead
+                    tr.table100-head
+                      th.column1
+                        i.fal.fa-flag-checkered 
+                        | &nbsp; RANK
+                      th.column2 
+                        i.fal.fa-id-card
+                        | &nbsp; USN/ID
+                      th.column3 
+                        i.fal.fa-user 
+                        | &nbsp; Name
+                      th.column4
+                        i.fal.fa-bullseye-arrow
+                        | &nbsp; POINTS
+                      th.column5
+                        i.fal.fa-clock
+                        | &nbsp; TIME (HH:MM:SS:MS)
+                      
+                  tbody
+                    each i,j in assignment.leaderboard
+                      tr
+                        td.column1
+                          if(j+1 == 1)
+                            i.fad.fa-trophy-alt.fa-2x(style="color:#FFDB19")
+                          else if(j+1 == 2)
+                            i.fad.fa-trophy-alt.fa-2x(style="color:#c6c6c6")
+                          else if(j+1 == 3)
+                            i.fad.fa-trophy-alt.fa-2x(style="color:#E67300")
+                          else
+                            div(style="padding-left:12px;font-weight:bold") #{j+1}
+                        td.column2 #{i.usn}
+                        td.column3 
+                          a(href="/viewProfile/"+i.usn+"") #{i.name} 
+                        td.column4 #{i.points}
+                        td.column5 #{time(i.timestamp)}
     .push1
     .push
   footer.bg-dark(class="FOOTER")

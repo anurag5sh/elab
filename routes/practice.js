@@ -43,8 +43,39 @@ router.get('/', authenticate,async (req,res)=> {
   });
 
 
+//delete a question
+router.get('/delete/:qid',authenticate,teacher,async (req,res)=>{
+  const question = await Practice.findOne({qid:req.params.qid});
+  if(!question) return res.status(404).end();
+
+  if(!question.createdBy == req.params.staff_id){
+    if(req.session.isAdmin){}
+    else
+    return res.status(401).end();
+  } 
+
+  await Practice.deleteOne({qid:req.params.qid}).then(()=>{
+    res.send("Question Deleted!");
+  }).catch((err)=>{
+    winston.error(err);
+    res.status(500).send("Unable to delete");
+  })
+});
+
 //fetch source code for student
 router.get('/source/:qid',authenticate,async (req,res)=>{
+
+  if(req.session.staff_id){ let temp=null;
+    if(req.session.practice){
+       temp = req.session.practice.find(i => i.usn == req.session.staff_id && i.lang==req.query.lang);
+    }
+    if(temp) return res.send(temp.sourceCode);
+    else {
+      const source=config.get(`source.${req.query.lang}`);
+      return res.send(source);
+    }
+  }
+
   const question = await Practice.findOne({qid:req.params.qid}).lean().select('submissions');
   if(!question) return res.status(400).send("Question not found!!");
 
@@ -78,7 +109,7 @@ router.post('/source/:qid',authenticate,async (req,res)=>{
     else{
         let obj = {};
         obj.qid=req.params.qid;
-        obj.usn = req.session.usn;
+        obj.usn = req.session.usn || req.session.staff_id;
         obj.lang = req.body.lang.substr(req.body.lang.length-2);
         obj.sourceCode = req.body.sourceCode;
         obj.timestamp = new Date();
@@ -88,7 +119,7 @@ router.post('/source/:qid',authenticate,async (req,res)=>{
 else{
     let obj = {};
     obj.qid=req.params.qid;
-    obj.usn = req.session.usn;
+    obj.usn = req.session.usn || req.session.staff_id;
     obj.lang = req.body.lang.substr(req.body.lang.length-2);
     obj.sourceCode = req.body.sourceCode;
     obj.timestamp = new Date();
@@ -103,11 +134,11 @@ router.get('/:qid', authenticate, async (req,res)=>{
   if(!question) return res.send("Question not found!!");
 
   if(req.session.staff_id){
-    res.render('teacher/editor', {question : _.pick(question,['qid','name','statement','constraints', 'input_format','output_format','sample_cases'])});
+    res.render('teacher/editor', {question : _.pick(question,['qid','name','difficulty','createdByName','statement','constraints', 'input_format','output_format','sample_cases'])});
 
   }
   else{
-    res.render('editor', {question : _.pick(question,['name','statement','constraints', 'input_format','output_format','sample_cases','qid'])});
+    res.render('editor', {question : _.pick(question,['name','statement','difficulty','createdByName','constraints', 'input_format','output_format','sample_cases','qid'])});
 
   }
 });
@@ -198,6 +229,8 @@ router.post('/:qid',authenticate,async (req,res) => {
         desc.push({id:data.status.id,description:data.status.description,points:point}); 
       }
     
+      if(req.session.staff_id) return res.send(desc);
+
     let total_points  = 0;
     desc.forEach((item,index) =>{
             total_points+= item.points;
@@ -269,6 +302,8 @@ router.post('/',authenticate,teacher,async (req,res)=>{
     question.output_format = req.body.o_format;
     question.statement=decodeURIComponent(req.body.statement); 
     question.qid=date + (++count);
+    question.createdBy = req.session.staff_id;
+    question.createdByName = req.session.fname +" "+req.session.lname ;
     if(Array.isArray(req.body.i_sample1)){
 
       for(let i=0;i<req.body.i_sample1.length;i++){
@@ -302,9 +337,14 @@ router.post('/edit/:qid',authenticate,teacher,async (req,res)=>{
   const {error} = validatePractise(req.body);
     if(error) return res.status(400).send(error.message);
 
-    let question  = await Practice.findOne({qid:req.params.qid});
-    if(!question) return res.status(400).send('Invalid ID');
+  let question  = await Practice.findOne({qid:req.params.qid});
+  if(!question) return res.status(400).send('Invalid ID');
 
+  if(question.createdBy != req.session.staff_id) {
+    if(req.session.isAdmin){}
+    else
+    return res.status(401).end();
+  }
     question.name = req.body.name;
     question.constraints = req.body.constraints;
     question.difficulty = req.body.difficulty;
@@ -312,6 +352,7 @@ router.post('/edit/:qid',authenticate,teacher,async (req,res)=>{
     question.input_format = req.body.i_format;
     question.output_format = req.body.o_format;
     question.statement=decodeURIComponent(req.body.statement); 
+    question.description = req.body.description;
 
     question.sample_cases = [];
     question.test_cases =[];

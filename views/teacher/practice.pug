@@ -31,7 +31,8 @@ block append head
         }
         .pull-right{
                 float:right;
-                margin:5px;
+                margin:3px;
+                font-size:12px;
         }
         .trans{
         position:absolute;
@@ -88,7 +89,9 @@ block content
                                                 h3(style="font-family:Lato,sanf-serif")=i.name
                                                     br
                                                     br
-                                                    a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' data-toggle="modal" data-target="#edit" data-qid=i.qid href="" ) EDIT
+                                                    -if(i.createdBy == session.staff_id)
+                                                        a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' data-toggle="modal" data-target="#edit" data-qid=i.qid href="" ) EDIT
+                                                        a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' data-toggle="modal" data-target="#delete" data-qid=i.qid data-name=i.name href="" ) DELETE
                                                     a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' href='/practice/'+i.qid) VIEW
                             //- .col-lg-3.text-center
                             //-     .card.m-0
@@ -124,7 +127,7 @@ block content
                                                         select#difficult.form-control(name='difficulty')
                                                             option(value='Easy') Easy
                                                             option(value='Medium') Medium
-                                                            option(value='Difficult') Difficult
+                                                            option(value='Hard') Hard
                                             tr
                                                 td
                                                     label(for='description') Description:
@@ -223,19 +226,19 @@ block content
                                                     input#name-e(type='text' name='name' required style="width:50%").form-control
                                             tr
                                                 td
-                                                    label(for='difficult') Difficulty:
+                                                    label(for='difficult-e') Difficulty:
                                                 td
                                                     //- input#difficulty(type='text' name='description' required).form-control
                                                     .form-group(style="width:50%")
-                                                        select#difficult.form-control(name='difficulty')
+                                                        select#difficult-e.form-control(name='difficulty')
                                                             option(value='Easy') Easy
                                                             option(value='Medium') Medium
                                                             option(value='Hard') Hard
                                             tr
                                                 td
-                                                    label(for='description') Description:
+                                                    label(for='description-e') Description:
                                                 td
-                                                    input#description(type='text' name='description' required).form-control
+                                                    input#description-e(type='text' name='description' required).form-control
                                             tr
                                                 td(style="width:150px;")
                                                     label Problem Statement:
@@ -317,6 +320,7 @@ block content
                     .modal-body
                         p Delete the following question?
                         #dbody
+                        p(style="display:none")#qid
                     .modal-footer
                         button.btn.btn-danger(type='button' data-dismiss='modal' onclick="deleteQ()") Delete
                         button.btn.btn-secondary(type='button' data-dismiss='modal') Close
@@ -349,3 +353,17 @@ block content
                     $("#myModal").modal('show');
                 }
             })
+
+            $("#delete").on('show.bs.modal',function(e){ $("#dbody").empty();
+                $("#dbody").html($(e.relatedTarget).data('name'));
+                $("#qid").text($(e.relatedTarget).data('qid'));
+            });
+
+            function deleteQ(){
+                $.get('/practice/delete/'+$("#qid").text(),function(data,status){
+                    toastr.success(data);
+                    location.reload();
+                }).fail((err)=>{
+                    toastr.error(err.responseText);
+                })
+            }

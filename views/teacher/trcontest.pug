@@ -166,8 +166,7 @@ block content
     .row.w-100
       .col-lg-8
         .navbar1
-          a.nav-link1.nav-link-ltr1.active(href='?l=ongoing') Ongoing
-          a.nav-link1.nav-link-ltr1(href='?l=upcoming') Upcoming
+          a.nav-link1.nav-link-ltr1.active(href='/contest') Contest
           a.nav-link1.nav-link-ltr1(href='?l=past') Past
       .col-lg-4
         //- div.mt-3
@@ -203,7 +202,7 @@ block content
               ul.contest-details
                   li.contest-details-item
                       i.ion.ion-ios-clock-outline
-                      span.value=Math.abs(i.timings.ends - i.timings.starts) / 36e5
+                      span.value=Math.round(Math.abs(i.timings.ends - i.timings.starts) / 36e5)
                       span.title Hours
                   li.contest-details-item
                       i.ion.ion-ios-book-outline
@@ -216,21 +215,10 @@ block content
             p.description=i.description
             footer.content__footer
                 a(href="/contest/"+i.url) View Contest
+  
+    -if(msg)
+      p.text-center=msg
 
-      //- .col-lg-3.col-md-2(style="padding-left:30px")
-      //-   div(style="margin-top:50px;")
-      //-     h2.card-title.text-center Administration
-      //-     hr(style="border-color:grey;")
-      //-     .row
-      //-       .col.text-center
-      //-         a.btn(href='/contest/create' style="font-size:20px;") 
-      //-           i.fas.fa-plus-square
-      //-           label(style="cursor: pointer") &nbsp; Create Contest
-      //-     .row
-      //-       .col.text-center
-      //-         a.btn(href='/contest/manage' style="font-size:20px;")
-      //-           i.fas.fa-cogs 
-      //-           label(style="cursor: pointer") &nbsp; Manage Contest
     -if(count!=0)
       ul.pagination.justify-content-center
         li.page-item(class=(page==1?'disabled':''))

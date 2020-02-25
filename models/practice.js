@@ -13,6 +13,8 @@ const practiceSchema = new mongoose.Schema({
         type:String,
         default: moment().format('DDMMYY')
     },
+    createdBy:{type:String},
+    createdByName:{type:String},
     statement:{
         type: String,
         required: true,

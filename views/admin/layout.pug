@@ -1,15 +1,10 @@
 doctype html
-//
-  
-  This is a starter template page. Use this page to start your new project from
-  scratch. This page gets rid of all links and provides the needed markup only.
-
 block code 
-  //  jQuery 
+  
   script(src='/adminLTE/plugins/jquery/jquery.min.js')
   script(src="/js/toastr.min.js")
   link(rel="stylesheet", href="/css/toastr.min.css")
-  - let active={dashboard:"",add:"",manage:"",edit:"",assignment:"",addAssignment:"",editAssignment:"",assignmentReports:"",academic:""}
+  - let active={dashboard:"",add:"",manage:"",edit:"",assignment:"",addAssignment:"",editAssignment:"",reports:"",academic:""}
   - let menu={manage:"",assignment:""}
 
 html(lang='en')
@@ -18,17 +13,16 @@ html(lang='en')
     meta(name='viewport' content='width=device-width,initial-scale=1')
     meta(http-equiv='x-ua-compatible' content='ie=edge')
     title ELAB Admin
-    //  Font Awesome Icons 
     link(rel='stylesheet' href='/adminLTE/plugins/fontawesome-free/css/all.min.css')
-    //  Theme style 
+    
     link(rel='stylesheet' href='/adminLTE/dist/css/adminlte.min.css')
-    //  Google Font: Source Sans Pro 
+    
     link(href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700' rel='stylesheet')
   body.hold-transition.sidebar-mini
     .wrapper
-      //  Navbar 
+      //-  Navbar 
       nav.main-header.navbar.navbar-expand.navbar-white.navbar-light
-        //  Left navbar links 
+        //-  Left navbar links 
         ul.navbar-nav
           li.nav-item
             a.nav-link(data-widget='pushmenu' href='#')
@@ -37,25 +31,25 @@ html(lang='en')
             a.nav-link(href='/') Teacher's Dashboard
           li.nav-item.d-none.d-sm-inline-block
             a.nav-link(href='/logout') Logout
-      //  /.navbar 
-      //  Main Sidebar Container 
+      //-  /.navbar 
+      //-  Main Sidebar Container 
       aside.main-sidebar.sidebar-dark-primary.elevation-4
-        //  Brand Logo 
+        //-  Brand Logo 
         a.brand-link(href='/admin')
           img.brand-image.img-circle.elevation-3(src='/adminLTE/dist/img/AdminLTELogo.png' alt='AdminLTE Logo' style='opacity: .8')
           span.brand-text.font-weight-light ELAB 
-        //  Sidebar 
+        //-  Sidebar 
         .sidebar
-          //  Sidebar user panel (optional) 
+          //-  Sidebar user panel (optional) 
           .user-panel.mt-3.pb-3.mb-3.d-flex
             .image
               img.img-circle.elevation-2(src=session.profile_image alt='User Image')
             .info
               a.d-block(href='#') Admin
-          //  Sidebar Menu 
+          //-  Sidebar Menu 
           nav.mt-2
             ul.nav.nav-pills.nav-sidebar.flex-column(data-widget='treeview' role='menu' data-accordion='false')
-              //
+              //-
                  Add icons to the links using the .nav-icon class
                                with font-awesome or any other icon font library 
               li.nav-item.has-treeview
@@ -94,62 +88,62 @@ html(lang='en')
                     a.nav-link(href='/admin/assignment/edit' class=active.editAssignment)
                       i.fas.fa-edit.nav-icon
                       p Edit Assignment
-                  li.nav-item
-                    a.nav-link(href='/admin/assignment/reports' class=active.assignmentReports)
-                      i.fas.fa-chart-bar.nav-icon
-                      p Reports
+              li.nav-item
+                a.nav-link(href='/admin/reports' class=active.reports)
+                  i.fas.fa-chart-bar.nav-icon
+                  p Reports
               li.nav-item
                 a.nav-link(href='/admin/academic' class=active.academic)
                   i.nav-icon.fas.fa-calendar-plus
                   p
                     | New Academic Year
-          //  /.sidebar-menu 
-        //  /.sidebar 
-      //  Content Wrapper. Contains page content 
+          //- /.sidebar-menu 
+        //-  /.sidebar 
+      //-  Content Wrapper. Contains page content 
       .content-wrapper
-        //  Content Header (Page header) 
+        //-  Content Header (Page header) 
         .content-header
           .container-fluid
             .row.mb-2
               .col-sm-6
                 //-h1.m-0.text-dark Starter Page
-              //  /.col 
+              //-  /.col 
               //-.col-sm-6
                 ol.breadcrumb.float-sm-right
                   li.breadcrumb-item
                     a(href='#') Home
                   li.breadcrumb-item.active Starter Page
-              //  /.col 
-            //  /.row 
-          //  /.container-fluid 
-        //  /.content-header 
-        //  Main content 
+              //-  /.col 
+            //-  /.row 
+          //-  /.container-fluid 
+        //-  /.content-header 
+        //-  Main content 
         .content
           block content
       aside.control-sidebar.control-sidebar-dark
-        //  Control sidebar content goes here 
+        //-  Control sidebar content goes here 
         .p-3
           h5 Title
           p Sidebar content
-      //  /.control-sidebar 
-      //  Main Footer 
+      //-  /.control-sidebar 
+      //-  Main Footer 
       footer.main-footer
-        //  To the right 
+        //-  To the right 
         .float-right.d-none.d-sm-inline.
           
           
-        //  Default to the left 
+        //-  Default to the left 
         strong
           | Copyright © 2014-2019 
           a(href='https://adminlte.io') AdminLTE.io
           | .
         |  All rights reserved.
 
-    //  ./wrapper 
-    //  REQUIRED SCRIPTS 
+    //-  ./wrapper 
+    //-  REQUIRED SCRIPTS 
     
-    //  Bootstrap 4 
+    //-  Bootstrap 4 
     script(src='/adminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js')
-    //  AdminLTE App 
+    //-  AdminLTE App 
     script(src='/adminLTE/dist/js/adminlte.min.js')
     

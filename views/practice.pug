@@ -7,6 +7,8 @@ block append head
     meta(name='viewport' content='width=device-width, initial-scale=1.0, shrink-to-fit=no')
     title Practice
     link(rel='stylesheet' href='list_style/bootstrap/css/new.css')
+    link(rel="stylesheet", href="/fontawesome/all.min.css")
+    script(src="/fontawesome/all.min.js")
     link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,400,700')
     link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css')
     link(rel="stylesheet", href="/assets/css/n.css")
@@ -26,21 +28,36 @@ block append head
         background:transparent;
         background-color:transparent!important;
         }
+        /*.editor-right{
+        color:#263238;
+        }*/
+        .editor-right:hover{
+            /*color:#1E88E5;*/
+            cursor:pointer;
+        }
         
 block content
-    .WRAPPER
+    .WRAPPER 
         section.module.parallax.parallax-1(data-type='background' data-speed='10')
             .parallax-container
                 h2.typewrite(href='' data-period='2000' data-type='[ "PRACTICE" ]' style="font-weight:bold")
                     span.wrap
         div#practice
             main.page.projets-page
-                section.portfolio-block.project-no-images
-                    .container1
+                section.portfolio-block.project-no-images.pt-4
+                    //- .container1
+                    .container-fluid
+                        .row
+                            .col-10
+                            .col-2
+                                a.btn.btn-outline-secondary.editor.right(style="border-radius:20px;" href="")
+                                    i.fad.fa-poll-people
+                                    | &nbsp; 
+                                    label.editor-right.mb-0 Leaderboard
                         .row1
                             - let questions=q
                             each i in questions
-                                .col-md-6.col-lg-4
+                                .col-lg-3
                                     .project-card-no-image
                                         h3(style="font-family:Lato,sanf-serif")=i.name
                                             br

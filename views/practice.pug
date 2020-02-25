@@ -45,6 +45,16 @@ block content
                                         h3(style="font-family:Lato,sanf-serif")=i.name
                                             br
                                             a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' href='/practice/'+i.qid) SOLVE
+        -if(count>0)
+            ul.pagination.justify-content-center
+                li.page-item(class=(page==1?'disabled':''))
+                    a.page-link(href="?page="+(page-1)) Previous
+                -for(let i=1;i<=Math.ceil(count/12);i++)
+                    li.page-item(class=(page==i?'active':''))
+                        a.page-link(href="?page="+i)=i
+                li.page-item(class=(page==Math.ceil(count/12)?'disabled':''))
+                    a.page-link(href="?page="+(page+1) ) Next
+        
         .push1
         .push
     footer.bg-dark(class="FOOTER")

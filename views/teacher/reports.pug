@@ -114,7 +114,7 @@ style.
             td=i.Wrong_Answer
     br
     br
-  -if(query == "leaderboard")
+  -if(query == "leaderboard" || query=="all" || !query)
     h1.lb_heading.text-center Leaderboard
     table.table.table-striped.table-bordered
       thead

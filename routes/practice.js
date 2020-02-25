@@ -25,11 +25,21 @@ return b.toString();
 
 
 router.get('/', authenticate,async (req,res)=> {
-    const questions = await Practice.find().sort({date:-1}).lean();
-    if(!req.session.staff_id)
-    res.render('practice', {q:questions});
-    else
-    res.render('teacher/practice',{q:questions});
+    let page=1;
+    if(Number.isNaN(req.query.page) || !req.query.page || req.query.page < 1) page=1;
+    else page=req.query.page;
+    let count=0;
+    let questions = await Practice.find().sort({date:-1}).lean().skip((page-1)*12).limit(12);
+    if(questions.length > 0) count =  await Practice.countDocuments();
+    if(questions.length<=0) {questions=[],count=0}
+    if(!req.session.staff_id){
+      res.render('practice', {q:questions,count:count,page:page});
+    }
+    
+    else{
+      res.render('teacher/practice',{q:questions,count:count,page:page});
+    }
+    
   });
 
 

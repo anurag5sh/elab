@@ -84,10 +84,7 @@ block content
                             //-             br
                             //-             button.btn.btn-primary(type='button' data-toggle='modal' data-target='#myModal')
                             //-                 i.fas.fa-plus-square &nbsp; Add Question
-        .push1
-        .push
-    footer.bg-dark(class="FOOTER")
-        div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
+
         .modal.fade#myModal
             .modal-dialog.modal-xl
                 .modal-content
@@ -314,7 +311,20 @@ block content
             .modal-dialog.modal-dialog-centered.text-center(role="document")
                 span.fas.fa-circle-notch.fa-spin.fa-3x.w-100
         
+        -if(count>0)
+            ul.pagination.justify-content-center
+                li.page-item(class=(page==1?'disabled':''))
+                    a.page-link(href="?page="+(page-1)) Previous
+                -for(let i=1;i<=Math.ceil(count/12);i++)
+                    li.page-item(class=(page==i?'active':''))
+                        a.page-link(href="?page="+i)=i
+                li.page-item(class=(page==Math.ceil(count/12)?'disabled':''))
+                    a.page-link(href="?page="+(page+1) ) Next
         
+        .push1
+        .push
+    footer.bg-dark(class="FOOTER")
+        div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
 
         script(src='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js')
         script(src='list_style/js/theme.js')

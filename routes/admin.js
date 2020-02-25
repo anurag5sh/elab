@@ -204,6 +204,29 @@ router.get('/delete/student/:usn',admin,async (req,res)=>{
     })
 });
 
+router.post('/deleteMany',admin,async (req,res) =>{ console.log(req.body);
+  if(!req.body.list || !Array.isArray(req.body.list)) return res.status(400).end();
+  if(req.body.type=="student"){
+    await Student.deleteMany({usn:{$in:req.body.list}}).then(async()=>{
+      await Submission.deleteMany({usn:{$in:req.body.list}});
+      await aSubmission.deleteMany({usn:{$in:req.body.list}});
+      return res.send("Account deleted!");
+    }).catch((err)=>{winston.error(err);
+      return res.status(400).send("Unable to delete!");
+    });
+  }
+  else if(req.body.type=="teacher"){
+    await Teacher.deleteMany({staff_id:{$in:req.body.list}}).then(()=>{
+      return res.send("Account deleted!");
+    }).catch((err)=>{
+      winston.error(err);
+      return res.status(400).send("Unable to delete!");
+    });
+  }
+  else
+  res.status(400).end();
+});
+
 router.get('/add',admin, (req,res) => {
     res.render('admin/addAccount');
 });

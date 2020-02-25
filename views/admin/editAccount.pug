@@ -7,6 +7,8 @@ block append code
     link(rel="stylesheet", href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css")
     script(src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js")
     script(src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js")
+    link(rel="stylesheet", href="/css/select.dataTables.min.css")
+    script(src="/js/dataTables.select.min.js")
 
 
 block content   
@@ -148,17 +150,20 @@ block content
 
 
     script.
+        let teachers=null;
+        let students=null;
         $("#type").change(()=>{
             const type= $("#type").val();
             $("#List").empty();
             if(type=="teacher"){
                 $("#stud").remove();
-                let html ='<div class="card card-primary"><div class="card-header"><h3 class="card-title">Teachers</h3></div><div class="card-body table-responsive p-0"><br><table id="list" class="table table-hover"><thead><tr><th style="width:30px">#</th><th>STAFF ID</th><th>Name</th><th>Edit</th><th>Delete</th></tr></thead></table></div></div>';
+                let html ='<div class="card card-primary"><div class="card-header"><h3 class="card-title">Teachers</h3></div><div class="card-body table-responsive p-0"><br><div style="margin:auto" class="col-1" id="selectBody"></div><table id="list" class="table table-hover"><thead><tr><th style="width:30px"><input type="checkbox" id="all" onclick="selectAll()"></th><th style="width:30px">#</th><th>STAFF ID</th><th>Name</th><th>Edit</th><th>Delete</th></tr></thead></table></div></div>';
                 $("#List").append(html);
                 $.get('/admin/get/teachers',function (data,status){
-                    const teachers = $('#list').DataTable( {
+                    teachers = $('#list').DataTable( {
                             "data":data,
                             "columns": [
+                                { "data": null },
                                 { "data": null },
                                 { "data": "staff_id" },
                                 { "data": "name" },
@@ -168,14 +173,30 @@ block content
                             "order": [[ 1, 'asc' ]],
                             "columnDefs": [ {"searchable": false,"orderable": false,"targets": 0},
                                             {"searchable": false,"orderable": false,"targets": 3},
-                                            {"searchable": false,"orderable": false,"targets": 4} ]
+                                            {"searchable": false,"orderable": false,"targets": 4},
+                                            {orderable: false,defaultContent: '',className: 'select-checkbox',targets:0} ],
+                            "select": {
+                                style:    'multi',
+                                selector: 'td:first-child'
+                            }
                         } );
 
                         teachers.on( 'order.dt search.dt', function () {
-                        teachers.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                        teachers.column(1, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
                             cell.innerHTML = i+1;
                         } );
                     } ).draw();
+
+                    teachers.on( 'select', function ( e, dt, type, indexes ) {$("#selectBody").empty();
+                        $("#selectBody").append('<button class="btn btn-danger " id="deleteButton" onclick="deleteMany(\'teacher\')" >Delete</button>');
+                        } );
+
+                    teachers.on('deselect',function (e,dt,type,indexes){
+                        if(teachers.rows({selected:true}).count() ==0 ){
+
+                            $("#deleteButton").remove();
+                        }
+                    });
                     }).fail((err)=>{
                         toastr.error(err.responseText);
                     });
@@ -185,12 +206,13 @@ block content
                 
                 $("#year").change(()=>{
                     $("#List").empty();
-                    let html ='<div class="card card-primary"><div class="card-header"><h3 class="card-title">Students</h3></div><div class="card-body table-responsive p-0"><br><table id="list" class="table table-hover"><thead><tr><th style="width:30px">#</th><th>USN</th><th>Name</th><th>Edit</th><th>Delete</th></tr></thead></table></div></div>';
+                    let html ='<div class="card card-primary"><div class="card-header"><h3 class="card-title">Students</h3></div><div class="card-body table-responsive p-0"><br><div style="margin:auto" class="col-1" id="selectBody2"></div><table id="list" class="table table-hover"><thead><tr><th style="width:30px"><input type="checkbox" id="allS" onclick="selectAllS()"></th><th style="width:30px">#</th><th>USN</th><th>Name</th><th>Edit</th><th>Delete</th></tr></thead></table></div></div>';
                     $("#List").append(html);
                     $.get('/admin/get/students/'+$("#year").val(),function (data,status){
-                        const students = $('#list').DataTable( {
+                        students = $('#list').DataTable( {
                             "data":data,
                             "columns": [
+                                { "data": null },
                                 { "data": null },
                                 { "data": "usn" },
                                 { "data": "name" },
@@ -200,14 +222,30 @@ block content
                             "order": [[ 1, 'asc' ]],
                             "columnDefs": [ {"searchable": false,"orderable": false,"targets": 0},
                                             {"searchable": false,"orderable": false,"targets": 3},
-                                            {"searchable": false,"orderable": false,"targets": 4} ]
+                                            {"searchable": false,"orderable": false,"targets": 4},
+                                            {orderable: false,defaultContent: '',className: 'select-checkbox',targets:0} ],
+                            "select": {
+                                style:    'multi',
+                                selector: 'td:first-child'
+                            }
                         } );
 
                         students.on( 'order.dt search.dt', function () {
-                        students.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                        students.column(1, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
                             cell.innerHTML = i+1;
                         } );
                     } ).draw();
+
+                    students.on( 'select', function ( e, dt, type, indexes ) {$("#selectBody2").empty();
+                        $("#selectBody2").append('<button class="btn btn-danger " id="deleteButton2" onclick="deleteMany(\"student\")" >Delete</button>');
+                        } );
+
+                    students.on('deselect',function (e,dt,type,indexes){
+                        if(students.rows({selected:true}).count() ==0 ){
+
+                            $("#deleteButton2").remove();
+                        }
+                    });
                     }).fail((err)=>{
                         toastr.error(err.responseText);
                     });
@@ -295,3 +333,51 @@ block content
             $pwd.attr('type', 'password');
         }
         });
+
+        function selectAll(){
+            
+            var checkBox = document.getElementById("all");
+
+            if (checkBox.checked == true){
+                teachers.rows().select();
+            } else {
+                teachers.rows().deselect();
+            }
+        }
+
+        function selectAllS(){
+            
+            var checkBox = document.getElementById("allS");
+
+            if (checkBox.checked == true){
+                students.rows().select();
+            } else {
+                students.rows().deselect();
+            }
+        }
+
+        function deleteMany(type){
+            if(type == "student"){ let arr=[];
+                for(let i=0;i<students.rows({selected:true}).data().length;i++){
+                    arr.push(students.rows({selected:true}).data()[i].usn);
+                }
+             $.post('/admin/deleteMany',{list:arr,type:"student"},function(data,status){
+                toastr.success(data);
+                $('#type').val('student').change();
+             }).fail((err)=>{
+                toastr.error(err.responseText);
+             });
+            }
+            else if(type="teacher"){ let arr=[];
+                for(let i=0;i<teachers.rows({selected:true}).data().length;i++){
+                    arr.push(teachers.rows({selected:true}).data()[i].staff_id);
+                }
+             $.post('/admin/deleteMany',{list:arr,type:"teacher"},function(data,status){
+                toastr.success(data);
+                $('#type').val('teacher').change();
+             }).fail((err)=>{
+                toastr.error(err.responseText);
+             });
+            }
+        }
+        

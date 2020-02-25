@@ -71,6 +71,8 @@ block content
             section.portfolio-block.project-no-images
                 .container1
                     .row1#quesList
+        
+        #paginationAllow
         .push1
         .push
     footer.bg-dark(class="FOOTER")
@@ -80,11 +82,39 @@ block content
     script.
         $("#sem").change(function(){
             $("#quesList").empty();
+            $("#paginationAllow").empty();
             $.get('/assignment/get/'+$("#sem").val(),function (data,status){
-                data.forEach((item,index)=>{
+                data.questions.forEach((item,index)=>{
                     $("#quesList").append('<div class="col-md-6 col-lg-4"><div class="project-card-no-image"><h5>'+item.name+'</h5><a class="btn1 btn1-outline-primary btn1-sm" role="button" href="/assignment/'+item.qid+'">VIEW</a></div></div>');
                 });
+
+                let pagi = '<nav aria-label="..."><ul class="pagination pagination-sm justify-content-center"><li class="page-item '+(data.page==1?'disabled':'') +'"><a class="page-link" href="javascript:getQ('+(data.page-1)+')" '+(data.page==1?'aria-disabled="true"':'')+'>Previous</a></li>';
+                for(let i=1;i<=Math.ceil(data.count/12);i++){
+                pagi+='<li class="page-item '+(data.page==i?'active':'') +'"><a class="page-link " href="javascript:getQ('+i+')">'+i+" "+(data.page==i?'<span class="sr-only">(current)</span>':'')+'</a></li>';
+                }
+                pagi+='<li class="page-item '+(data.page==Math.ceil(data.count/12)?'disabled':'') +'"><a class="page-link" href="javascript:getQ('+(parseInt(data.page)+1)+')" '+(data.page==data.count?'aria-disabled="true"':'')+'>Next</a></li></ul></nav>';
+                if(!data.count <=0)$("#paginationAllow").append(pagi);
+
             });
         });
+
+        function getQ(p){
+            let page=1;
+            if(Number.isNaN(p) || !p || p < 1) page=1;
+            else page=p;
+            
+            $.get('/assignment/get/'+$("#sem").val(),{page:p},function (data,status){$("#quesList").empty();$("#paginationAllow").empty();
+                data.questions.forEach((item,index)=>{
+                    $("#quesList").append('<div class="col-md-6 col-lg-4"><div class="project-card-no-image"><h5>'+item.name+'</h5><a class="btn1 btn1-outline-primary btn1-sm" role="button" href="/assignment/'+item.qid+'">VIEW</a></div></div>');
+                });
+
+                let pagi = '<nav aria-label="..."><ul class="pagination pagination-sm justify-content-center"><li class="page-item '+(data.page==1?'disabled':'') +'"><a class="page-link" href="javascript:getQ('+(data.page-1)+')" '+(data.page==1?'aria-disabled="true"':'')+'>Previous</a></li>';
+                for(let i=1;i<=Math.ceil(data.count/12);i++){
+                pagi+='<li class="page-item '+(data.page==i?'active':'') +'"><a class="page-link " href="javascript:getQ('+i+')">'+i+" "+(data.page==i?'<span class="sr-only">(current)</span>':'')+'</a></li>';
+                }
+                pagi+='<li class="page-item '+(data.page==Math.ceil(data.count/12)?'disabled':'') +'"><a class="page-link" href="javascript:getQ('+(parseInt(data.page)+1)+')" '+(data.page==data.count?'aria-disabled="true"':'')+'>Next</a></li></ul></nav>';
+                if(!data.count <=0)$("#paginationAllow").append(pagi);
+            });
+        }
     script(src='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js')
     script(src='list_style/js/theme.js')

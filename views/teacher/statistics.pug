@@ -1,6 +1,6 @@
 
 .container
-    p.fontStyle No of students signed up : #{contest.signedUp.length}
+    p.fontStyle Total No. of sign ups : #{contest.signedUp.length}
     p.fontStyle Total No. of submissions : #{contest.submissions.length}
 
 .container
@@ -27,6 +27,20 @@
                 td 4
                 td=stats.signed_up[3]
                 td=stats.submissions[3]
+    br
+    table.table.table-striped
+        thead
+            tr
+                th Year
+                th No of Teachers signed up
+                th Total No. of submissions
+        tbody
+            tr
+                td -
+                td=stats.signed_up[4]
+                td=stats.submissions[4]
+
+    br
     table.table.table-striped
         thead
             tr

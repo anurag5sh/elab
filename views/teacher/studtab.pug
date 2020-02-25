@@ -1,17 +1,18 @@
 head
-  title STUDENTLIST
+
   link(rel="stylesheet", href="https://use.fontawesome.com/releases/v5.7.0/css/all.css")
   link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css")
 
 body
   
-  p.fontStyle Students who have signed up.
+  p.fontStyle Students/Teachers who have signed up.
+  a.btn.btn-success(href="/contest/"+contest.url+"/reportDownload?print=signedup") Download Signed up list
   table.table.table-stripped
     thead
       tr
         th No
         th NAME
-        th USN
+        th USN / ID
         th Timestamp
     tbody
       each i,j in contest.signedUp

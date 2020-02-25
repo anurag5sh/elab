@@ -10,7 +10,7 @@ style.
     letter-spacing:0.8px
   }
   html, body {
-      height: 100%;
+      height: auto;
       margin: 0;
   }
   .WRAPPER {
@@ -29,10 +29,14 @@ style.
 
 -function time(ms) {var sec = Math.floor(ms/1000);  ms = ms % 1000;  t = three(ms);  var min = Math.floor(sec/60);  sec = sec % 60;  t = two(sec) + ":" + t;  var hr = Math.floor(min/60);  min = min % 60;  t = two(min) + ":" + t; var day = Math.floor(hr/60);  hr = hr % 60;  t = two(hr) + ":" + t;   return t;  }
 //- Statistics
-.WRAPPER.m-5
+.m-5
   .row.w-100
     .col-lg-2
       h2.text-left.lb_heading(style="color:black") ELAB
+    -if(!query)
+      a.btn.btn-success(href="/contest/"+curl+"/reportDownload?print=all") Download Report
+      a.btn.btn-success(href="/contest/"+curl+"/reportDownload?print=leaderboard") Download Leaderboard
+      a.btn.btn-success(href="/contest/"+curl+"/reportDownload?print=signedup") Download Signed up list
   br
   .row.w-100
     .col-lg-4
@@ -49,68 +53,96 @@ style.
   .row.w-100
     .col-lg-6
       p.p-2(style="font-weight:bold;color:#666666;") #{startTime} - #{endTime}
-  h1.lb_heading.text-center Signed Up
-  table.table.table-striped.table-bordered
-    thead
-      tr
-        th Year
-        th No of Students signed up
-        th Total No. of submissions
-      tbody
+  -if(!(query && (query == "leaderboard" || query == "signedup")))
+    h1.lb_heading.text-center Student signed Up
+    table.table.table-striped.table-bordered
+      thead
         tr
-          td 1
-          td=stats.signed_up[0]
-          td=stats.submissions[0]
-        tr
-          td 2
-          td=stats.signed_up[1]
-          td=stats.submissions[1]
-        tr
-          td 3
-          td=stats.signed_up[2]
-          td=stats.submissions[2]
-        tr
-          td 4
-          td=stats.signed_up[3]
-          td=stats.submissions[3]
-  br
-  br
+          th Year
+          th No of Students signed up
+          th Total No. of submissions
+        tbody
+          tr
+            td 1
+            td=stats.signed_up[0]
+            td=stats.submissions[0]
+          tr
+            td 2
+            td=stats.signed_up[1]
+            td=stats.submissions[1]
+          tr
+            td 3
+            td=stats.signed_up[2]
+            td=stats.submissions[2]
+          tr
+            td 4
+            td=stats.signed_up[3]
+            td=stats.submissions[3]
+    br
 
-  h1.lb_heading.text-center Question submission
-  table.table.table-striped.table-bordered
-    thead
-      tr
-        th Question Name
-        th Accepted
-        th Partially Accepted
-        th Wrong Answer
-    tbody
-      each i in questionNo
+    h1.lb_heading.text-center Teacher signed up
+    table.table.table-striped.table-bordered
+      thead
         tr
-          td=i.name
-          td=i.Accepted
-          td=i.Partially_Accepted
-          td=i.Wrong_Answer
-  br
-  br
-  h1.lb_heading.text-center Leaderboard
-  table.table.table-striped.table-bordered
-    thead
-      tr
-        th RANK
-        th USN/ID
-        th NAME
-        th POINTS
-        th TIME (HH:MM:SS:MS)
-    tbody
-      each i,j in contest.leaderboard
+          th Year
+          th No of Teachers signed up
+          th Total No. of submissions
+        tbody
+          tr
+            td -
+            td=stats.signed_up[4]
+            td=stats.submissions[4]
+
+    br
+    br
+    h1.lb_heading.text-center Question submission
+    table.table.table-striped.table-bordered
+      thead
         tr
-          td=(j+1)
-          td=i.usn
-          td=i.name
-          td=i.points
-          td=time(i.timestamp)
-  .push1
-  .push
-//- footer.bg-dark(class="FOOTER")
-//-   div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
+          th Question Name
+          th Accepted
+          th Partially Accepted
+          th Wrong Answer
+      tbody
+        each i in questionNo
+          tr
+            td=i.name
+            td=i.Accepted
+            td=i.Partially_Accepted
+            td=i.Wrong_Answer
+    br
+    br
+  -if(query == "leaderboard")
+    h1.lb_heading.text-center Leaderboard
+    table.table.table-striped.table-bordered
+      thead
+        tr
+          th RANK
+          th USN/ID
+          th NAME
+          th POINTS
+          th TIME (HH:MM:SS:MS)
+      tbody
+        each i,j in contest.leaderboard
+          tr
+            td=(j+1)
+            td=i.usn
+            td=i.name
+            td=i.points
+            td=time(i.timestamp)
+  -if(query == "signedup")
+    h1.lb_heading.text-center Signed up
+    table.table.table-striped.table-bordered
+      thead
+        tr
+          th No
+          th USN/ID
+          th NAME
+          th TIMESTAMP
+      tbody
+        each i,j in contest.signedUp
+          tr
+            td=(j+1)
+            td=i.usn
+            td=i.name
+            td=i.time.toLocaleString()

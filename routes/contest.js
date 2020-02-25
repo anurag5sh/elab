@@ -333,12 +333,14 @@ router.get('/manage/:name',authenticate,teacher, async (req,res) => {
         q.totalPoints = points;
         questions.push(q);
     }
-    let signed_up =[0,0,0,0];
+    let signed_up =[0,0,0,0,0];
     for(i of contest.signedUp){
+        if(i.year == '-') signed_up[4]++;
          signed_up[i.year-1]++;
     }
-    let submissions = [0,0,0,0];
+    let submissions = [0,0,0,0,0];
     for(i of contest.submissions){
+        if(i.year == '-') submissions[4]++;
         submissions[i.year - 1]++;
     }
 
@@ -400,7 +402,7 @@ router.post('/manage/:name',authenticate,teacher,async (req,res) =>{
 
 //sign up for contest
 router.get('/sign/:curl',authenticate,contestAuth,async (req,res) => {
-   const con = await Contest.findOneAndUpdate({url:req.params.curl, 'signedUp.usn':{$ne : req.session.usn},'timings.starts':{$lt:new Date()},'timings.ends':{$gt:new Date()}},{$addToSet :{signedUp : {usn: req.session.usn,name:req.session.fname+" "+req.session.lname,time:new Date(),year:req.session.year}}},
+   const con = await Contest.findOneAndUpdate({url:req.params.curl, isReady:true,'signedUp.usn':{$ne : req.session.usn || req.session.staff_id},'timings.starts':{$lt:new Date()},'timings.ends':{$gt:new Date()}},{$addToSet :{signedUp : {usn: req.session.usn || req.session.staff_id,name:req.session.fname+" "+req.session.lname,time:new Date(),year:req.session.year || "-"}}},
    (err,doc) => {
     if(err)
     return res.status(404).send("Not Permitted");
@@ -838,7 +840,7 @@ router.get('/teachers/id/:id',authenticate,teacher,async (req,res) =>{
 
 //landing page for contest
 router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
-    let contest = await Contest.findOne({url:req.params.curl}).lean().select('timings signedUp name questions url createdBy createdByName rules description');
+    let contest = await Contest.findOne({url:req.params.curl}).lean().select('timings signedUp name questions url createdBy createdByName rules description isReady');
     if(!contest) return res.status(404).end();
 
     const now = new Date();
@@ -846,7 +848,7 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
 
     //teacher 
     if(req.session.staff_id){
-        if(contest.createdBy == req.session.staff_id)
+        if(contest.createdBy == req.session.staff_id || req.session.isAdmin || contest.timings.ends < new Date())
         {
         let questions = await ContestQ.find({qid:{$in:contest.questions}}).select('name difficulty qid description _id test_cases')
         let totalPoints = [];
@@ -863,75 +865,89 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
         questions.test_cases = [];
         return res.render('qdisplay',{contest:contest,questions:questions,totalPoints:totalPoints});
         }
-        else if(now > contest.timings.starts){
-        let questions = await ContestQ.find({qid:{$in:contest.questions}}).select('name difficulty qid description _id test_cases')
-        let totalPoints = [];
-        if(!questions) questions=[];
-        else
-        {
-            questions.forEach((item,index)=>{ let total=0;
-                item.test_cases.forEach((itemp)=>{
-                    total+=itemp.points;
-                })
-                totalPoints.push(total);
-            });
-        }
-        questions.test_cases = [];
-        return res.render('qdisplay',{contest:contest,questions:questions,totalPoints:totalPoints});
+        else if(contest.isReady){
+            if(now > contest.timings.starts && now < contest.timings.ends){
+                if(!contest.signedUp.find(({usn}) => usn == req.session.staff_id)){
+                    return res.render("timer" , {attempt:"/contest/sign/"+req.params.curl,time:false,contest:contest,rules:contest.rules});
+                }
+                let questions = await ContestQ.find({qid:{$in:contest.questions}}).select('name difficulty qid description _id test_cases')
+                let totalPoints = [];
+                if(!questions) questions=[];
+                else
+                {
+                    questions.forEach((item,index)=>{ let total=0;
+                        item.test_cases.forEach((itemp)=>{
+                            total+=itemp.points;
+                        })
+                        totalPoints.push(total);
+                    });
+                }
+                questions.test_cases = [];
+                return res.render('qdisplay',{contest:contest,questions:questions,totalPoints:totalPoints});
+                }
+                else{
+                    const milli = contest.timings.starts - now;
+                    return res.render("timer",{time:Date.now() + milli,name:contest.name,rules:contest.rules} );
+                }
         }
         else{
-            const milli = contest.timings.starts - now;
-            return res.render("timer",{time:Date.now() + milli,name:contest.name,type: "teacher",rules:contest.rules} );
-        }
+            return res.status(404).end();
+        } 
     }
     
     //student
     else{ 
         
-        if(now>=contest.timings.starts && now<=contest.timings.ends){ //between contest
-        if(!contest.signedUp.find(({usn}) => usn == req.session.usn)){
-           return res.render("timer" , {attempt:"/contest/sign/"+req.params.curl,time:false,type: "student",contest:contest,rules:contest.rules});
+        if(contest.isReady){
+            if(now>=contest.timings.starts && now<=contest.timings.ends){ //between contest
+                if(!contest.signedUp.find(({usn}) => usn == req.session.usn)){
+                   return res.render("timer" , {attempt:"/contest/sign/"+req.params.curl,time:false,contest:contest,rules:contest.rules});
+                }
+        
+                let questions = await ContestQ.find({qid:{$in:contest.questions}}).select('name difficulty qid description _id test_cases')
+                let totalPoints = [];
+                if(!questions) questions=[];
+                else
+                {
+                    questions.forEach((item,index)=>{ let total=0;
+                        item.test_cases.forEach((itemp)=>{
+                            total+=itemp.points;
+                        })
+                        totalPoints.push(total);
+                    });
+                }
+                questions.test_cases = [];
+                return res.render('qdisplay',{contest:contest,questions:questions,totalPoints:totalPoints});
+                }
+        
+                if(now < contest.timings.starts) //before contest
+                {   const milli = contest.timings.starts - now; //stores milli seconds
+                    
+                    return res.render("timer",{time:Date.now() + milli,contest:contest,rules:contest.rules} );
+                }
+        
+                if(now > contest.timings.ends) //after contest
+                {
+                    let questions = await ContestQ.find({qid:{$in:contest.questions}}).select('name difficulty qid description _id test_cases')
+                    let totalPoints = [];
+                    if(!questions) questions=[];
+                    else
+                    {
+                        questions.forEach((item,index)=>{ let total=0;
+                            item.test_cases.forEach((itemp)=>{
+                                total+=itemp.points;
+                            })
+                            totalPoints.push(total);
+                        });
+                    }
+                    questions.test_cases = [];
+                return res.render('qdisplay',{contest:contest,questions:questions,totalPoints:totalPoints});
+                }
         }
-
-        let questions = await ContestQ.find({qid:{$in:contest.questions}}).select('name difficulty qid description _id test_cases')
-        let totalPoints = [];
-        if(!questions) questions=[];
-        else
-        {
-            questions.forEach((item,index)=>{ let total=0;
-                item.test_cases.forEach((itemp)=>{
-                    total+=itemp.points;
-                })
-                totalPoints.push(total);
-            });
+        else{
+            return res.status(404).end();
         }
-        questions.test_cases = [];
-        return res.render('qdisplay',{contest:contest,questions:questions,totalPoints:totalPoints});
-        }
-
-        if(now < contest.timings.starts) //before contest
-        {   const milli = contest.timings.starts - now; //stores milli seconds
-            
-            return res.render("timer",{time:Date.now() + milli,contest:contest,rules:contest.rules} );
-        }
-
-        if(now > contest.timings.ends) //after contest
-        {
-            let questions = await ContestQ.find({qid:{$in:contest.questions}}).select('name difficulty qid description _id test_cases')
-            let totalPoints = [];
-            if(!questions) questions=[];
-            else
-            {
-                questions.forEach((item,index)=>{ let total=0;
-                    item.test_cases.forEach((itemp)=>{
-                        total+=itemp.points;
-                    })
-                    totalPoints.push(total);
-                });
-            }
-            questions.test_cases = [];
-        return res.render('qdisplay',{contest:contest,questions:questions,totalPoints:totalPoints});
-        }
+        
     }
     
 
@@ -955,7 +971,9 @@ router.get('/:curl/submissions',authenticate,teacher, async (req,res)=>{
 });
 
 router.get('/:curl/reportDownload',authenticate,teacher,async (req,res)=>{
-
+    let print="all";
+    if(req.query.print && req.query.print == "leaderboard") print=req.query.print; 
+    if(req.query.print && req.query.print == "signedup") print=req.query.print;
     (async function() {
         try {
         // launch puppeteer API
@@ -963,8 +981,8 @@ router.get('/:curl/reportDownload',authenticate,teacher,async (req,res)=>{
         const page = await browser.newPage();
         // await page.setContent(html);
         // await page.emulateMedia('screen');
-        await page.setCookie({name:"elab",value:req.headers.cookie.substr(5),domain:"localhost",path:"/"+req.params.curl+"/reportDownload"});
-        await page.goto('http://localhost:4000/contest/sas/report',{waitUntil:'networkidle0'});
+        await page.setCookie({name:"elab",value:req.headers.cookie.substr(5),domain:"localhost",path:"/"});
+        await page.goto(`http://localhost:4000/contest/${req.params.curl}/report?print=${print}`,{waitUntil:'networkidle0'});
         await page.pdf({
             // name of your pdf file in directory
 			path: './public/testpdf.pdf', 
@@ -985,16 +1003,18 @@ router.get('/:curl/reportDownload',authenticate,teacher,async (req,res)=>{
 });
 
 
-router.get('/:curl/report',async (req,res)=>{
+router.get('/:curl/report',authenticate,teacher,async (req,res)=>{
     let contest = await Contest.findOne({url:req.params.curl}).lean();
     if(!contest)    return res.status(404).end();
 
-    let signed_up =[0,0,0,0];
+    let signed_up =[0,0,0,0,0];
     for(i of contest.signedUp){
+        if(i.year == '-') signed_up[4]++;
          signed_up[i.year-1]++;
     }
-    let submissions = [0,0,0,0];
+    let submissions = [0,0,0,0,0];
     for(i of contest.submissions){
+        if(i.year == '-') submissions[4]++;
         submissions[i.year - 1]++;
     }
     let questions = [];
@@ -1028,8 +1048,9 @@ router.get('/:curl/report',async (req,res)=>{
     }
 
     let stats ={signed_up:signed_up , submissions:submissions};
-
-res.render('teacher/reports',{contest:contest,stats:stats,questionNo:questionNo});
+let query = null;
+if(req.query.print) query=req.query.print;
+res.render('teacher/reports',{contest:contest,stats:stats,questionNo:questionNo,curl:req.params.curl,query:query});
 });
 
 

@@ -9,7 +9,16 @@
   h1,   h2,   h3,  h4,  h5,  h6,  p,  small,  em,  b,  span {
   color: #424242;
 }
-
+  .card2{
+  display: inline-block;
+  width: 350px;
+  margin: 20px;
+  overflow: hidden;
+  background: url(/images/img21.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-color: #A9C9BA;
+  }
 
   .card1 {
   display: inline-block;
@@ -21,12 +30,16 @@
   cursor: pointer;
 }
   .card1 .header {
-  background: url(http://via.placeholder.com/300x200) center;
+  /* background: url(http://via.placeholder.com/300x200) center; */
   background-size: cover;
   width: 100%;
   height: 200px;
 }
   .card1 .body {
+  padding: 15px 20px 5px;
+  /* background: #FFF; */
+}
+  .card2 .body {
   padding: 15px 20px 5px;
   /* background: #FFF; */
 }
@@ -48,7 +61,7 @@
   .card1.one {
   border-radius: 15px;
 }
-  .card1.two {
+  .card2.one {
   border-radius: 30px;
 }
 

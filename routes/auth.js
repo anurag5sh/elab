@@ -88,9 +88,10 @@ router.get('/viewProfile/:id',authenticate,async (req,res)=>{
 
 //student dashboard
 router.get('/dashboard', authenticate,async (req,res)=> {
-    const q = await Practice.find().sort({date:-1}).limit(5).lean().catch(err => res.send(err));
+    const q = await Practice.find().sort({date:-1}).limit(2).lean().select('name qid').catch(err => res.send(err));
+    const contest = await Contest.find({isReady:true}).sort({_id:-1}).limit(2).lean().select('name description url ').catch(err => res.send(err));
     if(!req.session.staff_id)
-    res.render('dashboard', {q:q});
+    res.render('dashboard', {q:q,contest:contest});
     else
     res.status(404).end();
 

@@ -5,7 +5,10 @@ head
   script(src='/js/Chart.min.js')
   script(src='/js/jquery.easing.js')
   script(src='/assets/js/theme.js')
-
+  link(rel="stylesheet", href="/css/practcard.css")
+  link(rel='stylesheet' href='list_style/bootstrap/css/new.css')
+  link(rel="stylesheet", href="/css/stdash.css")
+  
 body
   br
   br
@@ -16,7 +19,7 @@ body
           .container-fluid
             .d-sm-flex.justify-content-between.align-items-center.mb-4
               h3.text-dark.mb-0 Welcome #{session.fname}!
-            .row
+            .row.mb-5
               .col-lg-7.col-xl-8
                 .card.shadow.mb-4
                   .card-header
@@ -46,103 +49,58 @@ body
                       p.m-0 Manage Contest
                       p.text-white-50.small.m-0 Contest
           .textcon(style='text-align: center; height: 50px; float: left;transform: rotate(90deg);margin-top: 60px;width: 150px;position: absolute;left: 0;')
+            hr
             h2 Contest
-          .textcon(style='text-align: center; height: 50px; float: right;margin-top: 90px;width: 150px;cursor: pointer;' onclick="location.href='#'")
-            h2 Contest
+          .textcon(style='text-align: center; height: 50px; float: right;margin-top: 90px;width: 150px;cursor: pointer;' onclick="location.href='/contest'")
             i.fas.fa-arrow-circle-right.fa-3x
           .container
             div
-              //- <div class="carousel-inner">
-              //- <div class="carousel-item px-5 active">
+              
               .row
                 .col-4
-                  .card
-                    img.card-img-top(src='https://placehold.it/400x300' alt='Card image cap')
+                  .card(style="height:350px;")
+                    img.card-img-top(src='https://placehold.it/400x300' alt='Card image cap' style='height:180px;')
                     .card-body
-                      h5.card-title Card title
+                      h3.card-title #contestName
+                      p #description 
+                        a.btn.btn-primary.btn-block(type='button' style='margin-left: 190px;width: 90px;height: 40px;margin-top:25px;postion:absolute;' href="#") Solve
                 .col-4
-                  .card
+                  .card(style="height:350px;")
                     img.card-img-top(src='https://placehold.it/400x300' alt='Card image cap')
                     .card-body
-                      h5.card-title Card title
+                      h5.card-title Card title 1
                 .col-4
-                  .card
+                  .card(style="height:350px;")
                     img.card-img-top(src='https://placehold.it/400x300' alt='Card image cap')
                     .card-body
                       h5.card-title Card title
-              //- row
-              //- </div>
-              //- </div>
-              //-
-                </div>
-                </div>
-              //-
-                <a class="carousel-control-prev" href="#carousel-card" role="button" data-slide="prev" >
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#carousel-card" role="button" data-slide="next" >
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
-                </a>
-            //-
-              <style>
-              #carousel-card .carousel-control-next,
-              #carousel-card .carousel-control-prev {
-              width: 5%;
-              background-color: #333;
-              }
-              </style>
+             
           br
           br
-          .textcon(style='text-align: center; height: 50px; float: left;transform: rotate(90deg);margin-top: 60px;width: 150px;position: absolute;left: 0;')
+          .textcon(style='text-align: center; height: 50px; float: left;transform: rotate(90deg);margin-top: 30px;width: 150px;position: absolute;left: 0;')
+            hr
             h2 Practice
-          .textcon(style='text-align: center; height: 50px; float: right;margin-top: 90px;width: 150px;cursor: pointer;' onclick="location.href='#'")
-            h2 Practice
+          .textcon(style='text-align: center; height: 50px; float: right;margin-top: 30px;width: 150px;cursor: pointer;' onclick="location.href='/practice'")
+            //- a(href='/practice''/practice')  
             i.fas.fa-arrow-circle-right.fa-3x
           .container
             div
-              //- <div class="carousel-inner">
-              //- <div class="carousel-item px-5 active">
               .row
                 .col-4
-                  .card
-                    img.card-img-top(src='https://placehold.it/400x300' alt='Card image cap')
-                    .card-body
-                      h5.card-title Card title
+                  .project-card-no-image
+                      h3(style="font-family:Lato,sanf-serif") Practice 1
+                          br
+                          a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' href='#') SOLVE
                 .col-4
-                  .card
-                    img.card-img-top(src='https://placehold.it/400x300' alt='Card image cap')
-                    .card-body
-                      h5.card-title Card title
+                  .project-card-no-image
+                      h3(style="font-family:Lato,sanf-serif") Practice 2
+                          br
+                          a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' href='#') SOLVE
                 .col-4
-                  .card
-                    img.card-img-top(src='https://placehold.it/400x300' alt='Card image cap')
-                    .card-body
-                      h5.card-title Card title
-              //- row
-              //- </div>
-              //- </div>
-              //-
-                </div>
-                </div>
-              //-
-                <a class="carousel-control-prev" href="#carousel-card" role="button" data-slide="prev" >
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#carousel-card" role="button" data-slide="next" >
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
-                </a>
-            //-
-              <style>
-              #carousel-card .carousel-control-next,
-              #carousel-card .carousel-control-prev {
-              width: 5%;
-              background-color: #333;
-              }
-              </style>
+                  .project-card-no-image
+                      h3(style="font-family:Lato,sanf-serif") Practice 3
+                          br
+                          a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' href='#') SOLVE
     .push1
     .push          
   footer.bg-dark(class="FOOTER")

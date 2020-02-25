@@ -7,7 +7,8 @@ head
   //- script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js')
   //- script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js')
   //- script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js')
-  style.
+title=user.fname + "'s Profile"
+style.
     body{
     margin-top: auto;
     background-color: #f1f1f1;
@@ -17,10 +18,9 @@ head
     margin-bottom:10px;
     }
     .main-secction{
-    box-shadow: 10px 10px 10px;
+    /*box-shadow: 10px 10px 10px; */
     }
-<<<<<<< HEAD
-    .image-section{
+   .image-section{
     padding: 0px;
     }
     .image-section img{
@@ -34,6 +34,7 @@ head
     }
     .user-left-part{
     margin: 0px;
+    width:100%;
     }
     .user-image img{
     width:100px;
@@ -71,6 +72,8 @@ head
     }
     .profile-right-section-row{
     margin: 0px;
+    padding-bottom:30px;
+    width:100%;
     }
     .profile-header-section1 h1{
     font-size: 25px;
@@ -129,7 +132,7 @@ head
     .nav-link{
     font-size: 1.2em;
     }
-.container.main-secction
+.container-fluid.main-secction
   .row
     .col-md-12.col-sm-12.col-xs-12.image-section
       img(src='https://images.unsplash.com/photo-1533158326339-7f3cf2404354?ixlib=rb-1.2.1&auto=format&fit=crop&w=1004&q=80')
@@ -137,19 +140,20 @@ head
       .col-md-3.col-sm-3.col-xs-12.user-profil-part.pull-left
         .row
           .col-md-12.col-md-12-sm-12.col-xs-12.user-image.text-center
-            img.rounded-circle(src='https://www.jamf.com/jamf-nation/img/default-avatars/generic-user-purple.png')
+            img.rounded-circle(src=user.profile_image)
           .col-md-12.col-sm-12.col-xs-12.user-detail-section1.text-center
-            button#btn-contact.btn.btn-success.btn-block.follow #username
+            button#btn-contact.btn.btn-success.btn-block.follow #{user.email}
           .row.user-detail-row
             .col-md-12.col-sm-12.user-detail-section2.pull-left
               .border(style='align-items: center;')
-              p(style='text-align: center;') #description
+              p(style='text-align: center;') #{user.about_me}
       .col-md-9.col-sm-9.col-xs-12.pull-right.profile-right-section
         .row.profile-right-section-row
           .col-md-12.profile-header
             .row
               .col-md-8.col-sm-6.col-xs-6.profile-header-section1.pull-left
-                h1 Juan Perez
+                h1.title #{user.fname} #{user.lname}
+                br
           .col-md-12
             .row
               .col-md-8
@@ -161,28 +165,38 @@ head
                   li.nav-item
                     // <a class="nav-link" href="#buzz" role="tab" data-toggle="tab">Achivements</a>
                 // Tab panes
+                br
                 .tab-content
                   #profile.tab-pane.fade.show.active(role='tabpanel')
                     .row
                       .col-md-2
-                        label USN
+                        -if(user.usn)
+                          label USN
+                        -else
+                          label Staff Id
                       .col-md-6
-                        p #usn
-                    .row
-                      .col-md-2
-                        label Name
-                      .col-md-6
-                        p #Name of user
+                        -if(user.usn)
+                          p=user.usn
+                        -else
+                          p=user.staff_id
+
+                          
                     .row
                       .col-md-2
                         label Email
                       .col-md-6
-                        p juanp@gmail.com
+                        p=user.email
                     .row
                       .col-md-2
-                        label Year
+                        -if(user.usn)
+                          label Year
+                        -else
+                          label 
                       .col-md-6
-                        p #year
+                        -if(user.usn)
+                          p=user.year
+                        -else
+                          p 
                   // <div role="tabpanel" class="tab-pane fade" id="buzz">
                   // <div class="row">
                   //
@@ -233,19 +247,7 @@ head
                     </div>
                   // </div>
                   // </div>
-              .col-md-4.img-main-rightPart
-                .row
-                  .col-md-12
-                    .row.image-right-part
-                      //
-                        <div class="col-md-6 pull-left image-right-detail">
-                        <h6>PUBLICIDAD</h6>
-                        </div>
-                  // <a href="http://camaradecomerciozn.com/">
-                  .col-md-12.image-right(style='background-color: #FCFCFC')
-                    img(src='http://pluspng.com/img-png/bootstrap-png-bootstrap-512.png')
-                  // </a>
-                  .col-md-12.image-right-detail-section2
+              
 
 //- head
 //-   link(rel='stylesheet' type='text/css' href='/assets/css/light.css')
@@ -328,75 +330,3 @@ head
 //-             //- button.btn.btn-info.btn-fill.pull-right(type='button' id='update-cover') Update Cover
 //-             hr
 //-             br
-=======
-  title=user.fname + "'s Profile"
-  
-body
-  br
-  .WRAPPER
-    .content(style="color:#9A9A9A;")
-      .container-fluid
-        .row
-          .col-md-8
-            .card
-              .header
-                h4.title(style="margin-top:15px;margin-left:15px;margin-bottom:8px;") Edit Profile
-              .content
-                form#profile
-                  .row
-                    .col-md-4
-                      .form-group
-                        -if(user.usn)
-                          label USN
-                          input.form-control(type='text' disabled placeholder='' value=user.usn)
-                        -else
-                          label STAFF ID
-                          input.form-control(type='text' disabled placeholder='' value=user.staff_id)
-                    .col-md-4
-                      .form-group
-                        label First Name
-                        input.form-control(type='text' disabled placeholder='First Name' value=user.fname)    
-                    .col-md-4
-                      .form-group
-                        label Last Name
-                        input.form-control(type='text' disabled placeholder='Last Name' value=user.lname) 
-                  .row
-                    .col-md-6
-                      .form-group
-                        label Primary Email
-                        input.form-control(type='email' disabled placeholder='' value=user.email)
-                  //-   .col-md-6
-                  //-     .form-group
-                  //-       label(for='exampleInputEmail1') Recovery Email
-                  //-       input.form-control(type='email' name="recovery_email" placeholder='Email' value=user.recovery_email)
-                  .row
-                    .col-md-12
-                      .form-group
-                        label About Me
-                        textarea#about_me.form-control(rows='5' name="about_me" disabled placeholder='Here can be your description') #{user.about_me}
-                  //- button.btn.btn-info.btn-fill.pull-right(type='button' id='update-profile') Update Profile
-                  .clearfix
-          .col-md-4
-            .card.card-user
-              .image
-                //- img(src='https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400' alt='...')
-                //- img(src=student.profile_image)
-              .content
-                .author
-                  form(enctype="multipart/form-data" method="post")#img
-                    a(href='#')
-                      img.avatar.border-gray#image(src=user.profile_image alt='...')
-                      input(type='file' accept='image/*' name='profile_image' id='image-upload' style="display:none;")
-                    h4.title #{user.fname} #{user.lname}
-                      br
-                      small #{user.usn}
-                    p.description.text-center #{user.about_me}
-                  //-   button.btn.btn-info.btn-fill.pull-right(type='button' onclick="javascript:$('#image-upload').click();" id='update-image') Update Image 
-              //- button.btn.btn-info.btn-fill.pull-right(type='button' id='update-cover') Update Cover
-              hr
-              br
-    .push1
-    .push
-  footer.bg-dark(class="FOOTER")
-    div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
->>>>>>> e57b01a74db63255784601458f2f93fd9b54d276

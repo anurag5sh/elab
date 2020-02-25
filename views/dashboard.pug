@@ -8,6 +8,7 @@ html
       link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,400,700')
       link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css')
       link(rel="stylesheet", href="/css/stdash.css")
+      link(rel='stylesheet', type='text/css', href='/fonts/font-awesome-4.7.0/css/font-awesome.min.css')
 body
   .row.w-100
     .col-lg-4
@@ -21,33 +22,35 @@ body
         br
         p
           | Explore different programming Languages, solve coding problems, and crack your coding interview.
-        button.btn.btn-success(type='button') View All
-    .col-lg-4  
+        a.btn.btn-success(type='button' href="/practice" target="_blank") View All
+    .col-lg-4.mb-4  
       .card1.one.shadows.shadows-interact(style='float: right;')
-        .header
+        .header(style='background: url(/images/img18.jpg) center;background-size: cover;')
         .body
-          h2 Experience title 2
-          b Mildly Rounded - large  shadows - no interaction
+          h2 #{q[0].name}
+          b
+          br
           br
           br
           br
           br
         .footer
           span.price
-            button.btn.btn-primary.btn-block(type='button' style='margin-left: 50%;width: 90px;height: 40px;') Solve
+            a.btn.btn-primary.btn-block(type='button' style='margin-left: 50%;width: 90px;height: 40px;' href="/practice/"+q[0].qid) Solve
     .col-lg-4  
-      .card1.one.shadows.shadows-interact(style='float: right;')
-        .header
+      .card2.one.shadows.shadows-interact(style='float: right;')
         .body
-          h2 Experience title 3
-          b Mildly Rounded - small  shadows with interaction
+          h2(style='text-align:center;margin-bottom:-40px;margin-top: 300px;') Coming Soon
           br
           br
           br
           br
+          
         .footer
-          span.price
-            button.btn.btn-primary.btn-block(type='button' style='margin-left: 50%;width: 90px;height: 40px;') Solve
+          br
+          br
+          //- span.price
+          //-   button.btn.btn-primary.btn-block(type='button' style='margin-left: 50%;width: 90px;height: 40px;') Solve
   div(style='width: 100%; height: auto;')
     .descrip(style='float: right;width: 430px;')
       br
@@ -58,13 +61,13 @@ body
       h4 Participate in coding contests
       br
       p
-        | Explore different programming Languages, solve coding problems, and crack your coding interview.
-      button.btn.btn-success(type='button') View All
+        | Comepete , Code Faster and Achieve.
+      a.btn.btn-success(type='button' href="/contest" target="_blank") View All
   .card1.one.shadows.shadows-interact(style='float:left;')
     .header
     .body
-      h2 Experience title 2
-      b Mildly Rounded - large  shadows - no interaction
+      h2 #{contest[0].name}
+      b #{contest[0].description}
       br
       br
       br
@@ -72,18 +75,19 @@ body
     .footer
       span.price
         button.btn.btn-primary.btn-block(type='button' style='margin-left: 50%;width: 90px;height: 40px;') Register
-  .card1.one.shadows.shadows-interact(style='float: left;')
-    .header
+  .card2.one.shadows.shadows-interact(style='float: left;')
     .body
-      h2 Experience title 3
-      b Mildly Rounded - small  shadows with interaction
+      h2(style='text-align:center;margin-bottom:-40px;margin-top: 300px;') Coming Soon
       br
       br
       br
       br
+
     .footer
-      span.price
-        button.btn.btn-primary.btn-block(type='button' style='margin-left: 50%;width: 90px;height: 40px;') Register
+      br
+      br
+      //- span.price
+        //- button.btn.btn-primary.btn-block(type='button' style='margin-left: 50%;width: 90px;height: 40px;') Register
 //-   
 
     //-script(src='list_style/js/jquery.min.js')

@@ -6,66 +6,11 @@ block append head
   - navStyle = "";
   link(rel="stylesheet", href="/css/contest_card.css")
   link(rel="stylesheet", href="/assets/css/n.css")
+  link(rel="stylesheet", href="/fontawesome/all.min.css")
+  script(src="/fontawesome/all.min.js")
   link(rel='stylesheet' type='text/css' href='/card.css')
   script(src="/js/contest_card.js")
   script(src="/js/typewriter.js ")
-  script.
-    //- var TxtType = function(el, toRotate, period) {
-    //-       this.toRotate = toRotate;
-    //-       this.el = el;
-    //-       this.loopNum = 0;
-    //-       this.period = parseInt(period, 10) || 2000;
-    //-       this.txt = '';
-    //-       this.tick();
-    //-       this.isDeleting = false;
-    //-   };
-
-    //-   TxtType.prototype.tick = function() {
-    //-       var i = this.loopNum % this.toRotate.length;
-    //-       var fullTxt = this.toRotate[i];
-
-    //-       if (this.isDeleting) {
-    //-       this.txt = fullTxt.substring(0, this.txt.length - 1);
-    //-       } else {
-    //-       this.txt = fullTxt.substring(0, this.txt.length + 1);
-    //-       }
-
-    //-       this.el.innerHTML = '<span class="wrap">'+this.txt+'</span>';
-
-    //-       var that = this;
-    //-       var delta = 200 - Math.random() * 100;
-
-    //-       if (this.isDeleting) { delta /= 2; }
-
-    //-       if (!this.isDeleting && this.txt === fullTxt) {
-    //-       delta = this.period;
-    //-       this.isDeleting = true;
-    //-       } else if (this.isDeleting && this.txt === '') {
-    //-       this.isDeleting = false;
-    //-       this.loopNum++;
-    //-       delta = 500;
-    //-       }
-
-    //-       setTimeout(function() {
-    //-       that.tick();
-    //-       }, delta);
-    //-   };
-
-    //-   window.onload = function() {
-    //-       var elements = document.getElementsByClassName('typewrite');
-    //-       for (var i=0; i<elements.length; i++) {
-    //-           var toRotate = elements[i].getAttribute('data-type');
-    //-           var period = elements[i].getAttribute('data-period');
-    //-           if (toRotate) {
-    //-             new TxtType(elements[i], JSON.parse(toRotate), period);
-    //-           }
-    //-       }
-    //-       // INJECT CSS
-    //-       var css = document.createElement("style");
-    //-       css.type = "text/css";
-    //-       css.innerHTML = ".typewrite > .wrap { border-right: 0.08em solid white}";
-    //-       document.body.appendChild(css);
-    //-   };
   style.
     .admin{
     float: right;
@@ -124,24 +69,29 @@ block append head
       font-size: 18px;
       text-transform: uppercase;
       text-decoration: none;
-      color: #031D44;
+      /*color: #031D44;*/
+      color:#37474F;
       padding: 20px 0px;
+      padding-bottom: 15px;
       margin: 0px 20px;
       display: inline-block;
       position: relative;
       opacity: 0.75;
+      letter-spacing: 0.3px;
     }
 
     .nav-link1:hover {
       opacity: 1;
+      text-decoration:none;
+      color: #1E88E5;
     }
 
     .nav-link1::before {
       transition: 300ms;
-      height: 5px;
+      height: 3px;
       content: "";
       position: absolute;
-      background-color: #031D44;
+      background-color: #666666;
     }
 
     .nav-link-ltr1::before {
@@ -153,6 +103,37 @@ block append head
       width: 100%;
     }
 
+    .card {
+      width: 90%;
+      box-shadow: 0 0.5px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      text-align: left;
+      left: 20px;
+      padding: 10px;
+      margin: 20px;
+      position: relative;
+      
+      }
+      .editor-right{
+        color:#263238;
+      }
+      .editor-right:hover{
+        color:#1E88E5;
+        cursor:pointer;
+        text-decoration:none;
+      }
+      /*.navbar1 .nav-link1:active a {
+        transition:none;
+      }
+      .active{
+        border-bottom:3px solid black;
+        color:black;
+      }*/
+      .page-item.active .page-link {
+    z-index: 1;
+    color: #fff;
+    background-color: #FF4F87;
+    border-color: #FF4F87;
+    }
     
 
 //- .container-fluid(style="width:100%;height:90%")
@@ -182,10 +163,27 @@ block content
         h2.typewrite(href='' data-period='2000' data-type='[ "CONTEST" ]' style="font-weight:bold")
           span.wrap
     
-    .navbar1
-      a.nav-link1.nav-link-ltr1.active(href='?l=ongoing') Ongoing
-      a.nav-link1.nav-link-ltr1(href='?l=upcoming') Upcoming
-      a.nav-link1.nav-link-ltr1(href='?l=past') Past
+    .row.w-100
+      .col-lg-8
+        .navbar1
+          a.nav-link1.nav-link-ltr1.active(href='?l=ongoing') Ongoing
+          a.nav-link1.nav-link-ltr1(href='?l=upcoming') Upcoming
+          a.nav-link1.nav-link-ltr1(href='?l=past') Past
+      .col-lg-4
+        //- div.mt-3
+        a.btn.btn-outline-secondary.mt-3.mr-4(style="border-radius:20px;" href='/contest/create') 
+          i.fad.fa-plus-square(style="")
+          | &nbsp; 
+          label.mb-0(style="") Create Contest
+        a.btn.btn-outline-secondary.mt-3(style="border-radius:20px;" href='/contest/manage') 
+          i.fad.fa-cogs(style="")
+          | &nbsp; 
+          label.mb-0(style="") Manage Contest
+        //- a.editor-right.ml-4(href='/contest/manage') 
+        //-   i.fad.fa-cogs(style="font-size:20px")
+        //-   | &nbsp; 
+        //-   label.editor-right(style="font-size:22px") Manage Contest
+
     
     - const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     -function nth(n){return n+([,'st','nd','rd'][n%100>>3^1&&n%10]||'th')}
@@ -219,20 +217,20 @@ block content
             footer.content__footer
                 a(href="/contest/"+i.url) View Contest
 
-      .col-lg-3.col-md-2(style="padding-left:30px")
-        div(style="margin-top:50px;")
-          h2.card-title.text-center Administration
-          hr(style="border-color:grey;")
-          .row
-            .col.text-center
-              a.btn(href='/contest/create' style="font-size:20px;") 
-                i.fas.fa-plus-square
-                label(style="cursor: pointer") &nbsp; Create Contest
-          .row
-            .col.text-center
-              a.btn(href='/contest/manage' style="font-size:20px;")
-                i.fas.fa-cogs 
-                label(style="cursor: pointer") &nbsp; Manage Contest
+      //- .col-lg-3.col-md-2(style="padding-left:30px")
+      //-   div(style="margin-top:50px;")
+      //-     h2.card-title.text-center Administration
+      //-     hr(style="border-color:grey;")
+      //-     .row
+      //-       .col.text-center
+      //-         a.btn(href='/contest/create' style="font-size:20px;") 
+      //-           i.fas.fa-plus-square
+      //-           label(style="cursor: pointer") &nbsp; Create Contest
+      //-     .row
+      //-       .col.text-center
+      //-         a.btn(href='/contest/manage' style="font-size:20px;")
+      //-           i.fas.fa-cogs 
+      //-           label(style="cursor: pointer") &nbsp; Manage Contest
     -if(count!=0)
       ul.pagination.justify-content-center
         li.page-item(class=(page==1?'disabled':''))

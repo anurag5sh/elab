@@ -33,10 +33,12 @@ style.
   .row.w-100
     .col-lg-2
       h2.text-left.lb_heading(style="color:black") ELAB
+    .col-lg-4
     -if(!query)
-      a.btn.btn-success(href="/contest/"+curl+"/reportDownload?print=all") Download Report
-      a.btn.btn-success(href="/contest/"+curl+"/reportDownload?print=leaderboard") Download Leaderboard
-      a.btn.btn-success(href="/contest/"+curl+"/reportDownload?print=signedup") Download Signed up list
+      .col-lg-6
+        a.btn.btn-success(href="/contest/"+curl+"/reportDownload?print=all") Download Report
+        a.btn.btn-success.ml-4(href="/contest/"+curl+"/reportDownload?print=leaderboard") Download Leaderboard
+        a.btn.btn-success.ml-4(href="/contest/"+curl+"/reportDownload?print=signedup") Download Signed up list
   br
   .row.w-100
     .col-lg-4

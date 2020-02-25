@@ -269,15 +269,15 @@ html(lang='en')
             //-     | &nbsp; 
             //-     label.editor-right(style="font-size:18px") Leaderboard
             div.text-left.ml-3.mr-3.mb-2
-              a.editor-right( href="") 
+              a.editor-right() 
                 i.fas.fa-puzzle-piece(style="font-size:17px")
                 | &nbsp; 
-                label.editor-right(style="font-size:18px") Difficulty :
+                label.editor-right(style="font-size:18px") Difficulty : #{question.difficulty}
             div.text-left.ml-3.mr-3.mb-2
-              a.editor-right( href="") 
+              a.editor-right( ) 
                 i.fad.fa-user-edit(style="font-size:17px")
                 | &nbsp; 
-                label.editor-right(style="font-size:18px") Created By :
+                label.editor-right(style="font-size:18px") Created By : #{question.createdByName}
             
             
             

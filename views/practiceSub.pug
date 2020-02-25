@@ -20,6 +20,15 @@ head
 
 body
     .WRAPPER
+        br
+        nav(aria-label='breadcrumb' style="color:black;width:50%;margin-left:40px")
+            ol.breadcrumb(style="padding-left:20px")
+                li.breadcrumb-item
+                    a(href='/practice') Practice
+                li.breadcrumb-item
+                    a(href='/practice/'+question.qid) #{question.name}
+                li.breadcrumb-item.active(aria-current='page') Submissions
+
         h1.text-center.m-3.lb_heading Submissions
 
         .container-fluid

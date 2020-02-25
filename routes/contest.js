@@ -63,26 +63,20 @@ router.get('/',authenticate, async (req,res)=> {
     if(req.session.staff_id){
         let contest=null;
         if(!req.query.l){ //query l does not exist
-            contest = await Contest.find({'timings.starts':{$lt:new Date()},'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
-            if(!contest) return res.render('teacher/trcontest',{contest:[],count:0});
-            count = await Contest.countDocuments({'timings.starts':{$lt:new Date()},'timings.ends':{$gt:new Date()}});
-        }
-        else if(req.query.l == 'upcoming'){
-            contest = await Contest.find({'timings.starts':{$gt:new Date()}}).lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
-            if(!contest) return res.render('teacher/trcontest',{contest:[],count:0});
-            count = await Contest.countDocuments({'timings.starts':{$gt:new Date()}}).lean().sort({'timings.starts':-1});
-            return res.render('teacher/trcontest',{contest:contest,count:count,type:"upcoming",page:page});
+            contest = await Contest.find({'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
+            if(contest.length <=0) return res.render('teacher/trcontest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
+            count = await Contest.countDocuments({'timings.ends':{$gt:new Date()}});
         }
         else if(req.query.l == 'past'){
             contest = await Contest.find({'timings.ends':{$lt:new Date()}}).lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
-            if(!contest) return res.render('teacher/trcontest',{contest:[],count:0});
+            if(contest.length <=0) return res.render('teacher/trcontest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
             count = await Contest.countDocuments({'timings.ends':{$lt:new Date()}}).lean().sort({'timings.starts':-1});
             return res.render('teacher/trcontest',{contest:contest,count:count,type:"past",page:page});
         }
         else{
-            contest = await Contest.find({'timings.starts':{$lt:new Date()},'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
-            if(!contest) return res.render('teacher/trcontest',{contest:[],count:0});
-            count = await Contest.countDocuments({'timings.starts':{$lt:new Date()},'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':-1});
+            contest = await Contest.find({'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
+            if(contest.length <=0) return res.render('teacher/trcontest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
+            count = await Contest.countDocuments({'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':-1});
         }
         
         res.render('teacher/trcontest',{contest:contest,count:count,type:"ongoing",page:page});
@@ -92,34 +86,23 @@ router.get('/',authenticate, async (req,res)=> {
             const grp = await CustomGroup.find({'usn':req.session.usn}).lean().select({id:1,_id:0});
             let gid=[];
             for(i of grp) gid.push(i.id);
-            let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.starts':{$lt:new Date()},'timings.ends':{$gt:new Date()}}).select('name url description questions timings').lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
-            //-contest = contest.concat(await Contest.find({customGroup:{$in:gid},isReady:true,'timings.starts':{$lt:new Date()},'timings.ends':{$gt:new Date()}}).lean().select('name url description questions timings')).sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
-            if(!contest) return res.render('contest',{contest:[],count:0});
-            count = await Contest.countDocuments({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.starts':{$lt:new Date()},'timings.ends':{$gt:new Date()}});
+            let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}}).select('name url description questions timings').lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
+            //-contest = contest.concat(await Contest.find({customGroup:{$in:gid},isReady:true,'timings.ends':{$gt:new Date()}}).lean().select('name url description questions timings')).sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
+            if(contest.length <=0) return res.render('contest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
+            count = await Contest.countDocuments({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}});
             res.render('contest',{contest:contest,count:count,type:"ongoing",page:page});
         }
         else{
 
-            if(req.query.l == 'upcoming'){ //l=upcoming
+            
 
-                const grp = await CustomGroup.find({'usn':req.session.usn}).lean().select({id:1,_id:0});
-                let gid=[];
-                for(i of grp) gid.push(i.id);
-                let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.starts':{$gt:new Date()}}).select('name url description questions timings').lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
-                //contest = contest.concat(await Contest.find({customGroup:{$in:gid},isReady:true,'timings.starts':{$gt:new Date()}}).lean().select('name url description questions timings')).sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
-                if(!contest) return res.render('contest',{contest:[],count:0});
-                count = await Contest.countDocuments({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.starts':{$gt:new Date()}});
-                res.render('contest',{contest:contest,count:count,type:"upcoming",page:page});
-
-            }
-
-            else if(req.query.l == 'past'){ //l=past
+            if(req.query.l == 'past'){ //l=past
                 const grp = await CustomGroup.find({'usn':req.session.usn}).lean().select({id:1,_id:0});
                 let gid=[];
                 for(i of grp) gid.push(i.id);
                 let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$lt:new Date()}}).select('name url description questions timings').lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
                 //contest = contest.concat(await Contest.find({customGroup:{$in:gid},isReady:true,'timings.ends':{$lt:new Date()}}).lean().select('name url description questions timings')).sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
-                if(!contest) return res.render('contest',{contest:[],count:0});
+                if(contest.length <=0) return res.render('contest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
                 count = await Contest.countDocuments({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$lt:new Date()}});
                 res.render('contest',{contest:contest,count:count,type:"past",page:page});
             }
@@ -127,10 +110,10 @@ router.get('/',authenticate, async (req,res)=> {
                 const grp = await CustomGroup.find({'usn':req.session.usn}).lean().select({id:1,_id:0});
                 let gid=[];
                 for(i of grp) gid.push(i.id);
-                let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.starts':{$lt:new Date()},'timings.ends':{$gt:new Date()}}).select('name url description questions timings').lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
-                //contest = contest.concat(await Contest.find({customGroup:{$in:gid},isReady:true,'timings.starts':{$lt:new Date()},'timings.ends':{$gt:new Date()}}).lean().select('name url description questions timings')).sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
-                if(!contest) return res.render('contest',{contest:[],count:0});
-                count = await Contest.countDocuments({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.starts':{$lt:new Date()},'timings.ends':{$gt:new Date()}});
+                let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}}).select('name url description questions timings').lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
+                //contest = contest.concat(await Contest.find({customGroup:{$in:gid},isReady:true,'timings.ends':{$gt:new Date()}}).lean().select('name url description questions timings')).sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
+                if(contest.length <=0) return res.render('contest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
+                count = await Contest.countDocuments({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}});
                 res.render('contest',{contest:contest,count:count,type:"ongoing",page:page});
 
             }

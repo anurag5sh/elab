@@ -6,6 +6,8 @@ block append head
     link(rel="stylesheet", href="/assets/css/n.css")
     link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,400,700')
     link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css')
+    link(rel="stylesheet", href="/fontawesome/all.min.css")
+    script(src="/fontawesome/all.min.js")
     script(src="/js/typewriter.js ")
     - active.assignment="active"
     - navClass = "bg-fade trans";
@@ -19,6 +21,25 @@ block append head
         background:transparent;
         background-color:transparent!important;
         }
+        .card {
+      width: 90%;
+      box-shadow: 0 0.5px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      text-align: left;
+      left: 20px;
+      padding: 10px;
+      margin: 20px;
+      position: relative;
+      
+      }
+      .editor-right{
+        color:#263238;
+      }
+      .editor-right:hover{
+        color:#1E88E5;
+        cursor:pointer;
+        text-decoration:none;
+      }
+    
 
 block content
     //- .jumbotron.text-left.bg-light.border.rounded.d-lg-flex.justify-content-lg-center.align-items-lg-center
@@ -34,6 +55,18 @@ block content
                     option(selected,disabled) Select Semester
                     each i in current
                         option(value=i.id) #{i.sem}, Set #{i.id.substr(9)}
+        .col-3.mr-4(style="float:right")
+            .card.mt-0
+                div.mt-3
+                    a.editor-right.pl-3(href='') 
+                        i.fad.fa-plus-square(style="font-size:17px")
+                        | &nbsp; 
+                        label.editor-right(style="font-size:15px") Leaderboard
+                div.mt-3
+                    a.editor-right.pl-2(href='') 
+                        i.fad.fa-cogs(style="font-size:17px")
+                        | &nbsp; 
+                        label.editor-right(style="font-size:15px") View Previous Assignments
         main.page.projets-page
             section.portfolio-block.project-no-images
                 .container1

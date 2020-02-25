@@ -18,6 +18,8 @@ block append head
     link(rel="stylesheet", href="/css/dracula.css")
     link(rel="stylesheet", href="/assets/css/n.css")
     script(src="/js/typewriter.js")
+    link(rel="stylesheet", href="/fontawesome/all.min.css")
+    script(src="/fontawesome/all.min.js")
 
     script.  
         hljs.configure({   
@@ -48,6 +50,11 @@ block append head
             margin: 20px;
             position: relative; 
       }
+
+      .editor-right:hover{
+            /*color:#1E88E5;*/
+            cursor:pointer;
+        }
 block content
     .WRAPPER
         section.module.parallax.parallax-1(data-type='background' data-speed='10')
@@ -56,15 +63,22 @@ block content
                     span.wrap
         div#practice
             main.page.projets-page
-                section.portfolio-block.project-no-images(style="padding-top:30px")
+                section.portfolio-block.project-no-images(style="padding-top:20px")
                     .container-fluid
                         .row
-                            .col-10
-                            .col-2
-                                a.btn.btn-outline-secondary(style="border-radius:20px;" href="")
-                                    i.fas.fa-plus-square
+                            .col-lg-8
+                            .col-lg-2
+                                //- a.btn.btn-outline-secondary(style="border-radius:20px;" href="")
+                                button.btn.btn-success.mr-3(type='button' style="border-radius:20px;float:right;" data-toggle='modal' data-target='#myModal')
+                                    i.fad.fa-plus-square
                                     | &nbsp; 
-                                    label.mb-0 Add question
+                                    label.editor-right.mb-0 Add question
+                            .col-lg-2
+                                a.btn.btn-success(style="border-radius:20px;" href="" )
+                                    i.fad.fa-eye
+                                    | &nbsp; 
+                                    label.editor-right.mb-0 Leaderboard
+
                         .row
                             .col-lg-9
                                 .row

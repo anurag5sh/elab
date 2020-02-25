@@ -44,24 +44,29 @@ block append head
       font-size: 18px;
       text-transform: uppercase;
       text-decoration: none;
-      color: #031D44;
+      /*color: #031D44;*/
+      color:#37474F;
       padding: 20px 0px;
+      padding-bottom: 15px;
       margin: 0px 20px;
       display: inline-block;
       position: relative;
       opacity: 0.75;
+      letter-spacing: 0.3px;
     }
 
     .nav-link1:hover {
       opacity: 1;
+      text-decoration:none;
+      color: #1E88E5;
     }
 
     .nav-link1::before {
       transition: 300ms;
-      height: 5px;
+      height: 3px;
       content: "";
       position: absolute;
-      background-color: #031D44;
+      background-color: #666666;
     }
 
     .nav-link-ltr1::before {

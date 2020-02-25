@@ -1,0 +1,129 @@
+extends layout
+
+block append code
+    -active.reports ='active';
+    link(rel="stylesheet", href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css")
+    script(src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js")
+    script(src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js")
+
+
+block content
+    .card.card-primary
+        .card-header
+            h3.card-title Reports
+        .card-body
+            .col-3(style="margin:auto;")
+                    .form-group
+                        select#type.form-control.custom-select
+                            option(selected,disabled) Select Type
+                            option(value="contest") Contest
+                            option(value="assignment") Assignment
+            
+            #body
+
+        .modal.fade#viewList(tabindex ="-1" role="dialog" )
+            .modal-dialog.modal-lg
+                .modal-content
+                    .modal-header
+                        h4.modal-title List
+                    .modal-body
+                        p#contestID(style="display:none;")
+                        #accordionExample.accordion
+                            .card
+                                #headingOne.card-header
+                                    h2.mb-0
+                                        button.btn.btn-link.collapsed(type='button' data-toggle='collapse' data-target='#collapseOne' aria-expanded='false' aria-controls='collapseOne')
+                                            | View selected students
+                                #collapseOne.collapse(aria-labelledby='headingOne' data-parent='#accordionExample')
+                                    .card-body
+                                        table.table.table-hover
+                                            thead
+                                                tr
+                                                    th #
+                                                    th Usn
+                                                    th Name
+                                                    th Year
+                                            tbody#selectedStudents
+
+                            .card
+                                #headingTwo.card-header
+                                    h2.mb-0
+                                        button.btn.btn-link.collapsed(type='button' data-toggle='collapse' data-target='#collapseTwo' aria-expanded='false' aria-controls='collapseTwo')
+                                            | View selected teachers
+                                #collapseTwo.collapse(aria-labelledby='headingTwo' data-parent='#accordionExample')
+                                    .card-body
+                                        table.table.table-hover
+                                            thead
+                                                tr
+                                                    th #
+                                                    th STAFF ID
+                                                    th Name
+                                            tbody#selectedTeachers
+                    .modal-footer
+                        button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+
+    script.
+        $("#type").change(()=>{
+            const type= $("#type").val();
+            $("#body").empty();
+            if(type=="contest"){
+                let html ='<table id="list" class="table table-hover"><thead><tr><th style="width:30px">#</th><th>CONTEST NAME</th><th>CREATED BY</th><th>DATE</th><th>BATCH</th><th>REPORT</th></tr></thead></table>';
+                $("#body").append(html);
+                $.get('/admin/get/contest',function (data,status){
+                    const teachers = $('#list').DataTable( {
+                            "data":data,
+                            "columns": [
+                                { "data": null },
+                                { "data": "cname" },
+                                { "data": "createdBy" },
+                                { "data": "date" },
+                                { "data": "batch" },
+                                { "data": "report" },
+                            ],
+                            //- "order": [[ 1, 'asc' ]],
+                            "columnDefs": [ {"searchable": false,"orderable": false,"targets": 0},
+                                            {"searchable": false,"targets": 3},
+                                            {"searchable": false,"orderable": false,"targets": 4},
+                                            {"searchable": false,"orderable": false,"targets": 5} ]
+                        } );
+
+                        teachers.on( 'order.dt search.dt', function () {
+                        teachers.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                            cell.innerHTML = i+1;
+                        } );
+                    } ).draw();
+                    }).fail((err)=>{
+                        toastr.error(err.responseText);
+                    });
+            }
+        });
+
+        $("#collapseOne").on('show.bs.collapse',function (){$("#selectedStudents").empty();
+           $.get('/contest/students/id/'+$('#contestID').text(),function (data,status){
+               data.forEach((item,index)=>{
+                   $("#selectedStudents").append('<tr><td>'+(index+1)+'</td><td>'+item.usn+'</td><td>'+item.fname+" "+item.lname+'</td><td>'+item.year+'</td></tr>');
+               })
+               
+           }).fail((err)=>{
+                   toastr.error(err.responseText);
+               });
+        });
+
+        $("#collapseTwo").on('show.bs.collapse',function (){$("#selectedTeachers").empty();
+           $.get('/contest/teachers/id/'+$('#contestID').text(),function (data,status){
+               data.forEach((item,index)=>{
+                   $("#selectedTeachers").append('<tr><td>'+(index+1)+'</td><td>'+item.staff_id+'</td><td>'+item.fname+" "+item.lname+'</td></tr>');
+               })
+               
+           }).fail((err)=>{
+                   toastr.error(err.responseText);
+               });
+        });
+
+        $("#viewList").on('show.bs.modal',function(e){
+            $("#contestID").text($(e.relatedTarget).data('id'));
+            $("#selectedStudents").empty();
+            $("#selectedTeachers").empty();
+            $('#collapseOne').collapse('hide');
+            $('#collapseTwo').collapse('hide');
+        });

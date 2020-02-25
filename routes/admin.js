@@ -12,6 +12,7 @@ const {AssignmentQ,validateAQ} = require('../models/assignmentQ');
 const {ArchivedStudents} = require('../models/archivedStudents');
 const {Submission} = require('../models/submission');
 const {aSubmission} = require('../models/assignmentSubmission');
+const {Contest} = require('../models/contest');
 const fs = require('fs');
 const Joi = require("@hapi/joi");
 const winston = require('winston');
@@ -203,6 +204,29 @@ router.get('/delete/student/:usn',admin,async (req,res)=>{
     })
 });
 
+router.post('/deleteMany',admin,async (req,res) =>{ console.log(req.body);
+  if(!req.body.list || !Array.isArray(req.body.list)) return res.status(400).end();
+  if(req.body.type=="student"){
+    await Student.deleteMany({usn:{$in:req.body.list}}).then(async()=>{
+      await Submission.deleteMany({usn:{$in:req.body.list}});
+      await aSubmission.deleteMany({usn:{$in:req.body.list}});
+      return res.send("Account deleted!");
+    }).catch((err)=>{winston.error(err);
+      return res.status(400).send("Unable to delete!");
+    });
+  }
+  else if(req.body.type=="teacher"){
+    await Teacher.deleteMany({staff_id:{$in:req.body.list}}).then(()=>{
+      return res.send("Account deleted!");
+    }).catch((err)=>{
+      winston.error(err);
+      return res.status(400).send("Unable to delete!");
+    });
+  }
+  else
+  res.status(400).end();
+});
+
 router.get('/add',admin, (req,res) => {
     res.render('admin/addAccount');
 });
@@ -300,6 +324,42 @@ router.post('/add', admin,async (req, res, next) => {
   });
 //--------------------Accounts end------------------------------//
 
+//---------------------Contest Report----------------------------//
+
+router.get('/get/contest',admin,async (req,res)=>{
+  const contest = await Contest.find().sort({_id:-1}).lean().select('url name id createdByName timings custom_usn custom_staff_id customGroup year');
+  if(!contest) return res.send([]);
+
+  let data=[];
+  
+  
+
+  contest.forEach((item)=>{ let batch='';
+    let obj={};
+    obj.cname = item.name;
+    obj.createdBy = item.createdByName;
+    obj.date = item.timings.starts.toLocaleString();
+    obj.report = '<a href="/contest/'+item.url+'/report" target="_blank">View Report</a>';
+
+    if(item.year.length > 0)
+    batch += "Year : " + item.year +"<br>" ;
+
+    if(item.customGroup.length>0)
+    batch += "Groups : " + item.customGroup + +"<br>";
+
+    if(item.custom_usn.length> 0 || item.custom_staff_id.length> 0 )
+    batch +="Custom List : " + '<a href="#" data-toggle="modal" data-target="#viewList" data-id="'+item.id+'">View List</a>';
+    obj.batch = batch;  
+
+    data.push(obj);
+
+  });
+
+  res.send(data);
+  
+});
+
+//---------------------Contest Report end------------------------//
 
 //-------------------Assignment routes start----------------------//
 
@@ -385,8 +445,8 @@ router.post('/assignment/edit',admin,async (req,res) => {
   res.status(200).send("Changes Saved.");
 });
 
-router.get('/assignment/reports', admin, async (req,res) => {
-  res.render('admin/assignmentReports');
+router.get('/reports', admin, async (req,res) => {
+  res.render('admin/reports');
 });
 
 //deleting assignment

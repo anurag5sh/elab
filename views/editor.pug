@@ -121,15 +121,14 @@ html(lang='en')
       border-color:#dee2e6 #dee2e6 #fff;
       }*/
       .loader {
-    
-      margin:auto;
-      border: 16px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 16px solid #3498db;
-      width: 150px;
-      height: 150px;
-      -webkit-animation: spin 2s linear infinite; /* Safari */
-      animation: spin 2s linear infinite;
+        margin:auto;
+        border: 16px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 16px solid #3498db;
+        width: 150px;
+        height: 150px;
+        -webkit-animation: spin 2s linear infinite; /* Safari */
+        animation: spin 2s linear infinite;
       }
       @-webkit-keyframes spin {
         0% { -webkit-transform: rotate(0deg); }
@@ -161,8 +160,13 @@ html(lang='en')
         border-radius:4px;
         font-family: 'Source Code Pro', monospace;
       }
+      @font-face {
+        font-family: OpenSans-Regular;
+        src: url('/fonts/OpenSans-Regular.ttf'); 
+      }
+
       .headings{
-        font-family:OpenSans-Regular;
+        font-family:'OpenSans-Regular';
         font-weight:bold;
         margin-top:4px;
         margin-bottom:0px;
@@ -171,13 +175,7 @@ html(lang='en')
         letter-spacing:0.5px;
       }
       .ql-editor{
-        padding:0px 0px;
-         
-      }
-
-      @font-face {
-      font-family: OpenSans-Regular;
-      src: url('/fonts/OpenSans-Regular.ttf'); 
+        padding:0px 0px;  
       }
 
       #TestCases,td{
@@ -205,6 +203,14 @@ html(lang='en')
         letter-spacing:0.8px
       }
 
+      .editor-right{
+        color:#263238;
+      }
+      .editor-right:hover{
+        color:#1E88E5;
+        cursor:pointer;
+      }
+
   body
     .WRAPPER
       .row.mt-4.w-100
@@ -220,7 +226,7 @@ html(lang='en')
         //-     | &nbsp; View Submissions
       h1.q_name(style="margin-left:40px;font-size:35px;") #{question.name}
       .row.w-100
-        .col-lg-9
+        .col-lg-9.col-md-8.col-sm-8
           .card#card(style="padding-left:25px;padding-right:25px;")
             //- p #{question.name}
             
@@ -245,12 +251,36 @@ html(lang='en')
               div.bg-col.m-1(class="pre" class="sa" id="sam_i"+j) #{i.input}
               p.headings Sample Output #{j+1}
               div.bg-col.m-1(class="pre" id="sam_o"+j) #{i.output}
-        .col-lg-3
-          .card.m-0.mt-4.h-50
-            div.text-center.p-3
-              a.btn(style="border-radius:20px;" href="/practice/"+question.qid+"/submissions") 
-                i.fas.fa-eye
-                | &nbsp; View Submissions
+        .col-lg-3.col-md-4.col-sm-4.pl-0
+          .card.m-0.mt-4(style="width:95%;height:auto")
+            div.text-left.m-3.mb-2
+              a.editor-right(style="border-radius:20px;" href="/practice/"+question.qid+"/submissions") 
+                i.fad.fa-eye(style="font-size:17px")
+                | &nbsp; 
+                label.editor-right(style="font-size:18px") View Submissions
+            //- div.text-left.ml-3.mr-3.mb-2
+            //-   a.editor-right( href="") 
+            //-     i.fad.fa-user-check(style="font-size:17px")
+            //-     | &nbsp; 
+            //-     label.editor-right(style="font-size:18px") Correct Submmissions
+            //- div.text-left.ml-3.mr-3.mb-2
+            //-   a.editor-right( href="") 
+            //-     i.fad.fa-poll-people(style="font-size:17px")
+            //-     | &nbsp; 
+            //-     label.editor-right(style="font-size:18px") Leaderboard
+            div.text-left.ml-3.mr-3.mb-2
+              a.editor-right( href="") 
+                i.fas.fa-puzzle-piece(style="font-size:17px")
+                | &nbsp; 
+                label.editor-right(style="font-size:18px") Difficulty :
+            div.text-left.ml-3.mr-3.mb-2
+              a.editor-right( href="") 
+                i.fad.fa-user-edit(style="font-size:17px")
+                | &nbsp; 
+                label.editor-right(style="font-size:18px") Created By :
+            
+            
+            
     
           
       .card(style="width:90%; display:inline-block;")
@@ -466,6 +496,7 @@ html(lang='en')
           $("#TestCases").empty();
 
           let total =0;
+          
           let table = document.createElement("TABLE");
           table.setAttribute("id", "table");
           table.setAttribute("class","table table-borderless");

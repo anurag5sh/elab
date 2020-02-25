@@ -36,13 +36,16 @@ const contestSchema = new mongoose.Schema({
     default : []
   }],
   custom_usn : {
-    type:[String]
+    type:[String],
+    default : []
   },
   custom_staff_id:{
-    type:[String]
+    type:[String],
+    default : []
   },
   customGroup:{
-    type:[Number]
+    type:[Number],
+    default : []
    },
   isReady:{
     type: Boolean,
@@ -52,11 +55,12 @@ const contestSchema = new mongoose.Schema({
     usn:{type : String},
     name:{type:String},
     time:{ type: Date, default:new Date()},
-    year:{type:Number},
+    year:{type:String},
     _id : false
   }],
   questions:{
-    type:[String]
+    type:[String],
+    default : []
   },
   submissions:[{
     qid:{type:String},

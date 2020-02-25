@@ -23,22 +23,24 @@ function encode64(string){ //encoding to base64
 
 //Load the current assignment questions for students and manage for teachers
 router.get('/',authenticate, async (req,res) => {
-
+    let page=1;
+    if(Number.isNaN(req.query.page) || !req.query.page || req.query.page < 1) page=1;
+    else page=req.query.page;
+    let count=0;
     if(req.session.staff_id){
         const current = await Assignment.find({ 'duration.ends' :{$gt : new Date()} }).lean().select({id:1,sem:1,_id:0}).sort({id:1});
         res.render('teacher/assignment',{current:current});
     }
     else{
         const assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).lean().select('id questions');
-        if(!assignment) return res.send("Try again later.");
+        if(!assignment) return res.render('assignment',{questions:[],count:0,page:page});
+        
+        let questions = await AssignmentQ.find({$or:[{assignmentId:assignment.id},{qid:{$in:assignment.questions}}]}).lean().select({_id:0,name:1,qid:1}).sort({_id:-1}).skip((page-1)*12).limit(12);
+        if(questions.length > 0) count = await AssignmentQ.countDocuments({$or:[{assignmentId:assignment.id},{qid:{$in:assignment.questions}}]});
+        
+        if(questions.length <=0) {questions = [];count=0;}
 
-        let questions = await AssignmentQ.find({assignmentId:assignment.id}).lean().select({_id:0,name:1,qid:1});
-        if(!questions) questions = [];
-
-        const old = await AssignmentQ.find({qid:{$in:assignment.questions}}).lean().select({_id:0,name:1,qid:1});
-        questions = questions.concat(old);
-
-        res.render('assignment',{questions:questions});
+        res.render('assignment',{questions:questions,count:count,page:page});
     }
     
 });
@@ -52,17 +54,20 @@ router.get('/leaderboard',authenticate,async (req,res)=>{
 });
 
 router.get('/get/:id',authenticate,teacher,async (req,res) =>{
+    let page=1;
+    if(Number.isNaN(req.query.page) || !req.query.page || req.query.page < 1) page=1;
+    else page=req.query.page;
+    let count=0;
 
     const assignment = await Assignment.findOne({id:req.params.id,'duration.ends' :{$gt : new Date()}}).lean().select('id questions');
-    if(!assignment) return res.send("Try again later.");
+    if(!assignment) return res.send({questions:[],count:0,page:page});
 
-    let questions = await AssignmentQ.find({assignmentId:assignment.id}).lean().select({_id:0,name:1,qid:1});
-    if(!questions) questions = [];
+    let questions = await AssignmentQ.find({$or:[{assignmentId:assignment.id},{qid:{$in:assignment.questions}}]}).lean().select({_id:0,name:1,qid:1}).sort({_id:-1}).skip((page-1)*12).limit(12);
+    if(questions.length>0) count = await AssignmentQ.countDocuments({$or:[{assignmentId:assignment.id},{qid:{$in:assignment.questions}}]});
+    
+    if(questions.length <=0) {questions = [];count=0;}
 
-    const old = await AssignmentQ.find({qid:{$in:assignment.questions}}).lean().select({_id:0,name:1,qid:1});
-    questions = questions.concat(old);
-
-    res.send(questions);
+    res.send({questions:questions,count:count,page:page});
 
 });
 

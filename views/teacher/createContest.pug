@@ -12,7 +12,7 @@ html(lang='en')
     script(src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js")
     title ELAB |CONTEST FORM
     style.
-      * {
+      * { 
       box-sizing: border-box;
       }
       .contestform{
@@ -69,6 +69,7 @@ html(lang='en')
 
   body
     .WRAPPER
+      h2.lb_heading.m-3.ml-4 Create Contest
       .contestform
         div#errorForm
         // The Modal
@@ -85,39 +86,41 @@ html(lang='en')
               .modal-footer
                 button.btn.btn-success(type='button' , onclick="location.href='./manage/'+u") Next
 
-        h2 Create Contest
-        div
+    
+        div.pl-3.pt-3
           form#con
-            label(for='Contest') Contest Name 
+            label.fontStyle.font-weight-bold(for='Contest') Contest Name 
             input.form-control.mwidth#Contest(type='text', name='name', placeholder='Contest', required='true')
             br
             br
-            label(for='descrip') Description
+            label.fontStyle.font-weight-bold(for='descrip') Description
             input.form-control.mwidth#descrip(type='text', name='description', placeholder='Description', required='true')
             br
             br
-            label(for='timings') Date
+            label.fontStyle.font-weight-bold(for='timings') Date
             input#timings.form-control.mwidth(type='text' name='timings' )
             
             br
             br
             .row.Row
-              label For: &nbsp;
+              label.fontStyle.font-weight-bold For: &nbsp;
               .col-1.custom-control.custom-checkbox
                 input(type='checkbox',class= "custom-control-input", name='year', id="1-year", value='1')
-                label(class="custom-control-label" for="1-year") 1st Year
+                label.fontStyle(class="custom-control-label" for="1-year") 1st Year
               .col-1.custom-control.custom-checkbox
                 input(type='checkbox', class= "custom-control-input",name='year',id="2-year" ,value='2')
-                label(class="custom-control-label" for="2-year") 2nd Year
+                label.fontStyle(class="custom-control-label" for="2-year") 2nd Year
               .col-1.custom-control.custom-checkbox
                 input(type='checkbox', class= "custom-control-input",name='year',id="3-year", value='3')
-                label(class="custom-control-label" for="3-year") 3rd Year
+                label.fontStyle(class="custom-control-label" for="3-year") 3rd Year
               .col-1.custom-control.custom-checkbox
                 input(type='checkbox', class= "custom-control-input",name='year',id="4-year", value='4')
-                label(class="custom-control-label" for="4-year") 4th Year
+                label.fontStyle(class="custom-control-label" for="4-year") 4th Year
             br 
-            input.btn.btn-outline-danger.btn-sm(type='button', value='CANCEL', onclick="",style="float:right;margin-right:70px;") 
-            input.btn.btn-outline-primary.btn-sm(type='button', value='GET STARTED', onclick="submitForm()",style="float:right;margin-right:10px;")
+            
+            div.mb-2(style="float:right")
+              input.btn.btn-outline-primary.btn-sm(type='button', value='GET STARTED', onclick="submitForm()",style="margin-right:30px;")
+              input.btn.btn-outline-danger.btn-sm(type='button', value='CANCEL', onclick="",style="margin-right:30px;") 
       .push1
       .push
     footer.bg-dark(class="FOOTER")

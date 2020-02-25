@@ -39,6 +39,15 @@ block append head
         background:transparent;
         background-color:transparent!important;
         }
+        .card {
+            width: 90%;
+            box-shadow: 0 0.5px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            text-align: left;
+            left: 20px;
+            padding: 10px;
+            margin: 20px;
+            position: relative; 
+      }
 block content
     .WRAPPER
         section.module.parallax.parallax-1(data-type='background' data-speed='10')
@@ -47,8 +56,15 @@ block content
                     span.wrap
         div#practice
             main.page.projets-page
-                section.portfolio-block.project-no-images
+                section.portfolio-block.project-no-images(style="padding-top:30px")
                     .container-fluid
+                        .row
+                            .col-10
+                            .col-2
+                                a.btn.btn-outline-secondary(style="border-radius:20px;" href="")
+                                    i.fas.fa-plus-square
+                                    | &nbsp; 
+                                    label.mb-0 Add question
                         .row
                             .col-lg-9
                                 .row
@@ -60,16 +76,15 @@ block content
                                                     br
                                                     a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' data-toggle="modal" data-target="#edit" data-qid=i.qid href="" ) EDIT
                                                     a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' href='/practice/'+i.qid) VIEW
-                            .col-lg-3.text-center
-                                h2 Administration
-                                hr(style="border-color:grey;")
-                                br
-                                button.btn.btn-primary(type='button' data-toggle='modal' data-target='#myModal')
-                                    i.fas.fa-plus-square &nbsp; Add Question
-        .push1
-        .push
-    footer.bg-dark(class="FOOTER")
-        div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
+                            //- .col-lg-3.text-center
+                            //-     .card.m-0
+                            //-         div.p-4.pt-2
+                            //-             h2.text-center Administration
+                            //-             hr(style="border-color:grey;")
+                            //-             br
+                            //-             button.btn.btn-primary(type='button' data-toggle='modal' data-target='#myModal')
+                            //-                 i.fas.fa-plus-square &nbsp; Add Question
+
         .modal.fade#myModal
             .modal-dialog.modal-xl
                 .modal-content
@@ -296,7 +311,20 @@ block content
             .modal-dialog.modal-dialog-centered.text-center(role="document")
                 span.fas.fa-circle-notch.fa-spin.fa-3x.w-100
         
+        -if(count>0)
+            ul.pagination.justify-content-center
+                li.page-item(class=(page==1?'disabled':''))
+                    a.page-link(href="?page="+(page-1)) Previous
+                -for(let i=1;i<=Math.ceil(count/12);i++)
+                    li.page-item(class=(page==i?'active':''))
+                        a.page-link(href="?page="+i)=i
+                li.page-item(class=(page==Math.ceil(count/12)?'disabled':''))
+                    a.page-link(href="?page="+(page+1) ) Next
         
+        .push1
+        .push
+    footer.bg-dark(class="FOOTER")
+        div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
 
         script(src='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/pikaday.min.js')
         script(src='list_style/js/theme.js')

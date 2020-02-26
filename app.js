@@ -19,7 +19,8 @@ require('winston-mongodb');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet')
 
-const port = process.env.elab_port_no || 4000;
+const port = process.argv[2] || 4000;
+app.locals.port = port;
 
 //fixing all deprecationWarning of mongoDB
 mongoose.set('useNewUrlParser', true);
@@ -54,7 +55,7 @@ winston.configure({
 });
 
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV != 'production') {
  winston.add(new winston.transports.Console)
 }
 

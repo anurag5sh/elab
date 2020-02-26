@@ -16,6 +16,10 @@ const request = require("request-promise");
 const config = require('config');
 const pug = require('pug');
 const puppeteer = require('puppeteer'); 
+const path = require('path');
+const winston = require('winston');
+const rimraf = require('rimraf');
+const fs = require('fs');
 
 
 function encode64(string){ //encoding to base64
@@ -63,7 +67,7 @@ router.get('/',authenticate, async (req,res)=> {
     if(req.session.staff_id){
         let contest=null;
         if(!req.query.l){ //query l does not exist
-            contest = await Contest.find({'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
+            contest = await Contest.find({'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':1}).skip((page-1)*12).limit(12);
             if(contest.length <=0) return res.render('teacher/trcontest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
             count = await Contest.countDocuments({'timings.ends':{$gt:new Date()}});
         }
@@ -74,7 +78,7 @@ router.get('/',authenticate, async (req,res)=> {
             return res.render('teacher/trcontest',{contest:contest,count:count,type:"past",page:page});
         }
         else{
-            contest = await Contest.find({'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
+            contest = await Contest.find({'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':1}).skip((page-1)*12).limit(12);
             if(contest.length <=0) return res.render('teacher/trcontest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
             count = await Contest.countDocuments({'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':-1});
         }
@@ -86,7 +90,7 @@ router.get('/',authenticate, async (req,res)=> {
             const grp = await CustomGroup.find({'usn':req.session.usn}).lean().select({id:1,_id:0});
             let gid=[];
             for(i of grp) gid.push(i.id);
-            let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}}).select('name url description questions timings').lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
+            let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}}).select('name url description questions timings image').lean().sort({'timings.starts':1}).skip((page-1)*12).limit(12);
             //-contest = contest.concat(await Contest.find({customGroup:{$in:gid},isReady:true,'timings.ends':{$gt:new Date()}}).lean().select('name url description questions timings')).sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
             if(contest.length <=0) return res.render('contest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
             count = await Contest.countDocuments({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}});
@@ -100,7 +104,7 @@ router.get('/',authenticate, async (req,res)=> {
                 const grp = await CustomGroup.find({'usn':req.session.usn}).lean().select({id:1,_id:0});
                 let gid=[];
                 for(i of grp) gid.push(i.id);
-                let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$lt:new Date()}}).select('name url description questions timings').lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
+                let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$lt:new Date()}}).select('name url description questions timings image').lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
                 //contest = contest.concat(await Contest.find({customGroup:{$in:gid},isReady:true,'timings.ends':{$lt:new Date()}}).lean().select('name url description questions timings')).sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
                 if(contest.length <=0) return res.render('contest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
                 count = await Contest.countDocuments({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$lt:new Date()}});
@@ -110,7 +114,7 @@ router.get('/',authenticate, async (req,res)=> {
                 const grp = await CustomGroup.find({'usn':req.session.usn}).lean().select({id:1,_id:0});
                 let gid=[];
                 for(i of grp) gid.push(i.id);
-                let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}}).select('name url description questions timings').lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
+                let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}}).select('name url description questions timings image').lean().sort({'timings.starts':1}).skip((page-1)*12).limit(12);
                 //contest = contest.concat(await Contest.find({customGroup:{$in:gid},isReady:true,'timings.ends':{$gt:new Date()}}).lean().select('name url description questions timings')).sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
                 if(contest.length <=0) return res.render('contest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
                 count = await Contest.countDocuments({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}});
@@ -167,6 +171,7 @@ router.post('/create',authenticate,teacher, async (req,res)=>{
     contest.timings.starts = starts;
     contest.description = req.body.description;
     contest.createdByName = req.session.fname + " "+ req.session.lname;
+    contest.image="/contestImage/"+Math.floor(Math.random() * 6)+".jpg";
 
     await contest.save();
     res.send(contest);
@@ -177,15 +182,20 @@ router.post('/create',authenticate,teacher, async (req,res)=>{
 
 // list the contest made by teacher 
 router.get('/manage',authenticate,teacher, async (req,res) => {
-
+    let page=1;
+    if(Number.isNaN(req.query.page) || !req.query.page || req.query.page < 1) page=1;
+    else page=req.query.page;
+    let count=0;
     if(req.session.isAdmin){
-        const contest = await Contest.find().lean();
-        return res.render('teacher/manage',{q:contest}); 
+        const contest = await Contest.find().lean().sort({_id:-1}).skip((page-1)*12).limit(12);
+        count=await Contest.estimatedDocumentCount();
+        return res.render('teacher/manage',{q:contest,count:count,page:page}); 
     }
 
-    let trcontest = await Contest.find({createdBy:req.session.staff_id}).lean(); 
-    if(!trcontest) res.send.status(404).end();
-    res.render('teacher/manage',{q:trcontest}); 
+    let trcontest = await Contest.find({createdBy:req.session.staff_id}).lean().sort({_id:-1}).skip((page-1)*12).limit(12); 
+    count = await Contest.countDocuments({createdBy:req.session.staff_id});
+    if(trcontest.length <=0) trcontest=[];
+    res.render('teacher/manage',{q:trcontest,count:count,page:page}); 
     
 
 });
@@ -218,7 +228,7 @@ router.post('/group/add',authenticate,teacher,async (req,res)=>{
     group.createdBy = req.session.staff_id;
     group.usn = req.body.usn;
     
-    await group.save().catch((err)=>{
+    await group.save().catch((err)=>{ winston.error(err);
         return res.send(err);
     });
 
@@ -399,6 +409,7 @@ router.post('/add/:cname',authenticate,teacher,async (req,res) => {
     const contest = await Contest.findOne({url:req.params.cname});
     if(!contest) return res.status(404);
 
+    if(contest.timings.ends < new Date()) return res.status(400).send("Cannot add a question after contest has ended.");
     const {error} = validateCQ(req.body);
     if(error) return res.status(400).send(error.message);
     let count=0;
@@ -507,7 +518,7 @@ router.get('/submissions/:curl',authenticate,teacher,async (req,res) =>{
 });
 
 //adding solution to a question in contest
-router.get('/solution/:curl/:qid',authenticate,teacher, async (req,res)=>{
+router.get('/solution/:curl/:qid',authenticate, async (req,res)=>{
     const contest = await Contest.findOne({url:req.params.curl}).lean().select('questions createdBy timings');
     if(!contest) return res.status(404).send('Contest not found!');
 
@@ -516,7 +527,7 @@ router.get('/solution/:curl/:qid',authenticate,teacher, async (req,res)=>{
 
     if(contest.createdBy == req.session.staff_id || req.session.isAdmin || contest.timings.ends < new Date())
         if(question.solution) res.send(question.solution);
-        else res.send('');
+        else res.send('No solutions yet!');
     else
     res.status(404).end();
 
@@ -556,9 +567,10 @@ router.post('/edit/:curl/:qid',authenticate,teacher,async (req,res)=>{
     const {error} = validateCQ(req.body);
     if(error) return res.status(400).send(error.message);
 
-    const contest = await Contest.findOne({url:req.params.curl}).lean().select('questions');
+    const contest = await Contest.findOne({url:req.params.curl}).lean().select('questions timings');
     if(!contest) return res.status(404);
 
+    if(contest.timings.ends < new Date()) return res.status(400).send("Cannot edit a question after contest has ended.");
     if(!contest.questions.includes(req.params.qid)) return res.status(400).send("Invalid ID");
 
     const question = await ContestQ.findOne({qid:req.params.qid});
@@ -615,7 +627,7 @@ router.get('/delete/:curl',authenticate,teacher,async (req,res) => {
         await ContestQ.deleteMany({qid:{$in:contest.questions}});
         return res.send("Contest deleted");
     } )
-    .catch((err)=>{
+    .catch((err)=>{ winston.error(err);
         return res.status(400).send("Error! Unable to delete the contest.");
     });
 });
@@ -945,7 +957,7 @@ router.get('/:curl/leaderboard',authenticate,contestAuth,async (req,res) =>{
 });
 
 router.get('/:curl/submissions',authenticate,teacher, async (req,res)=>{
-    const contest = await Contest.findOne({url:req.params.curl}).lean().select('url createdBy timings -_id');
+    const contest = await Contest.findOne({url:req.params.curl}).lean().select('url name createdBy timings -_id');
     if(!contest) return res.status(400).send("Contest not found");
 
     if(contest.createdBy == req.session.staff_id || req.session.isAdmin || contest.timings.ends < new Date())
@@ -968,7 +980,7 @@ router.get('/:curl/reportDownload',authenticate,teacher,async (req,res)=>{
         await page.goto(`http://localhost:4000/contest/${req.params.curl}/report?print=${print}`,{waitUntil:'networkidle0'});
         await page.pdf({
             // name of your pdf file in directory
-			path: './public/testpdf.pdf', 
+			path: './public/reports/'+req.params.curl+'-report-'+print+'.pdf', 
             //  specifies the format
 			format: 'A4', 
             // print background property
@@ -977,10 +989,30 @@ router.get('/:curl/reportDownload',authenticate,teacher,async (req,res)=>{
         // console message when conversion  is complete!
         await browser.close();
     } catch (e) {
-        console.log('our error', e);
+        winston.error(e);
     }
     })().then(()=>{
-        res.download('./public/testpdf.pdf');
+        const uploadsDir = path.join(__dirname, '../public/reports/');
+        fs.readdir(uploadsDir, function(err, files) {
+            files.forEach(function(file, index) {
+              fs.stat(path.join(uploadsDir, file), function(err, stat) {
+                var endTime, now;
+                if (err) {
+                  return winston.error(err);
+                }
+                now = new Date().getTime();
+                endTime = new Date(stat.ctime).getTime() + 6000;
+                if (now > endTime) {
+                  return rimraf(path.join(uploadsDir, file), function(err) {
+                    if (err) {
+                      winston.error(err);
+                    }
+                  });
+                }
+              });
+            });
+          });
+        res.download('./public/reports/'+req.params.curl+'-report-'+print+'.pdf');
     });
 
 });
@@ -1054,7 +1086,7 @@ router.get('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
         return res.status(404).end();
     });
     
-    return res.render('editorContest',{question : _.pick(question,['name','statement','constraints', 'input_format','output_format','sample_cases','explanation']),contest:contest})
+    return res.render('editorContest',{question : _.pick(question,['name','qid','statement','constraints', 'input_format','output_format','sample_cases','explanation','difficulty','description']),contest:contest})
 
 
 });
@@ -1328,7 +1360,7 @@ if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
     
     
     }).catch(err => {
-        console.log(err);
+        winston.error(err);
       res.send(err);
     });
 

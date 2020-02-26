@@ -1,9 +1,9 @@
 include nav
 
 head
-    link(rel="stylesheet", href="/css/dataTables.bootstrap4.min.css")
-    script(src="/js/jquery.dataTables.min.js")
-    script(src="/js/dataTables.bootstrap4.min.js")
+    link(rel="stylesheet", href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css")
+    script(src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js")
+    script(src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js")
     link(href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap" rel="stylesheet")
     link(rel="stylesheet", href="/css/lb_main.css")
     style.
@@ -15,20 +15,20 @@ head
             font-weight: unset;
         }
     title Submissions
-
         
         
 body
     .WRAPPER
+        br
         nav(aria-label='breadcrumb' style="color:black;width:56.5%;")
-          ol.mb-0.breadcrumb(style="padding-left:20px;background-color:white")
-            li.breadcrumb-item
-              a(href='/contest') Contest
-            li.breadcrumb-item
-              a(href='/contest/'+contest.url)=contest.name
-            li.breadcrumb-item.active(aria-current='page') Submissions
+            ol.mb-0.breadcrumb(style="padding-left:20px;background-color:white")
+                li.breadcrumb-item
+                    a(href='/assignment') Assignment
+                li.breadcrumb-item
+                    a(href='/assignment?a='+assignment.id) #{assignment.sem} Sem
+                li.breadcrumb-item.active(aria-current='page') Submissions
         h1.text-center.m-3.lb_heading Submissions
-        
+
         .container-fluid
             .row
                 .col-lg-12
@@ -37,7 +37,7 @@ body
                             thead
                                 tr
                                     th.column1 No.
-                                    th USN / ID
+                                    th USN
                                     th Name
                                     th Question Name
                                     th Language
@@ -61,7 +61,7 @@ body
         div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
         
     script.
-        $.get('/contest/submissions/#{contest.url}',function(data,status){
+        $.get('/assignment/submissions/data/#{assignment.id}',function(data,status){
                     const submissions = $('#submission').DataTable( {
                         "data":data,
                         "columns": [
@@ -96,7 +96,7 @@ body
 
         
         $("#source").on('show.bs.modal',function (e){
-            $.get('/contest/source/#{contest.url}/'+$(e.relatedTarget).data('usn')+'/'+$(e.relatedTarget).data('qid'),function(data,status){
+            $.get('/assignment/source/#{assignment.id}/'+$(e.relatedTarget).data('usn')+'/'+$(e.relatedTarget).data('qid'),function(data,status){
                 $("#sourceBody").html(data);
             });
 

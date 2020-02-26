@@ -128,7 +128,7 @@ router.post('/teacher/:id',admin,async (req,res)=>{
 router.get('/delete/teacher/:id',admin,async (req,res)=>{
   await Teacher.findOneAndDelete({staff_id:req.params.id}).then(()=>{
     return res.send("Account deleted!");
-  }).catch((err)=>{
+  }).catch((err)=>{ winston.error(err);
     return res.status(400).send("Unable to delete!");
   })
 });
@@ -189,7 +189,7 @@ router.post('/student/:usn',admin,async (req,res)=>{
     student.password = await bcrypt.hash(req.body.password, salt);
   }
 
-  await student.save().catch((err)=>{
+  await student.save().catch((err)=>{winston.error(err);
     return res.status(400).send("Unable to save.");
   });
   res.send("Changes Saved!");
@@ -199,12 +199,12 @@ router.post('/student/:usn',admin,async (req,res)=>{
 router.get('/delete/student/:usn',admin,async (req,res)=>{
     await Student.findOneAndDelete({usn:req.params.usn}).then(()=>{
       return res.send("Account deleted!");
-    }).catch((err)=>{
+    }).catch((err)=>{winston.error(err);
       return res.status(400).send("Unable to delete!");
     })
 });
 
-router.post('/deleteMany',admin,async (req,res) =>{ console.log(req.body);
+router.post('/deleteMany',admin,async (req,res) =>{
   if(!req.body.list || !Array.isArray(req.body.list)) return res.status(400).end();
   if(req.body.type=="student"){
     await Student.deleteMany({usn:{$in:req.body.list}}).then(async()=>{

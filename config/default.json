@@ -1,8 +1,4 @@
 {
-    "elab-admin-mail":{
-	"email":"cs.edc@hkbk.edu.in",
-	"password":"hkbk@321"
-	},
 	
 	"source":{
 		"62":"import java.io.*;\n\npublic class Main //Do not change the class name!!\n{ \n\tpublic static void main(String args[]){\n\n \t}\n }",

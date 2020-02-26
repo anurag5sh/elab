@@ -225,6 +225,7 @@ html(lang='en')
         //-     i.fas.fa-eye
         //-     | &nbsp; View Submissions
       h1.q_name(style="margin-left:40px;font-size:35px;") #{question.name}
+      div(class="pre" style="margin-left:40px") #{question.description}
       .row.w-100
         .col-lg-9.col-md-8.col-sm-8
           .card#card(style="padding-left:25px;padding-right:25px;")
@@ -251,6 +252,10 @@ html(lang='en')
               div.bg-col.m-1(class="pre" class="sa" id="sam_i"+j) #{i.input}
               p.headings Sample Output #{j+1}
               div.bg-col.m-1(class="pre" id="sam_o"+j) #{i.output}
+              -if(j==0) 
+                p.headings Explanation
+                div(class="pre") #{question.explanation}
+                |
         .col-lg-3.col-md-4.col-sm-4.pl-0
           .card.m-0.mt-4(style="width:95%;height:auto")
             div.text-left.m-3.mb-2

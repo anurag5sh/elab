@@ -10,9 +10,8 @@ const assignmentQSchema = new mongoose.Schema({
     qid:{
         type:String,
     },
-    teacherId:{
-        type:String
-    },
+    createdBy:{type:String},
+    createdByName:{type:String},
     name:{
         type: String,
         required:true

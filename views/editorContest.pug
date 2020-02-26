@@ -24,7 +24,7 @@ html
     script(src="/fontawesome/all.min.js")
     link(href="https://fonts.googleapis.com/css?family=Archivo+Black&display=swap" rel="stylesheet")
     link(href="https://fonts.googleapis.com/css?family=Patua+One&display=swap" rel="stylesheet")
-    //- link(href="https://fonts.googleapis.com/css?family=Palanquin+Dark:500&display=swap" rel="stylesheet")
+    link(href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap" rel="stylesheet")
     
     style(type='text/css').
       @font-face {
@@ -249,6 +249,8 @@ html
               li.breadcrumb-item.active(aria-current='page') #{question.name}
       
       h1.q_name(style="margin-left:40px;font-size:35px;") #{question.name}
+      div(class="pre" style="margin-left:40px") #{question.description}
+      |
       .row.w-100
         .col-lg-9.col-md-8.col-sm-8
           .card#card(style="padding-left:25px;padding-right:25px;")
@@ -275,6 +277,10 @@ html
               div.bg-col.m-1(class="pre" class="sa" id="sam_i"+j) #{i.input}
               p.headings Sample Output #{j+1}
               div.bg-col.m-1(class="pre" id="sam_o"+j) #{i.output}
+              -if(j==0) 
+                p.headings Explanation
+                div(class="pre") #{question.explanation}
+                |
         .col-lg-3.col-md-4.col-sm-4.pl-0
           .card.m-0.mt-4(style="width:95%;height:auto")
             //- div.text-left.m-3.mb-2
@@ -288,7 +294,7 @@ html
             //-     | &nbsp; 
             //-     label.editor-right(style="font-size:18px") Correct Submmissions
             div.text-left.m-3.mb-2
-              a.editor-right( href="") 
+              a.editor-right( href="/contest/"+contest.url+"/leaderboard") 
                 i.fad.fa-poll-people(style="font-size:17px")
                 | &nbsp; 
                 label.editor-right(style="font-size:18px") Leaderboard
@@ -296,17 +302,13 @@ html
               a.editor-right( href="") 
                 i.fas.fa-puzzle-piece(style="font-size:17px")
                 | &nbsp; 
-                label.editor-right(style="font-size:18px") Difficulty :
-            div.text-left.ml-3.mr-3.mb-2
-              a.editor-right( href="") 
-                i.fad.fa-user-edit(style="font-size:17px")
-                | &nbsp; 
-                label.editor-right(style="font-size:18px") Created By :
-            div.text-left.ml-3.mr-3.mb-2
-              a.editor-right( href="") 
-                i.fad.fa-eye(style="font-size:17px")
-                | &nbsp; 
-                label.editor-right(style="font-size:18px") View Solution
+                label.editor-right(style="font-size:18px") Difficulty : #{question.difficulty}
+            -if(contest.timings.ends < new Date())
+              div.text-left.ml-3.mr-3.mb-2
+                a.editor-right( href="" data-toggle="modal" data-target="#solution") 
+                  i.fad.fa-eye(style="font-size:17px")
+                  | &nbsp; 
+                  label.editor-right(style="font-size:18px") View Solution
             
           
       .card(style="width:90%; display:inline-block;")
@@ -376,6 +378,18 @@ html
                         th Select
                     tbody#sourceBody
 
+                .modal-footer
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+    .modal.fade#solution(tabindex ="-1" role="dialog" )
+        .modal-dialog.modal-lg
+            .modal-content
+                .modal-header
+                  h4.modal-title Solution
+                  button.close(type='button' data-dismiss='modal') ×
+                .modal-body
+                  #solutionLang.text-center
+                  br
+                  #solutionBody(style="font-family: 'Source Code Pro', ;white-space: pre-wrap;")
                 .modal-footer
                     button.btn.btn-secondary(type='button' data-dismiss='modal') Close
 
@@ -708,4 +722,16 @@ html
           if(document.getElementById('custom_i').checked == false)
           $('#custom_i').click();
         })
+        });
+
+        $("#solution").on('show.bs.modal',function (e){
+          $.get('/contest/solution/#{contest.url}/#{question.qid}',function (data,status){
+            if(data.sourceCode){
+            $("#solutionLang").html("Language : "+ data.language);
+            $("#solutionBody").html(data.sourceCode);
+            }
+            else{
+              $("#solutionLang").html(data);
+            }
+          });
         });

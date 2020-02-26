@@ -84,7 +84,8 @@ const contestSchema = new mongoose.Schema({
   rules:{
     type:String,
     default:''
-  }
+  },
+  image:{type:String}
   
 });
 

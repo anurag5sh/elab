@@ -86,7 +86,7 @@ router.get('/',authenticate, async (req,res)=> {
             const grp = await CustomGroup.find({'usn':req.session.usn}).lean().select({id:1,_id:0});
             let gid=[];
             for(i of grp) gid.push(i.id);
-            let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}}).select('name url description questions timings').lean().sort({'timings.starts':1}).skip((page-1)*12).limit(12);
+            let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}}).select('name url description questions timings image').lean().sort({'timings.starts':1}).skip((page-1)*12).limit(12);
             //-contest = contest.concat(await Contest.find({customGroup:{$in:gid},isReady:true,'timings.ends':{$gt:new Date()}}).lean().select('name url description questions timings')).sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
             if(contest.length <=0) return res.render('contest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
             count = await Contest.countDocuments({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}});
@@ -100,7 +100,7 @@ router.get('/',authenticate, async (req,res)=> {
                 const grp = await CustomGroup.find({'usn':req.session.usn}).lean().select({id:1,_id:0});
                 let gid=[];
                 for(i of grp) gid.push(i.id);
-                let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$lt:new Date()}}).select('name url description questions timings').lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
+                let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$lt:new Date()}}).select('name url description questions timings image').lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
                 //contest = contest.concat(await Contest.find({customGroup:{$in:gid},isReady:true,'timings.ends':{$lt:new Date()}}).lean().select('name url description questions timings')).sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
                 if(contest.length <=0) return res.render('contest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
                 count = await Contest.countDocuments({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$lt:new Date()}});
@@ -110,7 +110,7 @@ router.get('/',authenticate, async (req,res)=> {
                 const grp = await CustomGroup.find({'usn':req.session.usn}).lean().select({id:1,_id:0});
                 let gid=[];
                 for(i of grp) gid.push(i.id);
-                let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}}).select('name url description questions timings').lean().sort({'timings.starts':1}).skip((page-1)*12).limit(12);
+                let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}}).select('name url description questions timings image').lean().sort({'timings.starts':1}).skip((page-1)*12).limit(12);
                 //contest = contest.concat(await Contest.find({customGroup:{$in:gid},isReady:true,'timings.ends':{$gt:new Date()}}).lean().select('name url description questions timings')).sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
                 if(contest.length <=0) return res.render('contest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
                 count = await Contest.countDocuments({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}});
@@ -167,6 +167,7 @@ router.post('/create',authenticate,teacher, async (req,res)=>{
     contest.timings.starts = starts;
     contest.description = req.body.description;
     contest.createdByName = req.session.fname + " "+ req.session.lname;
+    contest.image="/contestImage/"+Math.floor(Math.random() * 6)+".jpg";
 
     await contest.save();
     res.send(contest);
@@ -508,7 +509,7 @@ router.get('/submissions/:curl',authenticate,teacher,async (req,res) =>{
 });
 
 //adding solution to a question in contest
-router.get('/solution/:curl/:qid',authenticate,teacher, async (req,res)=>{
+router.get('/solution/:curl/:qid',authenticate, async (req,res)=>{
     const contest = await Contest.findOne({url:req.params.curl}).lean().select('questions createdBy timings');
     if(!contest) return res.status(404).send('Contest not found!');
 
@@ -517,7 +518,7 @@ router.get('/solution/:curl/:qid',authenticate,teacher, async (req,res)=>{
 
     if(contest.createdBy == req.session.staff_id || req.session.isAdmin || contest.timings.ends < new Date())
         if(question.solution) res.send(question.solution);
-        else res.send('');
+        else res.send('No solutions yet!');
     else
     res.status(404).end();
 
@@ -947,7 +948,7 @@ router.get('/:curl/leaderboard',authenticate,contestAuth,async (req,res) =>{
 });
 
 router.get('/:curl/submissions',authenticate,teacher, async (req,res)=>{
-    const contest = await Contest.findOne({url:req.params.curl}).lean().select('url createdBy timings -_id');
+    const contest = await Contest.findOne({url:req.params.curl}).lean().select('url name createdBy timings -_id');
     if(!contest) return res.status(400).send("Contest not found");
 
     if(contest.createdBy == req.session.staff_id || req.session.isAdmin || contest.timings.ends < new Date())
@@ -1056,7 +1057,7 @@ router.get('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
         return res.status(404).end();
     });
     
-    return res.render('editorContest',{question : _.pick(question,['name','statement','constraints', 'input_format','output_format','sample_cases','explanation','difficulty','description']),contest:contest})
+    return res.render('editorContest',{question : _.pick(question,['name','qid','statement','constraints', 'input_format','output_format','sample_cases','explanation','difficulty','description']),contest:contest})
 
 
 });

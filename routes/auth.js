@@ -15,6 +15,7 @@ const {Contest} = require('../models/contest');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const winston = require('winston');
+const {Submission} = require('../models/submission');
 
 const fs = require('fs');
 
@@ -63,10 +64,25 @@ let storage = multer.diskStorage({
 
 //filter teacher and student login
 //redirect to respective dashboard
-router.get('/',(req,res,next)=>{
+router.get('/',async (req,res,next)=>{
   if (req.session && (req.session.staff_id || req.session.usn))
-    if(req.session.staff_id) 
-      return res.render('teacher/trdashboard');
+    if(req.session.staff_id){
+      const contest = await Contest.find({'timings.starts':{$lt:new Date()},isReady:true}).sort({'timings.ends':-1}).limit(7).lean();
+      if(contest.length <=0) return res.render('teacher/dashboard',{labels:[],signedup:[],submissions:[]}); 
+      let labels=[];
+      let signedup=[];
+      let submissions=[];
+      contest.forEach(async (item,index)=>{
+        labels.push(item.name+"");
+        signedup.push(item.signedUp.length);
+        submissions.push(item.submissions.length );
+      });
+
+      const practice = await Practice.find().sort({_id:-1}).limit(3).lean();
+      const contest3 = await Contest.find({createdBy:req.session.staff_id}).sort({_id:-1}).lean().select('name url description image').limit(3);
+      return res.render('teacher/trdashboard',{labels:labels,signedup:signedup,submissions:submissions,practice:practice,contest3:contest3});
+    } 
+     
     else
     return res.redirect('/dashboard');
   else  next();
@@ -89,7 +105,7 @@ router.get('/viewProfile/:id',authenticate,async (req,res)=>{
 //student dashboard
 router.get('/dashboard', authenticate,async (req,res)=> {
     const q = await Practice.find().sort({date:-1}).limit(2).lean().select('name qid').catch(err => res.send(err));
-    const contest = await Contest.find({isReady:true}).sort({_id:-1}).limit(2).lean().select('name description url ').catch(err => res.send(err));
+    const contest = await Contest.find({isReady:true}).sort({_id:-1}).limit(2).lean().select('name description url image ').catch(err => res.send(err));
     if(!req.session.staff_id)
     res.render('dashboard', {q:q,contest:contest});
     else

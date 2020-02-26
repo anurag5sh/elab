@@ -23,34 +23,35 @@ body
         p
           | Explore different programming Languages, solve coding problems, and crack your coding interview.
         a.btn.btn-success(type='button' href="/practice" target="_blank") View All
-    .col-lg-4.mb-4  
-      .card1.one.shadows.shadows-interact(style='float: right;')
-        .header(style='background: url(/images/img18.jpg) center;background-size: cover;')
-        .body
-          h2 #{q[0].name}
-          b
-          br
-          br
-          br
-          br
-          br
-        .footer
-          span.price
-            a.btn.btn-primary.btn-block(type='button' style='margin-left: 50%;width: 90px;height: 40px;' href="/practice/"+q[0].qid) Solve
-    .col-lg-4  
-      .card2.one.shadows.shadows-interact(style='float: right;')
-        .body
-          h2(style='text-align:center;margin-bottom:-40px;margin-top: 300px;') Coming Soon
-          br
-          br
-          br
-          br
-          
-        .footer
-          br
-          br
-          //- span.price
-          //-   button.btn.btn-primary.btn-block(type='button' style='margin-left: 50%;width: 90px;height: 40px;') Solve
+    -for(let i=0;i<2;i++)
+      -if(q[i])
+        .col-lg-4  
+          .card1.one.shadows.shadows-interact(style='float: right;')
+            .header(style='background: url(/images/img18.jpg) center;background-size: cover;')
+            .body
+              h2 #{q[i].name}
+              b
+              br
+              br
+              br
+              br
+              br
+            .footer
+              span.price
+                a.btn.btn-primary.btn-block(type='button' style='margin-left: 50%;width: 90px;height: 40px;' href="/practice/"+q[i].qid) Solve
+      -else
+        .col-lg-4  
+          .card2.one.shadows.shadows-interact(style='float: right;')
+            .body
+              h2(style='text-align:center;margin-bottom:-40px;margin-top: 300px;') Coming Soon
+              br
+              br
+              br
+              br
+              
+            .footer
+              br
+              br
   div(style='width: 100%; height: auto;')
     .descrip(style='float: right;width: 430px;')
       br
@@ -63,29 +64,34 @@ body
       p
         | Comepete , Code Faster and Achieve.
       a.btn.btn-success(type='button' href="/contest" target="_blank") View All
-  .card1.one.shadows.shadows-interact(style='float:left;')
-    .header
-    .body
-      h2 #{contest[0].name}
-      b #{contest[0].description}
-      br
-      br
-      br
-      br
-    .footer
-      span.price
-        button.btn.btn-primary.btn-block(type='button' style='margin-left: 50%;width: 90px;height: 40px;') Register
-  .card2.one.shadows.shadows-interact(style='float: left;')
-    .body
-      h2(style='text-align:center;margin-bottom:-40px;margin-top: 300px;') Coming Soon
-      br
-      br
-      br
-      br
+  
+  -for(let i=0;i<2;i++)
+    -if(contest[i])
+      .card1.one.shadows.shadows-interact(style='float:left;')
+        .header(style='background: url('+contest[i].image+') center;background-size: cover;')
+        .body
+          h2 #{contest[i].name}
+          b #{contest[i].description}
+          br
+          br
+          br
+          br
+        .footer
+          span.price
+            a.btn.btn-primary.btn-block(type='button' style='margin-left: 50%;width: 90px;height: 40px;' href="/contest/"+contest[i].url) View
+  
+    -else
+      .card2.one.shadows.shadows-interact(style='float: left;')
+        .body
+          h2(style='text-align:center;margin-bottom:-40px;margin-top: 300px;') Coming Soon
+          br
+          br
+          br
+          br
 
-    .footer
-      br
-      br
+        .footer
+          br
+          br
       //- span.price
         //- button.btn.btn-primary.btn-block(type='button' style='margin-left: 50%;width: 90px;height: 40px;') Register
 //-   

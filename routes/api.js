@@ -6,6 +6,7 @@ const {ContestQ} = require('../models/contestQ');
 const {AssignmentQ} = require('../models/assignmentQ');
 const Joi = require('@hapi/joi');
 const authenticate = require('../middleware/auth');
+const winston = require('winston');
 
 function encode64(string){ //encoding to base64
   const b = new Buffer.from(string);
@@ -95,7 +96,7 @@ router.post('/', authenticate,async (req,res)=>{
       res.send(r);
       
     })
-    .catch((err) => {
+    .catch((err) => { winston.error(err);
       res.send(err);
     });
   

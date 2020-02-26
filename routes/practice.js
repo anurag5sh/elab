@@ -10,6 +10,7 @@ const request = require("request-promise");
 const teacher = require('../middleware/teacher');
 const config = require('config');
 const {Student} = require('../models/student');
+const winston = require('winston');
 
 
 
@@ -275,7 +276,7 @@ router.post('/:qid',authenticate,async (req,res) => {
     }
       res.send(desc);
 
-    }).catch(err => {
+    }).catch(err => { winston.error(err);
       res.send(err);
     });
 
@@ -381,7 +382,7 @@ router.post('/edit/:qid',authenticate,teacher,async (req,res)=>{
     await question.save().then(()=>{
       res.send("Question saved.")
     })
-    .catch(err =>{
+    .catch(err =>{ winston.error(err);
       res.status(400).send("Something went wrong!");
     });
 

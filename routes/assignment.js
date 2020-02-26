@@ -11,6 +11,7 @@ const {aSubmission} = require('../models/assignmentSubmission');
 const moment = require('moment');
 const config = require('config');
 const {Student} = require('../models/student');
+const winston = require('winston');
 
 function encode64(string){ //encoding to base64
     const b = new Buffer.from(string);
@@ -576,7 +577,7 @@ router.post('/:qid',authenticate,async (req,res)=>{
         });
         }
     
-    }).catch(err => { console.log(err);
+    }).catch(err => { winston.error(err);
     res.send(err);
     });
 
@@ -752,7 +753,7 @@ router.post('/edit/oldAdd',authenticate,teacher,async (req,res) =>{
         }
         
     }
-    catch(err){
+    catch(err){winston.error(err);
         return res.status(400).end();
         }
 

@@ -19,7 +19,7 @@ require('winston-mongodb');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet')
 
-const port = process.env.elab_port_no || 4000;
+const port = process.argv[2] || 4000;
 
 //fixing all deprecationWarning of mongoDB
 mongoose.set('useNewUrlParser', true);

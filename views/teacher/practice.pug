@@ -80,19 +80,23 @@ block content
                                     | &nbsp; 
                                     label.editor-right.mb-0 Leaderboard
 
-                        .row
-                            .col-lg-9
+                        .row.mt-4
+                            .col-lg-12
                                 .row
                                     each i in q
-                                        .col-lg-4.col-md-4
-                                            .project-card-no-image
-                                                h3(style="font-family:Lato,sanf-serif")=i.name
-                                                    br
-                                                    br
-                                                    -if(i.createdBy == session.staff_id)
-                                                        a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' data-toggle="modal" data-target="#edit" data-qid=i.qid href="" ) EDIT
-                                                        a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' data-toggle="modal" data-target="#delete" data-qid=i.qid data-name=i.name href="" ) DELETE
-                                                    a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' href='/practice/'+i.qid) VIEW
+                                        .col-lg-3.col-md-3
+                                            .project-card-no-image.p-3.pl-4.pr-4
+                                                .row
+                                                    .col-lg-12
+                                                        //- style="font-family:Lato,sanf-serif"
+                                                        h3.lb_heading(style="letter-spacing:0px")=i.name
+                                                    .col-lg-12.h-50
+                                                        label.fontStyle(style="font-size:15px") Difficulty: #{i.difficulty}
+                                                    .col-12
+                                                        -if(i.createdBy == session.staff_id)
+                                                            a.btn1.btn1-outline-primary.btn1-sm.pull-right.fontStyle(role='button' data-toggle="modal" data-target="#delete" data-qid=i.qid data-name=i.name href="" ) DELETE
+                                                            a.btn1.btn1-outline-primary.btn1-sm.pull-right.fontStyle(role='button' data-toggle="modal" data-target="#edit" data-qid=i.qid href="" ) EDIT
+                                                        a.btn1.btn1-outline-primary.btn1-sm.pull-right.fontStyle(role='button' href='/practice/'+i.qid) VIEW
                             //- .col-lg-3.text-center
                             //-     .card.m-0
                             //-         div.p-4.pt-2

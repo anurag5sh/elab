@@ -55,14 +55,19 @@ block content
                                     i.fad.fa-poll-people
                                     | &nbsp; 
                                     label.editor-right.mb-0 Leaderboard
-                        .row1
+                        .row1.mt-4
                             - let questions=q
                             each i in questions
                                 .col-lg-3
-                                    .project-card-no-image
-                                        h3(style="font-family:Lato,sanf-serif")=i.name
-                                            br
-                                            a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' href='/practice/'+i.qid) SOLVE
+                                    .project-card-no-image.p-3.pl-4.pr-4
+                                        .row
+                                            .col-lg-12
+                                                //- style="font-family:Lato,sanf-serif"
+                                                h3.lb_heading(style="letter-spacing:0px")=i.name
+                                            .col-lg-12.h-50
+                                                label.fontStyle(style="font-size:15px") Difficulty: #{i.difficulty}
+                                            .col-lg-12
+                                                a.btn1.btn1-outline-primary.btn1-sm.pull-right.fontStyle(role='button' href='/practice/'+i.qid) SOLVE
         -if(count>0)
             ul.pagination.justify-content-center
                 li.page-item(class=(page==1?'disabled':''))

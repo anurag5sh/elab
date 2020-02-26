@@ -51,9 +51,11 @@
   /* background: #FFF; */
   padding: 20px;
   font-weight: 600;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: block;
+  position: relative;
+  bottom: 40px;
+  left:50%;
+  transform: translate(-50%,0);
 }
   .card1 .footer .price {
   font-size: 22px;

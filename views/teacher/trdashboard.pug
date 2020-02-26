@@ -7,7 +7,6 @@ head
   script(src='/assets/js/theme.js')
   link(rel="stylesheet", href="/css/practcard.css")
   link(rel='stylesheet' href='list_style/bootstrap/css/new.css')
-  link(rel="stylesheet", href="/css/stdash.css")
   
 body
   br
@@ -48,33 +47,25 @@ body
                     .card-body(onclick="location.href='/contest/manage'" style='cursor: pointer;')
                       p.m-0 Manage Contest
                       p.text-white-50.small.m-0 Contest
-          .textcon(style='text-align: center; height: 50px; float: left;transform: rotate(90deg);margin-top: 60px;width: 150px;position: absolute;left: 0;')
-            hr
-            h2 Contest
-          .textcon(style='text-align: center; height: 50px; float: right;margin-top: 90px;width: 150px;cursor: pointer;' onclick="location.href='/contest'")
-            //- h2 Contest
-            i.fas.fa-arrow-circle-right.fa-3x
-          .container
-            div
-              
-              .row
-                .col-4
-                  .card(style="height:350px;")
-                    img.card-img-top(src='https://placehold.it/400x300' alt='Card image cap' style='height:180px;')
-                    .card-body
-                      h3.card-title #contestName
-                      p #description 
-                        a.btn.btn-primary.btn-block(type='button' style='margin-left: 190px;width: 90px;height: 40px;margin-top:25px;postion:absolute;' href="#") Solve
-                .col-4
-                  .card(style="height:350px;")
-                    img.card-img-top(src='https://placehold.it/400x300' alt='Card image cap')
-                    .card-body
-                      h5.card-title Card title 1
-                .col-4
-                  .card(style="height:350px;")
-                    img.card-img-top(src='https://placehold.it/400x300' alt='Card image cap')
-                    .card-body
-                      h5.card-title Card title
+          -if(!contest3.length <=0)
+            .textcon(style='text-align: center; height: 50px; float: left;transform: rotate(90deg);margin-top: 60px;width: 150px;position: absolute;left: 0;')
+              hr
+              h2 Contest
+            .textcon(style='text-align: center; height: 50px; float: right;margin-top: 90px;width: 150px;cursor: pointer;' onclick="location.href='/contest'")
+              //- h2 Contest
+              i.fas.fa-arrow-circle-right.fa-3x
+            .container
+              div
+                
+                .row
+                  each i in contest3
+                    .col-4
+                      .card(style="height:350px;")
+                        img.card-img-top(src=i.image alt=i.name style='height:180px;object-fit:cover;')
+                        .card-body
+                          h3.card-title=i.name
+                          p=i.description.substr(0,90)+(i.description.length>90?"...":"")
+                            a.btn.btn-primary.btn-block(type='button' style='margin-left: 190px;width: 90px;height: 40px;margin-top:25px;postion:absolute;' href="/contest/"+i.url) View
              
           br
           br
@@ -87,44 +78,36 @@ body
           .container
             div
               .row
-                .col-4
-                  .project-card-no-image
-                      h3(style="font-family:Lato,sanf-serif") Practice 1
-                          br
-                          a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' href='#') SOLVE
-                .col-4
-                  .project-card-no-image
-                      h3(style="font-family:Lato,sanf-serif") Practice 2
-                          br
-                          a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' href='#') SOLVE
-                .col-4
-                  .project-card-no-image
-                      h3(style="font-family:Lato,sanf-serif") Practice 3
-                          br
-                          a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' href='#') SOLVE
+                each i in practice
+                  .col-4
+                    .project-card-no-image
+                        h3(style="font-family:Lato,sanf-serif") #{i.name}
+                            br
+                            a.btn1.btn1-outline-primary.btn1-sm.pull-right(role='button' href='/practice/'+i.qid) VIEW
+          
     .push1
     .push          
   footer.bg-dark(class="FOOTER")
     div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
 
 script.
-  var ctx = document.getElementById('myChart').getContext('2d');
-  var chart = new Chart(ctx, {
+  const ctx = document.getElementById('myChart').getContext('2d');
+  let chart = new Chart(ctx, {
   // The type of chart we want to create
   type: 'bar',
   // The data for our dataset
   data: {
-  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+  labels: !{JSON.stringify(labels)},
   datasets: [{
   label: 'Signed Up',
   backgroundColor: 'rgb(0, 99, 132)',
   // borderColor: 'rgb(0, 99, 132)',
-  data: [0, 10, 5, 2, 20, 90, 45]
+  data: [#{signedup}]
   },{
   label: 'Submission',
   backgroundColor: 'rgb(200, 0, 0)',
   // borderColor: 'rgb(0, 99, 132)',
-  data: [6, 2, 8, 6, 10, 12, 15]
+  data: [#{submissions}]
   }]
   },
   // Configuration options go here
@@ -132,7 +115,11 @@ script.
   tooltips:{
   mode:'index',
   },
-  // maintainAspectRatio:false;
+  scales:{
+    yAxes:[{
+      ticks:{beginAtZero:true}
+    }]
+  }
   }
   });
 

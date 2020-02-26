@@ -78,8 +78,10 @@ html(lang='en')
 
         .wrap-login100.p-l-50.p-r-50.p-t-77.p-b-30(style= "position:relative;height:530px;")
           form.login100-form.validate-form#login(onsubmit="return login()")
-            span.login100-form-title.p-b-55
-              | Login
+            //- span.login100-form-title.p-b-10(style='margin-top:-40px;')
+            //-   | ELAB
+            span.login100-form-title.p-b-25(style='font-size:150;')
+              |  ELAB login
             .wrap-input100.validate-input.m-b-16(data-validate='Valid email is required: ex@abc.xyz')
               input.input100(type='text', name='email', placeholder='Email')
               span.focus-input100
@@ -112,7 +114,7 @@ html(lang='en')
               br
               a(href='/forgotPassword') Forgot password?
       //- .push1
-      .push
+      //- .push
     footer.bg-dark(class="FOOTER")
         div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
             

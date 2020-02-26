@@ -182,15 +182,20 @@ router.post('/create',authenticate,teacher, async (req,res)=>{
 
 // list the contest made by teacher 
 router.get('/manage',authenticate,teacher, async (req,res) => {
-
+    let page=1;
+    if(Number.isNaN(req.query.page) || !req.query.page || req.query.page < 1) page=1;
+    else page=req.query.page;
+    let count=0;
     if(req.session.isAdmin){
-        const contest = await Contest.find().lean();
-        return res.render('teacher/manage',{q:contest}); 
+        const contest = await Contest.find().lean().sort({_id:-1}).skip((page-1)*12).limit(12);
+        count=await Contest.estimatedDocumentCount();
+        return res.render('teacher/manage',{q:contest,count:count,page:page}); 
     }
 
-    let trcontest = await Contest.find({createdBy:req.session.staff_id}).lean(); 
-    if(!trcontest) res.send.status(404).end();
-    res.render('teacher/manage',{q:trcontest}); 
+    let trcontest = await Contest.find({createdBy:req.session.staff_id}).lean().sort({_id:-1}).skip((page-1)*12).limit(12); 
+    count = await Contest.countDocuments({createdBy:req.session.staff_id});
+    if(trcontest.length <=0) trcontest=[];
+    res.render('teacher/manage',{q:trcontest,count:count,page:page}); 
     
 
 });

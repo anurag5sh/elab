@@ -68,7 +68,6 @@ router.get('/',async (req,res,next)=>{
   if (req.session && (req.session.staff_id || req.session.usn))
     if(req.session.staff_id){
       const contest = await Contest.find({'timings.starts':{$lt:new Date()},isReady:true}).sort({'timings.ends':-1}).limit(7).lean();
-      if(contest.length <=0) return res.render('teacher/dashboard',{labels:[],signedup:[],submissions:[]}); 
       let labels=[];
       let signedup=[];
       let submissions=[];
@@ -453,8 +452,8 @@ router.post('/forgotPassword',async (req,res)=>{
   });
   if(!user.recovery_email || user.recovery_email == '' || user.recovery_email==null) return res.status(400).send('Recovery Email not set!');
   let host= 'elab.hkbk.edu.in';
-  if (process.env.NODE_ENV !== 'production') {
-    host='localhost:'+process.env.elab_port_no || 'localhost:4000' ;
+  if (process.env.NODE_ENV != 'production') {
+    host='localhost:'+ req.app.locals.port || 'localhost:4000' ;
   }
   const mailOptions = {
     from: config.get('elab-admin-mail.email'),

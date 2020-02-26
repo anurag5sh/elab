@@ -121,7 +121,7 @@ block content
                       i.ion.ion-ios-person-outline
                       span.value=nth(i.timings.starts.getDate())
                       span.title=month[i.timings.starts.getMonth()]
-            p.description=i.description
+            p.description=i.description.substr(0,90)+(i.description.length>90?"...":"")
             footer.content__footer
                 a(href="/contest/"+i.url) View Contest
     

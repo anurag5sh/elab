@@ -10,6 +10,7 @@ const {AssignmentQ,validateAQ} = require('../models/assignmentQ');
 const {aSubmission} = require('../models/assignmentSubmission');
 const moment = require('moment');
 const config = require('config');
+const {Student} = require('../models/student');
 
 function encode64(string){ //encoding to base64
     const b = new Buffer.from(string);
@@ -40,7 +41,7 @@ router.get('/',authenticate, async (req,res) => {
         
         if(questions.length <=0) {questions = [];count=0;}
 
-        res.render('assignment',{questions:questions,count:count,page:page});
+        res.render('assignment',{questions:questions,count:count,page:page,id:assignment.id});
     }
     
 });
@@ -51,6 +52,74 @@ router.get('/leaderboard',authenticate,async (req,res)=>{
     if(!assignment) return res.status(404).end();
 
     res.render('leaderboardAssignment',{assignment:assignment});
+});
+
+//leaderboard for teachers
+router.get('/leaderboard/:id',authenticate,teacher,async (req,res)=>{
+    const assignment = await Assignment.findOne({id:req.params.id}).lean().select('leaderboard sem id');
+    if(!assignment) return res.status(404).end();
+
+    res.render('leaderboardAssignment',{assignment:assignment});
+});
+
+
+function two(x) {return ((x>9)?"":"0")+x}
+function three(x) {return ((x>99)?"":"0")+((x>9)?"":"0")+x}
+
+function time(ms) {var sec = Math.floor(ms/1000);  ms = ms % 1000;  t = three(ms);  var min = Math.floor(sec/60);  sec = sec % 60;  t = two(sec) + ":" + t;  var hr = Math.floor(min/60);  min = min % 60;  t = two(min) + ":" + t; var day = Math.floor(hr/60);  hr = hr % 60;  t = two(hr) + ":" + t;   return t;  }
+
+//fetching submissions data
+router.get('/submissions/data/:id',authenticate,teacher,async (req,res) =>{  
+    const assignment = await Assignment.findOne({id:req.params.id}).lean().select('submissions sem id');
+    if(!assignment) return res.status(404).end();
+
+    let students = [];
+
+    for(i=0;i<assignment.submissions.length;i++){
+        students.push(assignment.submissions[i].usn);
+    }
+
+    let studentData = await Student.find({usn:{$in:students}}).select('usn fname lname -_id').lean();
+    if(!studentData) studentData = [];
+
+    let questions = await AssignmentQ.find({assignmentId:assignment.id}).lean().select('qid name -_id');
+    if(!questions) questions=[];
+
+    let SendData=[];
+    for(i=0;i<assignment.submissions.length;i++){ let data={};
+
+        const index = studentData.findIndex(j => j.usn == assignment.submissions[i].usn);
+        data.usn = studentData[index].usn;
+        data.name = studentData[index].fname + " " + studentData[index].lname;
+        data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+studentData[index].usn+'" data-qid="'+assignment.submissions[i].qid +'" href="#">View Code</a>';
+    
+        data.qname = questions[questions.findIndex(j => j.qid == assignment.submissions[i].qid)].name;
+        data.time = time(assignment.submissions[i].timestamp);
+        data.points =assignment.submissions[i].points;
+        data.status = assignment.submissions[i].status;
+        const l = lang(assignment.submissions[i].language_id);
+        data.lang = l.substr(0,l.length-2); 
+
+        SendData.push(data);
+    }
+
+    res.send(SendData);
+});
+
+//router for submissions page
+router.get('/submissions/:id',authenticate,teacher,async (req,res)=>{
+    const assignment = await Assignment.findOne({id:req.params.id}).lean().select('sem id');
+    if(!assignment) return res.status(404).end();
+
+    res.render('teacher/assignmentSub',{assignment:assignment});
+});
+
+//fetching source for view modal
+router.get('/source/:id/:usn/:qid',authenticate,teacher,async (req,res) =>{
+    const assignment = await Assignment.findOne({id:req.params.id}).lean().select('sem id submissions');
+    if(!assignment) return res.status(404).end();
+
+    res.send(assignment.submissions.find(i => i.usn == req.params.usn && i.qid == req.params.qid).sourceCode);
 });
 
 router.get('/get/:id',authenticate,teacher,async (req,res) =>{
@@ -197,6 +266,8 @@ router.post('/add',authenticate,teacher,async (req,res) => {
     question.output_format = req.body.o_format;
     question.description = req.body.description;
     question.difficulty = req.body.difficulty;
+    question.createdBy = req.session.staff_id;
+    question.createdByName = req.session.fname + " " + req.session.lname;
 
     if(Array.isArray(req.body.i_sample1)){
 

@@ -63,7 +63,7 @@ router.get('/',authenticate, async (req,res)=> {
     if(req.session.staff_id){
         let contest=null;
         if(!req.query.l){ //query l does not exist
-            contest = await Contest.find({'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
+            contest = await Contest.find({'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':1}).skip((page-1)*12).limit(12);
             if(contest.length <=0) return res.render('teacher/trcontest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
             count = await Contest.countDocuments({'timings.ends':{$gt:new Date()}});
         }
@@ -74,7 +74,7 @@ router.get('/',authenticate, async (req,res)=> {
             return res.render('teacher/trcontest',{contest:contest,count:count,type:"past",page:page});
         }
         else{
-            contest = await Contest.find({'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
+            contest = await Contest.find({'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':1}).skip((page-1)*12).limit(12);
             if(contest.length <=0) return res.render('teacher/trcontest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
             count = await Contest.countDocuments({'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':-1});
         }
@@ -86,7 +86,7 @@ router.get('/',authenticate, async (req,res)=> {
             const grp = await CustomGroup.find({'usn':req.session.usn}).lean().select({id:1,_id:0});
             let gid=[];
             for(i of grp) gid.push(i.id);
-            let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}}).select('name url description questions timings').lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
+            let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}}).select('name url description questions timings').lean().sort({'timings.starts':1}).skip((page-1)*12).limit(12);
             //-contest = contest.concat(await Contest.find({customGroup:{$in:gid},isReady:true,'timings.ends':{$gt:new Date()}}).lean().select('name url description questions timings')).sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
             if(contest.length <=0) return res.render('contest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
             count = await Contest.countDocuments({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}});
@@ -110,7 +110,7 @@ router.get('/',authenticate, async (req,res)=> {
                 const grp = await CustomGroup.find({'usn':req.session.usn}).lean().select({id:1,_id:0});
                 let gid=[];
                 for(i of grp) gid.push(i.id);
-                let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}}).select('name url description questions timings').lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
+                let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}}).select('name url description questions timings').lean().sort({'timings.starts':1}).skip((page-1)*12).limit(12);
                 //contest = contest.concat(await Contest.find({customGroup:{$in:gid},isReady:true,'timings.ends':{$gt:new Date()}}).lean().select('name url description questions timings')).sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
                 if(contest.length <=0) return res.render('contest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
                 count = await Contest.countDocuments({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}});
@@ -399,6 +399,7 @@ router.post('/add/:cname',authenticate,teacher,async (req,res) => {
     const contest = await Contest.findOne({url:req.params.cname});
     if(!contest) return res.status(404);
 
+    if(contest.timings.ends < new Date()) return res.status(400).send("Cannot add a question after contest has ended.");
     const {error} = validateCQ(req.body);
     if(error) return res.status(400).send(error.message);
     let count=0;
@@ -556,9 +557,10 @@ router.post('/edit/:curl/:qid',authenticate,teacher,async (req,res)=>{
     const {error} = validateCQ(req.body);
     if(error) return res.status(400).send(error.message);
 
-    const contest = await Contest.findOne({url:req.params.curl}).lean().select('questions');
+    const contest = await Contest.findOne({url:req.params.curl}).lean().select('questions timings');
     if(!contest) return res.status(404);
 
+    if(contest.timings.ends < new Date()) return res.status(400).send("Cannot edit a question after contest has ended.");
     if(!contest.questions.includes(req.params.qid)) return res.status(400).send("Invalid ID");
 
     const question = await ContestQ.findOne({qid:req.params.qid});
@@ -1054,7 +1056,7 @@ router.get('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
         return res.status(404).end();
     });
     
-    return res.render('editorContest',{question : _.pick(question,['name','statement','constraints', 'input_format','output_format','sample_cases','explanation']),contest:contest})
+    return res.render('editorContest',{question : _.pick(question,['name','statement','constraints', 'input_format','output_format','sample_cases','explanation','difficulty','description']),contest:contest})
 
 
 });

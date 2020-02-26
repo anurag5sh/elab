@@ -22,8 +22,11 @@ body
           ol.mb-0.breadcrumb(style="padding-left:20px;background-color:white")
             li.breadcrumb-item
               a(href='/assignment') Assignment
-            li.breadcrumb-item.active(aria-current='page') Assignment leaderboard
-    h1.text-center.lb_heading Assignment Leaderboard
+            -if(session.staff_id)
+              li.breadcrumb-item
+                a(href='/assignment?a='+assignment.id) #{assignment.sem} Sem
+            li.breadcrumb-item.active(aria-current='page') Leaderboard
+    h1.text-center.lb_heading Leaderboard
       .limiter
         .container-table100
           .wrap-table100

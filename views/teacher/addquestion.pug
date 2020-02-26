@@ -223,7 +223,7 @@ each i in ques
           form#ques-edit(onsubmit="return editForm()")
               .modal-content
                   .modal-header
-                      h4.modal-title New Question  
+                      h4.modal-title Edit Question  
                       button.close(type='button' data-dismiss='modal') ×
                       
                   .modal-body
@@ -369,8 +369,7 @@ script.
       element.style.height = (element.scrollHeight)+"px";
   }
   $(document).ready(function() {
-      $('select').niceSelect();
-      setup();
+      $('#difficult-e,#difficult').niceSelect();
       });
   const curl = "#{contest.url}"
 script(src="/js/addquestion.js")

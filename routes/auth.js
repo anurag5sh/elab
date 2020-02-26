@@ -468,7 +468,7 @@ router.post('/forgotPassword',async (req,res)=>{
   };
 
   transporter.sendMail(mailOptions, (err, response) => {
-    if (err) {
+    if (err) { winston.error(err);
       res.status(400).send("Unable to send the reset link.");
     } else {
       res.status(200).send('Recovery E-mail sent.');

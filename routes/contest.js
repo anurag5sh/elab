@@ -16,6 +16,10 @@ const request = require("request-promise");
 const config = require('config');
 const pug = require('pug');
 const puppeteer = require('puppeteer'); 
+const path = require('path');
+const winston = require('winston');
+const rimraf = require('rimraf');
+const fs = require('fs');
 
 
 function encode64(string){ //encoding to base64
@@ -219,7 +223,7 @@ router.post('/group/add',authenticate,teacher,async (req,res)=>{
     group.createdBy = req.session.staff_id;
     group.usn = req.body.usn;
     
-    await group.save().catch((err)=>{
+    await group.save().catch((err)=>{ winston.error(err);
         return res.send(err);
     });
 
@@ -618,7 +622,7 @@ router.get('/delete/:curl',authenticate,teacher,async (req,res) => {
         await ContestQ.deleteMany({qid:{$in:contest.questions}});
         return res.send("Contest deleted");
     } )
-    .catch((err)=>{
+    .catch((err)=>{ winston.error(err);
         return res.status(400).send("Error! Unable to delete the contest.");
     });
 });
@@ -971,7 +975,7 @@ router.get('/:curl/reportDownload',authenticate,teacher,async (req,res)=>{
         await page.goto(`http://localhost:4000/contest/${req.params.curl}/report?print=${print}`,{waitUntil:'networkidle0'});
         await page.pdf({
             // name of your pdf file in directory
-			path: './public/testpdf.pdf', 
+			path: './public/reports/'+req.params.curl+'-report-'+print+'.pdf', 
             //  specifies the format
 			format: 'A4', 
             // print background property
@@ -980,10 +984,30 @@ router.get('/:curl/reportDownload',authenticate,teacher,async (req,res)=>{
         // console message when conversion  is complete!
         await browser.close();
     } catch (e) {
-        console.log('our error', e);
+        winston.error(e);
     }
     })().then(()=>{
-        res.download('./public/testpdf.pdf');
+        const uploadsDir = path.join(__dirname, '../public/reports/');
+        fs.readdir(uploadsDir, function(err, files) {
+            files.forEach(function(file, index) {
+              fs.stat(path.join(uploadsDir, file), function(err, stat) {
+                var endTime, now;
+                if (err) {
+                  return winston.error(err);
+                }
+                now = new Date().getTime();
+                endTime = new Date(stat.ctime).getTime() + 6000;
+                if (now > endTime) {
+                  return rimraf(path.join(uploadsDir, file), function(err) {
+                    if (err) {
+                      winston.error(err);
+                    }
+                  });
+                }
+              });
+            });
+          });
+        res.download('./public/reports/'+req.params.curl+'-report-'+print+'.pdf');
     });
 
 });
@@ -1331,7 +1355,7 @@ if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
     
     
     }).catch(err => {
-        console.log(err);
+        winston.error(err);
       res.send(err);
     });
 

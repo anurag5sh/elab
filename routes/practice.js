@@ -134,11 +134,11 @@ router.get('/:qid', authenticate, async (req,res)=>{
   if(!question) return res.send("Question not found!!");
 
   if(req.session.staff_id){
-    res.render('teacher/editor', {question : _.pick(question,['qid','name','difficulty','createdByName','statement','constraints', 'input_format','output_format','sample_cases'])});
+    res.render('teacher/editor', {question : _.pick(question,['qid','name','difficulty','createdByName','statement','constraints', 'input_format','output_format','sample_cases','difficulty','description'])});
 
   }
   else{
-    res.render('editor', {question : _.pick(question,['name','statement','difficulty','createdByName','constraints', 'input_format','output_format','sample_cases','qid'])});
+    res.render('editor', {question : _.pick(question,['name','statement','difficulty','createdByName','constraints', 'input_format','output_format','sample_cases','qid','difficulty','description'])});
 
   }
 });

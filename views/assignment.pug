@@ -36,16 +36,22 @@ block append content
                 //- .container1
                 .container-fluid
                     .row
-                        .col-lg-8
+                        -if(duration)
+                            -const d = duration.ends.toString();
+                            .col-lg-8
+                                | Ends on : #{d.substr(0,d.indexOf('GMT'))}
+                        -else
+                            .col-lg-8
                         .col-lg-4
                             a.btn.btn-primary.editor.right.pl-3.pr-3(style="border-radius:20px;" href="/assignment/leaderboard/")
                                 i.fad.fa-poll-people
                                 | &nbsp; 
                                 label.editor-right.mb-0 Leaderboard
-                            a.btn.btn-primary.editor.right.ml-5.pl-3.pr-3(style="border-radius:20px;" href="")
+                            a.btn.btn-primary.editor.right.ml-5.pl-3.pr-3(style="border-radius:20px;" href="/assignment/previous")
                                 i.fad.fa-eye
                                 | &nbsp; 
                                 label.editor-right.mb-0 View Previous                            
+                    br
                     .row1
                         each i in questions
                             .col-lg-3

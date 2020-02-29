@@ -34,7 +34,7 @@ router.get('/',authenticate, async (req,res) => {
         res.render('teacher/assignment',{current:current});
     }
     else{
-        const assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).lean().select('id questions');
+        const assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).lean().select('id questions duration');
         if(!assignment) return res.render('assignment',{questions:[],count:0,page:page});
         
         let questions = await AssignmentQ.find({$or:[{assignmentId:assignment.id},{qid:{$in:assignment.questions}}]}).lean().select({_id:0,name:1,qid:1}).sort({_id:-1}).skip((page-1)*12).limit(12);
@@ -42,9 +42,72 @@ router.get('/',authenticate, async (req,res) => {
         
         if(questions.length <=0) {questions = [];count=0;}
 
-        res.render('assignment',{questions:questions,count:count,page:page,id:assignment.id});
+        res.render('assignment',{questions:questions,count:count,page:page,id:assignment.id,duration:assignment.duration});
     }
     
+});
+
+//fetch previous assignment for students and teachers
+router.get('/previous',authenticate,async (req,res)=>{
+    if(req.session.staff_id){
+        res.render('teacher/previousAssignment');
+    }
+    else{
+        const arr = await Assignment.find({id:new RegExp(new Date().getFullYear() - req.session.year),'duration.ends':{$lt:new Date()}}).select('id sem');
+        res.render('previousAssignment',{arr:arr});
+    }
+});
+
+//fetch the list of previous assignments for teacher
+router.get('/previous/:sem',authenticate,teacher,async (req,res)=>{
+    const previous = await Assignment.find({sem:parseInt(req.params.sem),'duration.ends':{$lt: new Date()}}).select('id').lean();
+    let data='<div class="form-group" ><label for="aid" class="font-weight-bold">Select Assignment</label><select id="aid" class="form-control custom-select"><option selected disabled value="">Select Assignment</option>';
+    previous.forEach((item)=>{
+        data+='<option value='+item.id+'> Batch '+item.id.substr(5,4) +'</option>';
+    });
+    data+='</select></div>';
+    res.send(data);
+});
+
+//fetch previous assignment for dataTable
+router.get('/previous/list/:id',authenticate,async (req,res)=>{
+    if(req.session.staff_id){
+        const assignment = await Assignment.findOne({id:req.params.id}).lean();
+        if(!assignment) return res.status(404).send("Not Found!");
+
+        const questions = await AssignmentQ.find({assignmentId : req.params.id}).lean().select('qid name createdByName difficulty');
+        let sendData=[];
+        questions.forEach((item)=>{
+            let obj={};
+            obj.qid = item.qid;
+            obj.name = item.name;
+            obj.createdByName = item.createdByName;
+            obj.difficulty = item.difficulty;
+            obj.view = '<a href="" data-toggle="modal" data-target="#view" data-id="'+item.qid+'">View</a>';
+            obj.editor = '<a href="/assignment/'+item.qid+'" target="_blank" >View</a>';
+
+            sendData.push(obj);
+        });
+        res.send(sendData);
+    }else{
+        if(!req.params.id.includes(new Date().getFullYear()-req.session.year)) return res.status(404).end();
+        const assignment = await Assignment.findOne({id:req.params.id,'duration.ends':{$lt:new Date()}}).lean();
+        if(!assignment) return res.status(404).send("Not Found!");
+
+        const questions = await AssignmentQ.find({assignmentId : req.params.id}).lean().select('qid name createdByName difficulty');
+        let sendData=[];
+        questions.forEach((item)=>{
+            let obj={};
+            obj.qid = item.qid;
+            obj.name = item.name;
+            obj.createdByName = item.createdByName;
+            obj.difficulty = item.difficulty;
+            obj.view = '<a href="/assignment/'+item.qid+'" target="_blank" >View</a>';
+
+            sendData.push(obj);
+        });
+        res.send(sendData);
+    }
 });
 
 //leaderboard for students
@@ -129,7 +192,7 @@ router.get('/get/:id',authenticate,teacher,async (req,res) =>{
     else page=req.query.page;
     let count=0;
 
-    const assignment = await Assignment.findOne({id:req.params.id,'duration.ends' :{$gt : new Date()}}).lean().select('id questions');
+    const assignment = await Assignment.findOne({id:req.params.id,'duration.ends' :{$gt : new Date()}}).lean().select('id questions duration');
     if(!assignment) return res.send({questions:[],count:0,page:page});
 
     let questions = await AssignmentQ.find({$or:[{assignmentId:assignment.id},{qid:{$in:assignment.questions}}]}).lean().select({_id:0,name:1,qid:1}).sort({_id:-1}).skip((page-1)*12).limit(12);
@@ -137,7 +200,7 @@ router.get('/get/:id',authenticate,teacher,async (req,res) =>{
     
     if(questions.length <=0) {questions = [];count=0;}
 
-    res.send({questions:questions,count:count,page:page});
+    res.send({questions:questions,count:count,page:page,ends:assignment.duration.ends.toString()});
 
 });
 
@@ -159,7 +222,20 @@ function lang(l){
 }
 router.get('/source/:qid',authenticate,async (req,res) =>{
 
-    if(req.session.staff_id) return res.send('');
+    if(req.session.staff_id) { let source=[];
+        if(!req.query.lang) return res.send('');
+        if(req.session.assignment){ 
+            const index = req.session.assignment.findIndex(i => {return i.qid == req.params.qid && i.lang == req.query.lang})
+            if(index != -1)
+            source = [req.session.assignment[index]];
+            else{
+                source=[{sourceCode:config.get(`source.${req.query.lang}`)}];
+            }
+        }else{
+            source=[{sourceCode:config.get(`source.${req.query.lang}`)}];
+        }
+        return res.send(source);
+    }
     let source=[];
     if(req.query.lang){
         let assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year)},{submissions:{$elemMatch:{usn:req.session.usn,qid:req.params.qid,language_id:req.query.lang}}},{_id:0,'submissions.$':1}).lean();
@@ -197,14 +273,13 @@ router.post('/source/:qid',authenticate,async (req,res) =>{
     req.body.sourceCode = req.body.sourceCode.substr(0,req.body.sourceCode.length-18);
     if(req.body.sourceCode == '') return res.send('');
     if(req.session.assignment){
-        const found = req.session.assignment.findIndex(i =>{return i.qid == req.params.qid && i.curl == req.params.curl && i.lang == req.body.lang.substr(req.body.lang.length-2) });
+        const found = req.session.assignment.findIndex(i =>{return i.qid == req.params.qid && i.lang == req.body.lang.substr(req.body.lang.length-2) });
         if(found!=-1){
             req.session.assignment[found].sourceCode = req.body.sourceCode;
             req.session.assignment[found].timestamp = new Date();
         }
         else{
             let obj = {};
-            obj.curl = req.params.curl;
             obj.qid=req.params.qid;
             obj.lang = req.body.lang.substr(req.body.lang.length-2);
             obj.sourceCode = req.body.sourceCode;
@@ -214,7 +289,6 @@ router.post('/source/:qid',authenticate,async (req,res) =>{
     }
     else{
         let obj = {};
-        obj.curl = req.params.curl;
         obj.qid=req.params.qid;
         obj.lang = req.body.lang.substr(req.body.lang.length-2);
         obj.sourceCode = req.body.sourceCode;
@@ -298,29 +372,67 @@ router.post('/add',authenticate,teacher,async (req,res) => {
 
 });
 
+//solution for assingment questions
+router.get('/solution/:qid',authenticate, async (req,res)=>{
+
+    const question = await AssignmentQ.findOne({qid:req.params.qid}).lean().select('solution createdBy assignmentId');
+    if(!question) return res.status(400).send("Invalid ID");
+
+    const assignment = await Assignment.findOne({id:question.assignmentId}).select('duration').lean();
+
+    if(question.createdBy == req.session.staff_id || req.session.isAdmin || assignment.duration.ends < new Date())
+        if(question.solution) res.send(question.solution);
+        else res.send('No solutions yet!');
+    else
+    res.status(404).end();
+
+});
+
+router.post('/solution/:qid',authenticate,teacher, async (req,res)=>{
+
+    const question = await AssignmentQ.findOne({qid:req.params.qid}).select('solution createdBy');
+    if(!question) return res.status(400).send("Invalid ID");
+
+    if(question.createdBy == req.session.staff_id || req.session.isAdmin){
+        question.solution.language = req.body.language;
+        question.solution.sourceCode = req.body.sourceCode;
+        question.save();
+        res.send("Saved");
+    }
+    else{
+        res.status(401).end();
+    }
+
+});
 
 //display single question for student
 router.get('/:qid',authenticate,async (req,res) => {
-
+    let assignment=null;
     if(req.session.staff_id){
         const question =  await AssignmentQ.findOne({qid:req.params.qid}).lean();
         return res.render('editorAssignment',{question:question});
     }
 
-    const assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).lean().select('id questions');
-    if(!assignment) return res.status(400).end();
+    //previous 
+    const question_prev = await AssignmentQ.findOne({assignmentId:new RegExp(new Date().getFullYear() - req.session.year),qid:req.params.qid}).lean().select({_id:0,test_cases:0,date:0});
+    if(question_prev){
+        assignment = await Assignment.findOne({id:question_prev.assignmentId}).lean().select('duration');
+        return res.render('editorAssignment',{question:question_prev,duration:assignment.duration});
+    }
+    
+    assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).lean().select('id questions duration');
+    if(!assignment) return res.status(404).end();
 
     if(assignment.questions.includes(req.params.qid)){
         const question = await AssignmentQ.findOne({qid:req.params.qid}).lean().select({_id:0,test_cases:0,date:0});
-        return  res.render('editorAssignment',{question:question});
+        return  res.render('editorAssignment',{question:question,duration:assignment.duration});
 
-    }else
+    }else //old questions of other batch
     {
-        const question = await AssignmentQ.findOne({assignmentId:assignment.id,qid:req.params.qid}).lean().select({_id:0,test_cases:0,date:0});
-        if(!question) return res.send("Invalid ID");
+        let question = await AssignmentQ.findOne({assignmentId:assignment.id,qid:req.params.qid}).lean().select({_id:0,test_cases:0,date:0});
+        if(!question) return res.status(404).end();
         
-        return res.render('editorAssignment',{question:question});
-        
+        return res.render('editorAssignment',{question:question,duration:assignment.duration});
     }
     
     
@@ -329,22 +441,36 @@ router.get('/:qid',authenticate,async (req,res) => {
 
 //submission for assignment
 router.post('/:qid',authenticate,async (req,res)=>{
-
-    const assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).select('id questions submissions leaderboard duration');
-    if(!assignment) return res.status(400).end();
-
-    let question=null;
-    if(assignment.questions.includes(req.params.qid)){
-
-    question = await AssignmentQ.findOne({qid:req.params.qid}).lean().select({_id:0,test_cases:1});
-    if(!question) return res.send("Invalid ID");
+    let assignment=null;
+    let question = null;
+    if(req.session.staff_id){
+        question = await AssignmentQ.findOne({qid:req.params.qid}).lean().select({_id:0,test_cases:1});
+        if(!question) return res.status(404).send("Invalid ID");
     }
     else{
+        //check if previous
+        question = await AssignmentQ.findOne({assignmentId: new RegExp(new Date().getFullYear()-req.session.year),qid:req.params.qid}).lean().select({_id:0,test_cases:1,assignmentId:1});
+        if(question) assignment = await Assignment.findOne({id:question.assignmentId,'duration.ends':{$lt:new Date()}}).lean().select('duration');
+        if(!assignment){
+            assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).select('id questions submissions leaderboard duration');
+            if(!assignment) return res.status(400).end();
 
-    question = await AssignmentQ.findOne({assignmentId:assignment.id,qid:req.params.qid}).lean().select({_id:0,test_cases:1});
-    if(!question) return res.send("Invalid ID");
+            question=null;
+            if(assignment.questions.includes(req.params.qid)){
+
+            question = await AssignmentQ.findOne({qid:req.params.qid}).lean().select({_id:0,test_cases:1});
+            if(!question) return res.status(404).send("Invalid ID");
+            }
+            else{
+
+            question = await AssignmentQ.findOne({assignmentId:assignment.id,qid:req.params.qid}).lean().select({_id:0,test_cases:1});
+            if(!question) return res.status(404).send("Invalid ID");
+            }
+        }
+        
+
     }
-
+    
     const testcase = question.test_cases;
     let question_points = 0;
   testcase.forEach((item,index) =>{
@@ -381,14 +507,46 @@ router.post('/:qid',authenticate,async (req,res)=>{
         }
         desc.push({id:data.status.id,description:data.status.description,points:points}); 
     }
-    if(req.session.code == req.body.source+req.params.qid) return res.send(desc);
 
-        let total_points  = 0;
+    let total_points  = 0;
         desc.forEach((item,index) =>{
                 total_points+= item.points;
         });
+
+    if(req.session.code == req.body.source+req.params.qid) return res.send(desc);
+    req.session.code = req.body.source + req.params.qid;
+
+    if(req.session.staff_id || assignment.duration.ends < new Date() ){
+        if(req.session.usn){
+            let sub = new aSubmission();
+            const subCount = await aSubmission.estimatedDocumentCount({usn:req.session.usn,qid:req.params.qid});
+            if(subCount == 20){
+                sub = await aSubmission.findOne({usn:req.session.usn,qid:req.params.qid}).sort({timestamp:1});
+            }
+            sub.qid = req.params.qid;
+            sub.timestamp = new Date();
+            sub.usn = req.session.usn;
+            sub.sourceCode = req.body.source;
+            if(total_points == question_points){
+                sub.status = "Accepted";
+            }
+            else if(total_points == 0 ){
+                sub.status = "Wrong Answer";
+            }
+            else{
+                sub.status = "Partially Accepted";
+            }
+            sub.language_id = req.body.language;
+            sub.points = total_points;
+            await sub.save();
+            return res.send(desc);
+        }
+        else{
+            return res.send(desc);
+        }
+    }
         
-        req.session.code = req.body.source + req.params.qid;
+        
         const usn =req.session.usn;
         const user_submission = assignment.submissions.find(i => (i.usn == req.session.usn && i.qid==req.params.qid));
         if(!user_submission){
@@ -578,7 +736,8 @@ router.post('/:qid',authenticate,async (req,res)=>{
         }
     
     }).catch(err => { winston.error(err);
-    res.send(err);
+        console.log(err);
+    res.status(500).send("Something went wrong.");
     });
 
 
@@ -601,11 +760,21 @@ router.get('/edit/:id',authenticate,teacher,async (req,res) => {
   });
 
 //get an old assignment question
-router.get('/old/:qid',authenticate,teacher,async (req,res)=>{
-    let question = await AssignmentQ.findOne({qid:req.params.qid}).lean();
-    if(!question) return res.status(400).send("Not Found!");
+router.get('/old/:qid',authenticate,async (req,res)=>{
+    if(req.session.staff_id){
+        let question = await AssignmentQ.findOne({qid:req.params.qid}).lean();
+        if(!question) return res.status(400).send("Not Found!");
 
-    res.send(question);
+        res.send(question);
+    }
+    else{
+        let question = await AssignmentQ.findOne({qid:req.params.qid}).lean();
+        if(!question) return res.status(400).send("Not Found!");
+
+        if(!question.assignmentId.includes(new Date().getFullYear() - req.session.year)) return res.status(404).end();
+    
+        res.send(question);
+    }
 });
 
   //get an assignment question

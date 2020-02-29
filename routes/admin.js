@@ -80,7 +80,7 @@ router.get('/get/teachers',admin,async (req,res)=>{
 
 //fetching a teacher's info
 router.get('/get/teacher/:id',admin,async (req,res)=>{
-  const teacher = await Teacher.findOne({staff_id:req.params.id}).lean().select('fname lname staff_id email recovery_email isAdmin -_id');
+  const teacher = await Teacher.findOne({staff_id:req.params.id}).lean().select('fname lname staff_id email recovery_email isAdmin active -_id');
   if(!teacher) return res.status(400).send("Invalid ID");
 
   res.send(teacher);
@@ -151,7 +151,7 @@ router.get('/get/students/:year',admin,async (req,res)=>{
 
 //fetching a student info
 router.get('/get/student/:usn',admin,async (req,res)=>{
-  const student = await Student.findOne({usn:req.params.usn}).lean().select('fname lname usn email recovery_email year -_id');
+  const student = await Student.findOne({usn:req.params.usn}).lean().select('fname lname usn email recovery_email year active -_id');
   if(!student) return res.status(400).send("Invalid USN");
 
   res.send(student);

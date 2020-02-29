@@ -28,9 +28,9 @@ $('#sem').change(function (){
         data.questions.forEach(insert);
         function insert(item,index){
             if(item.assignmentId==data.assignment.id)
-            $("#qlist").append('<tr><td>'+item.qid+'</td><td>'+item.name+'</td><td><a class="fas fa-edit" data-toggle="modal" data-target="#edit" data-id="'+item.qid+'" style="color:dimgrey;" href=""></a></td><td><a class="fas fa-trash" style="color:red;" data-toggle="modal" data-target="#delete" href="" data-id="'+item.qid+'" data-name="'+item.name+'"></a></td></tr>');
+            $("#qlist").append('<tr><td>'+item.qid+'</td><td>'+item.name+'</td><td><a class="fas fa-edit" data-toggle="modal" data-target="#edit" data-id="'+item.qid+'" style="color:dimgrey;" href=""></a></td><td><a href="" data-toggle="modal" data-target="#solution" data-id="'+item.qid+'" data-name="'+item.name+'">Add Solution</a></td><td><a class="fas fa-trash" style="color:red;" data-toggle="modal" data-target="#delete" href="" data-id="'+item.qid+'" data-name="'+item.name+'"></a></td></tr>');
             else
-            $("#qlist").append('<tr><td>'+item.qid+'(Batch '+item.assignmentId.substr(5,4)+') </td><td>'+item.name+'</td><td><a class="fas fa-eye" data-toggle="modal" data-target="#edit" data-id="'+item.qid+'" style="color:dimgrey;" href=""></a></td><td><a class="fas fa-trash" style="color:red;" data-toggle="modal" data-target="#delete" href=""  data-id="'+item.qid+'" data-name="'+item.name+'"></a></td></tr>');
+            $("#qlist").append('<tr><td>'+item.qid+'(Batch '+item.assignmentId.substr(5,4)+') </td><td>'+item.name+'</td><td><a class="fas fa-eye" data-toggle="modal" data-target="#edit" data-id="'+item.qid+'" style="color:dimgrey;" href=""></a></td><td><a href="" data-toggle="modal" data-target="#solution" data-id="'+item.qid+'" data-name="'+item.name+'">Add Solution</a></td><td><a class="fas fa-trash" style="color:red;" data-toggle="modal" data-target="#delete" href=""  data-id="'+item.qid+'" data-name="'+item.name+'"></a></td></tr>');
         }
         
     });
@@ -496,5 +496,31 @@ $('input[name="list"]').click(function(){
         listArray.splice(listArray.indexOf($(this).val()),1);
     }
 });
+}
+
+$(document).ready(function(){
+    $("#solution").on('show.bs.modal', function(e){
+        $("#formSolution")[0].reset();
+        $("#qidForSolution").text(e.relatedTarget.dataset.id);
+        $.get('/assignment/solution/'+e.relatedTarget.dataset.id,function(data,status){
+            if(data != ''){
+                $("#languageCode").val(data.language);
+                $('#languageCode').niceSelect('update');
+                $('#solutionCode').val(data.sourceCode);
+            }
+        }).fail((err)=>{
+            toastr.error(err.responseText);
+        });
+});
+});
+
+function solution(){
+    $.post('/assignment/solution/'+$("#qidForSolution").text(),$("#formSolution").serialize(),function(data,status){
+        toastr.success(data);
+    }).fail((err)=>{
+        toastr.error(err.responseText);
+    });
+
+    return false;
 }
 

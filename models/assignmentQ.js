@@ -67,6 +67,11 @@ const assignmentQSchema = new mongoose.Schema({
     },
     difficulty:{
         type:String
+    },
+    solution:{
+        language:{type:String},
+        sourceCode:{type:String},
+        _id:false
     }
     
 });

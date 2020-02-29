@@ -1,0 +1,170 @@
+extends navbar
+
+block append head   
+    title Previous Assignment
+    - navClass = "bg-fade trans";
+    - navStyle = "";
+    link(rel="stylesheet", href="/assets/css/n.css")
+    script(src="/js/typewriter.js")
+    link(rel="stylesheet", href="/css/dataTables.bootstrap4.min.css")
+    script(src="/js/jquery.dataTables.min.js")
+    script(src="/js/dataTables.bootstrap4.min.js")
+    script(src="/js/quill.js")
+    link(rel="stylesheet", href="/css/katex.min.css")
+    script(src="/js/katex.min.js")
+    link(rel="stylesheet", href="/css/quill.bubble.css")
+    style.
+        .trans{
+        position:absolute;
+        right:60px;
+        left:60px;
+        padding-top:30px;
+        background:transparent;
+        background-color:transparent!important;
+        }
+        .editor-right:hover{
+            /*color:#1E88E5;*/
+            cursor:pointer;
+        }
+
+
+block content
+    .WRAPPER
+        section.module.parallax.parallax-1(data-type='background' data-speed='10')
+            .parallax-container
+                h2.typewrite(href='' data-period='2000' data-type='[ "ASSIGNMENT" ]' style="font-family: 'ABeeZee';letter-spacing:3px;font-weight:bold")
+                    span.wrap
+        br
+        nav(aria-label='breadcrumb' style="color:black;width:25%;margin-left:40px")
+            ol.breadcrumb(style="padding-left:20px")
+                li.breadcrumb-item
+                    a(href='/assignment') Assignment
+                li.breadcrumb-item.active(aria-current='page') Previous Assignment
+        .col-3(style="margin:auto;")
+            select#previous(name="sem").form-control.custom-select.type
+                    option(selected,disabled) Select Assignment
+                    each i in arr
+                        option(value=i.id) #{i.sem} Sem, Set #{i.id.substr(9)}
+        #List
+        br
+        .container
+            .modal#view.fade(role="dialog" tabindex ="-1")
+                .modal-dialog.modal-xl
+                    form#ques-edit
+                        .modal-content
+                            .modal-header
+                                h4.modal-title View Question  
+                                button.close(type='button' data-dismiss='modal') ×
+                                
+                            .modal-body
+                                    .box
+                                        table.table
+                                            tbody
+                                                tr
+                                                    td(style="width:150px;")
+                                                        label Question name:
+                                                    td
+                                                        input#name-e(type='text' name='name' required style="width:50%").form-control
+                                                tr
+                                                    td
+                                                        label(for='edifficulty') Difficulty:
+                                                    td
+                                                        //- input#difficulty(type='text' name='description' required).form-control
+                                                        .form-group(style="width:50%")
+                                                        select#edifficulty.form-control(name='difficulty')
+                                                            option(value='Easy') Easy
+                                                            option(value='Medium') Medium
+                                                            option(value='Hard') Hard
+                                                tr
+                                                    td
+                                                        label(for='edescription') Description:
+                                                    td
+                                                        input#edescription(type='text' name='description' required).form-control
+                                                tr
+                                                    td(style="width:150px;")
+                                                        label Problem Statement:
+                                                    td
+                                                        div#statement-editor-edit(style="min-height:120px;height:auto;")
+                                                        script.
+                                                            const editor_edit = new Quill('#statement-editor-edit', {
+                                                            theme: 'bubble' ,
+                                                            readOnly: true 
+                                                            });
+                                                    
+                                                tr
+                                                    td(style="width:150px;")
+                                                        label Constraints:
+                                                    td
+                                                        textarea#constraints-e.form-control(rows='5' name='constraints' cols='50')
+                                            
+                                                tr
+                                                    td(style="width:150px;")
+                                                        label Input format:
+                                                    td
+                                                        textarea.form-control#i_format-e(rows='5' name='i_format' cols='50' required)
+                                        
+                                                tr
+                                                    td(style="width:150px;")
+                                                        label Output format:
+                                                    td
+                                                        textarea.form-control#o_format-e(rows='5' name='o_format' cols='50' required)
+                                        hr    
+                                        #samplecase-e
+                                            label.tc Sample Testcases:
+                                            .t_case
+                                                p Sample Testcase 1
+                                                textarea.form-control.input#ei_sample1(rows='5' name='i_sample1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
+                                                textarea.form-control.input#eo_sample1(rows='5' name='o_sample1' cols='50' required placeholder='Output')
+                                                p Explanation
+                                                textarea.form-control.ex_box#explanation_edit(name='explanation' rows='5' cols='107' style="margin-bottom:10px" required)
+                                        #testcase-e
+                                            label.tc Testcases:
+                                            br
+                                            .t_case
+                                                p Testcase 1
+                                                textarea.form-control.input#ei_testcase1(rows='5' name='i_testcase1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
+                                                textarea.form-control.input#eo_testcase1(rows='5' name='o_testcase1' cols='50' required placeholder='Output')
+                                                p Points
+                                                input.form-control(style="width:15%;" name="points" id="epoints1" type="text" placeholder="Ex: 10" required)
+                                        
+                                        textarea(name="statement" id="es_edit" style="display:none;")
+                                        input#qid(type="text", style="display:none;" value="")
+                                
+                            .modal-footer
+                                button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+        .push1
+        .push
+    footer.bg-dark(class="FOOTER")
+        div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020  
+
+    script.
+        $("#previous").change(()=>{
+            $("#List").empty().append('<table class="table table-hover" id="list"><thead><tr><th style="width:30px">#</th><th>Question ID</th><th>Name</th><th>Created By</th><th>Difficulty</th><th>View</th></tr></thead></table>');
+            $.get('/assignment/previous/list/'+$("#previous").val(),function(data,status){
+                questions = $('#list').DataTable( {
+                        "data":data,
+                        "columns": [
+                            { "data": null },
+                            { "data": "qid" },
+                            { "data": "name" },
+                            { "data": "createdByName" },
+                            { "data": "difficulty" },
+                            { "data": "view" },
+
+                        ],
+                        "order": [[ 1, 'asc' ]],
+                        "columnDefs": [ {"searchable": false,"orderable": false,"targets": 0},
+                                        {"searchable": false,"targets": 3},
+                                        {"searchable": false,"targets": 4},
+                                        {"searchable": false,"orderable": false,"targets": 5}],
+                    } );
+
+                    questions.on( 'order.dt search.dt', function () {
+                    questions.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                        cell.innerHTML = i+1;
+                    } );
+                } ).draw();
+            }).fail((err)=>{
+                toastr.error(err.responseText);
+            });
+        });

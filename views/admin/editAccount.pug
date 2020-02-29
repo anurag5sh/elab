@@ -4,9 +4,9 @@ block append code
     - active.edit="active"
     - active.manage="active"
     - menu.manage="menu-open"
-    link(rel="stylesheet", href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css")
-    script(src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js")
-    script(src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js")
+    link(rel="stylesheet", href="/css/dataTables.bootstrap4.min.css")
+    script(src="/js/jquery.dataTables.min.js")
+    script(src="/js/dataTables.bootstrap4.min.js")
     link(rel="stylesheet", href="/css/select.dataTables.min.css")
     script(src="/js/dataTables.select.min.js")
 
@@ -265,6 +265,7 @@ block content
                 $("#email").val(data.email);
                 $("#recoveryEmail").val(data.recovery_email);
                 $("#yearForm").val(data.year);
+                $("#active").val(data.active+"");
             }).fail((err)=>{
                 toastr.error(err.responseText);
             });
@@ -312,6 +313,7 @@ block content
                 $("#emailT").val(data.email);
                 $("#recoveryEmailT").val(data.recovery_email);
                 $("#isAdmin").val(""+data.isAdmin);
+                $("#activeT").val(data.active+"");
             }).fail((err)=>{
                 toastr.error(err.responseText);
             });

@@ -12,14 +12,13 @@ block append head
   script(src="/js/typewriter.js")
   script.
     $(document).ready(function () {
-    $('.navbar1 a').click(function(e) {
-
+      if(window.location.href.split("=").length >1 ){
         $('.navbar1 a.active').removeClass('active');
 
-        $(this).addClass('active');
+        $("#past").addClass('active');
         //- $parent.addClass('active');
-        e.preventDefault();
-    });
+        //e.preventDefault();
+      }
     });
   style.
     .trans{
@@ -100,6 +99,10 @@ block append head
         border-color: #FF4F87;
     }
 
+    .nav-link1.active{
+      color:black;
+    }
+
   - active.contest="active"
   
 block content
@@ -109,10 +112,9 @@ block content
         h2.typewrite(href='' data-period='2000' data-type='[ "CONTESTS" ]' style="font-family: 'ABeeZee';letter-spacing:3px;font-weight:bold")
           span.wrap
     
-    
     .navbar1
-      a.nav-link1.nav-link-ltr1(href='/contest') Contest
-      a.nav-link1.nav-link-ltr1.active(href='?l=past') Past
+      a.nav-link1.nav-link-ltr1.active(href='/contest' ) Contest
+      a.nav-link1.nav-link-ltr1(href='?l=past')#past Past
 
 
     -const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];

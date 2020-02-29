@@ -268,6 +268,7 @@ $(document).ready(function() {
         $.get('/contest/solution/'+curl+"/"+e.relatedTarget.dataset.id,function(data,status){
             if(data != ''){
                 $("#languageCode").val(data.language);
+                $('#languageCode').niceSelect('update');
                 $('#solutionCode').val(data.sourceCode);
             }
         }).fail((err)=>{

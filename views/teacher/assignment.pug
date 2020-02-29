@@ -63,7 +63,7 @@ block content
                         | &nbsp; 
                         label.editor-right(style="font-size:18px") Leaderboard
                 div.mt-3
-                    a.editor-right.pl-2() 
+                    a.editor-right.pl-2(href="/assignment/previous") 
                         i.fad.fa-eye(style="font-size:16px")
                         | &nbsp; 
                         label.editor-right(style="font-size:18px") View Previous
@@ -74,6 +74,8 @@ block content
                         label.editor-right(style="font-size:18px") View Submissions
         main.page.projets-page
             section.portfolio-block.project-no-images
+                #ends(style="margin-left:70px;")
+                br
                 .container1
                     .row1#quesList
         
@@ -90,6 +92,8 @@ block content
             $("#paginationAllow").empty();
             $.get('/assignment/get/'+$("#sem").val(),function (data,status){ $("#leaderboard").attr('href','/assignment/leaderboard/'+$("#sem").val());
                 $("#sub").attr('href','/assignment/submissions/'+$("#sem").val());
+                const d = data.ends;
+                $("#ends").text("Ends on : "+ d.substr(0,d.indexOf("GMT")));
                 data.questions.forEach((item,index)=>{
                     $("#quesList").append('<div class="col-md-6 col-lg-4"><div class="project-card-no-image"><h5>'+item.name+'</h5><a class="btn1 btn1-outline-primary btn1-sm" role="button" href="/assignment/'+item.qid+'">VIEW</a></div></div>');
                 });

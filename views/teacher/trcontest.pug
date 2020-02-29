@@ -4,6 +4,7 @@ block append head
   - active.contest="active"
   - navClass = "bg-fade trans";
   - navStyle = "";
+  title Contest
   link(rel="stylesheet", href="/css/contest_card.css")
   link(rel="stylesheet", href="/assets/css/n.css")
   link(rel="stylesheet", href="/fontawesome/all.min.css")
@@ -13,14 +14,13 @@ block append head
   script(src="/js/typewriter.js ")
   script.
     $(document).ready(function () {
-    $('.navbar1 a').click(function(e) {
-
+      if(window.location.href.split("=").length >1 ){
         $('.navbar1 a.active').removeClass('active');
 
-        $(this).addClass('active');
+        $("#past").addClass('active');
         //- $parent.addClass('active');
-        e.preventDefault();
-    });
+        //e.preventDefault();
+      }
     });
   style.
     .admin{
@@ -150,6 +150,9 @@ block append head
         background-color: #FF4F87;
         border-color: #FF4F87;
       }
+      .nav-link1.active{
+      color:black;
+      }
     
 
 //- .container-fluid(style="width:100%;height:90%")
@@ -183,7 +186,7 @@ block content
       .col-lg-8
         .navbar1
           a.nav-link1.nav-link-ltr1.active(href='/contest') Contest
-          a.nav-link1.nav-link-ltr1(href='?l=past') Past
+          a.nav-link1.nav-link-ltr1(href='?l=past')#past Past
       .col-lg-4
         //- div.mt-3
         a.btn.btn-success.mt-3.mr-5.font-weight-bold(style="border-radius:20px;" href='/contest/create') 

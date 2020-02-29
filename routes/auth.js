@@ -470,7 +470,7 @@ router.post('/forgotPassword',async (req,res)=>{
     if (err) { winston.error(err);
       res.status(400).send("Unable to send the reset link.");
     } else {
-      res.status(200).send('Recovery E-mail sent.');
+      res.status(200).send('Recovery E-mail sent to '+user.recovery_email.substr(0,3)+'*****'+user.recovery_email.substr(user.recovery_email.indexOf('@')-1) +'.');
     }
   });
 

@@ -1106,9 +1106,10 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
         res.status(404).end();
     });
 
-if(contest.timings.starts > new Date() || contest.timings.ends < new Date())
+if(contest.createdBy == req.session.staff_id || req.session.isAdmin ){}
+else if(contest.timings.starts > new Date())
 {
-    return res.status(400).send("Cannot submit to this contest.");
+    return res.status(401).send("Cannot submit to this contest.");
 }
 
 if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
@@ -1155,15 +1156,50 @@ if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
         desc.push({id:data.status.id,description:data.status.description,points:points}); 
       }
     
+    const usn = req.session.usn || req.session.staff_id.toString();
+    const year = req.session.year || '-';
+
     if(req.session.code == req.body.source+req.params.qid) return res.send(desc);
+    req.session.code = req.body.source + req.params.qid;
     let total_points  = 0;
     desc.forEach((item,index) =>{
             total_points+= item.points;
     });
+
+    if(contest.timings.ends < new Date()){ //if contest has ended
+        if(req.session.staff_id){
+            return res.send(desc);
+        }
+        else{
+
+            let sub = new Submission();
+            const subCount = await Submission.estimatedDocumentCount({usn:usn,qid:req.params.qid});
+            if(subCount == 20){
+                sub = await Submission.findOne({usn:usn,qid:req.params.qid}).sort({timestamp:1});
+            }
+            sub.qid = req.params.qid;
+            sub.timestamp = new Date();
+            sub.usn = usn;
+            sub.year = year;
+            sub.sourceCode = req.body.source;
+            if(total_points == question_points){
+                sub.status = "Accepted";
+            }
+            else if(total_points == 0 ){
+                sub.status = "Wrong Answer";
+            }
+            else{
+                sub.status = "Partially Accepted";
+            }
+            sub.points = total_points;
+            sub.language_id = req.body.language;
+
+            await sub.save();
+            return res.send(desc);
+
+        }
+    }
    
-    req.session.code = req.body.source + req.params.qid;
-    const usn = req.session.usn || req.session.staff_id.toString();
-    const year = req.session.year || '-';
     const user_submission = contest.submissions.find(i => i.usn == usn && i.qid == req.params.qid);
     
     if(!user_submission){ 

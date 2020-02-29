@@ -9,10 +9,8 @@ block append head
         //- link(rel='stylesheet' href='/list_style/bootstrap/css/new.css')
         //- link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,400,700')
         //- link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css')
-        
-        link(rel="stylesheet", href="/css/contest_card.css")
+        link(rel='stylesheet' type='text/css' href='/card.css')
         link(rel="stylesheet", href="/assets/css/n.css")
-        script(src="/js/contest_card.js")
         script(src="/js/typewriter.js")
         style.
             .trans{
@@ -30,20 +28,45 @@ block content
             .parallax-container
                 h2.typewrite(href='' data-period='2000' data-type='[ "MANAGE" ]' style="font-family: 'ABeeZee';letter-spacing:3px;font-weight:bold")
                     span.wrap        
-    
-        .row(style="width:100%")
-            - let question = q
-            each i in question
-                .col-lg-3
-                    .container_card(style="margin-left:10px;")
-                        .c-card-block
-                            a(href="manage/"+i.url)
-                                .cheader
-                                    h4 #{ i.name}
-                                    br
-                                p.block-with-text=i.description                                
-                                button.attem.btn.btn-info(type='button' onclick="location.href=manage/"+i.url+"") Manage
-
+        br
+        nav(aria-label='breadcrumb' style="color:black;width:20%;margin-left:20px")
+            ol.breadcrumb(style="padding-left:20px")
+              li.breadcrumb-item
+                a(href='/contest') Contest
+              li.breadcrumb-item.active(aria-current='page') Manage Contest
+        br
+        - const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+        -function nth(n){return n+([,'st','nd','rd'][n%100>>3^1&&n%10]||'th')}
+        .row.flex-container(style="width:100%")
+            each i in contests
+                .ft-contest 
+                    .ft-contest__thumb
+                        //-span(id="close-modal")
+                            i.ion.ion-md-close
+                        //-h3 Today's Featured contest
+                        img(src=i.image, alt=i.name)
+                    .ft-contest__content
+                        header.content__header
+                            .row-wrapper
+                                h2(class="contest-title") #{ i.name}
+                                .user-rating
+                            ul.contest-details
+                                li.contest-details-item
+                                    i.ion.ion-ios-clock-outline
+                                    span.value=Math.round(Math.abs(i.timings.ends - i.timings.starts) / 36e5)
+                                    span.title Hours
+                                li.contest-details-item
+                                    i.ion.ion-ios-book-outline
+                                    span.value #{i.questions.length}
+                                    span.title Questions
+                                li.contest-details-item
+                                    i.ion.ion-ios-person-outline
+                                    span.value=nth(i.timings.starts.getDate())
+                                    span.title=month[i.timings.starts.getMonth()]
+                        p.description=i.description
+                        footer.content__footer
+                            a(href="manage/"+i.url) Manage Contest
+        
         -if(count>0)
             ul.pagination.justify-content-center
                 li.page-item(class=(page==1?'disabled':''))

@@ -132,71 +132,74 @@ style.
     .nav-link{
     font-size: 1.2em;
     }
-.container-fluid.main-secction
-  .row
-    .col-md-12.col-sm-12.col-xs-12.image-section
-      img(src='/images/img24.jpg' )
-    .row.user-left-part
-      .col-md-3.col-sm-3.col-xs-12.user-profil-part.pull-left
-        .row
-          .col-md-12.col-md-12-sm-12.col-xs-12.user-image.text-center
-            img.rounded-circle(src=user.profile_image)
-          .col-md-12.col-sm-12.col-xs-12.user-detail-section1.text-center
-            button#btn-contact.btn.btn-success.btn-block.follow #{user.email}
-          .row.user-detail-row
-            .col-md-12.col-sm-12.user-detail-section2.pull-left
-              .border(style='align-items: center;')
-              p(style='text-align: center;') #{user.about_me}
-      .col-md-9.col-sm-9.col-xs-12.pull-right.profile-right-section
-        .row.profile-right-section-row
-          .col-md-12.profile-header
-            .row
-              .col-md-8.col-sm-6.col-xs-6.profile-header-section1.pull-left
-                h1.title #{user.fname} #{user.lname}
-                br
-          .col-md-12
-            .row
-              .col-md-8
-                ul.nav.nav-tabs(role='tablist')
-                  li.nav-item
-                    a.nav-link.active(href='#profile' role='tab' data-toggle='tab')
-                      i.fas.fa-user-circle
-                      |  Details
-                  li.nav-item
-                    // <a class="nav-link" href="#buzz" role="tab" data-toggle="tab">Achivements</a>
-                // Tab panes
-                br
-                .tab-content
-                  #profile.tab-pane.fade.show.active(role='tabpanel')
-                    .row
-                      .col-md-2
-                        -if(user.usn)
-                          label USN
-                        -else
-                          label Staff Id
-                      .col-md-6
-                        -if(user.usn)
-                          p=user.usn
-                        -else
-                          p=user.staff_id
+.WRAPPER
+  .container-fluid.main-secction
+    .row
+      .col-md-12.col-sm-12.col-xs-12.image-section
+        img(src='/images/img24.jpg' )
+      .row.user-left-part
+        .col-md-3.col-sm-3.col-xs-12.user-profil-part.pull-left
+          .row
+            .col-md-12.col-md-12-sm-12.col-xs-12.user-image.text-center
+              img.rounded-circle(src=user.profile_image)
+            .col-md-12.col-sm-12.col-xs-12.user-detail-section1.text-center
+              button#btn-contact.btn.btn-success.btn-block.follow #{user.email}
+            .row.user-detail-row
+              .col-md-12.col-sm-12.user-detail-section2.pull-left
+                .border(style='align-items: center;')
+                p(style='text-align: center;') #{user.about_me}
+        .col-md-9.col-sm-9.col-xs-12.pull-right.profile-right-section
+          .row.profile-right-section-row
+            .col-md-12.profile-header
+              .row
+                .col-md-8.col-sm-6.col-xs-6.profile-header-section1.pull-left
+                  h1.title #{user.fname} #{user.lname}
+                  br
+            .col-md-12
+              .row
+                .col-md-8
+                  ul.nav.nav-tabs(role='tablist')
+                    li.nav-item
+                      a.nav-link.active(href='#profile' role='tab' data-toggle='tab')
+                        i.fas.fa-user-circle
+                        |  Details
+                    li.nav-item
+                      // <a class="nav-link" href="#buzz" role="tab" data-toggle="tab">Achivements</a>
+                  // Tab panes
+                  br
+                  .tab-content
+                    #profile.tab-pane.fade.show.active(role='tabpanel')
+                      .row
+                        .col-md-2
+                          -if(user.usn)
+                            label USN
+                          -else
+                            label Staff Id
+                        .col-md-6
+                          -if(user.usn)
+                            p=user.usn
+                          -else
+                            p=user.staff_id
 
-                          
-                    .row
-                      .col-md-2
-                        label Email
-                      .col-md-6
-                        p=user.email
-                    .row
-                      .col-md-2
-                        -if(user.usn)
-                          label Year
-                        -else
-                          label 
-                      .col-md-6
-                        -if(user.usn)
-                          p=user.year
-                        -else
-                          p 
+                            
+                      .row
+                        .col-md-2
+                          label Email
+                        .col-md-6
+                          p=user.email
+                      .row
+                        .col-md-2
+                          -if(user.usn)
+                            label Year
+                          -else
+                            label 
+                        .col-md-6
+                          -if(user.usn)
+                            p=user.year
+                          -else
+                            p 
+footer.bg-dark(class="FOOTER")
+  div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBKCE CSE DEPT. 2020
                   // <div role="tabpanel" class="tab-pane fade" id="buzz">
                   // <div class="row">
                   //

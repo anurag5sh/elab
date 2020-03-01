@@ -125,8 +125,8 @@ for(let i=0;i<data.length;i++)
 for(let i=0;i<$('#card .sa').length;i++){
 document.getElementById("message"+(i+1)+"").innerHTML=data[i].description;
 document.getElementById("output"+(i+1)+"").value = data[i].output;
-document.getElementById("input"+(i+1)+"").value = document.getElementById("sam_i"+i+"").innerHTML;
-document.getElementById("expectedOutput"+(i+1)+"").value = document.getElementById("sam_o"+i+"").innerHTML;
+$("#input"+(i+1)+"").html(document.getElementById("sam_i"+i+"").innerHTML);
+$("#expectedOutput"+(i+1)+"").html(document.getElementById("sam_o"+i+"").innerHTML);
 }
 
 document.getElementById("loader").style.display="none";
@@ -251,10 +251,10 @@ $(document).ready(function() {
         for(var i=1;i<=$('#card .sa').length;i++){
         if(i==1){
         $('#Output').append('<li class="nav-item"><a class="nav-link active" id="color'+i+'" data-toggle="tab" href="#tab'+i+'">Sample '+i+'  <i id="icon'+i+'"></i></a></li>');
-        $('#tab-content').append('<div id="tab'+i+'" class="container tab-pane active"><br><label><b>Message</b></label><br><p style="font-family: Source Sans Pro, sans-serif;font-size:18px;" id="message'+i+'"></p><label><b>Input</b></label><textarea class="bg-col" id="input'+i+'" readonly="readonly" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:auto;"></textarea><label><b>Output</b></label><textarea class="bg-col" id="output'+i+'" readonly="readonly" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:110px;"></textarea><label><b>Expected Output</b></label><textarea class="bg-col" id="expectedOutput'+i+'" readonly="readonly" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:auto;"></textarea></div>');
+        $('#tab-content').append('<div id="tab'+i+'" class="container tab-pane active"><br><label><b>Message</b></label><br><p style="font-family: Source Sans Pro, sans-serif;font-size:18px;" id="message'+i+'"></p><label><b>Input</b></label><div class="bg-col" id="input'+i+'" readonly="readonly" style="white-space:pre-wrap;font-family: Source Code Pro, monospace;width:100%;border:none;height:auto;"></div><label><b>Output</b></label><textarea class="bg-col" id="output'+i+'" readonly="readonly" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:110px;"></textarea><label><b>Expected Output</b></label><div class="bg-col" id="expectedOutput'+i+'" readonly="readonly" style="white-space:pre-wrap;font-family: Source Code Pro, monospace;width:100%;border:none;height:auto;"></div></div>');
         }else{
         $('#Output').append('<li class="nav-item"><a class="nav-link" id="color'+i+'" data-toggle="tab" href="#tab'+i+'">Sample '+i+'  <i id="icon'+i+'"></i></a></li>');                
-        $('#tab-content').append('<div id="tab'+i+'" class="container tab-pane fade"><br><label><b>Message</b></label><br><p style="font-family: Source Sans Pro, sans-serif;font-size:18px;" id="message'+i+'"></p><label><b>Input</b></label><textarea class="bg-col" id="input'+i+'" readonly="readonly" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:auto;"></textarea><label><b>Output</b></label><textarea class="bg-col" id="output'+i+'" readonly="readonly" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:110px;"></textarea><label><b>Expected Output</b></label><textarea class="bg-col" id="expectedOutput'+i+'" readonly="readonly" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:auto;"></textarea></div>');
+        $('#tab-content').append('<div id="tab'+i+'" class="container tab-pane fade"><br><label><b>Message</b></label><br><p style="font-family: Source Sans Pro, sans-serif;font-size:18px;" id="message'+i+'"></p><label><b>Input</b></label><div class="bg-col" id="input'+i+'" readonly="readonly" style="white-space:pre-wrap;font-family: Source Code Pro, monospace;width:100%;border:none;height:auto;"></div><label><b>Output</b></label><textarea class="bg-col" id="output'+i+'" readonly="readonly" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:110px;"></textarea><label><b>Expected Output</b></label><div class="bg-col" id="expectedOutput'+i+'" readonly="readonly" style="white-space:pre-wrap;font-family: Source Code Pro, monospace;width:100%;border:none;height:auto;"></div></div>');
         }
         } 
 

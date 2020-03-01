@@ -25,7 +25,7 @@ block append head
             }
 
 block content
-
+    .WRAPPER
         section.module.parallax.parallax-1(data-type='background' data-speed='10')
             .parallax-container
                 h2.typewrite(href='' data-period='2000' data-type='[ "MANAGE" ]' style="font-family: 'ABeeZee';letter-spacing:3px;font-weight:bold")
@@ -53,3 +53,7 @@ block content
                         a.page-link(href="?page="+i)=i
                 li.page-item(class=(page==Math.ceil(count/12)?'disabled':''))
                     a.page-link(href="?page="+(page+1) ) Next
+        .push1
+        .push
+    footer.bg-dark(class="FOOTER")
+        div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBKCE CSE DEPT. 2020

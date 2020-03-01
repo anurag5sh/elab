@@ -35,11 +35,15 @@ block content
                         label Last Name
                         input.form-control(type='text' disabled placeholder='Last Name' value=student.lname) 
                   .row
-                    .col-md-6
+                    .col-md-2
+                      .form-group
+                        label Year
+                        input.form-control(type='number' disabled placeholder='' value=student.year)
+                    .col-md-5
                       .form-group
                         label Priamry Email
                         input.form-control(type='email' disabled placeholder='' value=student.email)
-                    .col-md-6
+                    .col-md-5
                       .form-group
                         label(for='exampleInputEmail1') Recovery Email
                         input.form-control(type='email' name="recovery_email" placeholder='Email' value=student.recovery_email)
@@ -99,7 +103,7 @@ block content
     .push1
     .push
   footer.bg-dark(class="FOOTER")
-    div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBK CSE DEPT. 2020
+    div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBKCE CSE DEPT. 2020
 
   script.
     $(document).ready(function(){

@@ -189,13 +189,13 @@ router.get('/manage',authenticate,teacher, async (req,res) => {
     if(req.session.isAdmin){
         const contest = await Contest.find().lean().sort({_id:-1}).skip((page-1)*12).limit(12);
         count=await Contest.estimatedDocumentCount();
-        return res.render('teacher/manage',{q:contest,count:count,page:page}); 
+        return res.render('teacher/manage',{contests:contest,count:count,page:page}); 
     }
 
     let trcontest = await Contest.find({createdBy:req.session.staff_id}).lean().sort({_id:-1}).skip((page-1)*12).limit(12); 
     count = await Contest.countDocuments({createdBy:req.session.staff_id});
     if(trcontest.length <=0) trcontest=[];
-    res.render('teacher/manage',{q:trcontest,count:count,page:page}); 
+    res.render('teacher/manage',{contests:trcontest,count:count,page:page}); 
     
 
 });

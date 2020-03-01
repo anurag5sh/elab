@@ -151,20 +151,35 @@ router.get('/profile', authenticate,async function(req,res){
 
 router.post('/profile', authenticate, async (req, res) =>{
   if(!req.body.recovery_email || req.body.recovery_email.trim() == ''){
-    return res.send("Recovery Email cannont be Blank please fill");
+    return res.send("Recovery Email cannot be blank please fill.");
   }
+  const schema = Joi.object({
+    recovery_email: Joi.string().min(3).max(255).required().email(),
+    verifyPassword: Joi.string().required().error(new Error("Password not entered!")),
+    about_me:Joi.string().allow('')
+  });
+  const {error} = schema.validate(req.body,{escapeHtml:true});
+  if(error) return res.status(400).send(error.message);
 
   if(req.session.staff_id){
-    let teacher = await Teacher.findOne({ staff_id: req.session.staff_id}).select('recovery_email about_me');
+    let teacher = await Teacher.findOne({ staff_id: req.session.staff_id}).select('recovery_email about_me password');
     if(!teacher) return res.status(400).send("Invalid ID");
+
+    const validPassword = await bcrypt.compare(req.body.verifyPassword, teacher.password);
+    if (!validPassword) return res.status(400).send("Wrong Password.");
+
     teacher.about_me = req.body.about_me;
     teacher.recovery_email = req.body.recovery_email;
     await teacher.save();
     res.send("Saved");
   }
   else{
-    let student = await Student.findOne({ usn: req.session.usn }).select('recovery_email about_me');
+    let student = await Student.findOne({ usn: req.session.usn }).select('recovery_email about_me password');
     if(!student) return res.status(400).send("Invalid USN");
+
+    const validPassword = await bcrypt.compare(req.body.verifyPassword, student.password);
+    if (!validPassword) return res.status(400).send("Wrong Password.");
+
     student.recovery_email = req.body.recovery_email;
     student.about_me = req.body.about_me;
     await student.save();

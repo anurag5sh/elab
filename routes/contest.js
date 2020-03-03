@@ -881,7 +881,7 @@ router.get('/teachers/id/:id',authenticate,teacher,async (req,res) =>{
 
 //landing page for contest
 router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
-    let contest = await Contest.findOne({url:req.params.curl}).lean().select('timings signedUp name questions url createdBy createdByName rules description isReady');
+    let contest = await Contest.findOne({url:req.params.curl}).lean().select('timings signedUp name questions url createdBy createdByName rules description isReady image');
     if(!contest) return res.status(404).end();
 
     const now = new Date();
@@ -1026,7 +1026,8 @@ router.get('/:curl/reportDownload',authenticate,teacher,async (req,res)=>{
         if (process.env.NODE_ENV != 'production') {
             host='localhost:'+req.app.locals.port;
            }
-        await page.setCookie({name:"elab",value:req.headers.cookie.substr(5),domain:"localhost",path:"/"});
+        const elabIndex = req.headers.cookie.indexOf("elab");
+        await page.setCookie({name:"elab",value:req.headers.cookie.substr(elabIndex+5),domain:"localhost",path:"/"});   
         await page.goto(`http://${host}/contest/${req.params.curl}/report?print=${print}`,{waitUntil:'networkidle0'});
         await page.pdf({
             // name of your pdf file in directory
@@ -1051,7 +1052,7 @@ router.get('/:curl/reportDownload',authenticate,teacher,async (req,res)=>{
                   return winston.error(err);
                 }
                 now = new Date().getTime();
-                endTime = new Date(stat.ctime).getTime() + 180000;
+                endTime = new Date(stat.ctime).getTime() + 1800000;
                 if (now > endTime) {
                   return rimraf(path.join(uploadsDir, file), function(err) {
                     if (err) {

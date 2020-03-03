@@ -88,7 +88,7 @@ process.on('unhandledRejection',(ex)=>{
 //middleware
 app.use(session({
     name:'elab',
-    secret: 'elab',
+    secret: config.get('session-secret'),
     cookie:{sameSite:"strict",maxAge:2*60*60*1000},
     resave: false,
     rolling:true,
@@ -117,6 +117,6 @@ app.use('/register', register);
 app.use(errors);
 
 
-app.listen(port,()=> {
+app.listen(port,'localhost',()=> {
     console.log("Listening on port"+ port);
 });

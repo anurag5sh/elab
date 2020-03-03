@@ -6,7 +6,7 @@ else
 - function date(x) { let date = x; return x;}
   
 head
-  title TITLE
+  title=contest.name
   meta(http-equiv='X-UA-Compatible' content='IE=edge')
   meta(name='viewport' content='width=device-width, initial-scale=1')
   meta(charset='UTF-8')
@@ -30,7 +30,7 @@ head
     }
 .WRAPPER
   .main-area
-    section.left-section(style='background-image: url(/images/countdown-2-1000x1000.jpg)')
+    section.left-section(style='background-image: url('+contest.image+')')
       .display-table.center-text
         .display-table-cell
           - var x = date(time);

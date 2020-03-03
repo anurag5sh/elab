@@ -87,6 +87,7 @@ router.get('/',async (req,res,next)=>{
   else  next();
 
 }, (req,res) => {
+    res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
     res.render('login');
 });
 
@@ -335,18 +336,21 @@ router.post('/first',authenticate,async (req,res)=>{
 
 
 router.get('/first',authenticate,async (req,res)=>{
+  res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   if(req.session.incomplete)
   return res.render('firstLogin',{select:'both',title:'Change Password and Recovery Email'});
   else res.status(404).end();
 });
 
 router.get('/firstR',authenticate,async (req,res)=>{
+  res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   if(req.session.incomplete)
   return res.render('firstLogin',{select:'recovery',title:'Update Recovery Email'});
   else res.status(404).end();
 });
 
 router.get('/firstP',authenticate,async (req,res)=>{
+  res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   if(req.session.incomplete)
   return res.render('firstLogin',{select:'password',title:'Change Password'});
   else res.status(404).end();
@@ -356,6 +360,8 @@ router.get('/firstP',authenticate,async (req,res)=>{
 router.post('/', async (req, res) => {
   const { error } = validate(req.body); 
   if (error) return res.status(400).send(error.message);
+
+  res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
 
   let student = await Student.findOne({ email: req.body.email }).select('fname lname password usn year active lastLogin recovery_email ');
   if (student){

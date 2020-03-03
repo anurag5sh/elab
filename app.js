@@ -18,9 +18,22 @@ const winston = require('winston');
 require('winston-mongodb');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet')
+const fs = require('fs');
 
+//port config
 const port = process.argv[2] || 4000;
 app.locals.port = port;
+
+//creating important directories
+fs.mkdir('./uploads', { recursive: true }, (err) => {
+  if (err) throw err;
+});
+fs.mkdir('./public/reports', { recursive: true }, (err) => {
+  if (err) throw err;
+});
+fs.mkdir('./public/profileImage', { recursive: true }, (err) => {
+  if (err) throw err;
+});
 
 //fixing all deprecationWarning of mongoDB
 mongoose.set('useNewUrlParser', true);
@@ -42,7 +55,11 @@ app.set('views',__dirname+"/views");
 
 app.use(helmet());
 app.use(function(req, res, next) {
-  res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  if (!req.session) {
+      res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+      res.header('Expires', '-1');
+      res.header('Pragma', 'no-cache');
+  }
   next();
 });
 

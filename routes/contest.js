@@ -20,7 +20,13 @@ const path = require('path');
 const winston = require('winston');
 const rimraf = require('rimraf');
 const fs = require('fs');
+const Agenda = require('agenda');
 
+const mongoConnectionString = 'mongodb://localhost/elab';
+const agenda = new Agenda({db: {address: mongoConnectionString,options:{useUnifiedTopology: true}},processEvery:'30 minutes'});
+( async ()=>{
+    await agenda.start();
+})();
 
 function encode64(string){ //encoding to base64
     const b = new Buffer.from(string);
@@ -172,6 +178,25 @@ router.post('/create',authenticate,teacher, async (req,res)=>{
     contest.description = req.body.description;
     contest.createdByName = req.session.fname + " "+ req.session.lname;
     contest.image="/contestImage/"+Math.floor(Math.random() * 6)+".jpg";
+
+    //agenda for achievements
+    agenda.define(contest.name+" achievements",async job =>{
+        const c = await Contest.findOne({id:contest.id}).lean().select('leaderboard');
+
+        for(let i=0;i<c.leaderboard.length;i++){
+            const student = await Student.findOneAndUpdate({usn:c.leaderboard[i].usn},{$addToSet:{achievements:{position:i+1,name:contest.name,id:contest.id}}});
+            if(i == 2) break;
+        }
+    });
+
+    (async function() {
+        await agenda.start();
+        agenda.schedule(ends,contest.url+" achievements");
+        agenda.on(`success:${contest.url} achievements`, async job => {
+            job.remove();
+          });
+    })();
+
 
     await contest.save();
     res.send(contest);
@@ -384,6 +409,26 @@ router.post('/manage/:name',authenticate,teacher,async (req,res) =>{
     contest.description = req.body.description;
     contest.year = req.body.year || [];
     contest.isReady = (req.body.status == "on"?true:false);
+
+    //editing the agenda
+    await agenda.cancel({name:contest.url+" achievements"});
+    agenda.define(contest.url+" achievements",async job =>{
+        const c = await Contest.findOne({id:contest.id}).lean().select('leaderboard');
+
+        for(let i=0;i<c.leaderboard.length;i++){
+            const student = await Student.findOneAndUpdate({usn:c.leaderboard[i].usn},{$addToSet:{achievements:{position:i+1,name:contest.name,id:contest.id}}});
+            if(i == 2) break;
+        }
+    });
+
+    (async function() {
+        //await agenda.start();
+        agenda.schedule(ends,contest.url+" achievements");
+        agenda.on(`success:${contest.url} achievements`, async job => {
+            job.remove();
+          });
+    })();
+   
 
     await contest.save();
 
@@ -625,6 +670,7 @@ router.get('/delete/:curl',authenticate,teacher,async (req,res) => {
 
     await Contest.findOneAndDelete({url:req.params.curl}).then(async ()=>{
         await ContestQ.deleteMany({qid:{$in:contest.questions}});
+        await agenda.cancel({name:req.params.curl+" achievements"});
         return res.send("Contest deleted");
     } )
     .catch((err)=>{ winston.error(err);
@@ -976,8 +1022,12 @@ router.get('/:curl/reportDownload',authenticate,teacher,async (req,res)=>{
         const page = await browser.newPage();
         // await page.setContent(html);
         // await page.emulateMedia('screen');
+        let host = 'localhost';
+        if (process.env.NODE_ENV != 'production') {
+            host='localhost:'+req.app.locals.port;
+           }
         await page.setCookie({name:"elab",value:req.headers.cookie.substr(5),domain:"localhost",path:"/"});
-        await page.goto(`http://localhost:4000/contest/${req.params.curl}/report?print=${print}`,{waitUntil:'networkidle0'});
+        await page.goto(`http://${host}/contest/${req.params.curl}/report?print=${print}`,{waitUntil:'networkidle0'});
         await page.pdf({
             // name of your pdf file in directory
 			path: './public/reports/'+req.params.curl+'-report-'+print+'.pdf', 
@@ -1001,7 +1051,7 @@ router.get('/:curl/reportDownload',authenticate,teacher,async (req,res)=>{
                   return winston.error(err);
                 }
                 now = new Date().getTime();
-                endTime = new Date(stat.ctime).getTime() + 6000;
+                endTime = new Date(stat.ctime).getTime() + 180000;
                 if (now > endTime) {
                   return rimraf(path.join(uploadsDir, file), function(err) {
                     if (err) {

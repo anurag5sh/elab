@@ -62,7 +62,13 @@ const studentSchema = new mongoose.Schema({
   lastLogin :{
     type: Date,
     default : null
-  }
+  },
+  achievements:[{
+    position : {type:Number},
+    name:{type:String},
+    id :{type:String},
+    _id:false
+  }]
 
 });
 

@@ -93,7 +93,7 @@ block content
                         .form-group
                             input(type="file", name="csv")
                         .form-group
-                            input.btn.btn-success(type="button", value="Upload", onclick="submitCSV()")
+                            button#csv_process.btn.btn-success(type="button", onclick="submitCSV()", data-loading-text="<i class='fas fa-circle-notch fa-spin'></i> Processing") Upload
 
     .modal.fade#error_csv(tabindex ="-1" role="dialog" )
         .modal-dialog.modal-lg
@@ -104,7 +104,7 @@ block content
                     #ebody
                 .modal-footer
                     button.btn.btn-secondary(type='button' data-dismiss='modal') Close
-    
+       
     script(type='text/javascript').
         $(document).on('change', '#type', function() {
         let target = $(this).data('target');
@@ -142,6 +142,7 @@ block content
                 })
             
         }
+
         function submitCSV(){
              $.ajax({
                 url: '/admin/add/',
@@ -152,11 +153,14 @@ block content
                 processData: false,
                 success: function( data, textStatus, jQxhr ){
                     toastr.success(data);
+                    $('#csv_process').button('reset');
                 },
                 error: function(error){
                     //toastr.error(error.responseText);
+                    $('#csv_process').button('reset');
                     $("#ebody").html(error.responseText);
                     $('#error_csv').modal('show');
+                    
                 }
             });
         }
@@ -168,6 +172,10 @@ block content
                     $("#download").attr("href","/teacher.csv");
                 }
             });
+            $('#csv_process').on('click', function() {
+            $(this).button('loading');
+            });
         });
-                    
+        
+    
                     

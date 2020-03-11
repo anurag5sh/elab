@@ -19,6 +19,7 @@ require('winston-mongodb');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet')
 const fs = require('fs');
+const rateLimiter = require('./middleware/rateLimiter');
 
 //port config
 const port = process.argv[2] || 4000;
@@ -84,6 +85,8 @@ process.on('unhandledRejection',(ex)=>{
   throw(ex);
 });
 
+//rate Limiter
+app.use(rateLimiter);
 
 //middleware
 app.use(session({

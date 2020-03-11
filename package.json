@@ -28,6 +28,7 @@
     "nodemailer": "^6.4.2",
     "pug": "^2.0.4",
     "puppeteer": "^2.1.1",
+    "rate-limiter-flexible": "^2.0.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
     "rimraf": "^3.0.2",

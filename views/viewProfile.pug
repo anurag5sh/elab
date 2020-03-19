@@ -141,7 +141,10 @@ style.
         .col-md-3.col-sm-3.col-xs-12.user-profil-part.pull-left
           .row
             .col-md-12.col-md-12-sm-12.col-xs-12.user-image.text-center
-              img.rounded-circle(src=user.profile_image)
+              -if(user.usn)
+                img.rounded-circle(src=user.profile_image onerror=`this.src='/profileImage/${user.usn}.jpg'`)
+              -else
+                img.rounded-circle(src=user.profile_image)
             .col-md-12.col-sm-12.col-xs-12.user-detail-section1.text-center
               button#btn-contact.btn.btn-success.btn-block.follow #{user.email}
             .row.user-detail-row
@@ -164,8 +167,7 @@ style.
                         i.fas.fa-user-circle
                         |  Details
                     li.nav-item
-                      // <a class="nav-link" href="#buzz" role="tab" data-toggle="tab">Achivements</a>
-                  // Tab panes
+                      
                   br
                   .tab-content
                     #profile.tab-pane.fade.show.active(role='tabpanel')
@@ -200,136 +202,3 @@ style.
                             p 
 footer.bg-dark(class="FOOTER")
   div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBKCE CSE DEPT. 2020
-                  // <div role="tabpanel" class="tab-pane fade" id="buzz">
-                  // <div class="row">
-                  //
-                    <div class="col-md-6">
-                    <label>Experience</label>
-                    </div>
-                    <div class="col-md-6">
-                    <p>Expert</p>
-                    </div>
-                    </div>
-                    <div class="row">
-                    <div class="col-md-6">
-                    <label>Hourly Rate</label>
-                    </div>
-                    <div class="col-md-6">
-                    <p>10$/hr</p>
-                    </div>
-                    </div>
-                    <div class="row">
-                    <div class="col-md-6">
-                    <label>Total Projects</label>
-                    </div>
-                    <div class="col-md-6">
-                    <p>230</p>
-                    </div>
-                    </div>
-                    <div class="row">
-                    <div class="col-md-6">
-                    <label>English Level</label>
-                    </div>
-                    <div class="col-md-6">
-                    <p>Expert</p>
-                    </div>
-                    </div>
-                    <div class="row">
-                    <div class="col-md-6">
-                    <label>Availability</label>
-                    </div>
-                    <div class="col-md-6">
-                    <p>6 months</p>
-                    </div>
-                    </div>
-                    <div class="row">
-                    <div class="col-md-12">
-                    <label>Your Bio</label>
-                    <br/>
-                    <p>Your detail description</p>
-                    </div>
-                  // </div>
-                  // </div>
-              
-
-//- head
-//-   link(rel='stylesheet' type='text/css' href='/assets/css/light.css')
-
-//-   title profile
-//-   style.
-//-     p,.about_me{
-//-       color:black;
-//-       font-size:15px
-//-     }
-//-     label{
-//-       font-weight:bold;
-//-       font-size:18px
-//-     }
-//-     body{
-//-       background-color:#f5f5f0;
-//-     }
-//-   title=user.fname + "'s Profile"
-  
-//- body
-//-   br
-//-   .content(style="color:#9A9A9A;")
-//-     .container-fluid
-//-       .row
-//-         .col-md-8
-//-           .card
-//-             .header
-//-               h4.title(style="margin-top:15px;margin-left:15px;margin-bottom:8px;") Edit Profile
-//-             .content
-//-               form#profile
-//-                 .row
-//-                   .col-md-4
-//-                     .form-group
-//-                       -if(user.usn)
-//-                         label USN
-//-                         input.form-control(type='text' disabled placeholder='' value=user.usn)
-//-                       -else
-//-                         label STAFF ID
-//-                         input.form-control(type='text' disabled placeholder='' value=user.staff_id)
-//-                   .col-md-4
-//-                     .form-group
-//-                       label First Name
-//-                       input.form-control(type='text' disabled placeholder='First Name' value=user.fname)    
-//-                   .col-md-4
-//-                     .form-group
-//-                       label Last Name
-//-                       input.form-control(type='text' disabled placeholder='Last Name' value=user.lname) 
-//-                 .row
-//-                   .col-md-6
-//-                     .form-group
-//-                       label Primary Email
-//-                       input.form-control(type='email' disabled placeholder='' value=user.email)
-//-                 //-   .col-md-6
-//-                 //-     .form-group
-//-                 //-       label(for='exampleInputEmail1') Recovery Email
-//-                 //-       input.form-control(type='email' name="recovery_email" placeholder='Email' value=user.recovery_email)
-//-                 .row
-//-                   .col-md-12
-//-                     .form-group
-//-                       label About Me
-//-                       textarea#about_me.form-control(rows='5' name="about_me" disabled placeholder='Here can be your description') #{user.about_me}
-//-                 //- button.btn.btn-info.btn-fill.pull-right(type='button' id='update-profile') Update Profile
-//-                 .clearfix
-//-         .col-md-4
-//-           .card.card-user
-//-             .image
-//-               //- img(src='https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400' alt='...')
-//-               //- img(src=student.profile_image)
-//-             .content
-//-               .author
-//-                 form(enctype="multipart/form-data" method="post")#img
-//-                   a(href='#')
-//-                     img.avatar.border-gray#image(src=user.profile_image alt='...')
-//-                     input(type='file' accept='image/*' name='profile_image' id='image-upload' style="display:none;")
-//-                   h4.title #{user.fname} #{user.lname}
-//-                     br
-//-                     small #{user.usn}
-//-                   p.description.text-center #{user.about_me}
-//-                 //-   button.btn.btn-info.btn-fill.pull-right(type='button' onclick="javascript:$('#image-upload').click();" id='update-image') Update Image 
-//-             //- button.btn.btn-info.btn-fill.pull-right(type='button' id='update-cover') Update Cover
-//-             hr
-//-             br

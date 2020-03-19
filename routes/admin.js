@@ -278,7 +278,7 @@ router.post('/add', admin,async (req, res, next) => {
         let student = new Student(_.pick(jsonArray[i], ['fname', 'lname','email', 'password','year','usn']));
         const salt = await bcrypt.genSalt(10);
         student.password = await bcrypt.hash(student.password, salt);
-        student.profile_image = '/profileImage/default.png';
+        student.profile_image = '/profileImage/'+student.usn.toUpperCase()+'.jpg';
         studentArray.push(student);
       }
     

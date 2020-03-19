@@ -25,7 +25,7 @@ router.post('/',admin, async (req, res) => {
   student = new Student(_.pick(req.body, ['fname', 'lname', 'email', 'password','year','usn']));
   const salt = await bcrypt.genSalt(10);
   student.password = await bcrypt.hash(student.password, salt);
-  student.profile_image = '/profileImage/default.png';
+  student.profile_image = '/profileImage/default/'+student.usn.toUpperCase()+'.jpg';
   await student.save();
 
 

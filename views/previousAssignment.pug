@@ -134,9 +134,9 @@ block content
                                 button.btn.btn-secondary(type='button' data-dismiss='modal') Close
         .push1
         .push
-    footer.bg-dark(class="FOOTER")
-        div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBKCE CSE DEPT. 2020  
-
+    //- footer.bg-dark(class="FOOTER")
+    //-     div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBKCE CSE DEPT. 2020  
+    include footer
     script.
         $("#previous").change(()=>{
             $("#List").empty().append('<table class="table table-hover" id="list"><thead><tr><th style="width:30px">#</th><th>Question ID</th><th>Name</th><th>Created By</th><th>Difficulty</th><th>View</th></tr></thead></table>');

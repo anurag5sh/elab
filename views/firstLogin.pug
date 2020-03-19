@@ -82,9 +82,7 @@ body
                     .clearfix
         .push1
         .push
-    footer.bg-dark(class="FOOTER")
-        div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBKCE CSE DEPT. 2020
-
+include footer
     script.
         function subNext(){
             $.post('/first',$("#first").serialize(),function (data,status){

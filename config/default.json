@@ -7,5 +7,6 @@
 		"63":"",
 		"54":"#include <iostream>\n\nusing namespace std;\n\nint main() {\n\nreturn 0;\n}",
 		"51":""
-	}	
+	},
+	"no_of_contest_images":12	
 }

@@ -103,7 +103,13 @@ router.get('/viewProfile/:id',authenticate,async (req,res)=>{
       user = await Teacher.findOne({staff_id:req.params.id}).lean();
       if(!user) return res.status(400).send('Invalid ID');
     }
-    return res.render('viewProfile',{user:user});
+    if(req.session.usn){
+      return res.render('viewProfile',{user:user});
+    }
+    else{
+      return res.render('teacher/viewProfile',{user:user});
+    }
+    
 });
 
 //student dashboard
@@ -534,6 +540,11 @@ router.post('/resetPassword/:token', async (req,res)=>{
 
   res.send("Password updated! proceed to login page.");
 
+});
+
+//About ELAB page
+router.get('/about',(req,res)=>{
+  res.render('about');
 });
 
 

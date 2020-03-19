@@ -23,10 +23,10 @@ const fs = require('fs');
 const Agenda = require('agenda');
 
 const mongoConnectionString = 'mongodb://localhost/elab';
-const agenda = new Agenda({db: {address: mongoConnectionString,options:{useUnifiedTopology: true}},processEvery:'30 minutes'});
-( async ()=>{
-    await agenda.start();
-})();
+// const agenda = new Agenda({db: {address: mongoConnectionString,options:{useUnifiedTopology: true}},processEvery:'30 minutes'});
+// ( async ()=>{
+//     await agenda.start();
+// })();
 
 function encode64(string){ //encoding to base64
     const b = new Buffer.from(string);
@@ -177,25 +177,26 @@ router.post('/create',authenticate,teacher, async (req,res)=>{
     contest.timings.starts = starts;
     contest.description = req.body.description;
     contest.createdByName = req.session.fname + " "+ req.session.lname;
-    contest.image="/contestImage/"+Math.floor(Math.random() * 6)+".jpg";
+    no_of_image = config.get('no_of_contest_images');
+    contest.image="/contestImage/"+Math.floor(Math.random() * no_of_image)+".jpg";
 
-    //agenda for achievements
-    agenda.define(contest.name+" achievements",async job =>{
-        const c = await Contest.findOne({id:contest.id}).lean().select('leaderboard');
+    // //agenda for achievements
+    // agenda.define(contest.name+" achievements",async job =>{
+    //     const c = await Contest.findOne({id:contest.id}).lean().select('leaderboard');
 
-        for(let i=0;i<c.leaderboard.length;i++){
-            const student = await Student.findOneAndUpdate({usn:c.leaderboard[i].usn},{$addToSet:{achievements:{position:i+1,name:contest.name,id:contest.id}}});
-            if(i == 2) break;
-        }
-    });
+    //     for(let i=0;i<c.leaderboard.length;i++){
+    //         const student = await Student.findOneAndUpdate({usn:c.leaderboard[i].usn},{$addToSet:{achievements:{position:i+1,name:contest.name,id:contest.id}}});
+    //         if(i == 2) break;
+    //     }
+    // });
 
-    (async function() {
-        await agenda.start();
-        agenda.schedule(ends,contest.url+" achievements");
-        agenda.on(`success:${contest.url} achievements`, async job => {
-            job.remove();
-          });
-    })();
+    // (async function() {
+    //     await agenda.start();
+    //     agenda.schedule(ends,contest.url+" achievements");
+    //     agenda.on(`success:${contest.url} achievements`, async job => {
+    //         job.remove();
+    //       });
+    // })();
 
 
     await contest.save();
@@ -410,24 +411,24 @@ router.post('/manage/:name',authenticate,teacher,async (req,res) =>{
     contest.year = req.body.year || [];
     contest.isReady = (req.body.status == "on"?true:false);
 
-    //editing the agenda
-    await agenda.cancel({name:contest.url+" achievements"});
-    agenda.define(contest.url+" achievements",async job =>{
-        const c = await Contest.findOne({id:contest.id}).lean().select('leaderboard');
+    // //editing the agenda
+    // await agenda.cancel({name:contest.url+" achievements"});
+    // agenda.define(contest.url+" achievements",async job =>{
+    //     const c = await Contest.findOne({id:contest.id}).lean().select('leaderboard');
 
-        for(let i=0;i<c.leaderboard.length;i++){
-            const student = await Student.findOneAndUpdate({usn:c.leaderboard[i].usn},{$addToSet:{achievements:{position:i+1,name:contest.name,id:contest.id}}});
-            if(i == 2) break;
-        }
-    });
+    //     for(let i=0;i<c.leaderboard.length;i++){
+    //         const student = await Student.findOneAndUpdate({usn:c.leaderboard[i].usn},{$addToSet:{achievements:{position:i+1,name:contest.name,id:contest.id}}});
+    //         if(i == 2) break;
+    //     }
+    // });
 
-    (async function() {
-        //await agenda.start();
-        agenda.schedule(ends,contest.url+" achievements");
-        agenda.on(`success:${contest.url} achievements`, async job => {
-            job.remove();
-          });
-    })();
+    // (async function() {
+    //     //await agenda.start();
+    //     agenda.schedule(ends,contest.url+" achievements");
+    //     agenda.on(`success:${contest.url} achievements`, async job => {
+    //         job.remove();
+    //       });
+    // })();
    
 
     await contest.save();
@@ -670,7 +671,7 @@ router.get('/delete/:curl',authenticate,teacher,async (req,res) => {
 
     await Contest.findOneAndDelete({url:req.params.curl}).then(async ()=>{
         await ContestQ.deleteMany({qid:{$in:contest.questions}});
-        await agenda.cancel({name:req.params.curl+" achievements"});
+        //await agenda.cancel({name:req.params.curl+" achievements"});
         return res.send("Contest deleted");
     } )
     .catch((err)=>{ winston.error(err);

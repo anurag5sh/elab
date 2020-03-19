@@ -1,120 +1,132 @@
-doctype html
-html   
-    head
-      meta(name='viewport' content='width=device-width, initial-scale=1.0, shrink-to-fit=no')
-      title About Us
-      link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,400,700')
-      link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css')
-      link(rel='stylesheet', type='text/css', href='/vendor/bootstrap/css/bootstrap.min.css')
-      link(rel="stylesheet", href="/css/about.css")
-      link(rel='stylesheet', type='text/css', href='/fonts/font-awesome-4.7.0/css/font-awesome.min.css')
-style.
+//- extends navbar 
+block append head
+  meta(name='viewport' content='width=device-width, initial-scale=1.0, shrink-to-fit=no')
+  title About Us
+  link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,400,700')
+  link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css')
+  link(rel='stylesheet', type='text/css', href='/vendor/bootstrap/css/bootstrap.min.css')
+  link(rel="stylesheet", href="/css/about.css")
+  link(rel='stylesheet', type='text/css', href='/fonts/font-awesome-4.7.0/css/font-awesome.min.css')
+  link(href="https://fonts.googleapis.com/css?family=Palanquin+Dark:500&display=swap" rel="stylesheet")
+  link(href="https://fonts.googleapis.com/css?family=PT+Sans&display=swap" rel="stylesheet")
+  style.
+    
     .section-header h3 {
-        font-size: 36px;
-        color: #283d50;
-        text-align: center;
-        font-weight: 500;
-        position: relative;
-        margin-top: 20px;
+      font-size: 36px;
+      color: #283d50;
+      text-align: center;
+      font-weight: 500;
+      position: relative;
+      margin-top: 20px;
     }
     .section-header p {
-        text-align: center;
-        margin: auto;
-        font-size: 15px;
-        padding-bottom: 60px;
-        color: #556877;
-        width: 50%;
-        }
-body
-section#about
-  .container
-    header.section-header
-      h3(style='text-align: left;') About Elab
-      a(style='text-align: left;font-size: x-large;')
-        b Elab
-        |  is a competitive programming website,aimed at providing a platform for students to practice,
-        |              hone their programming skills through online contests
-      br
-      br
-    section#services.section-bg
-      .container
-        header.section-header
-          h3 FAQ&apos;s
-          p
-        .row
-          .col-md-6.col-lg-5.offset-lg-1.wow.bounceInUp(data-wow-duration='1.4s')
-            .box
-              h4.title
-                a(href='') How Can i Create an Id ?
-              p.description
-                | You can Ask your Class teacher or Hod For creating ur Account .
-          .col-md-6.col-lg-5.wow.bounceInUp(data-wow-duration='1.4s')
-            .box
-              h4.title
-                a(href='') How Can I Compete ? 
-              p.description
-                | You Can practice Various Questions in practice Section and Paricipate in Various Contest in Contest Section.
-          .col-md-6.col-lg-5.offset-lg-1.wow.bounceInUp(data-wow-delay='0.1s' data-wow-duration='1.4s')
-            .box
-              h4.title
-                a(href='') How do i Recover my Password ?
-              p.description click on forgot password and fill the essential credentials
-          .col-md-6.col-lg-5.wow.bounceInUp(data-wow-delay='0.1s' data-wow-duration='1.4s')
-            .box
-              h4.title
-                a(href='') when can i see correct answer of questions in contest ?
-              p.description After the Contest Ends .
-    section#services.padd
-      h2 Services
-      p.text-muted.down
-        em Various Things you can do .
-      .container
-        .row
-          .col-md-4
-            img.move(src='/images/about1.jpg')
-            h6
-              strong Practice
+      text-align: center;
+      margin: auto;
+      font-size: 15px;
+      padding-bottom: 60px;
+      color: #556877;
+      width: 50%;
+    }
+    .content-center{
+      margin-left:20px!important;
+      margin-right:20px!important;
+    }
+    .lb_heading{
+      font-family:'Palanquin Dark';
+      color:#666666!important;
+      cursor:default;
+      letter-spacing:0.8px
+    }
+block content
+  section#about
+    .container
+      header.section-header
+        h3.lb_heading(style='text-align: left;') About Elab
+        h2(style='text-align:left;font-size: x-large;letter-spacing:0.6px;color:#556877;font-family: PT Sans, sans-serif;')
+          b Elab
+          |  is a competitive programming website, aimed at providing a platform for students to practice,
+          |              hone their programming skills through online contests.
+        br
+        br
+      section#services.section-bg
+        .container
+          header.section-header
+            h3 FAQ&apos;s
             p
-              | Practice everyday to excel in interviews.
-          .col-md-4
-            img.move(src='/images/about2.jpg')
-            h6
-              strong Code
-            p
-              | Explore different programming Languages, solve coding problems, and crack your coding interview
-          .col-md-4
-            img.move(src='/images/about3.jpg')
-            h6
-              strong Compete
-            p
-              | Participate in coding contests.
-              | Comepete , Code Faster and Achieve.
-    section#why-us.wow.fadeIn
-      .container(style='margin-bottom: 10px;')
-        header.section-header
-          h3  Developers
-          br
-        .row.row-eq-height.justify-content-center(style='margin-top: 20px;')
-          .col-lg-4.mb-5
-            .card.wow.bounceInUp
-              i.fa.fa-diamond
-              .card-body
-                br
-                h5.card-title Anurag Sharma
-                p.card-text 1HK17CS024
-          .col-lg-4.mb-5
-            .card.wow.bounceInUp
-              i.fa.fa-language
-              .card-body
-                br
-                h5.card-title Abdul Ghani
-                p.card-text 1HK17CS004
-          .col-lg-4.mb-5
-            .card.wow.bounceInUp
-              .card-body
-                br
-                h5.card-title Himanshu Sekhar Bhuyan
-                p.card-text  1HK17CS054 
-script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js' integrity='sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY' crossorigin='anonymous')
-script(src='https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/js/tether.min.js' integrity='sha384-Plbmg8JY28KFelvJVai01l8WyZzrYWG825m+cZ0eDDS1f7d/js6ikvy1+X+guPIB' crossorigin='anonymous')
-script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.3/js/bootstrap.min.js' integrity='sha384-ux8v3A6CPtOTqOzMKiuo3d/DomGaaClxFYdCu2HPMBEkf6x2xiDyJ7gkXU0MWwaD' crossorigin='anonymous')
+          .row
+            .col-md-6.col-lg-5.offset-lg-1.wow.bounceInUp(style="margin-left:92.5px;" data-wow-duration='1.4s')
+              .box
+                h4.title.content-center
+                  a(href='') How Can i Create an Id ?
+                p.description.content-center
+                  | You can Ask your Class teacher or Hod For creating ur Account.
+            .col-md-6.col-lg-5.wow.bounceInUp(data-wow-duration='1.4s')
+              .box
+                h4.title.content-center
+                  a(href='') How Can I Compete ? 
+                p.description.content-center
+                  | You Can practice Various Questions in practice Section and Paricipate in Various Contest in Contest Section.
+            .col-md-6.col-lg-5.offset-lg-1.wow.bounceInUp( style="margin-left:92.5px;" data-wow-delay='0.1s' data-wow-duration='1.4s')
+              .box
+                h4.title.content-center
+                  a(href='') How do i Recover my Password ?
+                p.description.content-center click on forgot password and fill the essential credentials.
+            .col-md-6.col-lg-5.wow.bounceInUp(data-wow-delay='0.1s' data-wow-duration='1.4s')
+              .box
+                h4.title.content-center
+                  a(href='') When can i see correct answer of questions in contest ?
+                p.description.content-center After the Contest Ends.
+      section#services.padd
+        h2 Services
+        p.text-muted.down
+          em Various Things you can do .
+        .container
+          .row
+            .col-md-4
+              img.move.img-fluid(style = "width:200px;height:150px;border-radius:0px" src='/images/about1.png')
+              h5
+                strong Practice
+              p
+                | Practice everyday to excel in interviews.
+            .col-md-4
+              img.move.img-fluid(style = "width:200px;height:150px;border-radius:0px" src='/images/about2.png')
+              h5
+                strong Code
+              p
+                | Explore different programming Languages, solve coding problems and crack your coding interview.
+            .col-md-4
+              img.move.img-fluid(style = "width:160px;height:150px;border-radius:0px" src='/images/about3.png')
+              h5
+                strong Compete
+              p
+                | Participate in coding contests.
+                | Comepete , Code Faster and Achieve.
+      section#why-us.wow.fadeIn
+        .container(style='margin-bottom: 10px;')
+          header.section-header
+            h3  Developers
+            br
+          .row.row-eq-height.justify-content-center(style='margin-top: 20px;')
+            .col-lg-4.mb-5
+              .card.wow.bounceInUp
+                
+                .card-body
+                  br
+                  h5.card-title Anurag Sharma
+                  p.card-text 1HK17CS024
+            .col-lg-4.mb-5
+              .card.wow.bounceInUp
+                
+                .card-body
+                  br
+                  h5.card-title Abdul Ghani
+                  p.card-text 1HK17CS004
+            .col-lg-4.mb-5
+              .card.wow.bounceInUp
+                .card-body
+                  br
+                  h5.card-title Himanshu Sekhar Bhuyan
+                  p.card-text  1HK17CS054 
+  script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js' integrity='sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY' crossorigin='anonymous')
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/js/tether.min.js' integrity='sha384-Plbmg8JY28KFelvJVai01l8WyZzrYWG825m+cZ0eDDS1f7d/js6ikvy1+X+guPIB' crossorigin='anonymous')
+  script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.3/js/bootstrap.min.js' integrity='sha384-ux8v3A6CPtOTqOzMKiuo3d/DomGaaClxFYdCu2HPMBEkf6x2xiDyJ7gkXU0MWwaD' crossorigin='anonymous')

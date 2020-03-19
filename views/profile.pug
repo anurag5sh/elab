@@ -2,7 +2,7 @@ extends navbar
 block append head
   link(rel='stylesheet' type='text/css' href='assets/css/light.css')
 
-  title profile
+  title=student.fname+"'s Profile"
   style.
     body{
       background-color:#f5f5f0;
@@ -51,7 +51,7 @@ block content
                     .col-md-12
                       .form-group
                         label About Me
-                        textarea#about_me.form-control(rows='5' name="about_me" placeholder='Here can be your description')
+                        textarea#about_me.form-control(rows='5' name="about_me" placeholder='Tell something about yourself...')
                   button.btn.btn-info.btn-fill.pull-right(type='button' id='update-profile') Update Profile
                   .clearfix
           .col-md-5
@@ -63,7 +63,7 @@ block content
                 .author
                   form(enctype="multipart/form-data" method="post")#img
                     a(href='#')
-                      img.avatar.border-gray#image(src=student.profile_image alt='...')
+                      img.avatar.border-gray#image(src=student.profile_image onerror=`this.src='/profileImage/${student.usn}.jpg'`)
                       input(type='file' accept='image/*' name='profile_image' id='image-upload' style="display:none;")
                     h4.title #{student.fname} #{student.lname}
                       br

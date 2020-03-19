@@ -22,7 +22,7 @@ const fs = require('fs');
 const multer = require('multer');
 let storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './public/profileImage')
+    cb(null, './public/profileImage/new/')
   },
   filename: function (req, file, cb) {
     let file_name = file.originalname.split('.');
@@ -50,9 +50,13 @@ let storage = multer.diskStorage({
         
         if(user.profile_image != '/profileImage/default.png' ){
           const fileName = user.profile_image.split('.');
-          fs.unlink('./public/profileImage/'+ old_file + '.' + fileName[1] ,(err) => {
-            if (err) { 
-              winston.error(err);
+          fs.access('./public/profileImage/new/'+ old_file + '.' + fileName[1], fs.F_OK, (err) => {
+            if(!err){
+              fs.unlink('./public/profileImage/new/'+ old_file + '.' + fileName[1] ,(err) => {
+                if (err) { 
+                  winston.error(err);
+                }
+              });
             }
           });
         }
@@ -141,7 +145,7 @@ router.get('/profile', authenticate,async function(req,res){
   res.render('teacher/profile',{teacher:teacher});
   }
   else{
-    const student = await Student.findOne({ usn: req.session.usn }).lean().select('usn fname lname email recovery_email about_me profile_image');
+    const student = await Student.findOne({ usn: req.session.usn }).lean().select('usn fname lname email year recovery_email about_me profile_image');
   if(!student){
     return res.status(400).end();
   }
@@ -257,7 +261,7 @@ router.post('/uploadImage',authenticate,async (req,res,next)=> {
     if(req.file){
       const ext = req.file.originalname.split('.');
       const new_file_name = old_file;
-      user.profile_image = '/profileImage/' + new_file_name + '.' + ext[1];
+      user.profile_image = '/profileImage/new/' + new_file_name + '.' + ext[1];
         await user.save();
       
       return res.send("Profile Photo Updated");
@@ -363,7 +367,7 @@ router.post('/', async (req, res) => {
 
   res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
 
-  let student = await Student.findOne({ email: req.body.email }).select('fname lname password usn year active lastLogin recovery_email ');
+  let student = await Student.findOne({ $or : [{email: req.body.id},{usn:req.body.id}] }).select('fname lname password usn year active lastLogin recovery_email ');
   if (student){
     const validPassword = await bcrypt.compare(req.body.password, student.password);
     if (!validPassword) return res.status(400).send("Invalid Email or Password.");
@@ -390,7 +394,7 @@ router.post('/', async (req, res) => {
     return res.send('/dashboard');
   }
 
-  let teacher = await Teacher.findOne({ email: req.body.email }).select('fname lname password staff_id isAdmin active lastLogin recovery_email profile_image');
+  let teacher = await Teacher.findOne({email: req.body.id}).select('fname lname password staff_id isAdmin active lastLogin recovery_email profile_image');
   if (!teacher) return res.status(400).send("Invalid Email or Password.");
 
   const validPassword = await bcrypt.compare(req.body.password, teacher.password);
@@ -430,7 +434,7 @@ router.post('/', async (req, res) => {
 
 function validate(req) {
   const schema = Joi.object({
-    email: Joi.string().min(5).max(255).required().email(),
+    id: Joi.string().min(5).max(255).required(),
     password: Joi.string().min(5).max(255).required(),
     
   });

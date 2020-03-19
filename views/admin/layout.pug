@@ -45,7 +45,7 @@ html(lang='en')
             .image
               img.img-circle.elevation-2(src=session.profile_image alt='User Image')
             .info
-              a.d-block(href='#') Admin
+              a.d-block(href='/profile') #{session.fname}
           //-  Sidebar Menu 
           nav.mt-2
             ul.nav.nav-pills.nav-sidebar.flex-column(data-widget='treeview' role='menu' data-accordion='false')

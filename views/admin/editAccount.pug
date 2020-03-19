@@ -289,7 +289,7 @@ block content
         function deleteAccount(){
             $.get('/admin/delete/student/'+$("#delID").text(),function(data,status){
                 toastr.success(data);
-                $('#type').val('student').change();
+                $('#year').change();
             }).fail((err)=>{
                 toastr.error(err.responseText);
             });

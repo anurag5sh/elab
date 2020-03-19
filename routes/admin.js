@@ -274,7 +274,7 @@ router.post('/add', admin,async (req, res, next) => {
 
         const { error } = validate(jsonArray[i]); 
         if (error) return res.status(400).send(error.message + " at column index="+ i+2);
-
+        if(jsonArray[i].lname=='') jsonArray[i].lname=" ";
         let student = new Student(_.pick(jsonArray[i], ['fname', 'lname','email', 'password','year','usn']));
         const salt = await bcrypt.genSalt(10);
         student.password = await bcrypt.hash(student.password, salt);
@@ -298,7 +298,7 @@ router.post('/add', admin,async (req, res, next) => {
         for(let i=0;i<jsonArray.length;i++){
         const { error } = validateTeacher(jsonArray[i]); 
         if (error) return res.status(400).send(error.message + " at column index="+ i+2);
-
+        if(jsonArray[i].lname=='') jsonArray[i].lname=" ";
         let teacher = new Teacher(_.pick(jsonArray[i], ['fname', 'lname','email', 'password','staff_id']));
         const salt = await bcrypt.genSalt(10);
         teacher.password = await bcrypt.hash(teacher.password, salt);

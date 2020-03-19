@@ -22,6 +22,8 @@ router.post('/',admin, async (req, res) => {
   let student = await Student.findOne({ email: req.body.email });
   if (student) return res.status(400).send('Student already registered.');
 
+  if(!req.body.lname) req.body.lname=" ";
+
   student = new Student(_.pick(req.body, ['fname', 'lname', 'email', 'password','year','usn']));
   const salt = await bcrypt.genSalt(10);
   student.password = await bcrypt.hash(student.password, salt);
@@ -39,6 +41,8 @@ router.post('/',admin, async (req, res) => {
 
   let teacher = await Teacher.findOne({ email: req.body.email });
   if (teacher) return res.status(400).send('Teacher already registered.');
+
+  if(!req.body.lname) req.body.lname=" ";
 
   teacher = new Teacher(_.pick(req.body, ['fname', 'lname','email', 'password','staff_id']));
   const salt = await bcrypt.genSalt(10);

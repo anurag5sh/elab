@@ -11,9 +11,9 @@ const teacherSchema = new mongoose.Schema({
   },
   lname: {
     type: String,
-    required: true,
     minlength: 1,
-    maxlength: 25
+    maxlength: 25,
+    default:" "
   },
   email: {
     type: String,
@@ -74,7 +74,7 @@ const Teacher = mongoose.model('Teacher', teacherSchema);
 function validateTeacher(user) {
   const schema = Joi.object({
     fname: Joi.string().min(3).max(25).required(),
-    lname: Joi.string().min(1).max(25).required(),
+    lname: Joi.string().min(1).max(25).allow(''),
     email: Joi.string().min(3).max(255).required().email(),
     password: Joi.string().min(5).max(255).required(),
     type: Joi.string(),

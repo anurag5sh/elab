@@ -6,13 +6,13 @@ const studentSchema = new mongoose.Schema({
   fname: {
     type: String,
     required: true,
-    minlength: 3,
-    maxlength: 25
+    minlength: 1,
+    maxlength: 30
   },
   lname: {
     type: String,
     minlength: 1,
-    maxlength: 25,
+    maxlength: 30,
     default:" "
   },
   email: {
@@ -77,8 +77,8 @@ const Student = mongoose.model('Student', studentSchema);
 
 function validateUser(user) {
   const schema = Joi.object({
-    fname: Joi.string().min(3).max(25).required(),
-    lname: Joi.string().min(1).max(25).allow(''),
+    fname: Joi.string().min(1).max(30).required(),
+    lname: Joi.string().min(1).max(30).allow(''),
     email: Joi.string().min(3).max(255).required().email(),
     password: Joi.string().min(5).max(255).required(),
     type: Joi.string(),

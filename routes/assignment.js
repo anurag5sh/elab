@@ -112,8 +112,8 @@ router.get('/previous/list/:id',authenticate,async (req,res)=>{
 
 //leaderboard for students
 router.get('/leaderboard',authenticate,async (req,res)=>{
-    const assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).lean().select('leaderboard');
-    if(!assignment) return res.status(404).end();
+    let assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).lean().select('leaderboard');
+    if(!assignment) assignment={leaderboard:[]}
 
     res.render('leaderboardAssignment',{assignment:assignment});
 });

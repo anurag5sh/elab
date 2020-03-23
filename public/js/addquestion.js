@@ -83,6 +83,10 @@ $(document).ready(function() {
   });
 
   function submitFormAdd(){ 
+        if(!(document.getElementById('lang1').checked == true ||document.getElementById('lang2').checked == true || document.getElementById('lang3').checked == true ||document.getElementById('lang4').checked == true || document.getElementById('lang5').checked == true || document.getElementById('lang6').checked == true ) ){
+            alert("Select atleast one language");
+            return false;
+        }
       function isQuillEmpty(quill) {
       if ((quill.getContents()['ops'] || []).length !== 1) { return false }
       return quill.getText().trim().length === 0
@@ -279,6 +283,10 @@ $(document).ready(function() {
     
 });
 function editForm(){
+    if(!(document.getElementById('lang1').checked == true ||document.getElementById('lang2').checked == true || document.getElementById('lang3').checked == true ||document.getElementById('lang4').checked == true || document.getElementById('lang5').checked == true || document.getElementById('lang6').checked == true ) ){
+        alert("Select atleast one language");
+        return false;
+    }
     const qid = document.getElementById('qid').value;
 $("#es_edit").val(encodeURIComponent(JSON.stringify(editor_edit.getContents())));
 $.ajax({

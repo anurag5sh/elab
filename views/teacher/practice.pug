@@ -20,6 +20,8 @@ block append head
     script(src="/js/typewriter.js")
     link(rel="stylesheet", href="/fontawesome/all.min.css")
     script(src="/fontawesome/all.min.js")
+    link(rel="stylesheet", href="/css/nice-select.css")
+    script(src="/js/jquery.nice-select.min.js")
 
     script.  
         hljs.configure({   
@@ -55,6 +57,14 @@ block append head
       .editor-right:hover{
             /*color:#1E88E5;*/
             cursor:pointer;
+        }
+        .lang{
+            color:#595959;
+        }
+        .lang:hover{
+            color:black;
+            font-weight:bold;
+            text-decoration:none;
         }
 block content
     .WRAPPER
@@ -127,6 +137,40 @@ block content
                                                             option(value='Easy') Easy
                                                             option(value='Medium') Medium
                                                             option(value='Hard') Hard
+                                            tr
+                                                td
+                                                    label(for='') Language:
+                                                td
+                                                    .button-group(style="")
+                                                        button.btn.btn-default.btn-sm.dropdown-toggle(style="border:1px solid #ced4da;" type='button' data-toggle='dropdown')
+                                                            span.fad.fa-cog.fa-2x
+                                                            span.caret
+                                                        ul.dropdown-menu(style="padding-left:15px;")
+                                                            li
+                                                                a.lang(href='#' data-value='option1' tabindex='-1')
+                                                                input#lang1(name="languages" type='checkbox' value="50" checked)
+                                                                | &nbsp;C
+                                                            li
+                                                                a.lang(href='#' data-value='option2' tabindex='-1')
+                                                                input#lang2(name="languages" type='checkbox' value="54" checked)
+                                                                | &nbsp;C++
+                                                            li
+                                                                a.lang(href='#' data-value='option3' tabindex='-1')
+                                                                input#lang3(name="languages" type='checkbox' value="51" checked)
+                                                                | &nbsp;C#
+                                                            li
+                                                                a.lang(href='#' data-value='option4' tabindex='-1')
+                                                                input#lang4(name="languages" type='checkbox' value="71" checked)
+                                                                | &nbsp;Python
+                                                            li
+                                                                a.lang(href='#' data-value='option5' tabindex='-1')
+                                                                input#lang5(name="languages" type='checkbox' value="62" checked)
+                                                                | &nbsp;Java
+                                                            li
+                                                                a.lang(href='#' data-value='option6' tabindex='-1')
+                                                                input#lang6(name="languages" type='checkbox' value="63" checked)
+                                                                | &nbsp;Javascript
+
                                             tr
                                                 td
                                                     label(for='description') Description:
@@ -233,6 +277,40 @@ block content
                                                             option(value='Easy') Easy
                                                             option(value='Medium') Medium
                                                             option(value='Hard') Hard
+                                            tr
+                                                td
+                                                    label(for='') Language:
+                                                td
+                                                    .button-group(style="")
+                                                        button.btn.btn-default.btn-sm.dropdown-toggle(style="border:1px solid #ced4da;" type='button' data-toggle='dropdown')
+                                                            span.fad.fa-cog.fa-2x
+                                                            span.caret
+                                                        ul.dropdown-menu(style="padding-left:15px;")
+                                                            li
+                                                                a.lang(href='#' data-value='option1' tabindex='-1')
+                                                                input#lang1(name="languages" type='checkbox' value="50" checked)
+                                                                | &nbsp;C
+                                                            li
+                                                                a.lang(href='#' data-value='option2' tabindex='-1')
+                                                                input#lang2(name="languages" type='checkbox' value="54" checked)
+                                                                | &nbsp;C++
+                                                            li
+                                                                a.lang(href='#' data-value='option3' tabindex='-1')
+                                                                input#lang3(name="languages" type='checkbox' value="51" checked)
+                                                                | &nbsp;C#
+                                                            li
+                                                                a.lang(href='#' data-value='option4' tabindex='-1')
+                                                                input#lang4(name="languages" type='checkbox' value="71" checked)
+                                                                | &nbsp;Python
+                                                            li
+                                                                a.lang(href='#' data-value='option5' tabindex='-1')
+                                                                input#lang5(name="languages" type='checkbox' value="62" checked)
+                                                                | &nbsp;Java
+                                                            li
+                                                                a.lang(href='#' data-value='option6' tabindex='-1')
+                                                                input#lang6(name="languages" type='checkbox' value="63" checked)
+                                                                | &nbsp;Javascript
+
                                             tr
                                                 td
                                                     label(for='description-e') Description:
@@ -353,6 +431,11 @@ block content
                 }
             })
 
+            $(document).ready(function() {
+            $('#difficult-e,#difficult,#languageCode').niceSelect();
+            
+            });
+
             $("#delete").on('show.bs.modal',function(e){ $("#dbody").empty();
                 $("#dbody").html($(e.relatedTarget).data('name'));
                 $("#qid").text($(e.relatedTarget).data('qid'));
@@ -366,3 +449,27 @@ block content
                     toastr.error(err.responseText);
                 })
             }
+            //language select
+            var options = [];
+
+            $( '.dropdown-menu a' ).on( 'click', function( event ) {
+
+                var $target = $( event.currentTarget ),
+                    val = $target.attr( 'data-value' ),
+                    $inp = $target.find( 'input' ),
+                    idx;
+
+                if ( ( idx = options.indexOf( val ) ) > -1 ) {
+                    options.splice( idx, 1 );
+                    setTimeout( function() { $inp.prop( 'checked', false ) }, 0);
+                } else {
+                    options.push( val );
+                    setTimeout( function() { $inp.prop( 'checked', true ) }, 0);
+                }
+
+                $( event.target ).blur();
+                    
+                console.log( options );
+                return false;
+            });
+            //end of language select

@@ -95,7 +95,7 @@ block content
                 const d = data.ends;
                 $("#ends").text("Ends on : "+ d.substr(0,d.indexOf("GMT")));
                 data.questions.forEach((item,index)=>{
-                    $("#quesList").append('<div class="col-md-6 col-lg-4"><div class="project-card-no-image"><h5>'+item.name+'</h5><a class="btn1 btn1-outline-primary btn1-sm" role="button" href="/assignment/'+item.qid+'">VIEW</a></div></div>');
+                    $("#quesList").append('<div class="col-md-6 col-lg-4"><div class="project-card-no-image"><h5>'+item.name+'</h5><a class="btn1 btn1-outline-primary btn1-sm" target="_blank" role="button" href="/assignment/'+item.qid+'">VIEW</a></div></div>');
                 });
 
                 let pagi = '<nav aria-label="..."><ul class="pagination pagination-sm justify-content-center"><li class="page-item '+(data.page==1?'disabled':'') +'"><a class="page-link" href="javascript:getQ('+(data.page-1)+')" '+(data.page==1?'aria-disabled="true"':'')+'>Previous</a></li>';

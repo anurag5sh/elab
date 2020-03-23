@@ -100,8 +100,13 @@ router.get('/',async (req,res,next)=>{
 router.get('/viewProfile/:id',authenticate,async (req,res)=>{
     let user = await Student.findOne({usn:req.params.id}).lean();
     if(!user) {
+      try{
       user = await Teacher.findOne({staff_id:req.params.id}).lean();
       if(!user) return res.status(400).send('Invalid ID');
+      }
+      catch(err){
+        return res.status(400).send('Invalid ID');
+      }
     }
     if(req.session.usn){
       return res.render('viewProfile',{user:user});

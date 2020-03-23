@@ -229,10 +229,16 @@ router.get('/source/:qid',authenticate,async (req,res) =>{
             if(index != -1)
             source = [req.session.assignment[index]];
             else{
-                source=[{sourceCode:config.get(`source.${req.query.lang}`)}];
+                if(config.has(`source.${req.query.lang}`)){
+                sC = config.get(`source.${req.query.lang}`);
+                }
+                source=[{sourceCode:sC}];
             }
-        }else{
-            source=[{sourceCode:config.get(`source.${req.query.lang}`)}];
+        }else{ let sC="";
+            if(config.has(`source.${req.query.lang}`)){
+                sC = config.get(`source.${req.query.lang}`);
+            }
+            source=[{sourceCode:sC}];
         }
         return res.send(source);
     }
@@ -249,8 +255,11 @@ router.get('/source/:qid',authenticate,async (req,res) =>{
             if(index != -1)
             source = source.concat(req.session.assignment[index])
         }
-        if(source.length == 0){
-            source=[{sourceCode:config.get(`source.${req.query.lang}`)}];
+        if(source.length == 0){ let sC="";
+            if(config.has(`source.${req.query.lang}`)){
+                sC = config.get(`source.${req.query.lang}`);
+            }
+            source=[{sourceCode:sC}];
             return res.send(source);
         }
     }
@@ -366,6 +375,12 @@ router.post('/add',authenticate,teacher,async (req,res) => {
 
     question.explanation= req.body.explanation;
     question.qid = moment().format('DDMMYY') + "Q" + count;
+    if(Array.isArray(req.body.languages)){
+        question.languages = req.body.languages;
+      }
+      else{
+        question.languages=[req.body.languages];
+      }
     await question.save();
 
     res.status(200).send("Question added successfully");
@@ -480,7 +495,10 @@ router.post('/:qid',authenticate,async (req,res)=>{
   if(req.body.source.substr(req.body.source.length-18) == "undefinedundefined")
   req.body.source = req.body.source.substr(0,req.body.source.length-18);
   else
-  return res.status(400).send("Unauthorized");
+  return res.status(401).send("Unauthorized");
+  if(!question.languages.includes(req.body.language.toString()))
+  return res.status(400).send("Not permitted to submit in this language!");
+    
     if(req.body.source.trim()=='')
     return res.send("Source Code cannot be empty!");
 
@@ -835,6 +853,12 @@ router.post('/edit/:id/:qid',authenticate,teacher,async (req,res) =>{
     }
 
     question.explanation= req.body.explanation;
+    if(Array.isArray(req.body.languages)){
+        question.languages = req.body.languages;
+      }
+      else{
+        question.languages=[req.body.languages];
+      }
     await question.save();
 
     res.send("Changes Saved Successfully.");

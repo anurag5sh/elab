@@ -210,7 +210,12 @@ body
       .col-lg-5.col-md-2(style='margin-top:23px;align-items: initial;')
         .box
           #countdown-wrap(style='width: 60%;margin:auto;  margin-bottom: 25px;')
-            -if(contest.timings.ends > new Date())
+            -if(contest.timings.starts > new Date())
+              .text-center
+                h4 Contest starts on
+                br
+                p=moment(contest.timings.starts).format('MMMM Do YYYY, hh:mm a')
+            -else if(contest.timings.ends > new Date())
               #goal
                 i.fal.fa-hourglass-half.fa-lg.fa-spin
                 | &nbsp; 

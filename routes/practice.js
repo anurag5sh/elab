@@ -71,8 +71,11 @@ router.get('/source/:qid',authenticate,async (req,res)=>{
        temp = req.session.practice.find(i => i.usn == req.session.staff_id && i.lang==req.query.lang);
     }
     if(temp) return res.send(temp.sourceCode);
-    else {
-      const source=config.get(`source.${req.query.lang}`);
+    else { let sC="";
+      if(config.has(`source.${req.query.lang}`)){
+        sC = config.get(`source.${req.query.lang}`);
+      }
+      const source=sC;
       return res.send(source);
     }
   }
@@ -85,8 +88,11 @@ router.get('/source/:qid',authenticate,async (req,res)=>{
   if(req.session.practice){
     temp = req.session.practice.find(i => i.usn == req.session.usn && i.lang==req.query.lang);
   }
-  if(!source) {
-    source=config.get(`source.${req.query.lang}`);
+  if(!source) { let sC="";
+    if(config.has(`source.${req.query.lang}`)){
+      sC = config.get(`source.${req.query.lang}`);
+    }
+    source=sC;
     if(temp) source = temp.sourceCode;
     return res.send(source);
   }
@@ -135,11 +141,11 @@ router.get('/:qid', authenticate, async (req,res)=>{
   if(!question) return res.send("Question not found!!");
 
   if(req.session.staff_id){
-    res.render('teacher/editor', {question : _.pick(question,['qid','name','difficulty','createdByName','statement','constraints', 'input_format','output_format','sample_cases','difficulty','description'])});
+    res.render('teacher/editor', {question : _.pick(question,['qid','name','difficulty','createdByName','statement','constraints', 'input_format','output_format','sample_cases','difficulty','description','languages'])});
 
   }
   else{
-    res.render('editor', {question : _.pick(question,['name','statement','difficulty','createdByName','constraints', 'input_format','output_format','sample_cases','qid','difficulty','description'])});
+    res.render('editor', {question : _.pick(question,['name','statement','difficulty','createdByName','constraints', 'input_format','output_format','sample_cases','qid','difficulty','description','languages'])});
 
   }
 });
@@ -201,6 +207,8 @@ router.post('/:qid',authenticate,async (req,res) => {
   req.body.source = req.body.source.substr(0,req.body.source.length-18);
   else
   return res.status(400).send("Unauthorized");
+  if(!question.languages.includes(req.body.language.toString()))
+    return res.status(400).send("Not permitted to submit in this language!");
 
   if(req.body.source.trim()=='')
   return res.send("Source Code cannot be empty!");
@@ -327,6 +335,13 @@ router.post('/',authenticate,teacher,async (req,res)=>{
           question.test_cases.push({input:req.body.i_testcase1, output:req.body.o_testcase1,points:req.body.points});
       }
       question.explanation= req.body.explanation;
+
+      if(Array.isArray(req.body.languages)){
+        question.languages = req.body.languages;
+      }
+      else{
+        question.languages.push(req.body.languages)
+      }
     await question.save();
 
     res.send("Question Added");
@@ -379,6 +394,12 @@ router.post('/edit/:qid',authenticate,teacher,async (req,res)=>{
           question.test_cases.push({input:req.body.i_testcase1, output:req.body.o_testcase1,points:req.body.points});
       }
       question.explanation= req.body.explanation;
+      if(Array.isArray(req.body.languages)){
+        question.languages = req.body.languages;
+      }
+      else{
+        question.languages=[req.body.languages]
+      }
     await question.save().then(()=>{
       res.send("Question saved.")
     })

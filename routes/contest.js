@@ -500,6 +500,12 @@ router.post('/add/:cname',authenticate,teacher,async (req,res) => {
 
     question.explanation= req.body.explanation;
     question.qid =date + (++count);
+    if(Array.isArray(req.body.languages)){
+        question.languages = req.body.languages;
+      }
+      else{
+        question.languages=[req.body.languages];
+      }
     await question.save();
 
     contest.questions.push(question.qid);
@@ -658,6 +664,12 @@ router.post('/edit/:curl/:qid',authenticate,teacher,async (req,res)=>{
     }
 
     question.explanation= req.body.explanation;
+    if(Array.isArray(req.body.languages)){
+        question.languages = req.body.languages;
+      }
+      else{
+        question.languages=[req.body.languages];
+      }
     await question.save();
 
     res.send("Changes Saved Successfully.");
@@ -735,8 +747,11 @@ router.get('/source/:curl/:qid',authenticate,contestAuth,async (req,res) =>{
             if(index != -1)
             source = source.concat(req.session.contest[index])
         }
-        if(source.length == 0){
-            source=[{sourceCode:config.get(`source.${req.query.lang}`)}];
+        if(source.length == 0){ let sC=""
+            if(config.has(`source.${req.query.lang}`)){
+                sC = config.get(`source.${req.query.lang}`);
+            }
+            source=[{sourceCode:sC}];
             return res.send(source);
         }
     }
@@ -1125,7 +1140,7 @@ res.render('teacher/reports',{contest:contest,stats:stats,questionNo:questionNo,
 
 //viewing question
 router.get('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
-    let contest = await Contest.findOne({url:req.params.curl}).lean().select('questions name url timings');
+    let contest = await Contest.findOne({url:req.params.curl}).lean().select('questions name url timings createdBy');
     if(!contest) return res.status(404).end();
     
     if(!(contest.createdBy == req.session.staff_id || req.session.isAdmin || contest.timings.starts < new Date()))
@@ -1138,7 +1153,7 @@ router.get('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
         return res.status(404).end();
     });
     
-    return res.render('editorContest',{question : _.pick(question,['name','qid','statement','constraints', 'input_format','output_format','sample_cases','explanation','difficulty','description']),contest:contest})
+    return res.render('editorContest',{question : _.pick(question,['name','qid','statement','constraints', 'input_format','output_format','sample_cases','explanation','difficulty','description','languages']),contest:contest})
 
 
 });
@@ -1158,27 +1173,30 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
         res.status(404).end();
     });
 
-if(contest.createdBy == req.session.staff_id || req.session.isAdmin ){}
-else if(contest.timings.starts > new Date())
-{
-    return res.status(401).send("Cannot submit to this contest.");
-}
+    if(contest.createdBy == req.session.staff_id || req.session.isAdmin ){}
+    else if(contest.timings.starts > new Date())
+    {
+        return res.status(401).send("Cannot submit to this contest.");
+    }
 
-if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
-    if(contest.custom_staff_id.includes(req.session.staff_id.toString())){}
-    else
-        return res.status(400).send("Not authorized to make a submission!");
-}
+    if(req.session.staff_id && req.session.staff_id!=contest.createdBy){
+        if(contest.custom_staff_id.includes(req.session.staff_id.toString())){}
+        else
+            return res.status(400).send("Not authorized to make a submission!");
+    }
   const testcase = question.test_cases;
   let question_points = 0;
   testcase.forEach((item,index) =>{
     question_points +=item.points;
   });
 
+  //Checking for unauthorized submissions
   if(req.body.source.substr(req.body.source.length-18) == "undefinedundefined")
   req.body.source = req.body.source.substr(0,req.body.source.length-18);
   else
-  return res.status(400).send("Unauthorized");
+  return res.status(401).send("Unauthorized");
+  if(!question.languages.includes(req.body.language.toString()))
+    return res.status(400).send("Not permitted to submit in this language!");
 
   if(req.body.source.trim()=='')
   return res.send("Source Code cannot be empty!");

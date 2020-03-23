@@ -75,7 +75,11 @@ const practiceSchema = new mongoose.Schema({
         status:{type:String},
         points:{type: Number,default:0},
         _id : false
-      }]
+      }],
+    languages:{
+    type:[String],
+    default:[]
+    }
     
 });
 
@@ -96,7 +100,8 @@ function validatePractise(question)
         explanation: Joi.string().required(),
         points:[Joi.number(),Joi.array().items(Joi.number())],
         difficulty:Joi.string().valid('Easy','Medium','Hard').required(),
-        description:Joi.string().required()
+        description:Joi.string().required(),
+        languages:[Joi.string(),Joi.array().items(Joi.string())]
     });
 
     return schema.validate(question,{escapeHtml:true});

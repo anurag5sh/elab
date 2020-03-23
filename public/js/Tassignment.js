@@ -331,6 +331,11 @@ $(document).ready(function() {
                     $("#eo_testcase"+(i+1)).val(data.test_cases[i].output);
                     $("#epoints"+(i+1)).val(data.test_cases[i].points);
                 }
+                $.each(data.languages, function(i, val){
+
+                    $("input[value='" + val + "']").prop('checked', true);
+                 
+                 });
     
             });    
     
@@ -342,6 +347,7 @@ $(document).ready(function() {
                 $("#dbody").append("<p>"+e.relatedTarget.dataset.name+"</p><p style='display:none;' id='del_qid'>"+e.relatedTarget.dataset.id+"</p>");
     
             });
+            
     
             
         });

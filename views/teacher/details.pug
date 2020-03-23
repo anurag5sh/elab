@@ -4,9 +4,9 @@ html
     script(src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js")
     script(src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js")
     link(rel="stylesheet", href="https://use.fontawesome.com/releases/v5.7.0/css/all.css")
-    link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css")
-    link(rel="stylesheet", href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css")
-    script(src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js")
+    //-link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/font-awesome/css/font-awesome.min.css")
+    link(rel="stylesheet", href="/css/bootstrap4-toggle.min.css")
+    script(src="/js/bootstrap4-toggle.min.js")
     style.
       * {
       box-sizing: border-box;
@@ -95,7 +95,7 @@ html
           br
           br
           label.fontStyle.font-weight-bold(style = "margin-left:10px;") Status:&nbsp;&nbsp;&nbsp;
-          input.fontStyle#status(type="checkbox" checked=contest.isReady data-toggle="toggle" data-on="Ready" data-off="Not Ready" data-onstyle="success" data-offstyle="danger" name ="status" )
+          input.fontStyle#status(type="checkbox" checked=contest.isReady data-toggle="toggle" data-on="Ready" data-off="Not Ready" data-onstyle="success" data-offstyle="danger" name ="status" data-width="120")
           br
           div(class="foot")
             btn.btn.btn-labeled.btn-success#btn-submit(role='submit' style="cursor:pointer" )

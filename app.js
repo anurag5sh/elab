@@ -50,9 +50,11 @@ mongoose.connect('mongodb://localhost/elab').then(() => {
 }
 connectWithRetry();
 
+//PugJS config
 app.use(express.static('public'));
 app.set('view engine', 'pug');
 app.set('views',__dirname+"/views");
+app.locals.moment = require('moment');
 
 app.use(helmet());
 app.use(function(req, res, next) {

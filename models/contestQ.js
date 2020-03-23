@@ -69,8 +69,11 @@ const contestQSchema = new mongoose.Schema({
         language:{type:String},
         sourceCode:{type:String},
         _id:false
+    },
+    languages:{
+        type:[String],
+        default:[]
     }
-    
 });
 
 const ContestQ = mongoose.model('ContestQ',contestQSchema);
@@ -90,7 +93,8 @@ function validateCQ(question)
         explanation: Joi.string().required(),
         points : [Joi.number(),Joi.array().items(Joi.number())],
         difficulty:Joi.string().valid('Easy','Medium','Hard').required(),
-        description:Joi.string().required()
+        description:Joi.string().required(),
+        languages:[Joi.string(),Joi.array().items(Joi.string())]
         
     });
 

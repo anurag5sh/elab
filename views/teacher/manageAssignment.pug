@@ -43,6 +43,10 @@ block append head
         font-weight:bold;
         text-decoration:none;
       }
+      input[type=checkbox]:checked + label{
+        font-weight:bold;
+        color:black;
+      }
     - active.assignment="active"
 
     
@@ -99,31 +103,37 @@ block content
                                                                             button.btn.btn-default.btn-sm.dropdown-toggle(style="border:1px solid #ced4da;" type='button' data-toggle='dropdown')
                                                                                 span.fad.fa-cog.fa-2x
                                                                                 span.caret
-                                                                            ul.dropdown-menu(style="padding-left:15px;")
+                                                                            ul.dropdown-menu.Lang(style="padding-left:15px;")
                                                                                 li
-                                                                                a.lang(href='#' data-value='option1' tabindex='-1')
-                                                                                    input#lang1(name="languages" type='checkbox' value="50" checked)
-                                                                                    | &nbsp;C
+                                                                                    a.lang(href='#' data-value='option1' tabindex='-1')
+                                                                                        input#lang1(name="languages" type='checkbox' value="50" checked)
+                                                                                        | &nbsp;
+                                                                                        label( style = "margin-bottom:0px" for="lang1") C
                                                                                 li
-                                                                                a.lang(href='#' data-value='option2' tabindex='-1')
-                                                                                    input#lang2(name="languages" type='checkbox' value="54" checked)
-                                                                                    | &nbsp;C++
+                                                                                    a.lang(href='#' data-value='option2' tabindex='-1')
+                                                                                        input#lang2(name="languages" type='checkbox' value="54" checked)
+                                                                                        | &nbsp;
+                                                                                        label( style = "margin-bottom:0px" for="lang2") C++
                                                                                 li
-                                                                                a.lang(href='#' data-value='option3' tabindex='-1')
-                                                                                    input#lang3(name="languages" type='checkbox' value="51" checked)
-                                                                                    | &nbsp;C#
+                                                                                    a.lang(href='#' data-value='option3' tabindex='-1')
+                                                                                        input#lang3(name="languages" type='checkbox' value="51" checked)
+                                                                                        | &nbsp;
+                                                                                        label( style = "margin-bottom:0px" for="lang3") C#
                                                                                 li
-                                                                                a.lang(href='#' data-value='option4' tabindex='-1')
-                                                                                    input#lang4(name="languages" type='checkbox' value="71" checked)
-                                                                                    | &nbsp;Python
+                                                                                    a.lang(href='#' data-value='option4' tabindex='-1')
+                                                                                        input#lang4(name="languages" type='checkbox' value="71" checked)
+                                                                                        | &nbsp;
+                                                                                        label( style = "margin-bottom:0px" for="lang4") Python
                                                                                 li
-                                                                                a.lang(href='#' data-value='option5' tabindex='-1')
-                                                                                    input#lang5(name="languages" type='checkbox' value="62" checked)
-                                                                                    | &nbsp;Java
+                                                                                    a.lang(href='#' data-value='option5' tabindex='-1')
+                                                                                        input#lang5(name="languages" type='checkbox' value="62" checked)
+                                                                                        | &nbsp;
+                                                                                        label( style = "margin-bottom:0px" for="lang5") Java
                                                                                 li
-                                                                                a.lang(href='#' data-value='option6' tabindex='-1')
-                                                                                    input#lang6(name="languages" type='checkbox' value="63" checked)
-                                                                                    | &nbsp;Javascript
+                                                                                    a.lang(href='#' data-value='option6' tabindex='-1')
+                                                                                        input#lang6(name="languages" type='checkbox' value="63" checked)
+                                                                                        | &nbsp;
+                                                                                        label( style = "margin-bottom:0px" for="lang6") Javascript
 
                                                                 tr
                                                                     td
@@ -254,31 +264,37 @@ block content
                                                             button.btn.btn-default.btn-sm.dropdown-toggle(style="border:1px solid #ced4da;" type='button' data-toggle='dropdown')
                                                                 span.fad.fa-cog.fa-2x
                                                                 span.caret
-                                                            ul.dropdown-menu(style="padding-left:15px;")
+                                                            ul.dropdown-menu.Lang(style="padding-left:15px;")
                                                                 li
-                                                                a.lang(href='#' data-value='option1' tabindex='-1')
-                                                                    input#lang1(name="languages" type='checkbox' value="50" )
-                                                                    | &nbsp;C
+                                                                    a.lang(href='#' data-value='option1' tabindex='-1')
+                                                                        input#lang1(name="languages" type='checkbox' value="50" )
+                                                                        | &nbsp;
+                                                                        label( style = "margin-bottom:0px" for="lang1") C
                                                                 li
-                                                                a.lang(href='#' data-value='option2' tabindex='-1')
-                                                                    input#lang2(name="languages" type='checkbox' value="54" )
-                                                                    | &nbsp;C++
+                                                                    a.lang(href='#' data-value='option2' tabindex='-1')
+                                                                        input#lang2(name="languages" type='checkbox' value="54" )
+                                                                        | &nbsp;
+                                                                        label( style = "margin-bottom:0px" for="lang2") C++
                                                                 li
-                                                                a.lang(href='#' data-value='option3' tabindex='-1')
-                                                                    input#lang3(name="languages" type='checkbox' value="51" )
-                                                                    | &nbsp;C#
+                                                                    a.lang(href='#' data-value='option3' tabindex='-1')
+                                                                        input#lang3(name="languages" type='checkbox' value="51" )
+                                                                        | &nbsp;
+                                                                        label( style = "margin-bottom:0px" for="lang3") C#
                                                                 li
-                                                                a.lang(href='#' data-value='option4' tabindex='-1')
-                                                                    input#lang4(name="languages" type='checkbox' value="71" )
-                                                                    | &nbsp;Python
+                                                                    a.lang(href='#' data-value='option4' tabindex='-1')
+                                                                        input#lang4(name="languages" type='checkbox' value="71" )
+                                                                        | &nbsp;
+                                                                        label( style = "margin-bottom:0px" for="lang4") Python
                                                                 li
-                                                                a.lang(href='#' data-value='option5' tabindex='-1')
-                                                                    input#lang5(name="languages" type='checkbox' value="62" )
-                                                                    | &nbsp;Java
+                                                                    a.lang(href='#' data-value='option5' tabindex='-1')
+                                                                        input#lang5(name="languages" type='checkbox' value="62" )
+                                                                        | &nbsp;
+                                                                        label( style = "margin-bottom:0px" for="lang5") Java
                                                                 li
-                                                                a.lang(href='#' data-value='option6' tabindex='-1')
-                                                                    input#lang6(name="languages" type='checkbox' value="63" )
-                                                                    | &nbsp;Javascript
+                                                                    a.lang(href='#' data-value='option6' tabindex='-1')
+                                                                        input#lang6(name="languages" type='checkbox' value="63" )
+                                                                        | &nbsp;
+                                                                        label( style = "margin-bottom:0px" for="lang6") Javascript
 
                                                 tr
                                                     td
@@ -458,7 +474,7 @@ block content
         //language select
         var options = [];
 
-        $( '.dropdown-menu a' ).on( 'click', function( event ) {
+        $( '.dropdown-menu.Lang a' ).on( 'click', function( event ) {
 
             var $target = $( event.currentTarget ),
                 val = $target.attr( 'data-value' ),

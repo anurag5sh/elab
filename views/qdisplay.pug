@@ -262,6 +262,12 @@ body
                   a.btn(href='/contest/'+contest.url+'/report' style='font-size:20px;')
                     i.fad.fa-file-chart-line
                     label(style='cursor: pointer;') &nbsp; View Report
+            -if(session.staff_id == contest.createdBy || session.isAdmin)
+              .row
+                .col.text-left
+                  a.btn(href='/contest/manage/'+contest.url style='font-size:20px;')
+                    i.fad.fa-cog
+                    label(style='cursor: pointer;') &nbsp; Manage Contest
       br
       #myModal.modal.fade
         .modal-dialog(style="width:50%;max-width:70%")

@@ -243,7 +243,7 @@ $(document).ready(function() {
     
     function submitFormAdd(){ 
 
-        if(!(document.getElementById('lang1').checked == true ||document.getElementById('lang2').checked == true || document.getElementById('lang3').checked == true ||document.getElementById('lang4').checked == true || document.getElementById('lang5').checked == true || document.getElementById('lang6').checked == true ) ){
+        if(!$("#lang1,#lang2,#lang3,#lang4,#lang5,#lang6").is(':checked')){
             alert("Select atleast one language");
             return false;
         }
@@ -336,6 +336,7 @@ $(document).ready(function() {
                     $("input[value='" + val + "']").prop('checked', true);
                  
                  });
+                 options=data.languages;
     
             });    
     
@@ -347,15 +348,18 @@ $(document).ready(function() {
                 $("#dbody").append("<p>"+e.relatedTarget.dataset.name+"</p><p style='display:none;' id='del_qid'>"+e.relatedTarget.dataset.id+"</p>");
     
             });
+
+            $("#myModal").on('show.bs.modal', function(e){
+                options=['50','54','51','71','62','63'];
+            });
             
-    
-            
+
         });
     function editForm(){
         
-        if(!(document.getElementById('lang1').checked == true ||document.getElementById('lang2').checked == true || document.getElementById('lang3').checked == true ||document.getElementById('lang4').checked == true || document.getElementById('lang5').checked == true || document.getElementById('lang6').checked == true ) ){
-        alert("Select atleast one language");
-        return false;
+        if(!$("#lang1e,#lang2e,#lang3e,#lang4e,#lang5e,#lang6e").is(':checked')){
+            alert("Select atleast one language");
+            return false;
         }
         const qid = document.getElementById('qid').value;
         const aId = document.getElementById('sem').value;

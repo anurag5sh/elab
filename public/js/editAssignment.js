@@ -255,6 +255,10 @@ function closeModal() {
 }
 
 function submitFormAdd(){ 
+    if(!$("#lang1,#lang2,#lang3,#lang4,#lang5,#lang6").is(':checked')){
+        alert("Select atleast one language");
+        return false;
+    }
     
     function isQuillEmpty(quill) {
     if ((quill.getContents()['ops'] || []).length !== 1) { return false }
@@ -338,6 +342,12 @@ function submitFormAdd(){
                 $("#eo_testcase"+(i+1)).val(data.test_cases[i].output);
                 $("#epoints"+(i+1)).val(data.test_cases[i].points);
             }
+            $.each(data.languages, function(i, val){
+
+                $("input[value='" + val + "']").prop('checked', true);
+             
+             });
+             options=data.languages;
 
         });    
 
@@ -350,9 +360,17 @@ function submitFormAdd(){
 
         });
 
+        $("#myModal").on('show.bs.modal', function(e){
+            options=['50','54','51','71','62','63'];
+        });
+
         
     });
 function editForm(){
+    if(!$("#lang1e,#lang2e,#lang3e,#lang4e,#lang5e,#lang6e").is(':checked')){
+        alert("Select atleast one language");
+        return false;
+    }
     
     const qid = document.getElementById('qid').value;
     const aId = document.getElementById('sem').value;

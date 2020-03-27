@@ -5,8 +5,6 @@ else
 
 head
   title=contest.name
-  meta(charset='utf-8')
-  meta(name='viewport' content='width=device-width, initial-scale=1')
   link(rel='stylesheet' href='/fontawesome/all.min.css')
   script(src="/fontawesome/all.min.js")
   link(href="https://fonts.googleapis.com/css?family=Open+Sans:700&display=swap" rel="stylesheet")
@@ -97,44 +95,64 @@ head
     font-weight: bold;
     }
     .questions{
-      font-family: 'Palanquin Dark';color:white;font-size:34px;letter-spacing:0.4px";
+      font-family: 'Palanquin Dark';color:white;font-size:34px;letter-spacing:0.4px;
     }
-  script.
-    CountDownTimer('#{contest.timings.ends.toString()}', 'countdown');
-    const starts = new Date('#{contest.timings.starts.toString()}');
-    function CountDownTimer(dt, id)
-    {
-    var end = new Date(dt);
-    var _second = 1000;
-    var _minute = _second * 60;
-    var _hour = _minute * 60;
-    var _day = _hour * 24;
-    var timer;
-    function showRemaining() {
-    var now = new Date();
-    var distance = end - now;
-    if (distance < 0) {
-    clearInterval(timer);
-    document.getElementById(id).innerHTML = '0';
-    return;
+    .Easy{
+      background-color: #8bc34a; width: 700px;  margin-left: 25px;
     }
-    var days = Math.floor(distance / _day);
-    var hours = Math.floor((distance % _day) / _hour);
-    var minutes = Math.floor((distance % _hour) / _minute);
-    var seconds = Math.floor((distance % _minute) / _second);
-    document.getElementById(id).innerHTML = days /*+ ' days'*/;
-    document.getElementById(id).innerHTML += hours + ' hrs ';
-    document.getElementById(id).innerHTML += minutes + ' mins ';
-    document.getElementById(id).innerHTML += seconds + ' secs ';
+    .Medium{
+      background-color: #fbc02d; width: 700px; margin-left: 25px;
+    }
+    .Hard{
+      background-color: #ff4d4d;  width: 700px; margin-left: 25px;
+    }
+    .solved{
+      opacity:70%;
+    }
 
-    const overall = end-starts;
-    const elapsed = distance;
-    const width = (elapsed/overall) * 100 + "%";
-    $("#progress").css('width',width);
+    .solved:hover{
+      opacity:100%;
     }
-    timer = setInterval(showRemaining, 1000);
-    }
+
+
+  -if(contest.timings.starts < new Date() && contest.timings.ends > new Date() )
+    script.
+      CountDownTimer('#{contest.timings.ends.toString()}', 'countdown');
+      const starts = new Date('#{contest.timings.starts.toString()}');
+      function CountDownTimer(dt, id)
+      {
+      var end = new Date(dt);
+      var _second = 1000;
+      var _minute = _second * 60;
+      var _hour = _minute * 60;
+      var _day = _hour * 24;
+      var timer;
+      function showRemaining() {
+      var now = new Date();
+      var distance = end - now;
+      if (distance < 0) {
+      clearInterval(timer);
+      document.getElementById(id).innerHTML = '0';
+      return;
+      }
+      var days = Math.floor(distance / _day);
+      var hours = Math.floor((distance % _day) / _hour);
+      var minutes = Math.floor((distance % _hour) / _minute);
+      var seconds = Math.floor((distance % _minute) / _second);
+      document.getElementById(id).innerHTML = days /*+ ' days'*/;
+      document.getElementById(id).innerHTML += hours + ' hrs ';
+      document.getElementById(id).innerHTML += minutes + ' mins ';
+      document.getElementById(id).innerHTML += seconds + ' secs ';
+
+      const overall = end-starts;
+      const elapsed = distance;
+      const width = (elapsed/overall) * 100 + "%";
+      $("#progress").css('width',width);
+      }
+      timer = setInterval(showRemaining, 1000);
+      }
 body
+  -solved_questions = solved || []
   .WRAPPER
     .row(style="width:100%")
       .col-lg-7
@@ -152,59 +170,25 @@ body
     .row(style="width:100%")
       .col-lg-7.col-md-10
         each i,j in questions
-          -if(i.difficulty === 'Easy')
-            br
-            .row
-              .col-lg-8.col-md-8
-                .shadow.p-3.rounded(style='background-color: #8bc34a; width: 700px;  margin-left: 25px;')
-                  h2.questions #{i.name} 
-                  .row
-                    .col-lg-10.col-md-10
-                      p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;") #{i.description}
-                  .row
-                    .col-lg-3.col-md-3(style='color:white')
-                      label(style="letter-spacing:0.5px;font-weight:bold" for='difficulty') Difficulty: 
-                      label(style="letter-spacing:0.5px;") #{i.difficulty}
-                    .col-lg-3.col-md-3(style='color:white')
-                      label(style="letter-spacing:0.5px;font-weight:bold" for='points') Points: 
-                      label(style="letter-spacing:0.5px") #{totalPoints[j]}
-                    .col-lg-4
-                    .col-lg-2.col-md-2
-                      a.btn.btn-outline-light.hovering(style='font-weight:bold;border-radius:20px;' href="/contest/"+contest.url+"/"+i.qid) Solve
-          -else if(i.difficulty === 'Medium')
-            br
-            .row
-              .col-lg-8.col-md-8
-                .shadow.p-3.rounded(style='background-color: #fbc02d; width: 700px; margin-left: 25px; ')
-                  h2.questions #{i.name} 
-                  .row
-                    .col-lg-10.col-md-10
-                      p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;") #{i.description}
-                  .row
-                    .col-lg-3.col-md-3(style='color:white')
-                      label(for='difficulty') Difficulty: #{i.difficulty}
-                    .col-lg-3.col-md-3(style='color:white')
-                      label(for='points') Points: #{totalPoints[j]}
-                    .col-lg-4
-                    .col-lg-2.col-md-2
-                      a.btn.btn-outline-light.hovering2(style='font-weight:bold;border-radius:20px;' href="/contest/"+contest.url+"/"+i.qid) Solve
-          -else if(i.difficulty === 'Hard')
-            br
-            .row
-              .col-lg-8.col-md-8
-                .shadow.p-3.rounded(style='background-color: #ff4d4d;  width: 700px; margin-left: 25px; ')
-                  h2.questions #{i.name} 
-                  .row
-                    .col-lg-10.col-md-10
-                      p(style="font-family: 'Pompiere', cursive;color:white;font-size:20px;") #{i.description}
-                  .row
-                    .col-lg-3.col-md-3(style='color:white')
-                      label(for='difficulty') Difficulty: #{i.difficulty}
-                    .col-lg-3.col-md-3(style='color:white')
-                      label(for='points') Points: #{totalPoints[j]}
-                    .col-lg-4
-                    .col-lg-2.col-md-2
-                      a.btn.btn-outline-light.hovering1(style='font-weight:bold;border-radius:20px;' href="/contest/"+contest.url+"/"+i.qid) Solve
+          br
+          .row
+            .col-lg-8.col-md-8
+              .shadow.p-3.rounded(class=i.difficulty,class=(solved_questions.includes(i.qid)?"solved":""))
+                h2.questions #{i.name} 
+                .row
+                  .col-lg-10.col-md-10
+                    p(style="font-family: 'Pompiere', cursive;color:white;font-size:24px;") #{i.description.substr(0,60)+(i.description.length>60?"...":"")}
+                .row
+                  .col-lg-3.col-md-3(style='color:white')
+                    label(style="letter-spacing:0.5px;font-weight:bold" for='difficulty') Difficulty: 
+                    label(style="letter-spacing:0.5px;") #{i.difficulty}
+                  .col-lg-3.col-md-3(style='color:white')
+                    label(style="letter-spacing:0.5px;font-weight:bold" for='points') Points: 
+                    label(style="letter-spacing:0.5px") #{totalPoints[j]}
+                  .col-lg-4
+                  .col-lg-2.col-md-2
+                    a.btn.btn-outline-light.hovering(style='font-weight:bold;border-radius:20px;' href="/contest/"+contest.url+"/"+i.qid) Solve
+
         br  
 
       .col-lg-5.col-md-2(style='margin-top:23px;align-items: initial;')

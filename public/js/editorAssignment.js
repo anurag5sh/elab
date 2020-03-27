@@ -81,6 +81,7 @@ let input = null;
 if(document.getElementById("custom_i").checked == true){
     input = document.getElementById("custom_input").value;
 }
+$("#button").prop('disabled', true).append('<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>');
 $.post("/api",
 {
 source:editor.getValue(),
@@ -138,6 +139,10 @@ window.location.href="#opbox";
     const pre = $("#lang").data('pre');
     $.post(`/assignment/source/`+qid,{sourceCode:editor.getValue(),lang:pre},function (data,status){
     $("#lang").data('pre', $("#lang").val());});
+    //spinner
+    $("#button").prop('disabled', false);
+    $("#button").find('span').remove();
+
 }).fail((err)=>{
     toastr.error(err.responseText);
     document.getElementById("loader").style.display="none";
@@ -148,6 +153,7 @@ window.location.href="#opbox";
 function submission(){ 
     let l = document.getElementById("lang").value;
     l=l.slice(-2);
+    $("#button_submit").prop('disabled', true).append('<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>');
     $(document).ready(function (){
     $.post(window.location.pathname,
     {
@@ -224,6 +230,9 @@ function submission(){
     document.getElementById("loader").style.display="none";
     });
     });
+    //spinner
+    $("#button_submit").prop('disabled', false);
+    $("#button_submit").find('span').remove();
 }
 return {run:readText,submit:submission,setLang:setLang,source:source,setTheme:setTheme,setFont:setFont,sourceInsert:sourceInsert}
 

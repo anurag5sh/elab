@@ -897,7 +897,7 @@ router.get('/teachers/id/:id',authenticate,teacher,async (req,res) =>{
 
 //landing page for contest
 router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
-    let contest = await Contest.findOne({url:req.params.curl}).lean().select('timings signedUp name questions url createdBy createdByName rules description isReady image');
+    let contest = await Contest.findOne({url:req.params.curl}).lean();
     if(!contest) return res.status(404).end();
 
     const now = new Date();
@@ -940,7 +940,13 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
                     });
                 }
                 questions.test_cases = [];
-                return res.render('qdisplay',{contest:contest,questions:questions,totalPoints:totalPoints});
+                //solved questions
+                let solved = contest.submissions.filter(element => { return element.usn == req.session.staff_id && element.status=="Accepted" });
+                let solved_array=[];
+                solved.forEach((item,index)=>{
+                    solved_array.push(item.qid);
+                });
+                return res.render('qdisplay',{contest:contest,questions:questions,totalPoints:totalPoints,solved:solved_array});
                 }
                 else{
                     const milli = contest.timings.starts - now;
@@ -974,7 +980,13 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
                     });
                 }
                 questions.test_cases = [];
-                return res.render('qdisplay',{contest:contest,questions:questions,totalPoints:totalPoints});
+                //solved questions
+                let solved = contest.submissions.filter(element => { return element.usn == req.session.usn && element.status=="Accepted" });
+                let solved_array=[];
+                solved.forEach((item,index)=>{
+                    solved_array.push(item.qid);
+                });
+                return res.render('qdisplay',{contest:contest,questions:questions,totalPoints:totalPoints,solved:solved_array});
                 }
         
                 if(now < contest.timings.starts) //before contest
@@ -998,7 +1010,13 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
                         });
                     }
                     questions.test_cases = [];
-                return res.render('qdisplay',{contest:contest,questions:questions,totalPoints:totalPoints});
+                    //solved questions
+                    let solved = contest.submissions.filter(element => { return element.usn == req.session.usn && element.status=="Accepted" });
+                    let solved_array=[];
+                    solved.forEach((item,index)=>{
+                        solved_array.push(item.qid);
+                    });
+                return res.render('qdisplay',{contest:contest,questions:questions,totalPoints:totalPoints,solved:solved_array});
                 }
         }
         else{
@@ -1169,7 +1187,7 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
         return res.status(404).end();
     }
 
-    const question = await ContestQ.findOne({qid:req.params.qid}).select('test_cases').lean().catch(err => {
+    const question = await ContestQ.findOne({qid:req.params.qid}).select('test_cases languages').lean().catch(err => {
         res.status(404).end();
     });
 

@@ -461,16 +461,16 @@ router.get('/forgotPassword',async (req,res)=>{
 router.post('/forgotPassword',async (req,res)=>{
 
   const schema = Joi.object({
-    email: Joi.string().min(5).max(255).required().email()
+    id: Joi.string().min(5).max(255).required()
   });
 
   const {error} = schema.validate(req.body);
   if(error ) return res.status(400).send(error.message);
 
   let user; let token;
-    user = await Student.findOne({email:req.body.email});
+    user = await Student.findOne({$or:[{usn:req.body.id},{email:req.body.id}]});
     if(!user) {
-      user = await Teacher.findOne({email:req.body.email});
+      user = await Teacher.findOne({email:req.body.id});
       if(!user) return res.status(400).send('User not found!');
     }
 

@@ -9,7 +9,7 @@ block content
             h3.card-title New Academic Year Config 
         .card-body
             p This must be performed only during the beginning of 'ODD SEM'.
-            button.btn.btn-success(type="Button" data-toggle="modal" data-target="#promote") Promote Students
+            button#button_promote.btn.btn-success(type="Button" data-toggle="modal" data-target="#promote") Promote Students
 
     .modal.fade#promote(tabindex ="-1" role="dialog" )
         .modal-dialog.modal-sm
@@ -23,7 +23,7 @@ block content
                     button.btn.btn-success(type='button' data-dismiss='modal' onclick="promote()") Proceed
                     button.btn.btn-secondary(type='button' data-dismiss='modal') Close
     
-    form(enctype="multipart/form-data" ,method="POST")#csv
+    form(enctype="multipart/form-data" ,method="POST",onsubmit="submitCSV()")#csv
         .card.card-primary
             .card-header 
                 h3.card-title Year Back Students
@@ -37,9 +37,9 @@ block content
                         br
                         br
                         .form-group
-                            input(type="file", name="csv")
+                            input(type="file", name="csv" required)
                         .form-group
-                            input.btn.btn-success(type="button", value="Upload", onclick="submitCSV()")
+                            button#button_csv.btn.btn-success(type="submit") Upload
     
     .modal.fade#error_csv(tabindex ="-1" role="dialog" )
         .modal-dialog.modal-lg
@@ -53,6 +53,7 @@ block content
 
     script.
         function submitCSV(){
+            $("#button_csv").prop('disabled',true).html("Processing");
              $.ajax({
                 url: '/admin/yearback/',
                 type: 'post',
@@ -62,19 +63,25 @@ block content
                 processData: false,
                 success: function( data, textStatus, jQxhr ){
                     toastr.success(data);
+                    $("#button_csv").prop('disabled',false).html("Upload");
                 },
                 error: function(error){
                     //toastr.error(error.responseText);
                     $("#ebody").html(error.responseText);
                     $('#error_csv').modal('show');
+                    $("#button_csv").prop('disabled',false).html("Upload");
                 }
             });
+            return false;
         }
 
         function promote(){
+            $("#button_promote").prop('disabled',true).html("Processing");
             $.get('/admin/promote',function(data,status){
                 toastr.success(data);
+                $("#button_promote").prop('disabled',false).html("Promote Students");
             }).fail((err)=>{
                 toastr.error(err.responseText);
+                $("#button_promote").prop('disabled',false).html("Promote Students");
             })
         }

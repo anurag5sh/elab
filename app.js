@@ -121,7 +121,13 @@ app.use('/api',api);
 app.use('/register', register);
 app.use(errors);
 
-
-app.listen(port,'localhost',()=> {
+if (process.env.NODE_ENV == 'production') {
+  app.listen(port,'localhost',()=> {
     console.log("Listening on port"+ port);
 });
+ }
+ else{
+  app.listen(port,()=> {
+    console.log("Listening on port"+ port);
+});
+ }

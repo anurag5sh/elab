@@ -420,6 +420,7 @@ html(lang='en')
       if(document.getElementById("custom_i").checked == true){
         input = document.getElementById("custom_input").value;
       }
+      $("#button").prop('disabled', true).append('<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>')
       $.post("/api",
       {
       source:editor.getValue(),
@@ -477,6 +478,10 @@ html(lang='en')
       $.post(`/practice/source/${con[2]}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
       $("#lang").data('pre', $("#lang").val());});
         }
+      //spinner
+      $("#button").prop('disabled', false);
+      $("#button").find('span').remove();
+
       }).fail((err)=>{toastr.error(err.responseText)});
       
       });
@@ -485,6 +490,7 @@ html(lang='en')
         let l = document.getElementById("lang").value;
         l=l.slice(-2);
         $(document).ready(function (){
+        $("#button_submit").prop('disabled', true).append('<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>')
         $.post(window.location.pathname,
         {
         source:editor.getValue(),
@@ -569,6 +575,11 @@ html(lang='en')
           const pre = $("#lang").data('pre');
           $.post(`/practice/source/${con[2]}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
           $("#lang").data('pre', $("#lang").val());});
+        
+        //spinner
+        $("#button_submit").prop('disabled', false);
+        $("#button_submit").find('span').remove();
+        
         }).fail((err)=>{toastr.error(err.responseText)});
         });
       }

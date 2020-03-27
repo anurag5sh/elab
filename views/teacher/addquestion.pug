@@ -234,7 +234,7 @@ each i in ques
         h3(style="font-family: 'Palanquin Dark';font-size:34px;letter-spacing:0.4px")  #{i.name} 
         .row
           .col-lg-10.col-md-10
-            p(style="font-family: 'Pompiere', cursive;font-size:20px;padding-top:8px") #{i.description}
+            p(style="font-family: 'Pompiere', cursive;font-size:20px;padding-top:8px") #{i.description.substr(0,80)+(i.description.length>80?"...":"")}
         .row
           .col-lg-3.col-md-3(style='')
             label.mq_card(style="font-weight:bold") Difficulty: 

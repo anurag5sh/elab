@@ -72,7 +72,7 @@ block content
                             input#password.form-control(type="password",name="password")
                         .col-12
                         input(type="button", onclick="submitForm()",value="Create New Account").btn.btn-success.float-right
-    form(enctype="multipart/form-data" ,method="POST")#csv
+    form(enctype="multipart/form-data" ,method="POST",onsubmit="submitCSV()")#csv
         .card.card-primary
             .card-header
                 h3.card-title Add via CSV
@@ -91,9 +91,9 @@ block content
                         br
                         br
                         .form-group
-                            input(type="file", name="csv")
+                            input(type="file", name="csv" required)
                         .form-group
-                            button#csv_process.btn.btn-success(type="button", onclick="submitCSV()", data-loading-text="<i class='fas fa-circle-notch fa-spin'></i> Processing") Upload
+                            button#csv_process.btn.btn-success(type="submit", data-loading-text="<i class='fas fa-circle-notch fa-spin'></i> Processing") Upload
 
     .modal.fade#error_csv(tabindex ="-1" role="dialog" )
         .modal-dialog.modal-lg
@@ -144,6 +144,7 @@ block content
         }
 
         function submitCSV(){
+            $("#csv_process").prop('disabled',true).html("Processing");
              $.ajax({
                 url: '/admin/add/',
                 type: 'post',
@@ -153,16 +154,17 @@ block content
                 processData: false,
                 success: function( data, textStatus, jQxhr ){
                     toastr.success(data);
-                    $('#csv_process').button('reset');
+                    $("#csv_process").prop('disabled',false).html("Upload");
                 },
                 error: function(error){
                     //toastr.error(error.responseText);
-                    $('#csv_process').button('reset');
+                    $("#csv_process").prop('disabled',false).html("Upload");
                     $("#ebody").html(error.responseText);
                     $('#error_csv').modal('show');
                     
                 }
             });
+            return false;
         }
         $(document).ready(function(){
             $("#type_csv").change(function (){
@@ -171,9 +173,6 @@ block content
                 }else{
                     $("#download").attr("href","/teacher.csv");
                 }
-            });
-            $('#csv_process').on('click', function() {
-            $(this).button('loading');
             });
         });
         

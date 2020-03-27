@@ -353,6 +353,12 @@ html
                     
           textarea.form-control(rows="5" id="custom_input" style="display:none")
         
+      -if(contest.timings.ends < new Date())
+        .row(style="margin:30px;")
+          .col-lg-5.col-md-4
+            p
+              Strong Note :
+              | Submissions not valid since contest has ended.
       
       #opbox.output_box(style="width:650px; display:inline-block;")
       #loader(style="height:600px;display:none;")

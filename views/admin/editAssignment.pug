@@ -462,7 +462,7 @@ block content
                         .form-group.row
                             label.fontStyle.col-sm-2(for="solutionCode") Source Code:
                             .col-sm-9
-                                textarea#solutionCode.form-control(style="min-height:150px;resize:none;overflow:hidden" oninput="auto_grow(this)" required cols="30", rows="3" value="" name="sourceCode")
+                                textarea#solutionCode.form-control(style="min-height:150px;resize:none;overflow:hidden" required cols="30", rows="3" value="" name="sourceCode")
                         p(style="display:none;")#qidForSolution
                     .modal-footer
                         input.btn.btn-success(type='submit' value="Save")
@@ -470,12 +470,13 @@ block content
 
     script.
         function auto_grow(element) {
+        element = document.getElementById("solutionCode");
         element.style.height = "150px";
         element.style.height = (element.scrollHeight)+"px";
         }
         $(document).ready(function() {
         $('#difficulty,#edifficulty,#languageCode').niceSelect();
-      
+        document.getElementById("solutionCode").oninput = auto_grow;
         });
 
         //language select

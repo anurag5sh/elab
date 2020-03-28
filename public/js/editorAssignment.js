@@ -308,8 +308,8 @@ $(document).ready(function() {
     $("#solution").on('show.bs.modal',function (e){
     $.get('/assignment/solution/'+qid,function (data,status){
         if(data.sourceCode){
-        $("#solutionLang").html("Language : "+ data.language);
-        $("#solutionBody").html(data.sourceCode);
+        $("#solutionLang").text("Language : "+ data.language);
+        $("#solutionBody").html(he.escape(data.sourceCode));
         }
         else{
         $("#solutionLang").html(data);

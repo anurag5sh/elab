@@ -96,7 +96,7 @@ router.post('/teacher/:id',admin,async (req,res)=>{
     lnameT: Joi.string().min(1).max(25).required(),
     emailT: Joi.string().min(3).max(255).required().email(),
     passwordT: Joi.string().min(5).max(255).allow(''),
-    recovery_emailT: Joi.string().email().min(3).max(255),
+    recovery_emailT: Joi.string().email().min(3).max(255).allow(''),
     staff_id:Joi.number().required(),
     isAdmin:Joi.boolean().required(),
     activeT:Joi.boolean().required()
@@ -108,7 +108,7 @@ router.post('/teacher/:id',admin,async (req,res)=>{
   teacher.fname = req.body.fnameT;
   teacher.lname = req.body.lnameT;
   teacher.email = req.body.emailT;
-  teacher.recovery_email = req.body.recovery_emailT;
+  teacher.recovery_email = req.body.recovery_emailT || null;
   teacher.isAdmin = req.body.isAdmin;
   teacher.staff_id = req.body.staff_id;
   teacher.active = req.body.activeT;

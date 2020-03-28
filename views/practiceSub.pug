@@ -9,6 +9,7 @@ head
     script(src="/js/dataTables.bootstrap4.min.js")
     link(href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap" rel="stylesheet")
     link(rel="stylesheet", href="/css/lb_main.css")
+    script(src="/js/he.js")
     style.
         th{
             font-family: OpenSans-Regular;
@@ -57,7 +58,7 @@ body
                 .modal-header
                     h4.modal-title Code 
                 .modal-body
-                    #sourceBody(style="font-family: 'Source Code Pro', ;white-space: pre-wrap;")
+                    #sourceBody(style="font-family: 'Source Code Pro' ;white-space: pre-wrap;")
                 .modal-footer
                     button.btn.btn-secondary(type='button' data-dismiss='modal') Close
 
@@ -95,7 +96,7 @@ body
         
         $("#source").on('show.bs.modal',function (e){
             $.get('/practice/source/#{question.qid}/'+$(e.relatedTarget).data('usn'),function(data,status){
-                $("#sourceBody").html(data);
+                $("#sourceBody").html(he.escape(data));
             }).fail((err)=>{
                 toastr.error(err.responseText);
             });

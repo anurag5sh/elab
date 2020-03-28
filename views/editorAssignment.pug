@@ -15,7 +15,6 @@ html
     link(rel="stylesheet", href="/css/nice-select.css")
     link(rel="stylesheet", href="/fontawesome/all.min.css")
     script(src="/js/jquery.nice-select.min.js")
-    link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap")
     link(href="https://fonts.googleapis.com/css?family=Open+Sans:700&display=swap" rel="stylesheet")
     link(rel="stylesheet" href="/css/quill.bubble.css")
     script(src="/js/quill.js")
@@ -24,6 +23,7 @@ html
     link(href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap" rel="stylesheet")
     script(src="/fontawesome/all.min.js")
     link(href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap" rel="stylesheet")
+    script(src="/js/he.js")
 
     style(type='text/css').
       #editor {
@@ -266,12 +266,12 @@ html
         .col-lg-3.col-md-4.col-sm-4.pl-0
           .card.m-0.mt-4(style="width:95%;height:auto")
             div.text-left.m-3.mb-2
-              a.editor-right( href="") 
+              a.editor-right
                 i.fas.fa-puzzle-piece(style="font-size:17px")
                 | &nbsp; 
                 label.editor-right(style="font-size:18px") Difficulty : #{question.difficulty}
             div.text-left.ml-3.mr-3.mb-2
-              a.editor-right( href="") 
+              a.editor-right
                 i.fad.fa-user-edit(style="font-size:17px")
                 | &nbsp; 
                 label.editor-right(style="font-size:18px") Created By : #{question.createdByName}
@@ -364,7 +364,7 @@ html
                 .modal-body
                   #solutionLang.text-center
                   br
-                  #solutionBody(style="font-family: 'Source Code Pro', ;white-space: pre-wrap;")
+                  #solutionBody(style="font-family: 'Source Code Pro' ;white-space: pre-wrap;")
                 .modal-footer
                     button.btn.btn-secondary(type='button' data-dismiss='modal') Close
 

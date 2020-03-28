@@ -306,7 +306,7 @@ function setup(){const editor = ace.edit("editor");
           $.get('/contest/solution/'+url+'/'+qid,function (data,status){
             if(data.sourceCode){
             $("#solutionLang").html("Language : "+ data.language);
-            $("#solutionBody").html(data.sourceCode);
+            $("#solutionBody").html(he.escape(data.sourceCode));
             }
             else{
               $("#solutionLang").html(data);

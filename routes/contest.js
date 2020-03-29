@@ -20,13 +20,10 @@ const path = require('path');
 const winston = require('winston');
 const rimraf = require('rimraf');
 const fs = require('fs');
-const Agenda = require('agenda');
+const {Achievements} = require('../models/achievementJob');
+const achievements = require('../jobs/achivements');
 
-const mongoConnectionString = 'mongodb://localhost/elab';
-// const agenda = new Agenda({db: {address: mongoConnectionString,options:{useUnifiedTopology: true}},processEvery:'30 minutes'});
-// ( async ()=>{
-//     await agenda.start();
-// })();
+achievements.achievementsStartup();
 
 function encode64(string){ //encoding to base64
     const b = new Buffer.from(string);
@@ -155,14 +152,16 @@ router.post('/create',authenticate,teacher, async (req,res)=>{
     else{
         id=1;
     }
-    let url = req.body.name.replace(/ /g,'-');
+    let url = req.body.name.trim().replace(/ /g,'-');
     let lastUrl  = await Contest.find({name:new RegExp('\^'+req.body.name.trim()+'\$','i')}).sort({_id:-1}).limit(1).lean().select('url');
     if(lastUrl.length>0){
     let count = lastUrl[0].url.replace(url,"");
-    if(count!="")
+    if(count=="")
         url = url+"1";
-    else
-        url = url + (++count);
+    else{
+        count = Number(count) + 1;
+        url = url + count;
+    } 
     }
     let contest = new Contest({createdBy:createdBy,id:id,name:req.body.name.trim(),url:url});
     if(req.body.year) contest.year =req.body.year;
@@ -180,26 +179,8 @@ router.post('/create',authenticate,teacher, async (req,res)=>{
     no_of_image = config.get('no_of_contest_images');
     contest.image="/contestImage/"+Math.floor(Math.random() * no_of_image)+".jpg";
 
-    // //agenda for achievements
-    // agenda.define(contest.name+" achievements",async job =>{
-    //     const c = await Contest.findOne({id:contest.id}).lean().select('leaderboard');
-
-    //     for(let i=0;i<c.leaderboard.length;i++){
-    //         const student = await Student.findOneAndUpdate({usn:c.leaderboard[i].usn},{$addToSet:{achievements:{position:i+1,name:contest.name,id:contest.id}}});
-    //         if(i == 2) break;
-    //     }
-    // });
-
-    // (async function() {
-    //     await agenda.start();
-    //     agenda.schedule(ends,contest.url+" achievements");
-    //     agenda.on(`success:${contest.url} achievements`, async job => {
-    //         job.remove();
-    //       });
-    // })();
-
-
     await contest.save();
+    achievements.addAchievementJob(contest.id,contest.timings.ends);
     res.send(contest);
 
 
@@ -267,7 +248,7 @@ router.get('/group',authenticate,teacher,async (req,res)=>{
 
     if(!req.query.page) req.query.page=1;
 
-    let totalCount = await CustomGroup.estimatedDocumentCount();
+    let totalCount = await CustomGroup.countDocuments();
     if(!totalCount) totalCount=0;
 
     let list = await CustomGroup.find().sort({date:-1}).lean().skip((req.query.page-1)*10).limit(10);
@@ -411,26 +392,10 @@ router.post('/manage/:name',authenticate,teacher,async (req,res) =>{
     contest.year = req.body.year || [];
     contest.isReady = (req.body.status == "on"?true:false);
 
-    // //editing the agenda
-    // await agenda.cancel({name:contest.url+" achievements"});
-    // agenda.define(contest.url+" achievements",async job =>{
-    //     const c = await Contest.findOne({id:contest.id}).lean().select('leaderboard');
-
-    //     for(let i=0;i<c.leaderboard.length;i++){
-    //         const student = await Student.findOneAndUpdate({usn:c.leaderboard[i].usn},{$addToSet:{achievements:{position:i+1,name:contest.name,id:contest.id}}});
-    //         if(i == 2) break;
-    //     }
-    // });
-
-    // (async function() {
-    //     //await agenda.start();
-    //     agenda.schedule(ends,contest.url+" achievements");
-    //     agenda.on(`success:${contest.url} achievements`, async job => {
-    //         job.remove();
-    //       });
-    // })();
-   
-
+    //editing the achivements job
+    achievements.clearAchievementJob(contest.id);
+    achievements.addAchievementJob(contest.id,contest.timings.ends);
+    
     await contest.save();
 
     res.send("Changes saved!");
@@ -678,12 +643,12 @@ router.post('/edit/:curl/:qid',authenticate,teacher,async (req,res)=>{
 
 //deleting a contest
 router.get('/delete/:curl',authenticate,teacher,async (req,res) => {
-    const contest = await Contest.findOne({url:req.params.curl,'timings.ends':{$gt: new Date()}}).lean().select('questions');
+    const contest = await Contest.findOne({url:req.params.curl,'timings.ends':{$gt: new Date()}}).lean().select('questions id');
     if(!contest) return res.status(400).send("Contest has ended!");
 
     await Contest.findOneAndDelete({url:req.params.curl}).then(async ()=>{
         await ContestQ.deleteMany({qid:{$in:contest.questions}});
-        //await agenda.cancel({name:req.params.curl+" achievements"});
+        await Achievements.findOneAndDelete({contest_id:contest.id});
         return res.send("Contest deleted");
     } )
     .catch((err)=>{ winston.error(err);

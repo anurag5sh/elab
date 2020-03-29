@@ -16,7 +16,7 @@ $('#sem').change(function (){
         const sem = '<div class="form-group row"><label class="col-sm-2">Semester &nbsp; : &nbsp;'+data.assignment.sem+'</label><label class="col-sm-2">Set &nbsp; : &nbsp;'+data.assignment.id.substr(9)+'</label></div>';
         const dateTime = '<div class="form-group row"><label class="col-sm-1">Duration</label><div class="col-sm-4"><input type="text" name="duration" class="form-control"></div></div>';
         const batch = '<div class="form-group row"><label class="col-sm-1">Batch</label><div class="col-sm-4"><input readonly type="text" value="'+data.assignment.id.substr(5,4)+'"class="form-control"></div></div>';
-        const ready = '<div class="form-group row"><label class="col-sm-1">Status</label>&nbsp;&nbsp;<div class="col-sm-4 "><input type="checkbox" data-toggle="toggle" data-on="Ready" data-off="Not Ready" data-onstyle="success" data-offstyle="danger" data-size="small" name="isReady" id="isReady"></div></div>';
+        const ready = '<div class="form-group row"><label class="col-sm-1">Status</label>&nbsp;&nbsp;<div class="col-sm-4 "><input type="checkbox" data-toggle="toggle" data-on="Ready" data-off="Not Ready" data-onstyle="success" data-offstyle="danger" data-size="small" data-width="120" name="isReady" id="isReady"></div></div>';
         const del  ='<div class="col-8"><button class="btn btn-danger" type="button" data-toggle="modal" data-target="#deleteAssignment">Delete this Assignment</button></div>';
         const newQ = '<br><div class="form-group row"><div class="col-2"><button class="btn btn-primary" type="button" data-toggle="modal" data-target="#myModal">Add New Question</button></div><div class="col-2"><button class="btn btn-primary" type="button" data-toggle="modal" data-target="#oldQues">Insert Old Question</button></div>'+del+'</div>';
         const submit = '<div class="form-group row"><div class="col-2"><input type="submit" class="btn btn-success" value="Update"></div></div>';
@@ -525,8 +525,9 @@ $(document).ready(function(){
                 $("#languageCode").val(data.language);
                 $('#languageCode').niceSelect('update');
                 $('#solutionCode').val(data.sourceCode);
+                //document.getElementById("solutionCode").dispatchEvent(new Event("input"));
             }
-        }).fail((err)=>{
+        }).done(auto_grow).fail((err)=>{
             toastr.error(err.responseText);
         });
 });

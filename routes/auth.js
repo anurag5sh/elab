@@ -148,7 +148,7 @@ router.get('/logout', function(req, res, next) {
 router.get('/profile', authenticate,async function(req,res){
 
   if(req.session.staff_id){
-    const teacher = await Teacher.findOne({ staff_id: req.session.staff_id }).lean().select('staff_id fname lname email recovery_email about_me profile_image');
+    const teacher = await Teacher.findOne({ staff_id: req.session.staff_id }).lean();
 
     if(!teacher){
     return res.status(400).end();
@@ -156,7 +156,7 @@ router.get('/profile', authenticate,async function(req,res){
   res.render('teacher/profile',{teacher:teacher});
   }
   else{
-    const student = await Student.findOne({ usn: req.session.usn }).lean().select('usn fname lname email year recovery_email about_me profile_image');
+    const student = await Student.findOne({ usn: req.session.usn }).lean();
   if(!student){
     return res.status(400).end();
   }

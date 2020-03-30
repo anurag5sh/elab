@@ -84,7 +84,7 @@ head
     @media only screen and (max-width: 640px) {
     .goal-stat {
     width: 50%;
-    /* text-align: center; */
+    text-align: center; 
     }
     }
     .goal-number,
@@ -133,16 +133,15 @@ head
       if (distance < 0) {
       clearInterval(timer);
       document.getElementById(id).innerHTML = '0';
+      window.location.reload();
       return;
       }
       var days = Math.floor(distance / _day);
       var hours = Math.floor((distance % _day) / _hour);
       var minutes = Math.floor((distance % _hour) / _minute);
       var seconds = Math.floor((distance % _minute) / _second);
-      document.getElementById(id).innerHTML = days /*+ ' days'*/;
-      document.getElementById(id).innerHTML += hours + ' hrs ';
-      document.getElementById(id).innerHTML += minutes + ' mins ';
-      document.getElementById(id).innerHTML += seconds + ' secs ';
+      document.getElementById(id).innerHTML = (days>0?`${days}d `:'')+ hours + "h "
+      + minutes + "m " + seconds + "s ";
 
       const overall = end-starts;
       const elapsed = distance;
@@ -207,10 +206,10 @@ body
               br
               #glass
                 #progress
-              .goal-stat(style="margin:auto;")
+              .goal-stat(style="margin:auto;text-align:center;")
                 span.goal-number
                   br
-                  #countdown(style="width:250px")
+                  #countdown(style="font-size:19px;")
                   //- span.goal-label Days to End
             -else
               div.text-center

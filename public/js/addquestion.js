@@ -240,7 +240,8 @@ $(document).ready(function() {
         $("#ei_testcase1").val(data.test_cases[0].input);
         $("#eo_testcase1").val(data.test_cases[0].output);
         $("#epoints1").val(data.test_cases[0].points);
-        $("#difficulty-e").val(data.difficulty);
+        $("#difficult-e").val(data.difficulty);
+        $('#difficult-e').niceSelect('update');
 
         for(let i=1;i<data.sample_cases.length;i++){
             sampleAdd();
@@ -307,6 +308,7 @@ $.ajax({
     $("#edit").modal('hide');
     toastr.success(data);
     editor.setText("");
+    window.location.reload();
     },
     error: function (e) {
         toastr.error(e.responseText);

@@ -152,9 +152,8 @@ router.get('/:qid', authenticate, async (req,res)=>{
 
 //source code of a submission
 router.get('/source/:qid/:usn',authenticate,async (req,res)=>{
-  const question = await Practice.findOne({qid:req.params.qid},{submissions:{$elemMatch:{usn:req.params.usn,status:"Accepted"}}},{_id:0,'submissions.$':1}).lean();
-  if(!question) return res.status(404).send("Not found!");
-
+  const question = await Practice.findOne({qid:req.params.qid,submissions:{$elemMatch:{usn:req.params.usn,status:"Accepted"}}},{_id:0,'submissions.$':1}).lean();
+  if(!question || !question.submissions) return res.status(404).send("Not found!");
   res.send(question.submissions[0].sourceCode);
 });
 
@@ -166,10 +165,9 @@ router.get('/:qid/submissions',authenticate,async (req,res)=>{
 
 //data for submission table
 router.get('/:qid/submissions/list',authenticate,async (req,res)=>{
-  const question = await Practice.findOne({qid:req.params.qid},{submissions:{$elemMatch:{status:"Accepted"}}}).lean().select('submissions');
-  if(!question) return res.status(400).send("Invalid ID");
-
-  if(question.submissions == []) res.send([]);
+  const question = await Practice.findOne({qid:req.params.qid,submissions:{$elemMatch:{status:"Accepted"}}}).lean();
+  if(!question) return res.send([]);
+  if(question.submissions == []) return res.send([]);
 
   let students=[];
   question.submissions.forEach((item)=>{

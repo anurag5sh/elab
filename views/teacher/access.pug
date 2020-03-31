@@ -128,7 +128,7 @@ body
                     ],
                     "order": [[ 1, 'asc' ]],
                     "columnDefs": [ {"searchable": false,"orderable": false,"targets": 0} ],
-                    "initComplete": function(settings, json) {
+                    "drawCallback": function(settings, json) {
                         $.each(selected, function(i, val){
                             $("input[value='" + val + "']").prop('checked', true);
                         });

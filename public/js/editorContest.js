@@ -64,7 +64,7 @@ function setup(){const editor = ace.edit("editor");
 
       function save(){
         const pre = $("#lang").data('pre');
-        $.post(`/assignment/source/`+qid,{sourceCode:editor.getValue(),lang:pre},function (data,status){
+        $.post(`/contest/source/${url}/${qid}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
         $("#lang").data('pre', $("#lang").val());$("#save").prop('disabled',true);$("#save span").text("Saved");
         setTimeout(()=>{$("#save").prop('disabled',false);$("#save span").text("Save");},3000)}
         ).fail((err)=>{toastr.error("Could not save!")});

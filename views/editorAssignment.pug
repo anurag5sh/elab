@@ -310,8 +310,10 @@ html
           option(value='36') &nbsp; &nbsp; 36 &nbsp; &nbsp;
         
         -if(session.usn)
-          a.btn.btn-outline-primary.btn-sm(style='float:right;margin-right:12px;margin-top:5px;border-radius:20px' href="" data-toggle="modal" data-target="#sourceModal") View Code history
-
+          a.btn.btn-outline-primary.btn-sm(style='float:right;margin-right:12px;margin-top:5px;border-radius:20px' href="" data-toggle="modal" data-target="#sourceModal") View Submissions
+          button#save.btn.btn-outline-primary.btn-sm(style='float:right;margin-right:15px;margin-top:5px;border-radius:20px;' onclick="setup().save()")
+            span Save 
+            i.fas.fa-save
 
         div#editor
 
@@ -340,7 +342,7 @@ html
         .modal-dialog.modal-lg
             .modal-content
                 .modal-header
-                  h4.modal-title My source code history
+                  h4.modal-title My Submissions
                   button.close(type='button' data-dismiss='modal') ×
                 .modal-body
                   table.table.table-hover

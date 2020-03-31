@@ -339,8 +339,10 @@ html
           option(value='30') &nbsp; &nbsp; 30 &nbsp; &nbsp;
           option(value='36') &nbsp; &nbsp; 36 &nbsp; &nbsp;
 
-        a.btn.btn-outline-primary.btn-sm(style='float:right;margin-right:12px;margin-top:5px;border-radius:20px;' href="" data-toggle="modal" data-target="#sourceModal") View Code History
-        
+        a.btn.btn-outline-primary.btn-sm(style='float:right;margin-right:12px;margin-top:5px;border-radius:20px;' href="" data-toggle="modal" data-target="#sourceModal") View Submissions
+        button#save.btn.btn-outline-primary.btn-sm(style='float:right;margin-right:15px;margin-top:5px;border-radius:20px;' onclick="setup().save()")
+            span Save 
+            i.fas.fa-save
         div#editor
         button#button_submit.btn.btn-success(value='Submit', onclick='setup().submit()', style='float:right;width:100px;left:20px;') 
           a(href='#opbox' style="color:white;font-weight:bold") Submit
@@ -373,7 +375,7 @@ html
         .modal-dialog.modal-lg
             .modal-content
                 .modal-header
-                  h4.modal-title My source code history
+                  h4.modal-title My submissions
                   button.close(type='button' data-dismiss='modal') ×
                 .modal-body
                   table.table.table-hover

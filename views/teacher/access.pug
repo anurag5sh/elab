@@ -45,7 +45,7 @@ body
                                 th Name
                     
                 .modal-footer
-                    button.btn.btn-success(type='button' onclick="customInsert()") Add
+                    button.btn.btn-success(type='button' onclick="customInsert()") SAVE
                     button.btn.btn-secondary(type='button' data-dismiss='modal') Close
     .modal.fade#customTeacher(tabindex ="-1" role="dialog" )
         .modal-dialog.modal-xl
@@ -61,7 +61,7 @@ body
                                 th Name
                     
                 .modal-footer
-                    button.btn.btn-success(type='button' onclick="customInsertTeacher()") Add
+                    button.btn.btn-success(type='button' onclick="customInsertTeacher()") SAVE
                     button.btn.btn-secondary(type='button' data-dismiss='modal') Close
     
     | Grant access to participate in contest for individual Students/Teachers
@@ -115,7 +115,7 @@ body
     
     
     script.
-        
+        let selected = !{JSON.stringify(contest.custom_usn)}
         $('#year').change(function (){
             $("#studentTable").DataTable().destroy();
             $.get('/contest/students/'+$("#year").val(),{id:$('#contestid').val()},function(data,status){
@@ -127,7 +127,21 @@ body
                         { "data": "name" },
                     ],
                     "order": [[ 1, 'asc' ]],
-                    "columnDefs": [ {"searchable": false,"orderable": false,"targets": 0} ]
+                    "columnDefs": [ {"searchable": false,"orderable": false,"targets": 0} ],
+                    "initComplete": function(settings, json) {
+                        $.each(selected, function(i, val){
+                            $("input[value='" + val + "']").prop('checked', true);
+                        });
+                        $("input[name='studentListCustom']").change(function() {
+                            if(this.checked) {
+                                selected.push(this.value);
+                            }
+                            else{
+                                const index=selected.findIndex(i =>{return i == this.value});
+                                selected.splice(index,1);
+                            }
+                        });
+                    }
                 } );
             }).fail((err)=>{
                 toastr.error(err.responseText);
@@ -135,10 +149,10 @@ body
          });
 
         function customInsert(){
-        let selected =[];
-        $("input[name='studentListCustom']:checked").each(function () {
-            selected.push(this.value);
-        });
+        //- let selected =[];
+        //- $("input[name='studentListCustom']:checked").each(function () {
+        //-     selected.push(this.value);
+        //- });
         $.ajax({
             type: "POST",
             url: "/contest/students/"+$('#contestid').val(),

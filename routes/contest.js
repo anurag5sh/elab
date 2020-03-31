@@ -789,7 +789,7 @@ router.get('/students/:year',authenticate,teacher, async (req,res) =>{
   
     for(i of students)
     {
-      i.select = '<input type="checkbox" '+(contest.custom_usn.includes(i.usn)?'checked':'') +' name="studentListCustom" value="'+i.usn+'" >';
+      i.select = '<input type="checkbox" name="studentListCustom" value="'+i.usn+'" >';
       i.name = i.fname +" "+i.lname;
       delete i.fname;
       delete i.lname;
@@ -820,7 +820,7 @@ router.get('/teachers',authenticate,teacher,async (req,res)=>{
 router.post('/students/:id',authenticate,teacher,async (req,res) =>{
     const contest = await Contest.findOne({id:req.params.id});
     if(!contest) return res.status(400).send("Invalid ID");
-    contest.custom_usn = contest.custom_usn = (req.body.studentListCustom?req.body.studentListCustom:[]);
+    contest.custom_usn = (req.body.studentListCustom?req.body.studentListCustom:[]);
     await contest.save();
     res.send("Students Added");
     

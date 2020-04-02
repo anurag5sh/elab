@@ -191,7 +191,11 @@ block content
                         a.nav-link.active(href='#profile' role='tab' data-toggle='tab')
                           i.fas.fa-user-circle
                           |  Details
-                      li.nav-item
+                      -if(user.usn)
+                        li.nav-item
+                          a.nav-link(href='#achivements' role='tab' data-toggle='tab')
+                            i.fas.fa-trophy
+                            |  Achivements 
                         
                     br
                     .tab-content
@@ -224,7 +228,11 @@ block content
                             -if(user.usn)
                               p=user.year
                             -else
-                              p 
+                              p
+
+                      #achivements.tab-pane.fade(role='tabpanel')
+                          
+                          
                           .push
     
     include ../footer

@@ -251,6 +251,12 @@ body
                   a.btn(href='/contest/manage/'+contest.url style='font-size:20px;')
                     i.fad.fa-cog
                     label(style='cursor: pointer;') &nbsp; Manage Contest
+            -if(session.usn && contest.timings.ends < new Date())
+              .row
+                .col.text-left
+                  a.btn(href='/contest/'+contest.url+'/submissions' style='font-size:20px;' target="_blank")
+                    i.fas.fa-chalkboard-teacher
+                    label(style='cursor: pointer;') &nbsp; View all Submissions
       br
       #myModal.modal.fade
         .modal-dialog(style="width:50%;max-width:70%")

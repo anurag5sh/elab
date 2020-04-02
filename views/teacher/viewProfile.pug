@@ -141,6 +141,18 @@ block append head
     background:transparent;
     background-color:transparent!important;
     }
+  script.
+    function image_load(){
+      const image_url = "/profileImage/#{user.usn}.jpg"
+      $.get(image_url)
+      .done(function() { 
+          $("#profile_image").prop('src',image_url);
+
+      }).fail(function() { 
+          
+        $("#profile_image").prop('src',"/profileImage/default.png");
+    })
+    }
 
 block content
   .WRAPPER
@@ -155,9 +167,9 @@ block content
             .row
               .col-md-12.col-md-12-sm-12.col-xs-12.user-image.text-center
                 -if(user.usn)
-                  img.rounded-circle(src=user.profile_image onerror=`this.src='/profileImage/${user.usn}.jpg'`)
+                  img#profile_image.rounded-circle(src=user.profile_image onerror="image_load()" )
                 -else
-                  img.rounded-circle(src=user.profile_image)
+                  img.rounded-circle(src=user.profile_image onerror="image_load()")
               .col-md-12.col-sm-12.col-xs-12.user-detail-section1.text-center
                 button#btn-contact.btn.btn-success.btn-block.follow #{user.email}
               .row.user-detail-row
@@ -214,5 +226,6 @@ block content
                             -else
                               p 
                           .push
-  
+    
     include ../footer
+  

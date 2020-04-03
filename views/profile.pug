@@ -8,6 +8,18 @@ block append head
       background-color:#f5f5f0;
     }
   - active.profile="active"
+  script.
+    function image_load(){
+      const image_url = "/profileImage/#{student.usn}.jpg"
+      $.get(image_url)
+      .done(function() { 
+          $("#image").prop('src',image_url);
+
+      }).fail(function() { 
+          
+        $("#image").prop('src',"/profileImage/default.png");
+    })
+    }
   
 block content
   br
@@ -63,7 +75,7 @@ block content
                 .author
                   form(enctype="multipart/form-data" method="post")#img
                     a(href='#')
-                      img.avatar.border-gray#image(src=student.profile_image onerror=`this.src='/profileImage/${student.usn}.jpg'`)
+                      img.avatar.border-gray#image(src=student.profile_image onerror="image_load()")
                       input(type='file' accept='image/*' name='profile_image' id='image-upload' style="display:none;")
                     h4.title #{student.fname} #{student.lname}
                       br

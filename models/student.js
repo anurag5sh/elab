@@ -65,7 +65,6 @@ const studentSchema = new mongoose.Schema({
   },
   achievements:[{
     position : {type:Number},
-    name:{type:String},
     id :{type:String},
     _id:false
   }]

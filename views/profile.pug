@@ -123,7 +123,7 @@ block content
                         input.form-control(type='password' name = 're_entered_password'  placeholder='' value="")
                   button.btn.btn-info.btn-fill.pull-right(type='button' id="update-password") Update Password
                   .clearfix
-          - if (student.achievements.length !=0)
+          - if (student.achievements)
             .col-md-9
               .card(style="background:#f9f9f9;")
                 .header
@@ -133,19 +133,19 @@ block content
                     if(i.position == 1)
                       div.ml-3.mr-3.mb-4.text-center.shadow-sm(style="width:150px;height:150px;display:inline-block;border-radius:5px;background:#ffffff;")
                         div
-                          p.font-weight-bold.mb-0.pt-2(style="font-size:20px;color:#666666") #{i.name}
+                          a.font-weight-bold.mb-0.pt-2(style="font-size:20px;color:#666666" href="/contest/"+i.url target="_blank") #{i.name}
                           //- i.fad.fa-trophy-alt.fa-4x(style="color:#FFDB19")
-                          img(src="/images/Gold.png" style="width:110px;height:110px;")
+                        img(src="/images/Gold.png" style="width:110px;height:110px;")
                     else if(i.position == 2)
                       div.ml-3.mr-3.mb-4.text-center.shadow-sm(style="width:150px;height:150px;display:inline-block;border-radius:5px;background:#ffffff;")
                         div
-                          p.font-weight-bold.mb-0.pt-2(style="font-size:20px;color:#666666") #{i.name}
+                          a.font-weight-bold.mb-0.pt-2(style="font-size:20px;color:#666666" href="/contest/"+i.url target="_blank") #{i.name}
                           //- i.fad.fa-trophy-alt.fa-4x(style="color:#c6c6c6")
                           img(src="/images/Silver.png" style="width:110px;height:110px;")
                     else if(i.position == 3)
                       div.ml-3.mr-3.mb-4.text-center.shadow-sm(style="width:150px;height:150px;display:inline-block;border-radius:5px;background:#ffffff;")
                         div
-                          p.font-weight-bold.mb-0.pt-2(style="font-size:20px;color:#666666") #{i.name}
+                          a.font-weight-bold.mb-0.pt-2(style="font-size:20px;color:#666666" href="/contest/"+i.url target="_blank") #{i.name}
                           //- i.fad.fa-trophy-alt.fa-4x(style="color:#E67300")
                           img(src="/images/Bronze.png" style="width:110px;height:110px;")
 

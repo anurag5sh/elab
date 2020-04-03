@@ -108,6 +108,19 @@ router.get('/viewProfile/:id',authenticate,async (req,res)=>{
         return res.status(400).send('Invalid ID');
       }
     }
+
+    let id=[];
+    if(user.usn){
+      for(i=0;i<user.achievements.length;i++){
+        id.push(user.achievements[i].id);
+      }
+      const data = await Contest.find({id:{$in:id}}).lean().select('url name -_id');
+      for(i=0;i<user.achievements.length;i++){
+        user.achievements[i].url = data[i].url;
+        user.achievements[i].name = data[i].name.substr(0,8)+(data[i].name.length>8?"..":"");
+      }
+    }
+    
     if(req.session.usn){
       return res.render('viewProfile',{user:user});
     }
@@ -160,6 +173,15 @@ router.get('/profile', authenticate,async function(req,res){
   if(!student){
     return res.status(400).end();
   }
+  let id=[];
+    for(i=0;i<student.achievements.length;i++){
+      id.push(student.achievements[i].id);
+    }
+    const data = await Contest.find({id:{$in:id}}).lean().select('url name -_id');
+    for(i=0;i<student.achievements.length;i++){
+      student.achievements[i].url = data[i].url;
+      student.achievements[i].name = data[i].name.substr(0,8)+(data[i].name.length>8?"..":"");
+    }
   res.render('profile',{student:student});
   }
   

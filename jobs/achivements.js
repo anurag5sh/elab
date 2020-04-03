@@ -16,7 +16,7 @@ async function achievementsStartup(){
                     const leaderboard = contest.leaderboard.slice(0,4);
         
                     leaderboard.forEach(async (item,index)=>{
-                        await Student.findOneAndUpdate({usn:item.usn},{$addToSet:{achievements:{position:index+1,name:contest.name,id:contest.id}}});
+                        await Student.findOneAndUpdate({usn:item.usn},{$addToSet:{achievements:{position:index+1,id:contest.id}}});
                     });
 
                     await Achievements.findOneAndDelete({contest_id:item.contest_id});
@@ -52,7 +52,7 @@ async function addAchievementJob(contest_id,ends){
             const leaderboard = contest.leaderboard.slice(0,4);
 
             leaderboard.forEach(async (item,index)=>{
-                await Student.findOneAndUpdate({usn:item.usn},{$addToSet:{achievements:{position:index+1,name:contest.name,id:contest.id}}});
+                await Student.findOneAndUpdate({usn:item.usn},{$addToSet:{achievements:{position:index+1,id:contest.id}}});
             });
 
             await Achievements.findOneAndDelete({contest_id:contest_id});

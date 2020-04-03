@@ -246,6 +246,7 @@ $(document).ready(function() {
       $("#epoints1").val(data.test_cases[0].points);
       $("#description-e").val(data.description);
       $("#difficult-e").val(data.difficulty);
+      $('#difficult-e').niceSelect('update');
 
       for(let i=1;i<data.sample_cases.length;i++){
           sampleAdd();
@@ -301,6 +302,7 @@ $.ajax({
   closeModal();
   toastr.success(data);
   editor.setText("");
+  window.location.reload();
   },
   error: function (e) {
       toastr.error(e.responseText);

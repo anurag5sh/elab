@@ -63,6 +63,14 @@ setInterval(function(){
     $("#lang").data('pre', $("#lang").val());});
 },60000*5);
 
+function save(){
+    const pre = $("#lang").data('pre');
+    $.post(`/assignment/source/`+qid,{sourceCode:editor.getValue(),lang:pre},function (data,status){
+    $("#lang").data('pre', $("#lang").val());$("#save").prop('disabled',true);$("#save span").text("Saved");
+    setTimeout(()=>{$("#save").prop('disabled',false);$("#save span").text("Save");},3000)}
+    ).fail((err)=>{toastr.error("Could not save!")});
+}
+
 function setTheme(){
     editor.setTheme("ace/theme/"+$("#theme").val());
 }
@@ -234,7 +242,7 @@ function submission(){
     $("#button_submit").prop('disabled', false);
     $("#button_submit").find('span').remove();
 }
-return {run:readText,submit:submission,setLang:setLang,source:source,setTheme:setTheme,setFont:setFont,sourceInsert:sourceInsert}
+return {run:readText,submit:submission,setLang:setLang,source:source,setTheme:setTheme,setFont:setFont,sourceInsert:sourceInsert,save:save}
 
 }
 

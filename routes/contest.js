@@ -481,11 +481,25 @@ router.post('/add/:cname',authenticate,teacher,async (req,res) => {
 });
 
 //fetching submissions
-router.get('/submissions/:curl',authenticate,teacher,async (req,res) =>{
-    const contest = await Contest.findOne({url:req.params.curl}).lean().select('submissions questions -_id');
+router.get('/submissions/:curl',authenticate,contestAuth, async (req,res) =>{
+    const contest = await Contest.findOne({url:req.params.curl}).lean().select('submissions questions timings -_id');
     if(!contest) return res.status(400).send("Contest not found");
 
     function time_noDays(ms) {var sec = Math.floor(ms/1000);  ms = ms % 1000;  t = three(ms);  var min = Math.floor(sec/60);  sec = sec % 60;  t = two(sec) + ":" + t;  var hr = Math.floor(min/60);  min = min % 60;  t = two(min) + ":" + t; var day = Math.floor(hr/60);  hr = hr % 60;  t = two(hr) + ":" + t;   return t;  }
+    let student = false;
+
+    //verification
+    if(req.session.staff_id){
+        if(!(contest.createdBy == req.session.staff_id || req.session.isAdmin || req.session.staff_id && contest.timings.ends < new Date()))
+            return res.status(401).end();
+        
+    }
+    else{   student=true;
+        if(!(contest.timings.ends < new Date()))
+            return res.status(401).end();
+    }
+    
+
 
     let students = [];
     let teachers =[];
@@ -508,6 +522,8 @@ router.get('/submissions/:curl',authenticate,teacher,async (req,res) =>{
 
     let SendData=[];
     for(i=0;i<contest.submissions.length;i++){ let data={};
+        if(student && contest.submissions[i].status != "Accepted")
+            continue;
         if(contest.submissions[i].year != '-' ){
             const index = studentData.findIndex(j => j.usn == contest.submissions[i].usn);
             data.usn = studentData[index].usn;
@@ -521,7 +537,7 @@ router.get('/submissions/:curl',authenticate,teacher,async (req,res) =>{
             data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+teacherData[index1].staff_id+'" data-qid="'+contest.submissions[i].qid +'" href="#">View Code</a>';
         }
         data.qname = questions[questions.findIndex(j => j.qid == contest.submissions[i].qid)].name;
-        data.time = time_noDays(contest.submissions[i].timestamp);
+        data.time = time_noDays(contest.submissions[i].timestamp - contest.timings.starts);
         data.points =contest.submissions[i].points;
         data.status = contest.submissions[i].status;
         const l = lang(contest.submissions[i].language_id);
@@ -768,15 +784,24 @@ router.post('/source/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
     res.send('');
 });
 
-//fetch source code for teacher
-router.get('/source/:curl/:usn/:qid',authenticate,teacher,async (req,res) =>{
+//fetch source code
+router.get('/source/:curl/:usn/:qid',authenticate,contestAuth, async (req,res) =>{
     const contest = await Contest.findOne({url:req.params.curl}).lean().select('custom_staff_id createdBy submissions timings -_id');
     if(!contest) return res.status(400).send("Contest not found!");
 
-    if(req.session.staff_id == contest.createdBy || new Date() > contest.timings.ends || req.session.isAdmin){
-        res.send(contest.submissions.find(i => i.usn == req.params.usn && i.qid == req.params.qid).sourceCode);
+    if(req.session.staff_id){
+        if(req.session.staff_id == contest.createdBy || new Date() > contest.timings.ends || req.session.isAdmin){
+            res.send(contest.submissions.find(i => i.usn == req.params.usn && i.qid == req.params.qid).sourceCode);
+        }
+        else return res.end();
     }
-    else res.end();
+    else{
+        if(!(contest.timings.ends < new Date())){
+            return res.end();
+        }
+        return res.send(contest.submissions.find(i => i.usn == req.params.usn && i.qid == req.params.qid && i.status == "Accepted").sourceCode);
+    }
+   
 });
 
 //get list of students by year
@@ -789,7 +814,7 @@ router.get('/students/:year',authenticate,teacher, async (req,res) =>{
   
     for(i of students)
     {
-      i.select = '<input type="checkbox" '+(contest.custom_usn.includes(i.usn)?'checked':'') +' name="studentListCustom" value="'+i.usn+'" >';
+      i.select = '<input type="checkbox" name="studentListCustom" value="'+i.usn+'" >';
       i.name = i.fname +" "+i.lname;
       delete i.fname;
       delete i.lname;
@@ -820,7 +845,7 @@ router.get('/teachers',authenticate,teacher,async (req,res)=>{
 router.post('/students/:id',authenticate,teacher,async (req,res) =>{
     const contest = await Contest.findOne({id:req.params.id});
     if(!contest) return res.status(400).send("Invalid ID");
-    contest.custom_usn = contest.custom_usn = (req.body.studentListCustom?req.body.studentListCustom:[]);
+    contest.custom_usn = (req.body.studentListCustom?req.body.studentListCustom:[]);
     await contest.save();
     res.send("Students Added");
     
@@ -1001,13 +1026,16 @@ router.get('/:curl/leaderboard',authenticate,contestAuth,async (req,res) =>{
     res.render('leaderboard',{contest:contest});
 });
 
-router.get('/:curl/submissions',authenticate,teacher, async (req,res)=>{
+router.get('/:curl/submissions',authenticate,contestAuth,async (req,res)=>{
     const contest = await Contest.findOne({url:req.params.curl}).lean().select('url name createdBy timings -_id');
     if(!contest) return res.status(400).send("Contest not found");
 
-    if(contest.createdBy == req.session.staff_id || req.session.isAdmin || contest.timings.ends < new Date())
+    //teacher
+    if(contest.createdBy == req.session.staff_id || req.session.isAdmin || req.session.staff_id && contest.timings.ends < new Date())
     return res.render('teacher/submission',{contest:contest});
-    else return res.status(401).send("Unauthorized");
+    else{ //student
+        return res.render('submission',{contest:contest});
+    }
 });
 
 router.get('/:curl/reportDownload',authenticate,teacher,async (req,res)=>{

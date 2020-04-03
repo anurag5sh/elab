@@ -318,6 +318,7 @@ $(document).ready(function() {
                 $("#epoints1").val(data.test_cases[0].points);
                 $("#edescription").val(data.description);
                 $("#edifficulty").val(data.difficulty);
+                $("#edifficulty").niceSelect('update');
     
                 for(let i=1;i<data.sample_cases.length;i++){
                     sampleAdd();

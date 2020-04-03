@@ -328,6 +328,7 @@ function submitFormAdd(){
             $("#eo_testcase1").val(data.test_cases[0].output);
             $("#epoints1").val(data.test_cases[0].points);
             $("#edifficulty").val(data.difficulty);
+            $("#edifficulty").niceSelect('update');
             $("#edescription").val(data.description);
 
             for(let i=1;i<data.sample_cases.length;i++){

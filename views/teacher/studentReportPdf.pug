@@ -45,8 +45,8 @@ html
       //-   .col-lg-4
         
       .row.w-100
-        .col-8
-          h2.lb_heading.text-left Contest Name: #{contest.name}
+        .col-10.mx-auto
+          h2.lb_heading.text-left(style="padding-left:0px;") Contest Name: #{contest.name}
       
       - let startTime = (contest.timings.starts).toString()
       - let G = startTime.indexOf("G")
@@ -55,20 +55,20 @@ html
       - G = endTime.indexOf("G")
       - endTime = endTime.slice(0,G-1)
       .row.w-100
-        .col-lg-6
-          p.p-2(style="font-weight:bold;color:#666666;") #{startTime} - #{endTime}
+        .col-lg-10.mx-auto
+          p.p-2(style="font-weight:bold;color:#666666;padding-left:2px!important;") #{startTime} - #{endTime}
 
       .row.w-100
-        .col-lg-6
-          p.p-2(style="font-weight:bold;color:#666666;margin:0px;padding-bottom:0px!important") Name : #{user.fname + " " + user.lname}
+        .col-lg-10.mx-auto
+          p.p-2(style="font-weight:bold;color:#666666;margin:0px;padding-bottom:0px!important;padding-left:2px!important;") Name : #{user.fname + " " + user.lname}
           -if(user.usn)
-            p.p-2(style="font-weight:bold;color:#666666;margin:0px;padding-bottom:0px!important") USN : #{user.usn} 
+            p.p-2(style="font-weight:bold;color:#666666;margin:0px;padding-bottom:0px!important;padding-left:2px!important;") USN : #{user.usn} 
           -else
-            p.p-2(style="font-weight:bold;color:#666666;margin:0px;padding-bottom:0px!important") STAFF ID : #{user.staff_id} 
+            p.p-2(style="font-weight:bold;color:#666666;margin:0px;padding-bottom:0px!important;padding-left:2px!important;") STAFF ID : #{user.staff_id} 
           -if(user.year)
-            p.p-2(style="font-weight:bold;color:#666666;margin:0px;padding-bottom:0px!important") Year : #{user.year} 
+            p.p-2(style="font-weight:bold;color:#666666;margin:0px;padding-bottom:0px!important;padding-left:2px!important;") Year : #{user.year} 
 
-      h1.lb_heading.text-center Questions Answered
+      h1.lb_heading.text-center.pb-4 Questions Answered
       .row.w-100
         .col-10.mx-auto
           #sourceBody
@@ -85,7 +85,7 @@ html
             html += "<div class='row'><div class='col-8'><p>Language : "+val.language+"</p></div>";
             html += "<div class='col-4'><p class='float-right'>Points : "+val.points+"</p></div></div>";
             html += "<p>Time :  "+val.time+"</p>"
-            html += `<div style='font-family: "Source Code Pro" ;white-space: pre-wrap;background-color: #cfd8dc ; padding:5px'>`+he.escape(val.sourceCode)+"</div>"
+            html += `<div style='font-family: "Source Code Pro" ;white-space: pre-wrap;background-color: #cfd8dc ; padding:7px;border-radius:5px;'>`+he.escape(val.sourceCode)+"</div>"
             html +="<br>"
             $("#sourceBody").append(html);
         });

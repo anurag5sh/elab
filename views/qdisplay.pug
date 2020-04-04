@@ -244,7 +244,13 @@ body
                 .col.text-left
                   a.btn(href='/contest/'+contest.url+'/report' style='font-size:20px;')
                     i.fad.fa-file-chart-line
-                    label(style='cursor: pointer;') &nbsp; View Report
+                    label(style='cursor: pointer;') &nbsp; Contest Report
+              .row
+                | &nbsp;
+                .col.text-left
+                  a.btn(href='/contest/'+contest.url+'/studentReport' style='font-size:20px;')
+                    i.fad.fa-file-chart-line
+                    label(style='cursor: pointer;') &nbsp; Student Report
             -if(session.staff_id == contest.createdBy || session.isAdmin)
               .row
                 .col.text-left

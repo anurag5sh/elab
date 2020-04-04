@@ -16,6 +16,8 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const winston = require('winston');
 const {Submission} = require('../models/submission');
+const {CustomGroup} = require('../models/customGroup');
+
 
 const fs = require('fs');
 
@@ -133,7 +135,13 @@ router.get('/viewProfile/:id',authenticate,async (req,res)=>{
 //student dashboard
 router.get('/dashboard', authenticate,async (req,res)=> {
     const q = await Practice.find().sort({date:-1}).limit(2).lean().select('name qid').catch(err => res.send(err));
-    const contest = await Contest.find({isReady:true}).sort({_id:-1}).limit(2).lean().select('name description url image ').catch(err => res.send(err));
+    //const contest = await Contest.find({isReady:true}).sort({_id:-1}).limit(2).lean().select('name description url image ').catch(err => res.send(err));
+    
+    const grp = await CustomGroup.find({'usn':req.session.usn}).lean().select({id:1,_id:0});
+    let gid=[];
+    for(i of grp) gid.push(i.id);
+    let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true}).select('name url description image').lean().sort({_id:-1}).limit(2);
+
     if(!req.session.staff_id)
     res.render('dashboard', {q:q,contest:contest});
     else

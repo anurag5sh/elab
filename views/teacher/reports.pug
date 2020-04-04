@@ -1,6 +1,7 @@
 link(rel='stylesheet', href='/assets/bootstrap/css/bootstrap.min.css')
 script(src='/assets/bootstrap/js/bootstrap.min.js')
 link(href="https://fonts.googleapis.com/css?family=Palanquin+Dark:400&display=swap" rel="stylesheet")
+title #{contest.name+"-"+"report"}
 style.
   .lb_heading{
     font-family: 'Palanquin Dark';
@@ -36,9 +37,9 @@ style.
     .col-lg-4
     -if(!query)
       .col-lg-6
-        a.btn.btn-success(href="/contest/"+curl+"/reportDownload?print=all") Download Report
-        a.btn.btn-success.ml-4(href="/contest/"+curl+"/reportDownload?print=leaderboard") Download Leaderboard
-        a.btn.btn-success.ml-4(href="/contest/"+curl+"/reportDownload?print=signedup") Download Signed up list
+        a.btn.btn-success(href="/contest/"+curl+"/reportDownload?print=all" target="_blank") Download Report
+        a.btn.btn-success.ml-4(href="/contest/"+curl+"/reportDownload?print=leaderboard" target="_blank") Download Leaderboard
+        a.btn.btn-success.ml-4(href="/contest/"+curl+"/reportDownload?print=signedup" target="_blank") Download Signed up list
   br
   .row.w-100
     .col-8

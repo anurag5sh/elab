@@ -671,7 +671,9 @@ router.get('/studentReportDownload/:curl/:id',authenticate,teacher, async (req,r
     //verification
     if(!(contest.createdBy == req.session.staff_id || req.session.isAdmin || req.session.staff_id && contest.timings.ends < new Date()))
     return res.status(401).end();
-    let user;
+    
+    if(!req.query.download){
+        let user;
     const index = contest.submissions.findIndex(i => {return i.usn == req.params.id});
     if(index == -1){
         return res.end(404);
@@ -682,7 +684,60 @@ router.get('/studentReportDownload/:curl/:id',authenticate,teacher, async (req,r
             user=await Teacher.findOne({staff_id:req.params.id}).lean();
         }
     }
-    res.render('teacher/studentReportPdf',{contest:contest,user:user});
+    return res.render('teacher/studentReportPdf',{contest:contest,user:user});
+    }
+    
+    
+    (async function() {
+        try {
+        // launch puppeteer API
+        const browser = await puppeteer.launch(); 
+        const page = await browser.newPage();
+        let host = 'localhost';
+        if (process.env.NODE_ENV != 'production') {
+            host='localhost:'+req.app.locals.port;
+           }
+        const elabIndex = req.headers.cookie.indexOf("elab");
+        await page.setCookie({name:"elab",value:req.headers.cookie.substr(elabIndex+5),domain:"localhost",path:"/"});   
+        await page.goto(`http://${host}/contest/studentReportDownload/${req.params.curl}/${req.params.id}`,{waitUntil:'networkidle0'});
+        await page.pdf({
+            // name of your pdf file in directory
+			path: './public/reports/'+req.params.curl+'-report-'+req.params.id+'.pdf', 
+            //  specifies the format
+			format: 'A4', 
+            // print background property
+			printBackground: true 
+        });
+        // console message when conversion  is complete!
+        await browser.close();
+    } catch (e) {
+        winston.error(e);
+    }
+    })().then(()=>{
+        const uploadsDir = path.join(__dirname, '../public/reports/');
+        fs.readdir(uploadsDir, function(err, files) {
+            files.forEach(function(file, index) {
+              fs.stat(path.join(uploadsDir, file), function(err, stat) {
+                var endTime, now;
+                if (err) {
+                  return winston.error(err);
+                }
+                now = new Date().getTime();
+                endTime = new Date(stat.ctime).getTime() + 1800000;
+                if (now > endTime) {
+                  return rimraf(path.join(uploadsDir, file), function(err) {
+                    if (err) {
+                      winston.error(err);
+                    }
+                  });
+                }
+              });
+            });
+          });
+        res.set('Content-Type','application/pdf');
+        res.sendFile(uploadsDir+req.params.curl+'-report-'+req.params.id+'.pdf');
+        //res.download('./public/reports/'+req.params.curl+'-report-'+req.params.id+'.pdf');
+    });
 });
 //adding solution to a question in contest
 router.get('/solution/:curl/:qid',authenticate, async (req,res)=>{
@@ -1236,7 +1291,9 @@ router.get('/:curl/reportDownload',authenticate,teacher,async (req,res)=>{
               });
             });
           });
-        res.download('./public/reports/'+req.params.curl+'-report-'+print+'.pdf');
+        res.set('Content-Type','application/pdf');
+        res.sendFile(uploadsDir+req.params.curl+'-report-'+print+'.pdf');
+        //res.download('./public/reports/'+req.params.curl+'-report-'+print+'.pdf');
     });
 
 });

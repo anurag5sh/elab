@@ -82,7 +82,8 @@ body
                                         {"searchable": false,"orderable": false,"targets": 3},
                                         {"searchable": false,"targets": 4},
                                         {"searchable": false,"targets": 5},
-                                        {"searchable": false,"targets": 6} ]
+                                        {"searchable": false,"targets": 6},
+                                        {"className": "text-center", "targets": "_all"} ]
                     } );
                     submissions.on( 'order.dt search.dt', function () {
                         submissions.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {

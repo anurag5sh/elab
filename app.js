@@ -20,6 +20,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet')
 const fs = require('fs');
 const rateLimiter = require('./middleware/rateLimiter');
+const assignmentVeri = require('./middleware/assignmentVeri');
 
 //port config
 const port = process.argv[2] || 4000;
@@ -55,6 +56,9 @@ app.use(express.static('public'));
 app.set('view engine', 'pug');
 app.set('views',__dirname+"/views");
 app.locals.moment = require('moment');
+
+//trust proxy
+app.set('trust proxy',true);
 
 app.use(helmet());
 app.use(function(req, res, next) {
@@ -113,7 +117,7 @@ app.use(mongoSanitize({
 }));
 
 app.use('/', login)
-app.use('/assignment', assignment);
+app.use('/assignment', assignmentVeri,assignment);
 app.use('/contest', contest);
 app.use('/practice', practice);
 app.use('/admin', admin);

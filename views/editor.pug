@@ -258,11 +258,12 @@ html(lang='en')
                 |
         .col-lg-3.col-md-4.col-sm-4.pl-0
           .card.m-0.mt-4(style="width:95%;height:auto")
-            div.text-left.m-3.mb-2
-              a.editor-right(style="border-radius:20px;" href="/practice/"+question.qid+"/submissions") 
-                i.fad.fa-eye(style="font-size:17px")
-                | &nbsp; 
-                label.editor-right(style="font-size:18px") View Submissions
+            -if(isAccepted)
+              div.text-left.m-3.mb-2
+                a.editor-right(style="border-radius:20px;" href="/practice/"+question.qid+"/submissions") 
+                  i.fad.fa-eye(style="font-size:17px")
+                  | &nbsp; 
+                  label.editor-right(style="font-size:18px") View Submissions
             //- div.text-left.ml-3.mr-3.mb-2
             //-   a.editor-right( href="") 
             //-     i.fad.fa-user-check(style="font-size:17px")

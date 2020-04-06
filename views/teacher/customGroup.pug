@@ -143,7 +143,7 @@ body
                 tr  
                     td=i.id
                     td=i.name
-                    td=new Date(i.date).toLocaleString()
+                    td=moment(i.date).format('DD/MM/YYYY, hh:mm a')
                     td
                         a( href="" data-toggle="modal" data-target="#view" data-id=i.id)
                             i.fas.fa-eye(style="color:dimgray")

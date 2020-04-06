@@ -19,7 +19,7 @@ router.post('/',admin, async (req, res) => {
   const { error } = validate(req.body); 
   if (error) return res.status(400).send(error.message);
 
-  let student = await Student.findOne({ email: req.body.email });
+  let student = await Student.findOne({ $or:[{email: req.body.email},{usn:req.body.usn}]  });
   if (student) return res.status(400).send('Student already registered.');
 
   if(!req.body.lname) req.body.lname=" ";
@@ -39,7 +39,7 @@ router.post('/',admin, async (req, res) => {
     const { error } = validateTeacher(req.body); 
   if (error) return res.status(400).send(error.message);
 
-  let teacher = await Teacher.findOne({ email: req.body.email });
+  let teacher = await Teacher.findOne({$or:[{email: req.body.email},{staff_id:req.body.staff_id}] });
   if (teacher) return res.status(400).send('Teacher already registered.');
 
   if(!req.body.lname) req.body.lname=" ";

@@ -141,25 +141,39 @@ router.get('/:qid', authenticate, async (req,res)=>{
   if(!question) return res.send("Question not found!!");
 
   if(req.session.staff_id){
-    res.render('teacher/editor', {question : _.pick(question,['qid','name','difficulty','createdByName','statement','constraints', 'input_format','output_format','sample_cases','difficulty','description','languages'])});
+    res.render('teacher/editor', {question :question});
 
   }
   else{
-    res.render('editor', {question : _.pick(question,['name','statement','difficulty','createdByName','constraints', 'input_format','output_format','sample_cases','qid','difficulty','description','languages'])});
+    let accepted=false;
+    const sub = question.submissions.find(i => {return i.usn == req.session.usn && i.status == "Accepted"});
+    if(sub) accepted=true;
+    res.render('editor', {question : question,isAccepted:accepted});
 
   }
 });
 
 //source code of a submission
 router.get('/source/:qid/:usn',authenticate,async (req,res)=>{
-  const question = await Practice.findOne({qid:req.params.qid,submissions:{$elemMatch:{usn:req.params.usn,status:"Accepted"}}},{_id:0,'submissions.$':1}).lean();
+  const question = await Practice.findOne({qid:req.params.qid}).lean();
   if(!question || !question.submissions) return res.status(404).send("Not found!");
-  res.send(question.submissions[0].sourceCode);
+
+  //verify
+  if(req.session.usn){
+    const sub = question.submissions.find(i => {return i.usn == req.session.usn && i.status == "Accepted"});
+    if(!sub) return res.status(401).end();
+  }
+
+  res.send(question.submissions.find(i => {return i.usn == req.params.usn && i.status == "Accepted"}).sourceCode);
 });
 
 //submissions view page
 router.get('/:qid/submissions',authenticate,async (req,res)=>{
-  const question = await Practice.findOne({qid:req.params.qid}).lean().select('name qid');
+  const question = await Practice.findOne({qid:req.params.qid}).lean();
+  if(req.session.usn){
+    const sub = question.submissions.find(i => {return i.usn == req.session.usn && i.status == "Accepted"});
+    if(!sub) return res.status(401).end();
+  }
   res.render('practiceSub',{question:question});
 });
 
@@ -167,6 +181,12 @@ router.get('/:qid/submissions',authenticate,async (req,res)=>{
 router.get('/:qid/submissions/list',authenticate,async (req,res)=>{
   const question = await Practice.findOne({qid:req.params.qid,submissions:{$elemMatch:{status:"Accepted"}}}).lean();
   if(!question) return res.send([]);
+  
+  //verify
+  if(req.session.usn){
+    const sub = question.submissions.find(i => {return i.usn == req.session.usn && i.status == "Accepted"});
+    if(!sub) return res.status(401).end();
+  }
   if(question.submissions == []) return res.send([]);
 
   let students=[];
@@ -181,7 +201,7 @@ router.get('/:qid/submissions/list',authenticate,async (req,res)=>{
   for(i=0;i<question.submissions.length;i++){ let data={};
     data.usn = question.submissions[i].usn;
     data.name = studentData[i].fname + " " + studentData[i].lname;
-    data.time = question.submissions[i].timestamp.toLocaleString();
+    data.time = moment(question.submissions[i].timestamp).format('DD/MM/YYYY ,hh:mm a')
     data.points = question.submissions[i].points;
     data.status = question.submissions[i].status;
     data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+studentData[i].usn+'"  href="#">View Code</a>';

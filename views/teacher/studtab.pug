@@ -7,6 +7,7 @@ body
   
   p.fontStyle Students/Teachers who have signed up.
   a.btn.btn-success(href="/contest/"+contest.url+"/reportDownload?print=signedup") Download Signed up list
+  a.btn.btn-info(href="#" data-toggle="modal" data-target="#notSigned") Not Signed up list
   table.table.table-stripped
     thead
       tr
@@ -20,6 +21,33 @@ body
           td=j+1
           td=i.name
           td=i.usn
-          td=i.time.toLocaleString()
+          td=moment(i.time).format('LLL')
+  
+  .modal.fade#notSigned
+    .modal-dialog.modal-lg
+      .modal-content
+        .modal-header
+          h4.modal-title Not Signed up List
+        .modal-body
+          table.table.table-stripped
+            thead
+              tr
+                th No
+                th NAME
+                th USN / ID
+                th YEAR
+            tbody#notSignedTBody
 
-      
+        .modal-footer
+          button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+
+  script.
+    $("#notSigned").on('show.bs.modal', function(){
+      $("#notSignedTBody").empty();
+      $.get("/contest/#{contest.url}/notSigned", function(data,status){
+        $.each(data,function(index,val){
+          $("#notSignedTBody").append(`<tr><td>${index+1}</td><td>${val.fname+" "+val.lname}</td>
+          <td>${val.usn || val.staff_id}</td><td>${val.year || "-"}</td></tr>`)
+        });
+      }).fail((err)=>{toastr.error("Something went Wrong");});
+    });

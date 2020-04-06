@@ -113,7 +113,8 @@ html(lang='en')
 
               //- input.form-radio(type='radio', name='type', value='teacher')
               //- | Teacher
-            
+            .mx-auto
+              p#error(style="color:rgb(199, 21, 133);")
             .container-login100-form-btn.p-t-25
               input.login100-form-btn(type="Submit" value="Login")
             .forgot-password
@@ -139,6 +140,7 @@ html(lang='en')
         window.location.replace(data);
       }).fail((err)=>{
         toastr.error(err.responseText);
+        $("#error").text(err.responseText);
       });
       return false;
       }

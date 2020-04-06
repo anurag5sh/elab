@@ -588,11 +588,12 @@ router.get('/studentReport/:curl',authenticate,teacher, async (req,res) =>{
         data.name = studentData[i].fname + " " + studentData[i].lname;
         data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+studentData[i].usn+'" href="#">View Report</a>';
         data.questions = sub.filter(j => {return j.status != "Wrong Answer" }).length;
-        data.time=sub[i].timestamp;
+        data.time=sub[sub.length-1].timestamp;
         data.lang=new Set();
+        data.points=0;
         sub.forEach((item)=>{
             if(item.status != "Wrong Answer"){
-                data.points = item.points;
+                data.points += item.points;
                 const l = lang(item.language_id);
                 data.lang.add(l.substr(0,l.length-2));
                 if(data.time < item.timestamp)
@@ -611,11 +612,12 @@ router.get('/studentReport/:curl',authenticate,teacher, async (req,res) =>{
         data.name = teacherData[i].fname + " " + teacherData[i].lname;
         data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+teacherData[i].staff_id+'" href="#">View Report</a>';
         data.questions = sub.filter(j => {return j.status != "Wrong Answer" }).length;
-        data.time=sub[i].timestamp;
+        data.time=sub[sub.length-1].timestamp;
         data.lang=new Set();
+        data.points=0;
         sub.forEach((item)=>{
             if(item.status != "Wrong Answer"){
-                data.points = item.points;
+                data.points += item.points;
                 const l = lang(item.language_id);
                 data.lang.add(l.substr(0,l.length-2));
                 if(data.time < item.timestamp)
@@ -706,7 +708,8 @@ router.get('/studentReportDownload/:curl/:id',authenticate,teacher, async (req,r
             //  specifies the format
 			format: 'A4', 
             // print background property
-			printBackground: true 
+            printBackground: true ,
+            margin: {top: '2cm', left: 0, right: 0, bottom: '2cm'}
         });
         // console message when conversion  is complete!
         await browser.close();
@@ -1263,7 +1266,8 @@ router.get('/:curl/reportDownload',authenticate,teacher,async (req,res)=>{
             //  specifies the format
 			format: 'A4', 
             // print background property
-			printBackground: true 
+            printBackground: true ,
+            margin: {top: '2cm', left: 0, right: 0, bottom: '2cm'}
         });
         // console message when conversion  is complete!
         await browser.close();
@@ -1349,7 +1353,37 @@ if(req.query.print) query=req.query.print;
 res.render('teacher/reports',{contest:contest,stats:stats,questionNo:questionNo,curl:req.params.curl,query:query});
 });
 
+//Not signed up list
+router.get('/:curl/notSigned',authenticate,teacher,async (req,res)=>{
+    let contest = await Contest.findOne({url:req.params.curl}).lean().select('year custom_usn custom_staff_id customGroup signedUp');
+    if(!contest) return res.status(404).end();
 
+    let students = [];
+    let signedUSN=new Set();
+    contest.signedUp.forEach((item)=>{
+        signedUSN.add(item.usn);
+    });
+
+    contest.year.forEach(async (item)=>{
+        const list = await Student.find({year:item}).select('fname lname year usn -_id').lean();
+        students=students.concat(list);
+    });
+
+    const groups = await CustomGroup.find({id:{$in: contest.customGroup}}).limit().select({usn:1,_id:0});
+    let grp_usn = [];
+    for(i of groups)
+        grp_usn = grp_usn.concat(i.usn);
+
+    const custom = await Student.find({usn:{$in:contest.custom_usn.concat(grp_usn)}}).select('fname lname year usn -_id').lean();
+    const studentSet = new Set(students.concat(custom));
+
+    const custom_staff = new Set(await Teacher.find({staff_id:{$in:contest.custom_staff_id}}).lean().select('fname lname staff_id -_id'));
+
+    let notSigned = new Set([...studentSet].filter(x => !signedUSN.has(x.usn)));
+    let notSignedStaff = new Set([...custom_staff].filter(x => !signedUSN.has(x.staff_id)));
+    notSigned = [...notSigned].sort((a,b)=> (a.year > b.year)?1:(a.year === b.year) ? ((a.usn > b.usn) ? 1 : -1) : -1 );
+    res.send([...notSignedStaff].concat(notSigned));
+});
 
 
 //viewing question

@@ -233,14 +233,18 @@ function submission(){
     document.getElementById("loader").style.display="none";
     document.getElementById("out").style.display="block";
         window.location.href="#opbox";
-    }).fail((err)=>{
-    toastr.error(err.responseText);
-    document.getElementById("loader").style.display="none";
-    });
-    });
     //spinner
     $("#button_submit").prop('disabled', false);
     $("#button_submit").find('span').remove();
+    }).fail((err)=>{
+    toastr.error(err.responseText);
+    document.getElementById("loader").style.display="none";
+    //spinner
+    $("#button_submit").prop('disabled', false);
+    $("#button_submit").find('span').remove();
+    });
+    });
+    
 }
 return {run:readText,submit:submission,setLang:setLang,source:source,setTheme:setTheme,setFont:setFont,sourceInsert:sourceInsert,save:save}
 

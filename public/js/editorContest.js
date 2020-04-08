@@ -153,6 +153,9 @@ function setup(){const editor = ace.edit("editor");
       }).fail((err)=>{
           toastr.error(err.responseText);
           document.getElementById("loader").style.display="none";
+          //spinner
+          $("#button").prop('disabled', false);
+          $("#button").find('span').remove();
         });
       
       });
@@ -161,7 +164,6 @@ function setup(){const editor = ace.edit("editor");
         let l = document.getElementById("lang").value;
         l=l.slice(-2);
         $("#button_submit").prop('disabled', true).append('<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>');
-        $(document).ready(function (){
         $.post(window.location.pathname,
         {
         source:editor.getValue(),
@@ -231,14 +233,17 @@ function setup(){const editor = ace.edit("editor");
           document.getElementById("loader").style.display="none";
           document.getElementById("out").style.display="block";
            window.location.href="#opbox";
+           //spinner
+        $("#button_submit").prop('disabled', false);
+        $("#button_submit").find('span').remove();
         }).fail((err)=>{
           toastr.error(err.responseText);
           document.getElementById("loader").style.display="none";
+          //spinner
+          $("#button_submit").prop('disabled', false);
+          $("#button_submit").find('span').remove();
         });
-        });
-        //spinner
-        $("#button_submit").prop('disabled', false);
-        $("#button_submit").find('span').remove();
+        
       }
       return {run:readText,submit:submission,setLang:setLang,source:source,setTheme:setTheme,setFont:setFont,sourceInsert:sourceInsert,save:save}
       }

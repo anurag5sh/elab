@@ -5,7 +5,7 @@
 html
   head
     title=question.name
-    -if(contest.timings.ends < new Date())
+    -if(session.isAdmin ||session.staff_id == contest.createdBy ||contest.timings.ends < new Date())
       script(src='/src-min-noconflict/ace.js' charset='utf-8')
     -else
       script(src='/src-min-noconflict/ace_modified.js' charset='utf-8')

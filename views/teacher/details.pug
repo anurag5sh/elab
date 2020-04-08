@@ -102,10 +102,11 @@ html
               span.btn-label
                 i.fas.fa-thumbs-up
               | Save Settings
-            btn.btn.btn-labeled.btn-danger(role='button' style="cursor:pointer" data-target="#delete" data-toggle="modal")
-              span.btn-label
-                i.fas.fa-trash
-              | Delete
+            -if(session.isAdmin)
+              btn.btn.btn-labeled.btn-danger(role='button' style="cursor:pointer" data-target="#delete" data-toggle="modal")
+                span.btn-label
+                  i.fas.fa-trash
+                | Delete
         
       input(type = 'text',id ='contestid' value =contest.id style="display:none;")
 

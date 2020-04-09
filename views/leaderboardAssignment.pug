@@ -11,10 +11,19 @@ head
     script(src="/fontawesome/all.min.js")
 
 -function two(x) {return ((x>9)?"":"0")+x}
--function three(x) {return ((x>99)?"":"0")+((x>9)?"":"0")+x}
-
--function time(ms) {var sec = Math.floor(ms/1000);  ms = ms % 1000;  t = three(ms);  var min = Math.floor(sec/60);  sec = sec % 60;  t = two(sec) + ":" + t;  var hr = Math.floor(min/60);  min = min % 60;  t = two(min) + ":" + t; var day = Math.floor(hr/60);  hr = hr % 60;  t = two(hr) + ":" + t;   return t;  }
- 
+-
+  function convertMS( milliseconds ) {
+    var day, hour, minute, seconds;
+    seconds = Math.floor(milliseconds / 1000);
+    minute = Math.floor(seconds / 60);
+    seconds = seconds % 60;
+    hour = Math.floor(minute / 60);
+    minute = minute % 60;
+    day = Math.floor(hour / 24);
+    hour = hour % 24;
+    var time = two(day)+":"+two(hour)+":"+two(minute)+":"+two(seconds);
+    return time;
+  }
 body
   .WRAPPER
     div(style="margin-left:75px;margin-top:25px")
@@ -49,7 +58,7 @@ body
                         | &nbsp; POINTS
                       th.column5
                         i.fal.fa-clock
-                        | &nbsp; TIME (HH:MM:SS:MS)
+                        | &nbsp; TIME (DD:HH:MM:SS)
                       
                   tbody
                     each i,j in assignment.leaderboard
@@ -67,7 +76,7 @@ body
                         td.column3 
                           a(href="/viewProfile/"+i.usn+"") #{i.name} 
                         td.column4 #{i.points}
-                        td.column5 #{time(i.timestamp)}
+                        td.column5 #{convertMS(i.timestamp)}
     .push1
     .push
   //- footer.bg-dark(class="FOOTER")

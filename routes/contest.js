@@ -60,6 +60,19 @@ function encode64(string){ //encoding to base64
   return t
   }
 
+function convertMS( milliseconds ) {
+    var day, hour, minute, seconds;
+    seconds = Math.floor(milliseconds / 1000);
+    minute = Math.floor(seconds / 60);
+    seconds = seconds % 60;
+    hour = Math.floor(minute / 60);
+    minute = minute % 60;
+    day = Math.floor(hour / 24);
+    hour = hour % 24;
+    var time = two(day)+":"+two(hour)+":"+two(minute)+":"+two(seconds);
+    return time;
+}
+
 
 
 router.get('/',authenticate, async (req,res)=> {
@@ -488,10 +501,10 @@ router.post('/add/:cname',authenticate,teacher,async (req,res) => {
 
 //fetching submissions
 router.get('/submissions/:curl',authenticate,contestAuth, async (req,res) =>{
-    const contest = await Contest.findOne({url:req.params.curl}).lean().select('submissions questions timings -_id');
+    const contest = await Contest.findOne({url:req.params.curl}).lean();
     if(!contest) return res.status(400).send("Contest not found");
 
-    function time_noDays(ms) {var sec = Math.floor(ms/1000);  ms = ms % 1000;  t = three(ms);  var min = Math.floor(sec/60);  sec = sec % 60;  t = two(sec) + ":" + t;  var hr = Math.floor(min/60);  min = min % 60;  t = two(min) + ":" + t; var day = Math.floor(hr/60);  hr = hr % 60;  t = two(hr) + ":" + t;   return t;  }
+    //function time_noDays(ms) {var sec = Math.floor(ms/1000);  ms = ms % 1000;  t = three(ms);  var min = Math.floor(sec/60);  sec = sec % 60;  t = two(sec) + ":" + t;  var hr = Math.floor(min/60);  min = min % 60;  t = two(min) + ":" + t; var day = Math.floor(hr/60);  hr = hr % 60;  t = two(hr) + ":" + t;   return t;  }
     let student = false;
 
     //verification
@@ -543,7 +556,7 @@ router.get('/submissions/:curl',authenticate,contestAuth, async (req,res) =>{
             data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+teacherData[index1].staff_id+'" data-qid="'+contest.submissions[i].qid +'" href="#">View Code</a>';
         }
         data.qname = questions[questions.findIndex(j => j.qid == contest.submissions[i].qid)].name;
-        data.time = time_noDays(contest.submissions[i].timestamp - contest.timings.starts);
+        data.time = convertMS(contest.submissions[i].timestamp - contest.timings.starts);
         data.points =contest.submissions[i].points;
         data.status = contest.submissions[i].status;
         const l = lang(contest.submissions[i].language_id);
@@ -556,11 +569,10 @@ router.get('/submissions/:curl',authenticate,contestAuth, async (req,res) =>{
 
 });
 
-function time_noDays(ms) {var sec = Math.floor(ms/1000);  ms = ms % 1000;  t = three(ms);  var min = Math.floor(sec/60);  sec = sec % 60;  t = two(sec) + ":" + t;  var hr = Math.floor(min/60);  min = min % 60;  t = two(min) + ":" + t; var day = Math.floor(hr/60);  hr = hr % 60;  t = two(hr) + ":" + t;   return t;  }
 
 //fetching studentReport data
 router.get('/studentReport/:curl',authenticate,teacher, async (req,res) =>{
-    const contest = await Contest.findOne({url:req.params.curl}).lean().select('submissions questions timings -_id');
+    const contest = await Contest.findOne({url:req.params.curl}).lean();
     if(!contest) return res.status(400).send("Contest not found");
 
     //verification
@@ -606,7 +618,7 @@ router.get('/studentReport/:curl',authenticate,teacher, async (req,res) =>{
                     data.time = item.timestamp;
             }
         })
-        data.time = time_noDays(data.time - contest.timings.starts);
+        data.time = convertMS(data.time - contest.timings.starts);
         data.lang = Array.from(data.lang).join();
 
         SendData.push(data);
@@ -630,7 +642,7 @@ router.get('/studentReport/:curl',authenticate,teacher, async (req,res) =>{
                     data.time = item.timestamp;
             }
         })
-        data.time = time_noDays(data.time - contest.timings.starts);
+        data.time = convertMS(data.time - contest.timings.starts);
         data.lang = Array.from(data.lang).join();
         SendData.push(data);
     }
@@ -641,7 +653,7 @@ router.get('/studentReport/:curl',authenticate,teacher, async (req,res) =>{
 
 //individual student report
 router.get('/studentReport/:curl/:id',authenticate,teacher, async (req,res) =>{
-    const contest = await Contest.findOne({url:req.params.curl}).lean().select('submissions questions timings -_id');
+    const contest = await Contest.findOne({url:req.params.curl}).lean();
     if(!contest) return res.status(400).send("Contest not found");
 
     if(!(contest.createdBy == req.session.staff_id || req.session.isAdmin || req.session.staff_id && contest.timings.ends < new Date()))
@@ -657,7 +669,7 @@ router.get('/studentReport/:curl/:id',authenticate,teacher, async (req,res) =>{
     for(i=0;i<subs.length;i++){
         let data={};
         data.name = questions.find(j => {return j.qid == subs[i].qid}).name;
-        data.time = time_noDays(subs[i].timestamp - contest.timings.starts);
+        data.time = convertMS(subs[i].timestamp - contest.timings.starts);
         data.status = subs[i].status;
         const l = lang(subs[i].language_id);
         data.language = l.substr(0,l.length-2);
@@ -673,7 +685,7 @@ router.get('/studentReport/:curl/:id',authenticate,teacher, async (req,res) =>{
 
 //student report download
 router.get('/studentReportDownload/:curl/:id',authenticate,teacher, async (req,res) =>{
-    const contest = await Contest.findOne({url:req.params.curl}).lean().select('timings submissions name url -_id');
+    const contest = await Contest.findOne({url:req.params.curl}).lean();
     if(!contest) return res.status(400).send("Contest not found");
 
     //verification

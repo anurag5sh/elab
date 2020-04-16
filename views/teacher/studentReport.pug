@@ -95,9 +95,9 @@ body
 
         
         $("#source").on('show.bs.modal',function (e){
+            $("#sourceBody").empty();
             $("#pdf").attr('href',"/contest/studentReportDownload/#{contest.url}/"+$(e.relatedTarget).data('usn')+"?download=true")
             $.get('/contest/studentReport/#{contest.url}/'+$(e.relatedTarget).data('usn'),function(data,status){
-                $("#sourceBody").empty();
                 $.each(data,function (index,val){
                     let html = (index+1)+")<br>";
                     html += "<div class='row'><div class='col-8'><p><strong>Question Name : "+val.name +"</strong></p></div>";

@@ -97,6 +97,7 @@ body
 
         
         $("#source").on('show.bs.modal',function (e){
+            $("#sourceBody").empty();
             $.get('/contest/source/#{contest.url}/'+$(e.relatedTarget).data('usn')+'/'+$(e.relatedTarget).data('qid'),function(data,status){
                 $("#sourceBody").html(he.escape(data));
             });

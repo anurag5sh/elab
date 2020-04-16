@@ -96,6 +96,7 @@ body
 
         
         $("#source").on('show.bs.modal',function (e){
+            $("#sourceBody").empty();
             $.get('/practice/source/#{question.qid}/'+$(e.relatedTarget).data('usn'),function(data,status){
                 $("#sourceBody").html(he.escape(data));
             }).fail((err)=>{

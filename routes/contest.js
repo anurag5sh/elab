@@ -83,18 +83,30 @@ router.get('/',authenticate, async (req,res)=> {
     if(req.session.staff_id){
         let contest=null;
         if(!req.query.l){ //query l does not exist
+            if(req.session.isAdmin){
             contest = await Contest.find({'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':1}).skip((page-1)*12).limit(12);
+            }
+            else
+            contest = await Contest.find({$or:[{createdBy:req.session.staff_id},{custom_staff_id:req.session.staff_id}],'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':1}).skip((page-1)*12).limit(12);
             if(contest.length <=0) return res.render('teacher/trcontest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
             count = await Contest.countDocuments({'timings.ends':{$gt:new Date()}});
         }
         else if(req.query.l == 'past'){
+            if(req.session.isAdmin){
             contest = await Contest.find({'timings.ends':{$lt:new Date()}}).lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
+            }
+            else
+            contest = await Contest.find({$or:[{createdBy:req.session.staff_id},{custom_staff_id:req.session.staff_id}],'timings.ends':{$lt:new Date()}}).lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
             if(contest.length <=0) return res.render('teacher/trcontest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
             count = await Contest.countDocuments({'timings.ends':{$lt:new Date()}}).lean().sort({'timings.starts':-1});
             return res.render('teacher/trcontest',{contest:contest,count:count,type:"past",page:page});
         }
         else{
+            if(req.session.isAdmin){
             contest = await Contest.find({'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':1}).skip((page-1)*12).limit(12);
+            }
+            else
+            contest = await Contest.find({$or:[{createdBy:req.session.staff_id},{custom_staff_id:req.session.staff_id}],'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':1}).skip((page-1)*12).limit(12);
             if(contest.length <=0) return res.render('teacher/trcontest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
             count = await Contest.countDocuments({'timings.ends':{$gt:new Date()}}).lean().sort({'timings.starts':-1});
         }
@@ -1130,6 +1142,7 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
         return res.render('qdisplay',{contest:contest,questions:questions,totalPoints:totalPoints});
         }
         else if(contest.isReady){
+            if(!contest.custom_staff_id.includes(String(req.session.staff_id))) return res.status(404).end();
             if(now > contest.timings.starts && now < contest.timings.ends){
                 if(!contest.signedUp.find(({usn}) => usn == req.session.staff_id)){
                     return res.render("timer" , {attempt:"/contest/sign/"+req.params.curl,time:false,contest:contest,rules:contest.rules});

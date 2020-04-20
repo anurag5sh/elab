@@ -62,7 +62,7 @@ body
     //-     div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBKCE CSE DEPT. 2020
     include ../footer    
     script.
-        $.get('/contest/studentReport/#{contest.url}',function(data,status){
+        $.get('/contest/studentReport/!{contest.url}',function(data,status){
                     const submissions = $('#submission').DataTable( {
                         "data":data,
                         "columns": [
@@ -96,8 +96,8 @@ body
         
         $("#source").on('show.bs.modal',function (e){
             $("#sourceBody").empty();
-            $("#pdf").attr('href',"/contest/studentReportDownload/#{contest.url}/"+$(e.relatedTarget).data('usn')+"?download=true")
-            $.get('/contest/studentReport/#{contest.url}/'+$(e.relatedTarget).data('usn'),function(data,status){
+            $("#pdf").attr('href',"/contest/studentReportDownload/!{contest.url}/"+$(e.relatedTarget).data('usn')+"?download=true")
+            $.get('/contest/studentReport/!{contest.url}/'+$(e.relatedTarget).data('usn'),function(data,status){
                 $.each(data,function (index,val){
                     let html = (index+1)+")<br>";
                     html += "<div class='row'><div class='col-8'><p><strong>Question Name : "+val.name +"</strong></p></div>";

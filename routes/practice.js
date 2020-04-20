@@ -170,6 +170,7 @@ router.get('/source/:qid/:usn',authenticate,async (req,res)=>{
 //submissions view page
 router.get('/:qid/submissions',authenticate,async (req,res)=>{
   const question = await Practice.findOne({qid:req.params.qid}).lean();
+  if(!question) return res.status(404).end();
   if(req.session.usn){
     const sub = question.submissions.find(i => {return i.usn == req.session.usn && i.status == "Accepted"});
     if(!sub) return res.status(401).end();
@@ -179,9 +180,10 @@ router.get('/:qid/submissions',authenticate,async (req,res)=>{
 
 //data for submission table
 router.get('/:qid/submissions/list',authenticate,async (req,res)=>{
-  const question = await Practice.findOne({qid:req.params.qid,submissions:{$elemMatch:{status:"Accepted"}}}).lean();
-  if(!question) return res.send([]);
-  
+  //const question = await Practice.findOne({qid:req.params.qid,submissions:{$elemMatch:{status:"Accepted"}}}).lean();
+  let question = await Practice.aggregate([{$match:{qid:req.params.qid}},{$project:{submissions:{$filter:{input:"$submissions",as:"submissions",cond:{$eq:["$$submissions.status","Accepted"]}}}}}]);
+  if(question.length == 0) return res.send([]);
+  question=question[0];
   //verify
   if(req.session.usn){
     const sub = question.submissions.find(i => {return i.usn == req.session.usn && i.status == "Accepted"});
@@ -190,9 +192,10 @@ router.get('/:qid/submissions/list',authenticate,async (req,res)=>{
   if(question.submissions == []) return res.send([]);
 
   let students=[];
-  question.submissions.forEach((item)=>{
-    students.push(item.usn);
-  });
+
+  for(i of question.submissions){
+    students.push(i.usn);
+  }
 
   let studentData = await Student.find({usn:{$in:students}}).select('usn fname lname -_id').lean();
   if(!studentData) studentData = [];

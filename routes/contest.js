@@ -402,13 +402,16 @@ router.get('/manage/:name',authenticate,teacher, async (req,res) => {
 router.post('/manage/:name',authenticate,teacher,async (req,res) =>{
     const { error } = validateContest(req.body);
     if(error) return res.status(400).send(error.message); 
-    let contest;
-    if(req.session.isAdmin){
-        contest = await Contest.findOne({url:req.params.name});
-    }
-    else
-        contest = await Contest.findOne({url:req.params.name,'timings.ends':{$gt:new Date()}});
+    
+    let contest = await Contest.findOne({url:req.params.name});
     if(!contest) return res.status(400).send('Contest Ended!');
+    
+    if(!req.session.isAdmin){
+        if(contest.timings.ends < new Date()){
+            return res.status(400).send('Contest Ended!');
+        }   
+    }
+    
     if(!(contest.createdBy==req.session.staff_id || req.session.isAdmin)) return res.status(400).send('Cannot edit this contest');
     const starts = new Date(req.body.timings.split("-")[0]);
     const ends = new Date(req.body.timings.split("-")[1]);

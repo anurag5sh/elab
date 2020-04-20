@@ -136,7 +136,7 @@ html
             $("#con").submit();
           });
         function submitForm(){
-        const con = $.post("/contest/manage/#{contest.url}", $("#con").serialize(), function(data,status) {
+        const con = $.post("/contest/manage/!{contest.url}", $("#con").serialize(), function(data,status) {
           toastr.success(data);
                 })
                   .fail(function(error){
@@ -146,7 +146,7 @@ html
                   }
 
         function contestDelete(){
-          $.get('/contest/delete/#{contest.url}',function(data,status){
+          $.get('/contest/delete/!{contest.url}',function(data,status){
             toastr.success(data);
             location.href="/contest";
           }).fail((error)=>{

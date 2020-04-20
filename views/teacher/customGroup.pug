@@ -209,7 +209,7 @@ body
             })
             $.ajax({
                 type:"POST",
-                url:'/contest/group/allow/#{contest.url}',
+                url:'/contest/group/allow/!{contest.url}',
                 data: {selectedList:lst1},
                 success: function (data,status, jqXHR) {
                 toastr.success(data);
@@ -246,7 +246,7 @@ body
             $("#dbodyG").append('<p style="display:none;" id="dgid" >'+$(e.relatedTarget).data('id')+'</p>');
         });
         function removeG(){
-            $.get('/contest/group/remove/#{contest.url}/'+$("#gid").text(),function(data,status){
+            $.get('/contest/group/remove/!{contest.url}/'+$("#gid").text(),function(data,status){
                 toastr.success(data);
                 $("#remove").modal('hide');
                 location.reload();

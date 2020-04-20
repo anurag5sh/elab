@@ -62,7 +62,7 @@ body
     //-     div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBKCE CSE DEPT. 2020
     include footer    
     script.
-        $.get('/contest/submissions/#{contest.url}',function(data,status){
+        $.get('/contest/submissions/!{contest.url}',function(data,status){
                     const submissions = $('#submission').DataTable( {
                         "data":data,
                         "columns": [
@@ -98,7 +98,7 @@ body
         
         $("#source").on('show.bs.modal',function (e){
             $("#sourceBody").empty();
-            $.get('/contest/source/#{contest.url}/'+$(e.relatedTarget).data('usn')+'/'+$(e.relatedTarget).data('qid'),function(data,status){
+            $.get('/contest/source/!{contest.url}/'+$(e.relatedTarget).data('usn')+'/'+$(e.relatedTarget).data('qid'),function(data,status){
                 $("#sourceBody").html(he.escape(data));
             });
 

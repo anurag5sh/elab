@@ -29,7 +29,7 @@ script.
     });
     
     function addRules(){
-    $.post("/contest/rules/#{contest.url}",$("#rules").serialize(),
+    $.post("/contest/rules/!{contest.url}",$("#rules").serialize(),
     function(data,status){
         toastr.success(data);
     }).fail((err)=>{

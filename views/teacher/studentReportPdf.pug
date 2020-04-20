@@ -76,7 +76,7 @@ html
 
 
     script.
-      $.get('/contest/studentReport/#{contest.url}/#{user.usn || user.staff_id}',function(data,status){
+      $.get('/contest/studentReport/!{contest.url}/#{user.usn || user.staff_id}',function(data,status){
         $("#sourceBody").empty();
         $.each(data,function (index,val){
             let html = (index+1)+")<br>";

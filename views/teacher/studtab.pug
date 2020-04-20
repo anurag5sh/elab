@@ -44,7 +44,7 @@ body
   script.
     $("#notSigned").on('show.bs.modal', function(){
       $("#notSignedTBody").empty();
-      $.get("/contest/#{contest.url}/notSigned", function(data,status){
+      $.get("/contest/!{contest.url}/notSigned", function(data,status){
         $.each(data,function(index,val){
           $("#notSignedTBody").append(`<tr><td>${index+1}</td><td>${val.fname+" "+val.lname}</td>
           <td>${val.usn || val.staff_id}</td><td>${val.year || "-"}</td></tr>`)

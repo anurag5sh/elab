@@ -268,6 +268,32 @@ router.post('/group/add',authenticate,teacher,async (req,res)=>{
     
 });
 
+router.post('/group/edit/:id',authenticate,teacher,async (req,res)=>{
+    
+    let group = await CustomGroup.findOne({id:req.params.id});
+    if(!group) return res.status(400).send("Invalid ID");
+    
+    let usnArray = req.body.usn.split(",").filter(function(value,index,arr){
+        return value.trim() != '';
+    });
+    req.body.usn = Array.from(new Set(usnArray));
+    req.body.usn = req.body.usn.map(f=>{ return f.toUpperCase(); });
+
+    const {error} = validateGroup(req.body);
+    if(error) return res.status(400).send(error.message);
+
+    group.name = req.body.name;
+    group.description = req.body.description;
+    group.usn = req.body.usn;
+    
+    await group.save().catch((err)=>{ winston.error(err);
+        return res.send(err);
+    });
+
+    res.send("Changes saved.");
+    
+});
+
 //get list of groups
 router.get('/group',authenticate,teacher,async (req,res)=>{
 
@@ -302,7 +328,7 @@ router.post('/group/allow/:url',authenticate,teacher,async (req,res)=>{
         res.send('Group added to this contest!');
     }
     else
-        return res.status(400).send("Nothing to add");
+        return res.status(400).send("No group selected!");
   
 });
 

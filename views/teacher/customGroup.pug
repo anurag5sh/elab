@@ -24,6 +24,10 @@ head
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
         }
+        .modal-backdrop {
+            visibility: hidden !important;
+        }
+        .modal:after { content: ""; display: block; background: rgba(0,0,0, .5); position: fixed; top: 0; bottom: 0; width: 100%; z-index: -1; }
 .m
 
 body
@@ -89,7 +93,7 @@ body
                             .form-group.row
                                 label.col-sm-2(for="gnamev") Group Name:
                                 .col-sm-4
-                                    input.form-control#gnamev(type="text",  value="")
+                                    input.form-control#gnamev(type="text",  value="", name="name")
                             .form-group.row
                                 label.col-sm-2(for="idv") Group ID:
                                 .col-sm-4
@@ -97,13 +101,14 @@ body
                             .form-group.row
                                 label.col-sm-2(for="descriptionv") Description:
                                 .col-sm-4
-                                    textarea#descriptionv.form-control( cols="30", rows="3" value="")
+                                    textarea#descriptionv.form-control( cols="30" rows="3" value="" name="description")
                             .form-group.row
-                                label.col-sm-2(for="usn") USN:
+                                label.col-sm-2(for="usnv") USN:
                                 .col-sm-8
-                                    textarea#usnv.form-control( cols="50", rows="10", value="")
+                                    textarea#usnv.form-control( cols="50", rows="10", value="",name="usn")
 
                     .modal-footer
+                        button#viewEdit.btn.btn-success(type='button') SAVE
                         button.btn.btn-secondary(type='button' data-dismiss='modal') Close
 
     .modal.fade#remove(tabindex ="-1" role="dialog" )
@@ -179,7 +184,7 @@ body
             $("#groupList").empty();
             $("#paginationAllow").empty();
             const lst = '!{contest.customGroup}';
-             $.get('/contest/group',function(data,status){
+             $.get('/contest/group',{page:page},function(data,status){
                  data.groups.forEach((item,index)=>{
                      if(lst.includes(item.id)) return;
                     $("#groupList").append('<tr><td><input type="checkbox" name="selectedList" value="'+item.id+'"></td><td>'+item.name+'</td><td>'+new Date(item.date).toLocaleString()+'</td><td><a href="" data-toggle="modal" data-target="#view" data-id='+item.id+'><i class="fas fa-eye"  style="color:dimgrey;" ></i></a></td><td><a data-toggle="modal" data-target="#deleteG" data-id='+item.id+' href=""><i class="fas fa-trash"  style="color:red;"></i></a></td></tr>');
@@ -227,6 +232,8 @@ body
         
         $("#view").on('show.bs.modal',function(e){
             $("#viewForm")[0].reset();
+            $("#viewEdit").unbind();
+            $("#viewEdit").on("click",()=>{edit($(e.relatedTarget).data('id'))});
             $.get('/contest/group/'+$(e.relatedTarget).data('id'),function(data,status){
                 $("#title").text(data.name);
                 $("#idv").val(data.id);
@@ -264,5 +271,27 @@ body
                 toastr.error(err.responseText);
             });
         }
+
+        function edit(id){
+            $.ajax({
+            type: "POST",
+            url: "/contest/group/edit/"+id,
+            data: $("#viewForm").serialize(),
+            success: function (data,status, jqXHR) {
+        
+            toastr.success(data);
+            return false;
+            },
+            error: function (e) {
+                toastr.error(e.responseText);
+            }
+            
+            });
+        }
+        $(document).on('hidden.bs.modal', function (event) {
+        if ($('.modal:visible').length) {
+            $('body').addClass('modal-open');
+        }
+        });
        
     

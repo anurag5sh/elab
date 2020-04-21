@@ -12,7 +12,8 @@ block append head
   script(src="/js/typewriter.js")
   script.
     $(document).ready(function () {
-      if(window.location.href.split("=").length >1 ){
+      const list=window.location.href.split("=");
+      if(list.includes("past") || list.includes("past&page")){
         $('.navbar1 a.active').removeClass('active');
 
         $("#past").addClass('active');

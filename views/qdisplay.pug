@@ -167,26 +167,25 @@ body
         h1(style="font-family: 'Palanquin Dark';color:#666666;letter-spacing:0.8px;font-size:43px")=contest.name
         hr(style='border: 1px solid red;')
     .row(style="width:100%")
-      .col-lg-7.col-md-10
+      .col-lg-7
         each i,j in questions
           br
-          .row
-            .col-lg-8.col-md-8
-              .shadow.p-3.rounded(class=i.difficulty,class=(solved_questions.includes(i.qid)?"solved":""))
-                h2.questions #{i.name} 
-                .row
-                  .col-lg-10.col-md-10
-                    p(style="font-family: 'Pompiere', cursive;color:white;font-size:24px;") #{i.description.substr(0,60)+(i.description.length>60?"...":"")}
-                .row
-                  .col-lg-3.col-md-3(style='color:white')
-                    label(style="letter-spacing:0.5px;font-weight:bold" for='difficulty') Difficulty: 
-                    label(style="letter-spacing:0.5px;") #{i.difficulty}
-                  .col-lg-3.col-md-3(style='color:white')
-                    label(style="letter-spacing:0.5px;font-weight:bold" for='points') Points: 
-                    label(style="letter-spacing:0.5px") #{totalPoints[j]}
-                  .col-lg-4
-                  .col-lg-2.col-md-2
-                    a.btn.btn-outline-light.hovering(style='font-weight:bold;border-radius:20px;' href="/contest/"+contest.url+"/"+i.qid) Solve
+          
+          .shadow.p-3.rounded.w-100(class=i.difficulty,class=(solved_questions.includes(i.qid)?"solved":""))
+            h2.questions #{i.name} 
+            .row
+              .col-lg-10.col-md-10
+                p(style="font-family: 'Pompiere', cursive;color:white;font-size:24px;") #{i.description.substr(0,60)+(i.description.length>60?"...":"")}
+            .row
+              .col-lg-3.col-md-3(style='color:white')
+                label(style="letter-spacing:0.5px;font-weight:bold" for='difficulty') Difficulty: 
+                label(style="letter-spacing:0.5px;") #{i.difficulty}
+              .col-lg-3.col-md-3(style='color:white')
+                label(style="letter-spacing:0.5px;font-weight:bold" for='points') Points: 
+                label(style="letter-spacing:0.5px") #{totalPoints[j]}
+              .col-lg-4
+              .col-lg-2.col-md-2
+                a.btn.btn-outline-light.hovering(style='font-weight:bold;border-radius:20px;' href="/contest/"+contest.url+"/"+i.qid) Solve
 
         br  
 

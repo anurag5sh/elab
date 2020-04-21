@@ -183,7 +183,7 @@ body
             if(!page) page=1;
             $("#groupList").empty();
             $("#paginationAllow").empty();
-            const lst = '!{contest.customGroup}';
+            const lst = !{JSON.stringify(contest.customGroup)};
              $.get('/contest/group',{page:page},function(data,status){
                  data.groups.forEach((item,index)=>{
                      if(lst.includes(item.id)) return;

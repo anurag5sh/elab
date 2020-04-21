@@ -238,7 +238,7 @@ router.post('/group/add',authenticate,teacher,async (req,res)=>{
         return value.trim() != '';
     });
     req.body.usn = Array.from(new Set(usnArray));
-    req.body.usn = req.body.usn.map(f=>{ return f.toUpperCase(); });
+    req.body.usn = req.body.usn.map(f=>{ return f.toUpperCase().trim(); });
 
     const {error} = validateGroup(req.body);
     if(error) return res.status(400).send(error.message);
@@ -277,7 +277,7 @@ router.post('/group/edit/:id',authenticate,teacher,async (req,res)=>{
         return value.trim() != '';
     });
     req.body.usn = Array.from(new Set(usnArray));
-    req.body.usn = req.body.usn.map(f=>{ return f.toUpperCase(); });
+    req.body.usn = req.body.usn.map(f=>{ return f.toUpperCase().trim(); });
 
     const {error} = validateGroup(req.body);
     if(error) return res.status(400).send(error.message);

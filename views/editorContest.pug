@@ -263,24 +263,24 @@ html
             
                 
             p.headings Input Format
-            div(class="pre") #{question.input_format}
+            pre(class="pre") #{question.input_format}
             |
           
             p.headings Output Format
-            div(class="pre") #{question.output_format}
+            pre(class="pre") #{question.output_format}
             |
             - if(question.constraints) 
                 p.headings Constraints
-                div(class = "pre") #{question.constraints}
+                pre(class = "pre") #{question.constraints}
                 |
             each i,j in question.sample_cases
               p.headings Sample Input #{j+1}
-              div.bg-col.m-1(class="pre" class="sa" id="sam_i"+j) #{i.input}
+              pre.bg-col.m-1(class="pre" class="sa" id="sam_i"+j) #{i.input}
               p.headings Sample Output #{j+1}
-              div.bg-col.m-1(class="pre" id="sam_o"+j) #{i.output}
+              pre.bg-col.m-1(class="pre" id="sam_o"+j) #{i.output}
               -if(j==0) 
                 p.headings Explanation
-                div(class="pre") #{question.explanation}
+                pre(class="pre") #{question.explanation}
                 |
         .col-lg-3.col-md-4.col-sm-4.pl-0
           .card.m-0.mt-4(style="width:95%;height:auto")

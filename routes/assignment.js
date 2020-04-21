@@ -464,21 +464,21 @@ router.post('/:qid',authenticate,async (req,res)=>{
     }
     else{
         //check if previous
-        question = await AssignmentQ.findOne({assignmentId: new RegExp(new Date().getFullYear()-req.session.year),qid:req.params.qid}).lean().select({_id:0,test_cases:1,assignmentId:1});
-        if(question) assignment = await Assignment.findOne({id:question.assignmentId,'duration.ends':{$lt:new Date()}}).lean().select('duration');
+        question = await AssignmentQ.findOne({assignmentId: new RegExp(new Date().getFullYear()-req.session.year),qid:req.params.qid}).lean();
+        if(question) assignment = await Assignment.findOne({id:question.assignmentId,'duration.ends':{$lt:new Date()}}).lean();
         if(!assignment){
-            assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}}).select('id questions submissions leaderboard duration');
+            assignment = await Assignment.findOne({id:new RegExp('\^'+req.session.year),'duration.ends' :{$gt : new Date()}});
             if(!assignment) return res.status(400).end();
 
             question=null;
             if(assignment.questions.includes(req.params.qid)){
 
-            question = await AssignmentQ.findOne({qid:req.params.qid}).lean().select({_id:0,test_cases:1});
+            question = await AssignmentQ.findOne({qid:req.params.qid}).lean();
             if(!question) return res.status(404).send("Invalid ID");
             }
             else{
 
-            question = await AssignmentQ.findOne({assignmentId:assignment.id,qid:req.params.qid}).lean().select({_id:0,test_cases:1});
+            question = await AssignmentQ.findOne({assignmentId:assignment.id,qid:req.params.qid}).lean();
             if(!question) return res.status(404).send("Invalid ID");
             }
         }

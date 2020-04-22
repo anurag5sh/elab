@@ -311,7 +311,7 @@ html
         
         -if(session.usn)
           a.btn.btn-outline-primary.btn-sm(style='float:right;margin-right:12px;margin-top:5px;border-radius:20px' href="" data-toggle="modal" data-target="#sourceModal") View Submissions
-          button#save.btn.btn-outline-primary.btn-sm(style='float:right;margin-right:15px;margin-top:5px;border-radius:20px;' onclick="setup().save()")
+          button#save.btn.btn-outline-primary.btn-sm(style='float:right;margin-right:15px;margin-top:5px;border-radius:20px;' onclick="setup().save()" rel="popover" data-title="Warning!" data-content="This code will be lost once you logout, make a submission to permanently save your code.")
             span Save 
             i.fas.fa-save
 
@@ -380,4 +380,8 @@ html
       const s = !{question.statement};
       quill.setContents(s);
       })();
+      $('#save').popover({
+        trigger: "hover",
+        delay: {show : 1000, hide : 0}
+      });
     script(src="/js/editorAssignment.js")

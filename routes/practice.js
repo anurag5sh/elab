@@ -181,7 +181,7 @@ router.get('/:qid/submissions',authenticate,async (req,res)=>{
 //data for submission table
 router.get('/:qid/submissions/list',authenticate,async (req,res)=>{
   //const question = await Practice.findOne({qid:req.params.qid,submissions:{$elemMatch:{status:"Accepted"}}}).lean();
-  let question = await Practice.aggregate([{$match:{qid:req.params.qid}},{$project:{submissions:{$filter:{input:"$submissions",as:"submissions",cond:{$eq:["$$submissions.status","Accepted"]}}}}}]);
+  let question = await Practice.aggregate([{$match:{qid:req.params.qid}},{$project:{submissions:{$filter:{input:"$submissions",as:"submissions",cond:{$eq:["$$submissions.status","Accepted"]}}}}},{ $sort : { "submissions.usn" : -1} }]);
   if(question.length == 0) return res.send([]);
   question=question[0];
   //verify
@@ -197,7 +197,7 @@ router.get('/:qid/submissions/list',authenticate,async (req,res)=>{
     students.push(i.usn);
   }
 
-  let studentData = await Student.find({usn:{$in:students}}).select('usn fname lname -_id').lean();
+  let studentData = await Student.find({usn:{$in:students}}).select('usn fname lname -_id').lean().sort({usn:-1});
   if(!studentData) studentData = [];
 
   let SendData=[];

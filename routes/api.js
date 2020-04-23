@@ -70,11 +70,16 @@ router.post('/', authenticate,async (req,res)=>{
 
   let result = [];
 
+  let compiler_opt = null;
+  if (req.body.language == 50){
+    compiler_opt = "-lm";
+  }
+
   for(let i=0;i<sample.length;i++){
   let options = { method: 'POST',
   url: 'http://127.0.0.1:3000/submissions?base64_encoded=true&wait=true',
   body: { "source_code": encode64(req.body.source), "language_id": req.body.language ,"stdin":encode64(sample[i].input),
-      "expected_output":encode64(sample[i].output)},
+      "expected_output":encode64(sample[i].output), "compiler_options":compiler_opt},
 
   json: true };
 

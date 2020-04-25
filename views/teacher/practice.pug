@@ -6,7 +6,7 @@ block append head
     meta(charset='utf-8')
     meta(name='viewport' content='width=device-width, initial-scale=1.0, shrink-to-fit=no')
     title Practice
-    link(rel='stylesheet' href='list_style/bootstrap/css/new.css')
+    link(rel='stylesheet' href='/list_style/bootstrap/css/new.css')
     script(src="/js/highlight.js")
     link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,400,700')
     link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.6.1/css/pikaday.min.css')
@@ -489,3 +489,21 @@ block content
                 return false;
             });
             //end of language select
+            //tab in textarea
+            $("textarea").keydown(function(e) {
+                if(e.keyCode === 9) { // tab was pressed
+                    var start = this.selectionStart;
+                        end = this.selectionEnd;
+
+                    var $this = $(this);
+                    $this.val($this.val().substring(0, start)
+                                + "\t"
+                                + $this.val().substring(end));
+
+                    this.selectionStart = this.selectionEnd = start + 1;
+                    return false;
+                }
+            });
+            $("textarea").css({"-moz-tab-size":"16","-o-tab-size":"16","tab-size":"16"});
+            $("pre").css({"-moz-tab-size":"16","-o-tab-size":"16","tab-size":"16"});
+

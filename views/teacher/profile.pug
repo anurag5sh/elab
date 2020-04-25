@@ -42,7 +42,7 @@ block content
                     .col-md-12
                       .form-group
                         label About Me
-                        textarea#about_me.form-control(rows='5' name="about_me" placeholder='Tell something about yourself...' )
+                        textarea#about_me.form-control(rows='5' name="about_me" placeholder='Tell something about yourself...' ) #{teacher.about_me}
                   button.btn.btn-info.btn-fill.pull-right(type='button' id="update-profile") Update Profile
                   .clearfix
           .col-md-5
@@ -142,7 +142,6 @@ block content
         });
       }
 
-    $("#about_me").val("#{teacher.about_me}");
     $('#image-upload').change(submitPhoto);
     function submitPhoto(){
                 

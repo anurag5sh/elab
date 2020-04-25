@@ -5,7 +5,7 @@
 html
   head
     title=question.name
-    -if(session.isAdmin ||session.staff_id == contest.createdBy ||contest.timings.ends < new Date())
+    -if(session.isAdmin ||session.staff_id == contest.createdBy ||contest.timings.ends < new Date() || session.year ==3)
       script(src='/src-min-noconflict/ace.js' charset='utf-8')
     -else
       script(src='/src-min-noconflict/ace_modified.js' charset='utf-8')
@@ -420,4 +420,21 @@ html
         trigger: "hover",
         delay: {show : 1000, hide : 0}
       });
+      //tab in textarea
+      $("textarea").keydown(function(e) {
+          if(e.keyCode === 9) { // tab was pressed
+              var start = this.selectionStart;
+                  end = this.selectionEnd;
+
+              var $this = $(this);
+              $this.val($this.val().substring(0, start)
+                          + "\t"
+                          + $this.val().substring(end));
+
+              this.selectionStart = this.selectionEnd = start + 1;
+              return false;
+          }
+      });
+      $("textarea").css({"-moz-tab-size":"16","-o-tab-size":"16","tab-size":"16"});
+      $("pre").css({"-moz-tab-size":"16","-o-tab-size":"16","tab-size":"16"});
     script(src="/js/editorContest.js")

@@ -24,11 +24,32 @@ head
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
         }
-        .modal-backdrop {
-            visibility: hidden !important;
+        .modal-backdrop ~ .modal-backdrop
+        {
+            z-index : 1051 ;
         }
-        .modal:after { content: ""; display: block; background: rgba(0,0,0, .5); position: fixed; top: 0; bottom: 0; width: 100%; z-index: -1; }
-.m
+        .modal-backdrop ~ .modal-backdrop ~ .modal-backdrop
+        {
+            z-index : 1052 ;
+        }
+        .modal-backdrop ~ .modal-backdrop ~ .modal-backdrop ~ .modal-backdrop
+        {
+            z-index : 1053 ;
+        }
+    //- .modal-backdrop {
+    //-     visibility: hidden !important;
+    //- }
+    //- .modal:after { 
+    //-     content: ""; 
+    //-     display: block; 
+    //-     background: rgba(0,0,0, .5); 
+    //-     position: fixed; 
+    //-     top: 0; 
+    //-     bottom: 0; 
+    //-     width: 100%; 
+    //-     z-index: -1; 
+    //-     overflow: auto !important; }
+
 
 body
 
@@ -288,10 +309,19 @@ body
             
             });
         }
-        $(document).on('hidden.bs.modal', function (event) {
-        if ($('.modal:visible').length) {
-            $('body').addClass('modal-open');
-        }
+        //- $(".modal").on('hidden.bs.modal', function (event) {
+        //- if ($('.modal:visible').length) {
+        //-     $('body').addClass('modal-open');
+        //- }
+        //- });
+        var modal_lv = 0 ;
+        $('body').on('show.bs.modal', function(e) {
+            if ( modal_lv > 0 )
+                $(e.target).css('zIndex',1051+modal_lv) ;
+            modal_lv++ ;
+        }).on('hidden.bs.modal', function() {
+            if ( modal_lv > 0 )
+                modal_lv-- ;
         });
        
     

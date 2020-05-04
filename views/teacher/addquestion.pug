@@ -91,136 +91,164 @@ style.
           //  Modal body 
           .modal-body
               .box
-                table.table
-                  tbody
-                    tr
-                      td(style="width:150px;")
-                        label Question name:
-                      td
-                        input#name(type='text' name='name' required style="width:50%").form-control
-                    tr
-                      td
-                        label(for='difficult') Difficulty:
-                      td
-                        //- input#difficulty(type='text' name='description' required).form-control
-                        .form-group(style="width:50%")
-                          select#difficult.form-control(name='difficulty')
-                            option(value='Easy') Easy
-                            option(value='Medium') Medium
-                            option(value='Hard') Hard
-                    tr
-                      td
-                        label(for='') Language:
-                      td
-                        .button-group(style="")
-                          button.btn.btn-default.btn-sm.dropdown-toggle(style="border:1px solid #ced4da;" type='button' data-toggle='dropdown')
-                            span.fad.fa-cog.fa-2x
-                            span.caret
-                          ul.dropdown-menu.Lang(style="padding-left:15px;")
-                            li
-                              a.lang( data-value='50' tabindex='-1')
-                                input.langCheck#lang1(name="languages" type='checkbox' value="50" checked)
-                                | &nbsp;
-                                label( style = "margin-bottom:0px" for="lang1-e") C
-                            li
-                              a.lang(data-value='54' tabindex='-1')
-                                input.langCheck#lang2(name="languages" type='checkbox' value="54" checked)
-                                | &nbsp;
-                                label( style = "margin-bottom:0px" for="lang2") C++
-                            li
-                              a.lang(data-value='51' tabindex='-1')
-                                input.langCheck#lang3(name="languages" type='checkbox' value="51" checked)
-                                | &nbsp;
-                                label( style = "margin-bottom:0px" for="lang3") C#
-                            li
-                              a.lang(data-value='71' tabindex='-1')
-                                input.langCheck#lang4(name="languages" type='checkbox' value="71" checked)
-                                | &nbsp;
-                                label( style = "margin-bottom:0px" for="lang4-e") Python
-                            li
-                              a.lang(data-value='62' tabindex='-1')
-                                input.langCheck#lang5(name="languages" type='checkbox' value="62" checked)
-                                | &nbsp;
-                                label( style = "margin-bottom:0px" for="lang5") Java
-                            li
-                              a.lang(data-value='63' tabindex='-1')
-                                input.langCheck#lang6(name="languages" type='checkbox' value="63" checked)
-                                | &nbsp;
-                                label( style = "margin-bottom:0px" for="lang6") Javascript
+                ul.nav.nav-tabs
+                  li.nav-item
+                    a.nav-link.active(data-toggle='tab' href = "#tab1") Details
+                  li.nav-item
+                    a.nav-link(data-toggle='tab' href = "#tab2") Constraints
+                  li.nav-item
+                    a.nav-link(data-toggle='tab' href = "#tab3") Sample
+                  li.nav-item
+                    a.nav-link(data-toggle='tab' href = "#tab4") Testcases
+                  li.nav-item
+                    a.nav-link(data-toggle='tab' href = "#tab5") Settings
+                .tab-content
+                  #tab1.container.tab-pane.active
+                    table.table.mt-3
+                      tbody
+                        tr
+                          td(style="width:150px;")
+                            label Question name:
+                          td
+                            input#name(type='text' name='name' required style="width:50%").form-control
+                        tr
+                          td
+                            label(for='difficult') Difficulty:
+                          td
+                            //- input#difficulty(type='text' name='description' required).form-control
+                            .form-group(style="width:50%")
+                              select#difficult.form-control(name='difficulty')
+                                option(value='Easy') Easy
+                                option(value='Medium') Medium
+                                option(value='Hard') Hard
+                        tr
+                          td
+                            label(for='') Language:
+                          td
+                            .button-group(style="")
+                              button.btn.btn-default.btn-sm.dropdown-toggle(style="border:1px solid #ced4da;" type='button' data-toggle='dropdown')
+                                span.fad.fa-cog.fa-2x
+                                span.caret
+                              ul.dropdown-menu.Lang(style="padding-left:15px;")
+                                li
+                                  a.lang( data-value='50' tabindex='-1')
+                                    input.langCheck#lang1(name="languages" type='checkbox' value="50" checked)
+                                    | &nbsp;
+                                    label( style = "margin-bottom:0px" for="lang1-e") C
+                                li
+                                  a.lang(data-value='54' tabindex='-1')
+                                    input.langCheck#lang2(name="languages" type='checkbox' value="54" checked)
+                                    | &nbsp;
+                                    label( style = "margin-bottom:0px" for="lang2") C++
+                                li
+                                  a.lang(data-value='51' tabindex='-1')
+                                    input.langCheck#lang3(name="languages" type='checkbox' value="51" checked)
+                                    | &nbsp;
+                                    label( style = "margin-bottom:0px" for="lang3") C#
+                                li
+                                  a.lang(data-value='71' tabindex='-1')
+                                    input.langCheck#lang4(name="languages" type='checkbox' value="71" checked)
+                                    | &nbsp;
+                                    label( style = "margin-bottom:0px" for="lang4-e") Python
+                                li
+                                  a.lang(data-value='62' tabindex='-1')
+                                    input.langCheck#lang5(name="languages" type='checkbox' value="62" checked)
+                                    | &nbsp;
+                                    label( style = "margin-bottom:0px" for="lang5") Java
+                                li
+                                  a.lang(data-value='63' tabindex='-1')
+                                    input.langCheck#lang6(name="languages" type='checkbox' value="63" checked)
+                                    | &nbsp;
+                                    label( style = "margin-bottom:0px" for="lang6") Javascript
 
-                    tr
-                      td
-                        label(for='description') Description:
-                      td
-                        input#description(type='text' name='description' required).form-control
-                    tr
-                      td(style="width:150px;")
-                        label Problem Statement:
-                      td
-                        div#statement-editor(style="min-height:120px;height:auto;")
-                        script.
-                          const editor = new Quill('#statement-editor', {
-                          modules: { 
-                          syntax: true ,
-                          toolbar: [
-                          [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-                          [{ 'header': [1, 2, 3, 4, 5, 6, false] }],    
-                          ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-                          ['blockquote'],
-                          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                          [{ 'script': 'sub'}, { 'script': 'super' }], 
-                          ['image', 'code-block','formula'],     			                // superscript/subscript
-                          [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-                          [{ 'direction': 'rtl' }],                         // text direction
-                          [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-                          //- [{ 'font': [] }],
-                          [{ 'align': [] }],
-                          ['clean'] 
-                              ] },
-                              theme: 'snow'
-                            });
+                        tr
+                          td
+                            label(for='description') Description:
+                          td
+                            input#description(type='text' name='description' required).form-control
+                        tr
+                          td(style="width:150px;")
+                            label Problem Statement:
+                          td
+                            div#statement-editor(style="min-height:120px;height:auto;")
+                            script.
+                              const editor = new Quill('#statement-editor', {
+                              modules: { 
+                              syntax: true ,
+                              toolbar: [
+                              [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+                              [{ 'header': [1, 2, 3, 4, 5, 6, false] }],    
+                              ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                              ['blockquote'],
+                              [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                              [{ 'script': 'sub'}, { 'script': 'super' }], 
+                              ['image', 'code-block','formula'],     			                // superscript/subscript
+                              [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+                              [{ 'direction': 'rtl' }],                         // text direction
+                              [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+                              //- [{ 'font': [] }],
+                              [{ 'align': [] }],
+                              ['clean'] 
+                                  ] },
+                                  theme: 'snow'
+                                });
+                  #tab2.container.tab-pane.fade
+                    table.table.mt-3
+                      tbody  
+                        tr
+                          td(style="width:150px;")
+                            label Constraints:
+                          td
+                            textarea.form-control#constraints(rows='5' name='constraints' cols='50')
                     
-                    tr
-                      td(style="width:150px;")
-                        label Constraints:
-                      td
-                        textarea.form-control#constraints(rows='5' name='constraints' cols='50')
-                
-                    tr
-                      td(style="width:150px;")
-                        label Input format:
-                      td
-                        textarea.form-control#i_format(rows='5' name='i_format' cols='50' required)
-          
-                    tr
-                      td(style="width:150px;")
-                        label Output format:
-                      td
-                        textarea.form-control#o_format(rows='5' name='o_format' cols='50' required)
-                hr    
+                        tr
+                          td(style="width:150px;")
+                            label Input format:
+                          td
+                            textarea.form-control#i_format(rows='5' name='i_format' cols='50' required)
               
-                #samplecase
-                  label.tc Sample Testcases:
-                  input#btSampleAdd.bt.btn.btn-info.btn-sm(type='button' value='Add Sample Case' style="margin-right:20px;margin-left:20px;")
-                  input#btSampleRemove.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
-                  .t_case
-                    p#s_no1 Sample Testcase 1
-                    textarea.form-control.input#i_sample1(rows='5' name='i_sample1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
-                    textarea.form-control.input#o_sample1(rows='5' name='o_sample1' cols='50' required placeholder='Output')
-                    p Explanation
-                    textarea.form-control.ex_box#explaination1(name='explanation' rows='5' cols='107' style="margin-bottom:10px" required)
-                #testcase
-                  label.tc Testcases:
-                  input#btAdd.bt.btn.btn-info.btn-sm(type='button' value='Add Testcase' style="margin-right:20px;margin-left:20px;")
-                  input#btRemove.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
-                  br
-                  .t_case
-                    p#t_no1 Testcase 1
-                    textarea.form-control.input#i_testcase1(rows='5' name='i_testcase1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
-                    textarea.form-control.input#o_testcase1(rows='5' name='o_testcase1' cols='50' required placeholder='Output')
-                    p#p_no1 Points
-                    input.form-control(style="width:15%;" name="points" id="points1" type="text" placeholder="Ex: 10")
-                textarea(name="statement" id="es" style="display:none;")
+                        tr
+                          td(style="width:150px;")
+                            label Output format:
+                          td
+                            textarea.form-control#o_format(rows='5' name='o_format' cols='50' required)   
+                  #tab3.container.tab-pane.fade
+                    #samplecase.mt-3
+                      label.tc Sample Testcases:
+                      input#btSampleAdd.bt.btn.btn-info.btn-sm(type='button' value='Add Sample Case' style="margin-right:20px;margin-left:20px;")
+                      input#btSampleRemove.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
+                      .t_case
+                        p#s_no1 Sample Testcase 1
+                        textarea.form-control.input#i_sample1(rows='5' name='i_sample1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
+                        textarea.form-control.input#o_sample1(rows='5' name='o_sample1' cols='50' required placeholder='Output')
+                        p Explanation
+                        textarea.form-control.ex_box#explaination1(name='explanation' rows='5' cols='107' style="margin-bottom:10px" required)
+                  #tab4.container.tab-pane.fade
+                    #testcase.mt-3
+                      label.tc Testcases:
+                      input#btAdd.bt.btn.btn-info.btn-sm(type='button' value='Add Testcase' style="margin-right:20px;margin-left:20px;")
+                      input#btRemove.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
+                      br
+                      .t_case
+                        p#t_no1 Testcase 1
+                        textarea.form-control.input#i_testcase1(rows='5' name='i_testcase1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
+                        textarea.form-control.input#o_testcase1(rows='5' name='o_testcase1' cols='50' required placeholder='Output')
+                        p#p_no1 Points
+                        input.form-control(style="width:15%;" name="points" id="points1" type="text" placeholder="Ex: 10")
+                  #tab5.container.tab-pane.fade
+                    div
+                      div.m-3
+                        label.fontStyle.font-weight-bold(style = "margin-left:10px;") Judging:&nbsp;&nbsp;&nbsp;
+                        .custom-control.custom-radio.custom-control-inline
+                          input.custom-control-input(type='radio' name='judging' id='Auto')
+                          label.custom-control-label(for='Auto') Auto
+                        .custom-control.custom-radio.custom-control-inline
+                          input.custom-control-input(type='radio' name='judging' id='Manual')
+                          label.custom-control-label(for='Manual') Manual
+                      div.m-3
+                        label.fontStyle.font-weight-bold(style = "margin-left:10px;") Status:&nbsp;&nbsp;&nbsp;
+                        input(type='checkbox' checked data-toggle="toggle" data-on="Active" data-off="InActive" data-onstyle="success" data-offstyle="danger" data-width="100")
+                  textarea(name="statement" id="es" style="display:none;")
           .modal-footer
             input.btn.btn-success(type='submit' value="Add")
             button.btn.btn-secondary(type='button' data-dismiss='modal') Close
@@ -282,133 +310,164 @@ each i in ques
                   .modal-body
                           p#edit_info(style="float:center;")
                           .box
-                              table.table
-                                  tbody
-                                      tr
-                                          td(style="width:150px;")
-                                              label Question name:
+                            ul.nav.nav-tabs
+                              li.nav-item
+                                a.nav-link.active(data-toggle='tab' href = "#e-tab1") Details
+                              li.nav-item
+                                a.nav-link(data-toggle='tab' href = "#e-tab2") Constraints
+                              li.nav-item
+                                a.nav-link(data-toggle='tab' href = "#e-tab3") Sample
+                              li.nav-item
+                                a.nav-link(data-toggle='tab' href = "#e-tab4") Testcases
+                              li.nav-item
+                                a.nav-link(data-toggle='tab' href = "#e-tab5") Settings
+                            .tab-content
+                              #e-tab1.container.tab-pane.active
+                                table.table.mt-3
+                                    tbody
+                                        tr
+                                            td(style="width:150px;")
+                                                label Question name:
+                                            td
+                                                input#name-e(type='text' name='name' required style="width:50%").form-control
+                                        tr
+                                            td
+                                                label(for='difficult-e') Difficulty:
+                                            td
+                                            
+                                                .form-group
+                                                  select#difficult-e.form-control(name='difficulty')
+                                                    option(value='Easy') Easy
+                                                    option(value='Medium') Medium
+                                                    option(value='Hard') Hard
+                                        tr
                                           td
-                                              input#name-e(type='text' name='name' required style="width:50%").form-control
-                                      tr
+                                            label(for='') Language:
                                           td
-                                              label(for='difficult-e') Difficulty:
-                                          td
-                                          
-                                              .form-group
-                                                select#difficult-e.form-control(name='difficulty')
-                                                  option(value='Easy') Easy
-                                                  option(value='Medium') Medium
-                                                  option(value='Hard') Hard
-                                      tr
-                                        td
-                                          label(for='') Language:
-                                        td
-                                          .button-group(style="")
-                                            button.btn.btn-default.btn-sm.dropdown-toggle(style="border:1px solid #ced4da;" type='button' data-toggle='dropdown')
-                                              span.fad.fa-cog.fa-2x
-                                              span.caret
-                                            ul.dropdown-menu.Lang(style="padding-left:15px;")
-                                              li
-                                                a.lang( data-value='50' tabindex='-1')
-                                                  input.langCheck#lang1e(name="languages" type='checkbox' value="50" )
-                                                  | &nbsp;
-                                                  label( style = "margin-bottom:0px" for="lang1e") C
-                                              li
-                                                a.lang(data-value='54' tabindex='-1')
-                                                  input.langCheck#lang2e(name="languages" type='checkbox' value="54" )
-                                                  | &nbsp;
-                                                  label( style = "margin-bottom:0px" for="lang2e") C++
-                                              li
-                                                a.lang(data-value='51' tabindex='-1')
-                                                  input.langCheck#lang3e(name="languages" type='checkbox' value="51" )
-                                                  | &nbsp;
-                                                  label( style = "margin-bottom:0px" for="lang3e") C#
-                                              li
-                                                a.lang(data-value='71' tabindex='-1')
-                                                  input.langCheck#lang4e(name="languages" type='checkbox' value="71" )
-                                                  | &nbsp;
-                                                  label( style = "margin-bottom:0px" for="lang4e") Python
-                                              li
-                                                a.lang(data-value='62' tabindex='-1')
-                                                  input.langCheck#lang5e(name="languages" type='checkbox' value="62" )
-                                                  | &nbsp;
-                                                  label( style = "margin-bottom:0px" for="lang5e") Java
-                                              li
-                                                a.lang(data-value='63' tabindex='-1')
-                                                  input.langCheck#lang6e(name="languages" type='checkbox' value="63" )
-                                                  | &nbsp;
-                                                  label( style = "margin-bottom:0px" for="lang6e") Javascript
+                                            .button-group(style="")
+                                              button.btn.btn-default.btn-sm.dropdown-toggle(style="border:1px solid #ced4da;" type='button' data-toggle='dropdown')
+                                                span.fad.fa-cog.fa-2x
+                                                span.caret
+                                              ul.dropdown-menu.Lang(style="padding-left:15px;")
+                                                li
+                                                  a.lang( data-value='50' tabindex='-1')
+                                                    input.langCheck#lang1e(name="languages" type='checkbox' value="50" )
+                                                    | &nbsp;
+                                                    label( style = "margin-bottom:0px" for="lang1e") C
+                                                li
+                                                  a.lang(data-value='54' tabindex='-1')
+                                                    input.langCheck#lang2e(name="languages" type='checkbox' value="54" )
+                                                    | &nbsp;
+                                                    label( style = "margin-bottom:0px" for="lang2e") C++
+                                                li
+                                                  a.lang(data-value='51' tabindex='-1')
+                                                    input.langCheck#lang3e(name="languages" type='checkbox' value="51" )
+                                                    | &nbsp;
+                                                    label( style = "margin-bottom:0px" for="lang3e") C#
+                                                li
+                                                  a.lang(data-value='71' tabindex='-1')
+                                                    input.langCheck#lang4e(name="languages" type='checkbox' value="71" )
+                                                    | &nbsp;
+                                                    label( style = "margin-bottom:0px" for="lang4e") Python
+                                                li
+                                                  a.lang(data-value='62' tabindex='-1')
+                                                    input.langCheck#lang5e(name="languages" type='checkbox' value="62" )
+                                                    | &nbsp;
+                                                    label( style = "margin-bottom:0px" for="lang5e") Java
+                                                li
+                                                  a.lang(data-value='63' tabindex='-1')
+                                                    input.langCheck#lang6e(name="languages" type='checkbox' value="63" )
+                                                    | &nbsp;
+                                                    label( style = "margin-bottom:0px" for="lang6e") Javascript
 
-                                      tr
-                                          td
-                                            label(for='description-e') Description:
-                                          td
-                                            input#description-e(type='text' name='description' required).form-control                                     
-                                      tr
-                                          td(style="width:150px;")
-                                              label Problem Statement:
-                                          td
-                                              div#statement-editor-edit(style="min-height:120px;height:auto;")
-                                              script.
-                                                  const editor_edit = new Quill('#statement-editor-edit', {
-                                                  modules: { toolbar: [
-                                                  [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-                                                  [{ 'header': [1, 2, 3, 4, 5, 6, false] }],    
-                                                  ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-                                                  ['blockquote'],
-                                                  [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                                                  [{ 'script': 'sub'}, { 'script': 'super' }], 
-                                                  ['image', 'code-block','formula'],     			                // superscript/subscript
-                                                  [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-                                                  [{ 'direction': 'rtl' }],                         // text direction
-                                                  [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-                                                  [{ 'font': [] }],
-                                                  [{ 'align': [] }],
-                                                  ['clean'] 
-                                                      ] },
-                                                      theme: 'snow'
-                                                      });
-                                          
-                                      tr
-                                          td(style="width:150px;")
-                                              label Constraints:
-                                          td
-                                              textarea#constraints-e.form-control(rows='5' name='constraints' cols='50')
-                                  
-                                      tr
-                                          td(style="width:150px;")
-                                              label Input format:
-                                          td
-                                              textarea.form-control#i_format-e(rows='5' name='i_format' cols='50' required)
-                              
-                                      tr
-                                          td(style="width:150px;")
-                                              label Output format:
-                                          td
-                                              textarea.form-control#o_format-e(rows='5' name='o_format' cols='50' required)
-                              hr    
-                              #samplecase-e
-                                  label.tc Sample Testcases:
-                                  input#btSampleAdd_e.bt.btn.btn-info.btn-sm(type='button' value='Add Sample Case' style="margin-right:20px;margin-left:20px;")
-                                  input#btSampleRemove_e.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
-                                  .t_case
-                                      p Sample Testcase 1
-                                      textarea.form-control.input#ei_sample1(rows='5' name='i_sample1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
-                                      textarea.form-control.input#eo_sample1(rows='5' name='o_sample1' cols='50' required placeholder='Output')
-                                      p Explanation
-                                      textarea.form-control.ex_box#explanation_edit(name='explanation' rows='5' cols='107' style="margin-bottom:10px" required)
-                              #testcase-e
-                                  label.tc Testcases:
-                                  input#btAdd-e.bt.btn.btn-info.btn-sm(type='button' value='Add Testcase' style="margin-right:20px;margin-left:20px;")
-                                  input#btRemove-e.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
-                                  br
-                                  .t_case
-                                      p Testcase 1
-                                      textarea.form-control.input#ei_testcase1(rows='5' name='i_testcase1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
-                                      textarea.form-control.input#eo_testcase1(rows='5' name='o_testcase1' cols='50' required placeholder='Output')
-                                      p Points
-                                      input.form-control(style="width:15%;" name="points" id="epoints1" type="text" placeholder="Ex: 10" required)
-                              
+                                        tr
+                                            td
+                                              label(for='description-e') Description:
+                                            td
+                                              input#description-e(type='text' name='description' required).form-control                                     
+                                        tr
+                                            td(style="width:150px;")
+                                                label Problem Statement:
+                                            td
+                                                div#statement-editor-edit(style="min-height:120px;height:auto;")
+                                                script.
+                                                    const editor_edit = new Quill('#statement-editor-edit', {
+                                                    modules: { toolbar: [
+                                                    [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+                                                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],    
+                                                    ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                                                    ['blockquote'],
+                                                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                                    [{ 'script': 'sub'}, { 'script': 'super' }], 
+                                                    ['image', 'code-block','formula'],     			                // superscript/subscript
+                                                    [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+                                                    [{ 'direction': 'rtl' }],                         // text direction
+                                                    [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+                                                    [{ 'font': [] }],
+                                                    [{ 'align': [] }],
+                                                    ['clean'] 
+                                                        ] },
+                                                        theme: 'snow'
+                                                        });
+
+                              #e-tab2.container.tab-pane.fade
+                                table.table.mt-3
+                                  tbody     
+                                    tr
+                                        td(style="width:150px;")
+                                            label Constraints:
+                                        td
+                                            textarea#constraints-e.form-control(rows='5' name='constraints' cols='50')
+                                
+                                    tr
+                                        td(style="width:150px;")
+                                            label Input format:
+                                        td
+                                            textarea.form-control#i_format-e(rows='5' name='i_format' cols='50' required)
+                            
+                                    tr
+                                        td(style="width:150px;")
+                                            label Output format:
+                                        td
+                                            textarea.form-control#o_format-e(rows='5' name='o_format' cols='50' required)
+
+                              #e-tab3.container.tab-pane.fade
+                                #samplecase-e.mt-3
+                                    label.tc Sample Testcases:
+                                    input#btSampleAdd_e.bt.btn.btn-info.btn-sm(type='button' value='Add Sample Case' style="margin-right:20px;margin-left:20px;")
+                                    input#btSampleRemove_e.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
+                                    .t_case
+                                        p Sample Testcase 1
+                                        textarea.form-control.input#ei_sample1(rows='5' name='i_sample1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
+                                        textarea.form-control.input#eo_sample1(rows='5' name='o_sample1' cols='50' required placeholder='Output')
+                                        p Explanation
+                                        textarea.form-control.ex_box#explanation_edit(name='explanation' rows='5' cols='107' style="margin-bottom:10px" required)
+                          
+                              #e-tab4.container.tab-pane.fade
+                                #testcase-e.mt-3
+                                    label.tc Testcases:
+                                    input#btAdd-e.bt.btn.btn-info.btn-sm(type='button' value='Add Testcase' style="margin-right:20px;margin-left:20px;")
+                                    input#btRemove-e.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
+                                    br
+                                    .t_case
+                                        p Testcase 1
+                                        textarea.form-control.input#ei_testcase1(rows='5' name='i_testcase1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
+                                        textarea.form-control.input#eo_testcase1(rows='5' name='o_testcase1' cols='50' required placeholder='Output')
+                                        p Points
+                                        input.form-control(style="width:15%;" name="points" id="epoints1" type="text" placeholder="Ex: 10" required)
+                              #e-tab5.container.tab-pane.fade
+                                div
+                                  div.m-3
+                                    label.fontStyle.font-weight-bold(style = "margin-left:10px;") Judging:&nbsp;&nbsp;&nbsp;
+                                    .custom-control.custom-radio.custom-control-inline
+                                      input.custom-control-input(type='radio' name='judging' id='Auto')
+                                      label.custom-control-label(for='Auto') Auto
+                                    .custom-control.custom-radio.custom-control-inline
+                                      input.custom-control-input(type='radio' name='judging' id='Manual')
+                                      label.custom-control-label(for='Manual') Manual
+                                  div.m-3
+                                    label.fontStyle.font-weight-bold(style = "margin-left:10px;") Status:&nbsp;&nbsp;&nbsp;
+                                    input(type='checkbox' checked data-toggle="toggle" data-on="Active" data-off="InActive" data-onstyle="success" data-offstyle="danger" data-width="100")
                               textarea(name="statement" id="es_edit" style="display:none;")
                               input#qid(type="text", style="display:none;" value="")
                       

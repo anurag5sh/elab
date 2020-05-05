@@ -181,7 +181,7 @@ router.get('/:qid/submissions',authenticate,async (req,res)=>{
 //data for submission table
 router.get('/:qid/submissions/list',authenticate,async (req,res)=>{
   //const question = await Practice.findOne({qid:req.params.qid,submissions:{$elemMatch:{status:"Accepted"}}}).lean();
-  let question = await Practice.aggregate([{$match:{qid:req.params.qid}},{$project:{submissions:{$filter:{input:"$submissions",as:"submissions",cond:{$eq:["$$submissions.status","Accepted"]}}}}},{ $sort : { "submissions.usn" : -1} }]);
+  let question = await Practice.aggregate([{$match:{qid:req.params.qid}},{$project:{submissions:{$filter:{input:"$submissions",as:"submissions",cond:{$eq:["$$submissions.status","Accepted"]}}}}}]);
   if(question.length == 0) return res.send([]);
   question=question[0];
   //verify
@@ -197,17 +197,18 @@ router.get('/:qid/submissions/list',authenticate,async (req,res)=>{
     students.push(i.usn);
   }
 
-  let studentData = await Student.find({usn:{$in:students}}).select('usn fname lname -_id').lean().sort({usn:-1});
+  let studentData = await Student.find({usn:{$in:students}}).select('usn fname lname -_id').lean();
   if(!studentData) studentData = [];
 
   let SendData=[];
   for(i=0;i<question.submissions.length;i++){ let data={};
+    let student = studentData.find(x => { return x.usn == question.submissions[i].usn});
     data.usn = question.submissions[i].usn;
-    data.name = studentData[i].fname + " " + studentData[i].lname;
+    data.name = student.fname + " " + student.lname;
     data.time = moment(question.submissions[i].timestamp).format('DD/MM/YYYY ,hh:mm a')
     data.points = question.submissions[i].points;
     data.status = question.submissions[i].status;
-    data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+studentData[i].usn+'"  href="#">View Code</a>';
+    data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+question.submissions[i].usn+'"  href="#">View Code</a>';
   
     SendData.push(data);
   }

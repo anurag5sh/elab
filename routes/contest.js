@@ -1550,8 +1550,8 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
     const usn = req.session.usn || req.session.staff_id.toString();
     const year = req.session.year || '-';
 
-    if(req.session.code == req.body.source+req.params.qid) return res.send(desc);
-    req.session.code = req.body.source + req.params.qid;
+    //if(req.session.code == req.body.source+req.params.qid) return res.send(desc);
+    //req.session.code = req.body.source + req.params.qid;
     let total_points  = 0;
     desc.forEach((item,index) =>{
             total_points+= item.points;

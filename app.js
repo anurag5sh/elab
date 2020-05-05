@@ -21,6 +21,7 @@ const helmet = require('helmet')
 const fs = require('fs');
 const rateLimiter = require('./middleware/rateLimiter');
 const assignmentVeri = require('./middleware/assignmentVeri');
+const lab = require('./routes/lab');
 
 //port config
 const port = process.argv[2] || 4000;
@@ -120,6 +121,7 @@ app.use('/', login)
 app.use('/assignment', assignmentVeri,assignment);
 app.use('/contest', contest);
 app.use('/practice', practice);
+app.use('/lab', lab);
 app.use('/admin', admin);
 app.use('/api',api);
 app.use('/register', register);

@@ -1,0 +1,8 @@
+extends ../nav
+
+block append head   
+    - active.lab="active";
+
+block content
+    each i in lab
+        a(href="/lab/manage/"+i.url) #{i.name}

@@ -8,7 +8,7 @@ const contestAuth = require('../middleware/contestAuth');
 const {Contest,validateContest} = require('../models/contest');
 const {ContestQ,validateCQ} = require('../models/contestQ');
 const {Submission} = require('../models/submission');
-const {CustomGroup,validateGroup} = require('../models/customGroup');
+const {CustomGroup} = require('../models/customGroup');
 const crypto = require("crypto");
 const moment = require('moment');
 const _ = require('lodash');
@@ -154,12 +154,12 @@ router.get('/',authenticate, async (req,res)=> {
     }
 });
 
-//teacher creates contest 
+//teacher creates contest page
 router.get('/create',authenticate,teacher, (req,res) => {
     if(req.session.staff_id)
     res.render('teacher/createContest');
     else
-    res.status(404).end
+    res.status(404).end();
 });
 
 //Saving the contest in db
@@ -232,90 +232,6 @@ router.get('/manage',authenticate,teacher, async (req,res) => {
 
 });
 
-//contest group add
-router.post('/group/add',authenticate,teacher,async (req,res)=>{
-    let usnArray = req.body.usn.split(",").filter(function(value,index,arr){
-        return value.trim() != '';
-    });
-    req.body.usn = Array.from(new Set(usnArray));
-    req.body.usn = req.body.usn.map(f=>{ return f.toUpperCase().trim(); });
-
-    const {error} = validateGroup(req.body);
-    if(error) return res.status(400).send(error.message);
-
-
-    let id=null;
-    const lastInserted = await CustomGroup.findOne().sort({_id:-1}).lean().select('id');
-    if(lastInserted) id=++lastInserted.id;
-    else id=1;
-
-    let group = new CustomGroup();
-
-    const lastName = await CustomGroup.findOne({name:req.body.name}).lean().select('name');
-    if(lastName) return res.status(400).send("Group with name "+ req.body.name +" already exists!");
-    group.name = req.body.name;
-    group.description = req.body.description;
-    group.id = id;
-    group.date = new Date();
-    group.createdBy = req.session.staff_id;
-    group.usn = req.body.usn;
-    
-    await group.save().catch((err)=>{ winston.error(err);
-        return res.send(err);
-    });
-
-    res.send("Group saved.");
-    
-});
-
-router.post('/group/edit/:id',authenticate,teacher,async (req,res)=>{
-    
-    let group = await CustomGroup.findOne({id:req.params.id});
-    if(!group) return res.status(400).send("Invalid ID");
-    
-    let usnArray = req.body.usn.split(",").filter(function(value,index,arr){
-        return value.trim() != '';
-    });
-    req.body.usn = Array.from(new Set(usnArray));
-    req.body.usn = req.body.usn.map(f=>{ return f.toUpperCase().trim(); });
-
-    const {error} = validateGroup(req.body);
-    if(error) return res.status(400).send(error.message);
-
-    group.name = req.body.name;
-    group.description = req.body.description;
-    group.usn = req.body.usn;
-    
-    await group.save().catch((err)=>{ winston.error(err);
-        return res.send(err);
-    });
-
-    res.send("Changes saved.");
-    
-});
-
-//get list of groups
-router.get('/group',authenticate,teacher,async (req,res)=>{
-
-    if(!req.query.page) req.query.page=1;
-
-    let totalCount = await CustomGroup.countDocuments();
-    if(!totalCount) totalCount=0;
-
-    let list = await CustomGroup.find().sort({date:-1}).lean().skip((req.query.page-1)*10).limit(10);
-    if(!list) list=[]
-
-    return res.send({groups:list,total:totalCount});
-});
-
-//get a specific group
-router.get('/group/:id',authenticate,teacher,async (req,res)=>{
-
-    let group = await CustomGroup.findOne({id:req.params.id}).lean();
-    if(!group) return res.status(400).send("Invalid ID");
-
-    return res.send(group);
-});
 
 //allowing a group to participate in contest
 router.post('/group/allow/:url',authenticate,teacher,async (req,res)=>{
@@ -344,26 +260,6 @@ router.get('/group/remove/:curl/:id',authenticate,teacher,async (req,res)=>{
     await contest.save();
 
     res.send("Group removed");
-});
-
-//deleting a group
-router.get('/group/delete/:id',authenticate,teacher,async (req,res)=>{
-    const group = await CustomGroup.findOne({id:req.params.id});
-    if(!group) return res.status(400).send("Invalid ID");
-
-    const list = await Contest.find({customGroup:req.params.id}).lean().select('name');
-
-    let lst=[];
-    if(list.length == 0){
-        await CustomGroup.deleteOne({id:group.id});
-        return res.send("Group deleted!");
-    } 
-    else{
-        for(i of list){
-            lst.push(i.name);
-        }
-        return res.status(400).send("Group is currently used in the following contests:"+lst);
-    } 
 });
 
 //teacher manage contest
@@ -1083,6 +979,7 @@ router.get('/students/:year',authenticate,teacher, async (req,res) =>{
   
 //get list of all teacher
 router.get('/teachers',authenticate,teacher,async (req,res)=>{
+    if (isNaN(req.query.id)) return res.status(404).end();
     const contest = await Contest.findOne({id:req.query.id}).lean().select('custom_staff_id createdBy -_id');
     if(!contest) return res.status(400).end();
 

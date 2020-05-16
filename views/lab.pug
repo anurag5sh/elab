@@ -1,1 +1,9 @@
 extends navbar
+
+block append head   
+    - active.lab="active";
+
+
+block content
+    each i in labs
+        a(href="/lab/"+i.url)=i.name

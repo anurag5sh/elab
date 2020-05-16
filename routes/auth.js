@@ -16,7 +16,7 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const winston = require('winston');
 const {Submission} = require('../models/submission');
-const {CustomGroup} = require('../models/customGroup');
+const {CustomGroup,validateGroup} = require('../models/customGroup');
 
 
 const fs = require('fs');
@@ -432,7 +432,8 @@ router.post('/', async (req, res) => {
 
     student.lastLogin = new Date();
     await student.save();
-    return res.send('/dashboard');
+    const redirectTO = req.session.redirectTO || '/dashboard';
+    return res.send(redirectTO);
   }
 
   let teacher = await Teacher.findOne({email: req.body.id});
@@ -466,11 +467,13 @@ router.post('/', async (req, res) => {
   if(teacher.isAdmin){
     teacher.lastLogin = new Date();
     await teacher.save();
-    return res.send('/admin');
+    const redirectTO = req.session.redirectTO || '/admin';
+    return res.send(redirectTO);
   }
   teacher.lastLogin = new Date();
   await teacher.save();
-  return res.send('/');
+  const redirectTO = req.session.redirectTO || '/';
+  return res.send(redirectTO);
   
 });
 
@@ -583,5 +586,113 @@ router.get('/about',(req,res)=>{
   res.render('about');
 });
 
+
+//------------------------------------------GROUP ROUTES------------------------------//
+//contest group add
+router.post('/group/add',authenticate,teacher,async (req,res)=>{
+  let usnArray = req.body.usn.split(",").filter(function(value,index,arr){
+      return value.trim() != '';
+  });
+  req.body.usn = Array.from(new Set(usnArray));
+  req.body.usn = req.body.usn.map(f=>{ return f.toUpperCase().trim(); });
+
+  const {error} = validateGroup(req.body);
+  if(error) return res.status(400).send(error.message);
+
+
+  let id=null;
+  const lastInserted = await CustomGroup.findOne().sort({_id:-1}).lean().select('id');
+  if(lastInserted) id=++lastInserted.id;
+  else id=1;
+
+  let group = new CustomGroup();
+
+  const lastName = await CustomGroup.findOne({name:req.body.name}).lean().select('name');
+  if(lastName) return res.status(400).send("Group with name "+ req.body.name +" already exists!");
+  group.name = req.body.name;
+  group.description = req.body.description;
+  group.id = id;
+  group.date = new Date();
+  group.createdBy = req.session.staff_id;
+  group.usn = req.body.usn;
+  
+  await group.save().catch((err)=>{ winston.error(err);
+      return res.send(err);
+  });
+
+  res.send("Group saved.");
+  
+});
+
+router.post('/group/edit/:id',authenticate,teacher,async (req,res)=>{
+  
+  let group = await CustomGroup.findOne({id:req.params.id});
+  if(!group) return res.status(400).send("Invalid ID");
+  
+  let usnArray = req.body.usn.split(",").filter(function(value,index,arr){
+      return value.trim() != '';
+  });
+  req.body.usn = Array.from(new Set(usnArray));
+  req.body.usn = req.body.usn.map(f=>{ return f.toUpperCase().trim(); });
+
+  const {error} = validateGroup(req.body);
+  if(error) return res.status(400).send(error.message);
+
+  group.name = req.body.name;
+  group.description = req.body.description;
+  group.usn = req.body.usn;
+  
+  await group.save().catch((err)=>{ winston.error(err);
+      return res.send(err);
+  });
+
+  res.send("Changes saved.");
+  
+});
+
+//get list of groups
+router.get('/group',authenticate,teacher,async (req,res)=>{
+
+  if(!req.query.page) req.query.page=1;
+
+  let totalCount = await CustomGroup.countDocuments();
+  if(!totalCount) totalCount=0;
+
+  let list = await CustomGroup.find().sort({date:-1}).lean().skip((req.query.page-1)*10).limit(10);
+  if(!list) list=[]
+
+  return res.send({groups:list,total:totalCount});
+});
+
+//get a specific group
+router.get('/group/:id',authenticate,teacher,async (req,res)=>{
+
+  let group = await CustomGroup.findOne({id:req.params.id}).lean();
+  if(!group) return res.status(400).send("Invalid ID");
+
+  return res.send(group);
+});
+
+//deleting a group
+router.get('/group/delete/:id',authenticate,teacher,async (req,res)=>{
+  const group = await CustomGroup.findOne({id:req.params.id});
+  if(!group) return res.status(400).send("Invalid ID");
+
+  const list = await Contest.find({customGroup:req.params.id}).lean().select('name');
+
+  let lst=[];
+  if(list.length == 0){
+      await CustomGroup.deleteOne({id:group.id});
+      return res.send("Group deleted!");
+  } 
+  else{
+      for(i of list){
+          lst.push(i.name);
+      }
+      return res.status(400).send("Group is currently used in the following contests:"+lst);
+  } 
+});
+
+//-------------------------------GROUP ROUTE END---------------------------------------//
 
 module.exports = router; 

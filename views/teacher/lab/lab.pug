@@ -1,0 +1,16 @@
+extends ../nav
+
+block append head   
+    - active.lab="active";
+
+
+block content   
+    a.btn.btn-primary.m-2(href="/lab/create")
+        | Create Lab
+
+    a.btn.btn-primary.m-2(href="/lab/manage")
+        | Manage Lab
+
+    br
+    each i in labs
+        a(href="/lab/"+i.url)=i.name

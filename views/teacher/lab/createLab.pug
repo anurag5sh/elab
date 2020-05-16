@@ -1,0 +1,108 @@
+include ../nav
+html(lang='en')
+
+  head
+    meta(http-equiv='X-UA-Compatible', content='ie=edge')
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css")
+    
+    script(src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js")
+    script(src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js")
+    title ELAB |LAB FORM
+    style.
+      * { 
+      box-sizing: border-box;
+      }
+      .contestform{
+      /*border: 2px solid black;*/
+      margin: 30px;
+      padding: 10px;
+      margin-top: 110px;
+      }
+      .mwidth{
+        width:400px;
+
+      }
+      .Date{
+        width:175px;
+
+      }
+      .at{
+        width:100px;
+      }
+      .Row{
+        margin-left:10px;    
+      }
+      .contestform{
+        width: 65%;
+        //- box-shadow: 0 0.5px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        text-align: left;
+        left: 10px;
+        //- padding: 10px;
+        margin: 10px;
+        position: relative;
+        //- display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 1px solid rgba(0,0,0,.125);
+        border-radius: .25rem;
+      }
+
+    script.
+      let u ="";
+      function submitForm(){
+      const con = $.post("", $("#con").serialize(), function(data,status) {
+              u = data.url;
+              $('#manageModal').modal('show');
+              })
+                  .fail(function(error){
+                      toastr.error(error.responseText);
+                  })}
+      
+
+  body
+    .WRAPPER
+      h2.lb_heading.m-3(style="margin-left:35px!important") Create New Lab
+      .contestform.ml-4
+        div#errorForm
+        // The Modal
+        #manageModal.modal.fade(data-backdrop="static", data-keyboard="false")
+          .modal-dialog.modal-dialog-centered
+            .modal-content
+              // Modal Header
+              .modal-header
+                h4.modal-title Lab Created
+              // Modal body
+              .modal-body
+                | Click on Next to manage your lab.
+              // Modal footer
+              .modal-footer
+                button.btn.btn-success(type='button' , onclick="location.href='./manage/'+u") Next
+
+    
+        div.pl-3.pt-3
+          form#con
+            label.fontStyle.font-weight-bold(for='Lab') Lab Name 
+            input.form-control.mwidth#Lab(type='text', name='name', placeholder='Lab', required='true')
+            br
+            br
+            label.fontStyle.font-weight-bold(for='descrip') Description
+            input.form-control.mwidth#descrip(type='text', name='description', placeholder='Description', required='true')
+            
+            br
+            br
+            
+            
+            div.mb-2(style="float:right")
+              input.btn.btn-outline-primary.btn-sm(type='button', value='GET STARTED', onclick="submitForm()",style="margin-right:30px;")
+              input.btn.btn-outline-danger.btn-sm(type='button', value='CANCEL', onclick="",style="margin-right:30px;") 
+      .push1
+      .push
+    //- footer.bg-dark(class="FOOTER")
+    //-   div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBKCE CSE DEPT. 2020    
+    include ../../footer
+

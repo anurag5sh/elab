@@ -53,7 +53,7 @@ head
 
 body
 
-    p Create a group of students who can participate in this contest.
+    p Create a group of students who can access this lab.
     btn.btn.btn-primary(data-toggle="modal" data-target="#group") Create new group
     btn.btn.btn-primary(data-toggle="modal" data-target="#allowGroup") Allow a group
 
@@ -138,7 +138,7 @@ body
                 .modal-header
                     h4.modal-title Remove Group
                 .modal-body
-                    p Remove the following group from this contest?
+                    p Remove the following group from this lab?
                     #rbody
                 .modal-footer
                     button.btn.btn-danger(type='button' onclick="removeG()") Delete
@@ -204,7 +204,7 @@ body
             if(!page) page=1;
             $("#groupList").empty();
             $("#paginationAllow").empty();
-            const lst = !{JSON.stringify(contest.customGroup)};
+            const lst = !{JSON.stringify(lab.customGroup)};
              $.get('/group',{page:page},function(data,status){
                  data.groups.forEach((item,index)=>{
                      if(lst.includes(item.id)) return;
@@ -235,7 +235,7 @@ body
             })
             $.ajax({
                 type:"POST",
-                url:'/contest/group/allow/!{contest.url}',
+                url:'/lab/group/allow/!{lab.url}',
                 data: {selectedList:lst1},
                 success: function (data,status, jqXHR) {
                 toastr.success(data);
@@ -274,7 +274,7 @@ body
             $("#dbodyG").append('<p style="display:none;" id="dgid" >'+$(e.relatedTarget).data('id')+'</p>');
         });
         function removeG(){
-            $.get('/contest/group/remove/!{contest.url}/'+$("#gid").text(),function(data,status){
+            $.get('/lab/group/remove/!{lab.url}/'+$("#gid").text(),function(data,status){
                 toastr.success(data);
                 $("#remove").modal('hide');
                 location.reload();

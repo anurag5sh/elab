@@ -1,0 +1,122 @@
+link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css")
+script(src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js")
+script(src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js")
+link(rel="stylesheet", href="/css/bootstrap4-toggle.min.css")
+script(src="/js/bootstrap4-toggle.min.js")
+style.
+  * {
+  box-sizing: border-box;
+  }
+  .contestform{
+  /*border: 2px solid black;*/
+  padding: 10px;
+  margin-top: 20px;
+  }
+  .mwidth{
+    width:400px;
+  }
+  .btn-label {
+    position: relative;
+    left: -12px;
+    display: inline-block;
+    padding: 6px 12px;
+    background: rgba(0,0,0,0.15);
+    border-radius: 3px 0 0 3px;
+  }
+  .btn-labeled {
+      padding-top: 0;
+      padding-bottom: 0;
+      float: right;
+  }
+  .btn { 
+      margin-bottom:10px;
+      margin-right:5px;
+  }
+  .foot{
+    float:right;
+    margin-right:30px;
+  }
+  .contestform{
+    width: 100%;
+    /*box-shadow: 0 0.5px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);*/
+    text-align: left;
+    left: 10px;
+    /*padding: 10px;*/
+    margin-bottom: 10px;
+    position: relative;
+    /*display: -ms-flexbox;*/
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: .25rem;
+  }
+  .Row{
+    margin-left:10px;
+  }
+
+.contestform
+  div(class = detail).pl-3.pt-3
+    form#con(onsubmit="return submitForm()")
+      label.fontStyle.font-weight-bold(for='Lab') Lab Name
+      input.form-control.mwidth#Lab(type='text', name='name', placeholder='Lab', required ,value=lab.name)
+      br
+      label.fontStyle.font-weight-bold(for='descrip') Description
+      input.form-control.mwidth#descrip(type='text', name='description', placeholder='Description', required ,value = lab.description)
+      br
+      br
+      label.fontStyle.font-weight-bold(style = "margin-left:10px;") Status:&nbsp;&nbsp;&nbsp;
+      input.fontStyle#status(type="checkbox" checked=lab.isReady data-toggle="toggle" data-on="Ready" data-off="Not Ready" data-onstyle="success" data-offstyle="danger" name ="status" data-width="120")
+      br
+      div(class="foot")
+        btn.btn.btn-labeled.btn-success#btn-submit(role='submit' style="cursor:pointer" )
+          span.btn-label
+            i.fas.fa-thumbs-up
+          | Save Settings
+        -if(session.isAdmin)
+          btn.btn.btn-labeled.btn-danger(role='button' style="cursor:pointer" data-target="#delete" data-toggle="modal")
+            span.btn-label
+              i.fas.fa-trash
+            | Delete
+    
+  input(type = 'text',id ='labId' value =lab.id style="display:none;")
+
+  .modal.fade#delete(tabindex ="-1" role="dialog" )
+    .modal-dialog.modal-sm
+        .modal-content
+            .modal-header
+                h4.modal-title Delete Labs
+            .modal-body
+                p All the questions in this lab will be deleted.
+            .modal-footer
+                button.btn.btn-danger(type='button' data-dismiss='modal' onclick="labDelete()") Delete
+                button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+
+script.
+  $(document).ready(function() {
+    $("#btn-submit").click(()=>{
+      $("#con").submit();
+    });
+  });
+  function submitForm(){
+  const con = $.post("/lab/manage/!{lab.url}", $("#con").serialize(), function(data,status) {
+    toastr.success(data);
+          })
+            .fail(function(error){
+                  toastr.error(error.responseText);
+            })
+            return false;
+    }
+
+  function labDelete(){
+    $.get('/lab/delete/!{lab.url}',function(data,status){
+      toastr.success(data);
+      location.href="/lab";
+    }).fail((error)=>{
+      toastr.error(error.responseText);
+    });
+  }

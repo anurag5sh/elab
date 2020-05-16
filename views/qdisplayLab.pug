@@ -1,0 +1,10 @@
+extends navbar
+
+block append head   
+    - active.lab="active";
+
+
+block content
+    each i in questions
+        a(href="/lab/"+lab.url+"/"+i.qid)=i.name
+        br

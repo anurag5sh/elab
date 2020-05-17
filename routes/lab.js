@@ -146,7 +146,7 @@ router.get("/manage", authenticate, teacher, async (req, res) => {
     else page = req.query.page;
     let count = 0;
     if (req.session.isAdmin) {
-        const lab = await lab
+        const lab = await Lab
             .find()
             .lean()
             .sort({ _id: -1 })

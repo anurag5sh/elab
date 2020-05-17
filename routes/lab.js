@@ -183,53 +183,52 @@ router.get("/manage/:url", authenticate, teacher,labAuth, async (req, res) => {
     }).lean();
     if (!custom) custom = [];
 
-    let questions = [];
-    for (i of lab.questions) {
-        let points = 0;
-        let q = await LabQ.findOne({ qid: i }).lean();
-        for (i of q.test_cases) {
-            points += i.points;
-        }
-        q.totalPoints = points;
-        questions.push(q);
-    }
+    let questions = await LabQ.find({qid:{$in:lab.questions}}).lean();
 
-    let submissions = [0, 0, 0, 0, 0];
-    for (i of lab.submissions) {
-        if (i.year == "-") submissions[4]++;
-        submissions[i.year - 1]++;
-    }
+
+    // for (i of lab.questions) {
+    //     let points = 0;
+    //     let q = await LabQ.findOne({ qid: i }).lean();
+    //     for (i of q.test_cases) {
+    //         points += i.points;
+    //     }
+    //     q.totalPoints = points;
+    //     questions.push(q);
+    // }
+
 
     let questionNo = [];
+    let totalNoOfSubs = 0;
     for (i of questions) {
         questionNo.push({
             qid: i.qid,
             name: i.name,
-            Accepted: 0,
-            Partially_Accepted: 0,
-            Wrong_Answer: 0,
+            Accepted: Number(i.submissions.filter(e => e.status == "Accepted").length),
+            Pending: Number(i.submissions.filter(e => e.status == "Pending").length),
+            Wrong_Answer: Number(i.submissions.filter(e => e.status == "Wrong Answer").length),
         });
+
+        totalNoOfSubs +=i.submissions.length;
     }
 
-    for (i of lab.submissions) {
-        if (i.status === "Accepted") {
-            const index = questionNo.findIndex((j) => j.qid === i.qid);
-            questionNo[index].Accepted++;
-        } else if (i.status === "Partially Accepted") {
-            const index = questionNo.findIndex((j) => j.qid === i.qid);
-            questionNo[index].Partially_Accepted++;
-        } else {
-            const index = questionNo.findIndex((j) => j.qid === i.qid);
-            questionNo[index].Wrong_Answer++;
-        }
-    }
+    // for (i of lab.submissions) {
+    //     if (i.status === "Accepted") {
+    //         const index = questionNo.findIndex((j) => j.qid === i.qid);
+    //         questionNo[index].Accepted++;
+    //     } else if (i.status === "Partially Accepted") {
+    //         const index = questionNo.findIndex((j) => j.qid === i.qid);
+    //         questionNo[index].Partially_Accepted++;
+    //     } else {
+    //         const index = questionNo.findIndex((j) => j.qid === i.qid);
+    //         questionNo[index].Wrong_Answer++;
+    //     }
+    // }
 
-    let stats = { submissions: submissions };
     
     return res.render("teacher/lab/manageLab", {
         lab: lab,
         questions: questions,
-        stats: stats,
+        totalNoOfSubs : totalNoOfSubs,
         questionNo: questionNo,
         custom: custom,
     });
@@ -703,8 +702,10 @@ router.get('/:url/:qid/evaluate/:usn',authenticate,teacher,labAuth,async (req,re
     //fetching question
     if(!lab.questions.includes(req.params.qid)) return res.status(404).end();
     const question = await LabQ.findOne({qid:req.params.qid}).lean();
+
+    const submission = question.submissions.find(e => e.usn == req.params.usn);
     
-    res.render('teacher/lab/evaluation',{lab,question});
+    res.render('teacher/lab/evaluation',{lab,question,submission});
 });
 
 //viewing question

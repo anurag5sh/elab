@@ -466,33 +466,46 @@ router.get('/submissions/:curl',authenticate,contestAuth, async (req,res) =>{
         teachers.push(contest.submissions[i].usn);
 
     }
-    
-    let studentData = await Student.find({usn:{$in:students}}).select('usn fname lname -_id').lean();
-    if(!studentData) studentData = [];
+    let studentData={},teacherData={},questions = {};
+    let studentResult = await Student.find({usn:{$in:students}}).select('usn fname lname -_id').lean();
+    if(!studentResult) studentResult = [];
+    else{
+        for( i of studentResult)
+            studentData[i.usn] = i;
+    }
 
-    let teacherData = await Teacher.find({staff_id:{$in:teachers}}).select('staff_id fname lname -_id').lean();
-    if(!teacherData) teacherData = [];
+    let teacherResult = await Teacher.find({staff_id:{$in:teachers}}).select('staff_id fname lname -_id').lean();
+    if(!teacherResult) teacherResult = [];
+    else{
+        for( i of teacherResult)
+            teacherData[i.staff_id] = i;
+    }
 
-    let questions = await ContestQ.find({qid:{$in:contest.questions}}).lean().select('qid name -_id');
-    if(!questions) questions=[];
+    let questionsResult = await ContestQ.find({qid:{$in:contest.questions}}).lean().select('qid name -_id');
+    if(!questionsResult) questionsResult=[];
+    else{
+        for(i of questionsResult)
+            questions[i.qid]=i;
+    }
 
     let SendData=[];
     for(i=0;i<contest.submissions.length;i++){ let data={};
+        const qid = contest.submissions[i].qid;
         if(student && contest.submissions[i].status != "Accepted")
             continue;
         if(contest.submissions[i].year != '-' ){
-            const index = studentData.findIndex(j => j.usn == contest.submissions[i].usn);
-            data.usn = studentData[index].usn;
-            data.name = studentData[index].fname + " " + studentData[index].lname;
-            data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+studentData[index].usn+'" data-qid="'+contest.submissions[i].qid +'" href="#">View Code</a>';
+            const student = studentData[contest.submissions[i].usn];
+            data.usn = student.usn;
+            data.name = student.fname + " " + student.lname;
+            data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+student.usn+'" data-qid="'+qid +'" href="#">View Code</a>';
         }
         else{
-            const index1 = teacherData.findIndex(j => j.staff_id == contest.submissions[i].usn);
-            data.usn = teacherData[index1].staff_id;
-            data.name = teacherData[index1].fname + " " + teacherData[index1].lname;
-            data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+teacherData[index1].staff_id+'" data-qid="'+contest.submissions[i].qid +'" href="#">View Code</a>';
+            const teacher = teacherData[contest.submissions[i].usn];
+            data.usn = teacher.staff_id;
+            data.name = teacher.fname + " " + teacher.lname;
+            data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+teacher.staff_id+'" data-qid="'+qid +'" href="#">View Code</a>';
         }
-        data.qname = questions[questions.findIndex(j => j.qid == contest.submissions[i].qid)].name;
+        data.qname = questions[qid].name;
         data.time = convertMS(contest.submissions[i].timestamp - contest.timings.starts);
         data.points =contest.submissions[i].points;
         data.status = contest.submissions[i].status;

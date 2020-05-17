@@ -4,6 +4,7 @@ const request = require("request-promise");
 const {Practice,validatePractise} = require('../models/practice');
 const {ContestQ} = require('../models/contestQ');
 const {AssignmentQ} = require('../models/assignmentQ');
+const {LabQ} = require('../models/labQ');
 const Joi = require('@hapi/joi');
 const authenticate = require('../middleware/auth');
 const winston = require('winston');
@@ -36,29 +37,43 @@ router.post('/', authenticate,async (req,res)=>{
   const { error } = validate(req.body); 
   if (error) return res.status(400).send("Invalid Request");
 
+  const pathname = req.body.qid.split("/");
+
   let question = undefined;
-  if(req.body.qid.split("/")[1] == "practice"){
-    let q = req.body.qid.split("/")[2];
-    question = await Practice.findOne({qid:q }).lean().select('sample_cases');
+  if(pathname[1] == "practice"){
+    let qid = pathname[2];
+    question = await Practice.findOne({qid:qid }).lean().select('sample_cases');
     if(!question) return res.send("Question not found.");
   }
-  else if(req.body.qid.split("/")[1] == "contest")
+  else if(pathname[1] == "contest")
   {
-    let c = req.body.qid.split("/")[3];
-    question = await ContestQ.findOne({qid:c}).lean().select('sample_cases');
+    let qid = pathname[3];
+    question = await ContestQ.findOne({qid:qid}).lean().select('sample_cases');
     if(!question) return res.send("Question not found.");
   }
-  else if(req.body.qid.split("/")[1] == "assignment"){
-    let a = req.body.qid.split("/")[2];
-    question = await AssignmentQ.findOne({qid:a}).lean().select('sample_cases');
+  else if(pathname[1] == "assignment"){
+    let qid = pathname[2];
+    question = await AssignmentQ.findOne({qid:qid}).lean().select('sample_cases');
     if(!question) return res.send("Question not found.")
   }
+  else if(pathname[1] == "lab"){
+    let qid = pathname[3];
+    question = await LabQ.findOne({qid:qid}).lean().select('sample_cases');
+    if(!question) return res.send("Question not found.");
+  }
+  else return res.status(404).end();
   let sample = null;
+
+  //if lab
+  if (!question.sample_cases[0].output){
+    req.body.custom = req.body.custom ||  ' ';
+  }
+
   if(req.body.custom){
-  sample = [ { input: req.body.custom, output: "1" }];
+    sample = [ { input: req.body.custom, output: "1" }];
   }
   else{
-  sample = question.sample_cases;
+    sample = question.sample_cases;
   }
 
   if(req.body.source.substr(req.body.source.length-18) == "undefinedundefined")

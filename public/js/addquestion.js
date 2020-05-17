@@ -333,6 +333,10 @@ $.get('/contest/delete/'+curl+'/'+qid,function(data,status){
 }
 
 function solution(){
+    if($("#languageCode").val == null){
+        alert("Choose a language");
+        return false;
+    }
     $.post('/contest/solution/'+curl+"/"+$("#qidForSolution").text(),$("#formSolution").serialize(),function(data,status){
         toastr.success(data);
     }).fail((err)=>{

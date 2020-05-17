@@ -93,9 +93,9 @@ style.
                   li.nav-item
                     a.nav-link(data-toggle='tab' href = "#tab2") Constraints
                   li.nav-item
-                    a#sampleTab.nav-link.disabled(data-toggle='tab' href = "#tab3") Sample
+                    a#sampleTab.nav-link(data-toggle='tab' href = "#tab3") Sample
                   li.nav-item
-                    a#testTab.nav-link.disabled(data-toggle='tab' href = "#tab4") Testcases
+                    a#testTab.nav-link(data-toggle='tab' href = "#tab4") Testcases
                   li.nav-item
                     a.nav-link(data-toggle='tab' href = "#tab5") Settings
                 .tab-content
@@ -520,7 +520,7 @@ each i in ques
                 .form-group.row
                   label.col-sm-2.fontStyle(for="languageCode") Language:
                   .col-sm-4
-                    select#languageCode.option-disp(name='language' ,required)
+                    select#languageCode.option-disp(name='language' )
                       option(selected,disabled,value="") Select Language
                       option(value='C') C
                       option(value='C++') C++
@@ -586,7 +586,7 @@ script.
   });
   //end of language select
 
-  const curl = "!{lab.url}"
+  const url = "!{lab.url}"
 script(src="/js/labAddQuestion.js")
   
   

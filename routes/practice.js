@@ -197,15 +197,20 @@ router.get('/:qid/submissions/list',authenticate,async (req,res)=>{
     students.push(i.usn);
   }
 
-  let studentData = await Student.find({usn:{$in:students}}).select('usn fname lname -_id').lean();
-  if(!studentData) studentData = [];
+  let studentData = {};
+  let result = await Student.find({usn:{$in:students}}).select('usn fname lname -_id').lean();
+    if(!result) result = [];
+    else{
+      for (i of result)
+        studentData[i.usn] = i;
+  }
 
   let SendData=[];
   for(i=0;i<question.submissions.length;i++){ let data={};
-    let student = studentData.find(x => { return x.usn == question.submissions[i].usn});
+    let student = studentData[question.submissions[i].usn];
     data.usn = question.submissions[i].usn;
     data.name = student.fname + " " + student.lname;
-    data.time = moment(question.submissions[i].timestamp).format('DD/MM/YYYY ,hh:mm a')
+    data.time = {timestamp:moment(i.timestamp).format('x'),display:moment(i.timestamp).format('LLL')};
     data.points = question.submissions[i].points;
     data.status = question.submissions[i].status;
     data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+question.submissions[i].usn+'"  href="#">View Code</a>';

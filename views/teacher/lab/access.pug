@@ -69,6 +69,7 @@ body
     
     
     script.
+        const labUrl = "#{lab.url}";
         function customInsertTeacher(){
             let selected =[];
             $("input[name='teacherListCustom']:checked").each(function () {
@@ -76,7 +77,7 @@ body
             });
             $.ajax({
                 type: "POST",
-                url: "/lab/teachers/"+$('#labId').val(),
+                url: "/lab/teachers/"+labUrl,
                 data:{teacherListCustom:selected},
                 success: function (data,status, jqXHR) {
                 toastr.success(data);  
@@ -92,7 +93,7 @@ body
          }
 
         $("#collapseTwo").on('show.bs.collapse',function (){$("#selectedTeachers").empty();
-           $.get('/lab/teachers/id/'+$('#labId').val(),function (data,status){
+           $.get('/lab/teachers/'+labUrl,function (data,status){
                data.forEach((item,index)=>{
                    $("#selectedTeachers").append('<tr><td>'+(index+1)+'</td><td>'+item.staff_id+'</td><td>'+item.fname+" "+item.lname+'</td></tr>');
                })
@@ -104,7 +105,7 @@ body
 
         $("#customTeacher").on('show.bs.modal',function (e){
             $("#teacherTable").DataTable().destroy();
-            $.get('/lab/teachers',{id:$('#labId').val()},function(data,status){
+            $.get('/lab/teachers/all/'+labUrl,function(data,status){
                 const teachers = $('#teacherTable').DataTable( {
                     "data":data,
                     "columns": [

@@ -44,17 +44,6 @@ const labSchema = new mongoose.Schema({
     type:[String],
     default : []
   },
-  submissions:[{
-    qid:{type:String},
-    timestamp:{type:Date},
-    language_id:{type:Number},
-    usn:{type:String},
-    year:{type:String},
-    sourceCode:{type:String},
-    status:{type:String},
-    points:{type: Number,default:0},
-    _id : false
-  }],
   image:{type:String},
   rules:{
     type:String,

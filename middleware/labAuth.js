@@ -8,10 +8,11 @@ module.exports = async function (req, res, next) {
     if (req.session.staff_id) {
         if (req.session.isAdmin) return next();
         else {
-            if (req.session.staff_id == lab.createdBy) next();
+            if (req.session.staff_id == lab.createdBy || lab.custom_staff_id.includes(String(req.session.staff_id))) next();
             else return res.status(404).end();
         }
     } else {
+        if(!lab.isReady) return res.status(404).end();
         const groups = await CustomGroup.find({ id: { $in: lab.customGroup } })
             .lean()
             .select("usn -_id");

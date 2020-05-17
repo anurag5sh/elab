@@ -123,7 +123,7 @@ $(document).ready(function() {
       document.getElementById('es').value=encodeURIComponent(JSON.stringify(editor.getContents()));
       $.ajax({
             type: "POST",
-            url: "/lab/add/"+curl,
+            url: "/lab/add/"+url,
             data: $("#ques").serialize(),
             success: function (data) {
  
@@ -249,7 +249,7 @@ $(document).ready(function() {
     const qid = e.relatedTarget.dataset.id;
     $("#qid").val(qid);
 
-    $.get("/lab/edit/"+curl+"/"+qid,function(data,status){
+    $.get("/lab/edit/"+url+"/"+qid,function(data,status){
         
         $("#name-e").val(data.name);
         editor_edit.setContents(JSON.parse(data.statement));
@@ -269,11 +269,9 @@ $(document).ready(function() {
         else $("#qActive-e").bootstrapToggle('off');
         if(data.autoJudge){
             $("#Auto-e").prop("checked",true)
-            $("#sampleTab-e,#testTab-e").removeClass('disabled');
             $("#approval-e").hide();
         } 
         else{
-            $("#sampleTab-e,#testTab-e").addClass('disabled');
             $("#Manual-e").prop("checked",true)
         } 
 
@@ -318,6 +316,20 @@ $(document).ready(function() {
 
     });
 
+    $("#solution").on('show.bs.modal', function(e){
+        $("#formSolution")[0].reset();
+        $("#qidForSolution").text(e.relatedTarget.dataset.id);
+        $.get('/lab/solution/'+url+"/"+e.relatedTarget.dataset.id,function(data,status){
+            if(data != ''){
+                $("#languageCode").val(data.language);
+                $('#languageCode').niceSelect('update');
+                $('#solutionCode').val(data.sourceCode);
+            }
+        }).fail((err)=>{
+            toastr.error(err.responseText);
+        })
+    });
+
     $("#myModal").on('show.bs.modal', function(e){
         options=['50','54','51','71','62','63'];
     });
@@ -327,13 +339,11 @@ $(document).ready(function() {
         switch($(this).val()) {
             case 'true' :
                 $("#approval").hide();
-                $("#sampleTab,#testTab").removeClass('disabled');
                 $("#samplecase").find("textarea").prop('required',true);
                 $("#testcase").find("textarea").prop('required',true);
                 break;
             case 'false' :
                 $("#approval").show();
-                $("#sampleTab,#testTab").addClass('disabled');
                 $("#samplecase").find("textarea").prop('required',false);
                 $("#testcase").find("textarea").prop('required',false);
                 break;
@@ -344,13 +354,11 @@ $(document).ready(function() {
         switch($(this).val()) {
             case 'true' :
                 $("#approval-e").hide();
-                $("#sampleTab-e,#testTab-e").removeClass('disabled');
                 $("#samplecase-e").find("textarea").prop('required',true);
                 $("#testcase-e").find("textarea").prop('required',true);
                 break;
             case 'false' :
                 $("#approval-e").show();
-                $("#sampleTab-e,#testTab-e").addClass('disabled');
                 $("#samplecase-e").find("textarea").prop('required',false);
                 $("#testcase-e").find("textarea").prop('required',false);
                 break;
@@ -391,7 +399,7 @@ function editForm(){
     $("#es_edit").val(encodeURIComponent(JSON.stringify(editor_edit.getContents())));
     $.ajax({
         type: "POST",
-        url: "/lab/edit/"+curl+"/"+qid,
+        url: "/lab/edit/"+url+"/"+qid,
         data: $("#ques-edit").serialize(),
         success: function (data,status, jqXHR) {
         $("#edit").modal('hide');
@@ -411,7 +419,7 @@ function editForm(){
 function deleteQ(){
     $("#delete").modal('hide');
     const qid = $("#del_qid").html();
-    $.get('/lab/delete/'+curl+'/'+qid,function(data,status){
+    $.get('/lab/delete/'+url+'/'+qid,function(data,status){
         toastr.success(data);
         $("#del_qid").empty();
         window.location.reload();
@@ -419,4 +427,18 @@ function deleteQ(){
         toastr.error(err.responseText);
     })
 
+}
+
+function solution(){
+    if($("#languageCode").val() == null){
+        alert("Choose a language");
+        return false;
+    }
+    $.post('/lab/solution/'+url+"/"+$("#qidForSolution").text(),$("#formSolution").serialize(),function(data,status){
+        toastr.success(data);
+    }).fail((err)=>{
+        toastr.error(err.responseText);
+    });
+
+    return false;
 }

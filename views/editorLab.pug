@@ -272,7 +272,7 @@ html
             - if(question.constraints) 
                 p.headings Constraints
                 pre(class = "pre") #{question.constraints}
-                |
+                |  
             each i,j in question.sample_cases
               p.headings Sample Input #{j+1}
               pre.bg-col.m-1(class="pre" class="sa" id="sam_i"+j) #{i.input}
@@ -294,17 +294,21 @@ html
             //-     i.fad.fa-user-check(style="font-size:17px")
             //-     | &nbsp; 
             //-     label.editor-right(style="font-size:18px") Correct Submmissions
+
             div.text-left.m-3.mb-2
-              a.editor-right( href="/lab/"+lab.url+"/leaderboard") 
-                i.fad.fa-poll-people(style="font-size:17px")
-                | &nbsp; 
-                label.editor-right(style="font-size:18px") Leaderboard
+              p Submit by #{moment(question.ends).format()}
             div.text-left.ml-3.mr-3.mb-2
               a.editor-right( href="") 
                 i.fas.fa-puzzle-piece(style="font-size:17px")
                 | &nbsp; 
                 label.editor-right(style="font-size:18px") Difficulty : #{question.difficulty}
-            -if(lab.timings.ends < new Date())
+            -if(session.staff_id)
+              div.text-left.m-3.mb-2
+                  a.editor-right( href="/lab/"+lab.url+"/"+question.qid+"/submissions") 
+                    i.fad.fa-poll-people(style="font-size:17px")
+                    | &nbsp; 
+                    label.editor-right(style="font-size:18px") View Submissions
+            -if(question.timings.ends < new Date())
               div.text-left.ml-3.mr-3.mb-2
                 a.editor-right( href="" data-toggle="modal" data-target="#solution") 
                   i.fad.fa-eye(style="font-size:17px")
@@ -346,6 +350,7 @@ html
         div#editor
         button#button_submit.btn.btn-success(value='Submit', onclick='setup().submit()', style='float:right;width:100px;left:20px;') 
           a(href='#opbox' style="color:white;font-weight:bold") Submit
+
         button#button.btn.btn-primary(value='Run', onclick='setup().run()', style='font-weight:bold;color:white;float:right;margin-right:20px;width:100px;')
           a(href='#loader' style="color:white;font-weight:bold") Run
       .row(style="margin:30px;")
@@ -356,12 +361,12 @@ html
                     
           textarea.form-control(rows="5" id="custom_input" style="display:none")
         
-      -if(lab.timings.ends < new Date())
+      -if(question.timings.ends < new Date())
         .row(style="margin:30px;")
           .col-lg-5.col-md-4
             p
               Strong Note :
-              | Submissions not valid since lab has ended.
+              | Submissions not valid.
       
       #opbox.output_box(style="width:650px; display:inline-block;")
       #loader(style="height:600px;display:none;")
@@ -436,4 +441,4 @@ html
           }
       });
       $("textarea").css({"-moz-tab-size":"16","-o-tab-size":"16","tab-size":"16"});
-    script(src="/js/editorContest.js")
+    script(src="/js/editorLab.js")

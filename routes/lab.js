@@ -17,13 +17,24 @@ const moment = require("moment");
 const { CustomGroup } = require("../models/customGroup");
 const labAuth = require("../middleware/labAuth");
 
+function encode64(string){ //encoding to base64
+    const b = new Buffer.from(string);
+  return b.toString('base64');
+  }
+  
+  function decode64(string64){//decode to utf8
+    const b = new Buffer.from(string64, 'base64')
+  return b.toString();
+  }
+
+
 router.get("/", authenticate, async (req, res) => {
     if (req.session.staff_id) {
         let labs;
         if (req.session.isAdmin) {
             labs = await Lab.find().lean();
         } else {
-            labs = await Lab.find({ createdBy: req.session.staff_id }).lean();
+            labs = await Lab.find({ $or:[{createdBy: req.session.staff_id},{custom_staff_id:req.session.staff_id}] }).lean();
         }
         res.render("teacher/lab/lab", { labs: labs });
     } else {
@@ -36,6 +47,7 @@ router.get("/", authenticate, async (req, res) => {
         }
         const labs = await Lab.find({
             customGroup: { $in: groupsArray },
+            isReady:true
         }).lean();
         res.render("lab", { labs: labs });
     }
@@ -48,7 +60,7 @@ router.get("/create", authenticate, teacher, (req, res) => {
 });
 
 //Saving the Lab in db
-router.post("/create", authenticate, teacher, async (req, res) => {
+router.post("/create", authenticate, teacher,teacher, async (req, res) => {
     const { error } = validateLab(req.body);
     if (error) return res.status(400).send(error.message);
 
@@ -100,9 +112,8 @@ router.post("/create", authenticate, teacher, async (req, res) => {
 });
 
 //allowing a group to participate in lab
-router.post("/group/allow/:url", authenticate, teacher, async (req, res) => {
-    let lab = await Lab.findOne({ url: req.params.url }).select("customGroup");
-    if (!lab) return res.status(400).send("Lab not found");
+router.post("/group/allow/:url", authenticate, teacher,labAuth, async (req, res) => {
+    const lab = res.locals.lab;
 
     if (req.body.selectedList) {
         lab.customGroup = lab.customGroup.concat(req.body.selectedList);
@@ -112,15 +123,8 @@ router.post("/group/allow/:url", authenticate, teacher, async (req, res) => {
 });
 
 //removing a group from lab
-router.get(
-    "/group/remove/:url/:id",
-    authenticate,
-    teacher,
-    async (req, res) => {
-        const lab = await Lab.findOne({ url: req.params.url }).select(
-            "customGroup"
-        );
-        if (!lab) return res.status(400).send("Invalid ID");
+router.get("/group/remove/:url/:id", authenticate,teacher,labAuth,async (req, res) => {
+        const lab = res.locals.lab;
 
         const i = lab.customGroup.findIndex((i) => {
             return i.id == req.params.id;
@@ -156,12 +160,12 @@ router.get("/manage", authenticate, teacher, async (req, res) => {
         });
     }
 
-    let labTeacher = await Lab.find({ createdBy: req.session.staff_id })
+    let labTeacher = await Lab.find({ $or:[{createdBy: req.session.staff_id},{custom_staff_id:req.session.staff_id}] })
         .lean()
         .sort({ _id: -1 })
         .skip((page - 1) * 12)
         .limit(12);
-    count = await Lab.countDocuments({ createdBy: req.session.staff_id });
+    count = await Lab.countDocuments({ $or:[{createdBy: req.session.staff_id},{custom_staff_id:req.session.staff_id}] });
     if (labTeacher.length <= 0) labTeacher = [];
     res.render("teacher/lab/manageList", {
         lab: labTeacher,
@@ -171,9 +175,8 @@ router.get("/manage", authenticate, teacher, async (req, res) => {
 });
 
 //teacher manage lab
-router.get("/manage/:name", authenticate, teacher, async (req, res) => {
-    let lab = await Lab.findOne({ url: req.params.name }).lean();
-    if (!lab) return res.status(404).end();
+router.get("/manage/:url", authenticate, teacher,labAuth, async (req, res) => {
+    const lab  = res.locals.lab;
 
     let custom = await CustomGroup.find({
         id: { $in: lab.customGroup },
@@ -222,34 +225,24 @@ router.get("/manage/:name", authenticate, teacher, async (req, res) => {
     }
 
     let stats = { submissions: submissions };
-    if (lab.createdBy == req.session.staff_id || req.session.isAdmin)
-        return res.render("teacher/lab/manageLab", {
-            lab: lab,
-            questions: questions,
-            stats: stats,
-            questionNo: questionNo,
-            custom: custom,
-        });
-    else return res.status(404).end();
+    
+    return res.render("teacher/lab/manageLab", {
+        lab: lab,
+        questions: questions,
+        stats: stats,
+        questionNo: questionNo,
+        custom: custom,
+    });
 });
 
 //teacher editing existing contest
-router.post("/manage/:name", authenticate, teacher, async (req, res) => {
+router.post("/manage/:url", authenticate,teacher ,labAuth, async (req, res) => {
     const { error } = validateLab(req.body);
     if (error) return res.status(400).send(error.message);
 
-    let lab = await Lab.findOne({ url: req.params.name });
-    if (!lab) return res.status(400).send("Contest Ended!");
+    const lab = await Lab.findOne({ url: req.params.url });
+    if (!lab) return res.status(404);
 
-    if (!req.session.isAdmin) {
-        if (lab.timings.ends < new Date()) {
-            return res.status(400).send("Lab Ended!");
-        }
-    }
-
-    if (!(lab.createdBy == req.session.staff_id || req.session.isAdmin))
-        return res.status(400).send("Cannot edit this contest");
-    
     lab.name = req.body.name;
     lab.description = req.body.description;
     lab.year = req.body.year || [];
@@ -261,14 +254,10 @@ router.post("/manage/:name", authenticate, teacher, async (req, res) => {
 });
 
 //adding question to lab
-router.post("/add/:url", authenticate, teacher, async (req, res) => {
+router.post("/add/:url", authenticate,teacher ,labAuth, async (req, res) => {
     const lab = await Lab.findOne({ url: req.params.url });
     if (!lab) return res.status(404);
 
-    if (lab.timings.ends < new Date())
-        return res
-            .status(400)
-            .send("Cannot add a question after contest has ended.");
     const { error } = validateLQ(req.body);
     if (error) return res.status(400).send(error.message);
     let count = 0;
@@ -344,11 +333,8 @@ router.post("/add/:url", authenticate, teacher, async (req, res) => {
 });
 
 //getting a question to edit
-router.get("/edit/:url/:qid", authenticate, teacher, async (req, res) => {
-    const lab = await Lab.findOne({ url: req.params.url })
-        .lean()
-        .select("questions");
-    if (!lab) return res.status(404).send("Contest not found!");
+router.get("/edit/:url/:qid", authenticate, teacher,labAuth, async (req, res) => {
+    const lab = res.locals.lab;
 
     const question = await LabQ.findOne({ qid: req.params.qid }).lean();
     if (!question) return res.status(400).send("Invalid ID");
@@ -357,19 +343,12 @@ router.get("/edit/:url/:qid", authenticate, teacher, async (req, res) => {
 });
 
 //editing questions
-router.post("/edit/:url/:qid", authenticate, teacher, async (req, res) => {
+router.post("/edit/:url/:qid", authenticate, teacher, labAuth,async (req, res) => {
     const { error } = validateLQ(req.body);
     if (error) return res.status(400).send(error.message);
 
-    const lab = await Lab.findOne({ url: req.params.url })
-        .lean()
-        .select("questions timings");
-    if (!lab) return res.status(404);
+    const lab = res.locals.lab;
 
-    if (lab.timings.ends < new Date())
-        return res
-            .status(400)
-            .send("Cannot edit a question after lab has ended.");
     if (!lab.questions.includes(req.params.qid))
         return res.status(400).send("Invalid ID");
 
@@ -392,42 +371,41 @@ router.post("/edit/:url/:qid", authenticate, teacher, async (req, res) => {
     question.autoApproval = req.body.autoApproval;
     question.active = (req.body.active == "on"?true:false);
 
-    if (question.autoJudge) {
-        question.sample_cases = [];
-        question.test_cases = [];
+    question.sample_cases = [];
+    question.test_cases = [];
 
-        if (Array.isArray(req.body.i_sample1)) {
-            for (let i = 0; i < req.body.i_sample1.length; i++) {
-                question.sample_cases.push({
-                    input: req.body.i_sample1[i],
-                    output: req.body.o_sample1[i],
-                });
-            }
-        } else {
+    if (Array.isArray(req.body.i_sample1)) {
+        for (let i = 0; i < req.body.i_sample1.length; i++) {
             question.sample_cases.push({
-                input: req.body.i_sample1,
-                output: req.body.o_sample1,
+                input: req.body.i_sample1[i],
+                output: req.body.o_sample1[i],
             });
         }
-
-        if (Array.isArray(req.body.i_testcase1)) {
-            for (let i = 0; i < req.body.i_testcase1.length; i++) {
-                question.test_cases.push({
-                    input: req.body.i_testcase1[i],
-                    output: req.body.o_testcase1[i],
-                    points: req.body.points[i],
-                });
-            }
-        } else {
-            question.test_cases.push({
-                input: req.body.i_testcase1,
-                output: req.body.o_testcase1,
-                points: req.body.points,
-            });
-        }
-
-        question.explanation = req.body.explanation;
+    } else {
+        question.sample_cases.push({
+            input: req.body.i_sample1,
+            output: req.body.o_sample1,
+        });
     }
+
+    if (Array.isArray(req.body.i_testcase1)) {
+        for (let i = 0; i < req.body.i_testcase1.length; i++) {
+            question.test_cases.push({
+                input: req.body.i_testcase1[i],
+                output: req.body.o_testcase1[i],
+                points: req.body.points[i],
+            });
+        }
+    } else {
+        question.test_cases.push({
+            input: req.body.i_testcase1,
+            output: req.body.o_testcase1,
+            points: req.body.points,
+        });
+    }
+
+    question.explanation = req.body.explanation;
+
     
     if (Array.isArray(req.body.languages)) {
         question.languages = req.body.languages;
@@ -440,10 +418,8 @@ router.post("/edit/:url/:qid", authenticate, teacher, async (req, res) => {
 });
 
 //get list of all teacher
-router.get('/teachers',authenticate,teacher,async (req,res)=>{
-    if (isNaN(req.query.id)) return res.status(404).end();
-    const lab = await Lab.findOne({id:req.query.id}).lean().select('custom_staff_id createdBy -_id');
-    if(!lab) return res.status(400).end();
+router.get('/teachers/all/:url',authenticate,teacher,labAuth,async (req,res)=>{
+    const lab = res.locals.lab;
 
     let teachers = await Teacher.find({staff_id:{$ne:lab.createdBy}}).lean().select('fname lname staff_id -_id').sort({staff_id:1});
     if(!teachers) return res.send([]);
@@ -459,9 +435,8 @@ router.get('/teachers',authenticate,teacher,async (req,res)=>{
 });
 
 //retreive teachers given access in a lab
-router.get('/teachers/id/:id',authenticate,teacher,async (req,res) =>{
-    const lab = await Lab.findOne({id:req.params.id}).lean().select('custom_staff_id -_id');
-    if(!lab) return res.status(400).send("Invalid ID");
+router.get('/teachers/:url',authenticate,teacher,labAuth,async (req,res) =>{
+   const lab = res.locals.lab;
 
     let teachers = await Teacher.find({staff_id:{$in:lab.custom_staff_id}}).lean().select({staff_id:1,fname:1,lname:1,_id:0});
     if(!teachers) teachers=[];
@@ -471,9 +446,9 @@ router.get('/teachers/id/:id',authenticate,teacher,async (req,res) =>{
 });
 
 //adding teachers to lab
-router.post('/teachers/:id',authenticate,teacher,async (req,res) =>{
-    const lab = await Lab.findOne({id:req.params.id}).select('custom_staff_id');
-    if(!lab) return res.status(400).send("Invalid ID");
+router.post('/teachers/:url',authenticate,teacher,labAuth,async (req,res) =>{
+    const lab = await Lab.findOne({url:req.params.url}).select('custom_staff_id');
+    if(!lab) return res.status(404).end();
     lab.custom_staff_id = (req.body.teacherListCustom?req.body.teacherListCustom:[]);
     await lab.save();
     res.send("Teachers Added");
@@ -481,7 +456,7 @@ router.post('/teachers/:id',authenticate,teacher,async (req,res) =>{
 });
 
 //adding rules to lab
-router.post('/rules/:url',authenticate,teacher,async (req,res)=>{
+router.post('/rules/:url',authenticate,teacher,labAuth,async (req,res)=>{
     const lab = await Lab.findOne({url:req.params.url}).select('rules');
     if(!lab) return res.status(404);
 
@@ -490,18 +465,392 @@ router.post('/rules/:url',authenticate,teacher,async (req,res)=>{
     res.send("Rules saved!");
 });
 
+//deleting a lab
+router.get('/delete/:url',authenticate,admin,async (req,res) => {
+    const lab = await Lab.findOne({url:req.params.url}).lean();
+    if(!lab) return res.status(400).send("Some error occured!");
+
+    await Lab.findOneAndDelete({url:req.params.url}).then(async ()=>{
+        await LabQ.deleteMany({qid:{$in:lab.questions}});
+        return res.send("Lab deleted");
+    } )
+    .catch((err)=>{ winston.error(err);
+        return res.status(400).send("Error! Unable to delete this lab.");
+    });
+});
+
+
+//deleting a question
+router.get('/delete/:url/:qid',authenticate,teacher,labAuth,async (req,res)=>{
+
+    const lab = await Lab.findOne({url:req.params.url}).select('questions');
+    if(!lab) return res.status(404);
+
+    if(!lab.questions.includes(req.params.qid)) return res.status(400).send("Invalid ID");
+    
+    lab.questions.splice(lab.questions.indexOf(req.params.qid),1);
+    await lab.save();
+
+    await LabQ.findOneAndDelete({qid:req.params.qid});
+
+    res.send("Question deleted.");
+});
+
+
+//adding solution to a question in contest
+router.get('/solution/:url/:qid',authenticate,labAuth,async (req,res)=>{
+    const lab = res.locals.lab;
+
+    if(!lab.questions.includes(req.params.qid)) return res.status(400).send("Invalid ID");
+
+    const question = await LabQ.findOne({qid:req.params.qid}).lean().select('solution active');
+    if(!question) return res.status(400).send("Invalid ID");
+
+    if(req.session.staff_id || question.active)
+        if(question.solution) res.send(question.solution);
+        else res.send('No solutions yet!');
+    else
+    res.status(404).end();
+
+});
+
+router.post('/solution/:url/:qid',authenticate,teacher,labAuth, async (req,res)=>{
+    const lab = res.locals.lab;
+
+    if(!lab.questions.includes(req.params.qid)) return res.status(400).send("Invalid ID");
+
+    const question = await LabQ.findOne({qid:req.params.qid}).select('solution');
+    if(!question) return res.status(400).send("Invalid ID");
+
+    question.solution.language = req.body.language;
+    question.solution.sourceCode = req.body.sourceCode;
+    question.save();
+    res.send("Saved");
+
+});
+
+
+//fetching source code
+function lang(l){
+    switch (l){
+        case 50 : return "C50";
+        case 54 : return "C++54";
+        case 51 : return "C#51";
+        case 62 : return "Java62";
+        case 63 : return "Javascript63";
+        case 71 : return "Python71";
+    }   
+}
+
+router.get('/source/:url/:qid',authenticate,labAuth,async (req,res) =>{
+    
+    const lab = res.locals.lab;
+
+    if(!lab.questions.includes(req.params.qid)) return res.status(400).send("Invalid ID");
+    const question = await LabQ.findOne({qid:req.params.qid}).lean();
+    
+    let source=[];
+    const usn = req.session.usn || req.session.staff_id;
+    if(req.query.lang){
+        let submission = question.submissions.find( sub => {return sub.usn == usn && sub.language_id == req.query.lang});
+        if(!submission) submission=[];
+
+        source = source.concat(submission);
+        if(req.session.lab){
+            const index = req.session.lab.findIndex(i => {return i.url == req.params.url && i.qid == req.params.qid && i.lang == req.query.lang})
+            if(index != -1)
+            source = source.concat(req.session.lab[index])
+        }
+        if(source.length == 0){ let sC=""
+            if(config.has(`source.${req.query.lang}`)){
+                sC = config.get(`source.${req.query.lang}`);
+            }
+            source=[{sourceCode:sC}];
+            return res.send(source);
+        }
+    }
+    else{
+        let submission = question.submissions.find( sub => {return sub.usn == usn && sub.language_id == req.query.lang});
+        if(!submission) submission=[];
+        else submission.language_id = lang(submission.language_id);
+        return res.send([submission]);
+    }
+  
+    res.send(source.sort((a,b)=>(a.timestamp>b.timestamp)?1:-1));
+});
+
+router.post('/source/:url/:qid',authenticate,labAuth,async (req,res)=>{
+    const lab = res.locals.lab;
+
+    if(!lab.questions.includes(req.params.qid)) return res.status(400).send("Invalid ID");
+    
+    req.body.sourceCode = req.body.sourceCode.substr(0,req.body.sourceCode.length-18);
+    if(req.body.sourceCode == '') return res.send('');
+    if(req.session.lab){
+        const found = req.session.lab.findIndex(i =>{return i.qid == req.params.qid && i.url == req.params.url && i.lang == req.body.lang.substr(req.body.lang.length-2) });
+        if(found!=-1){
+            req.session.lab[found].sourceCode = req.body.sourceCode;
+            req.session.lab[found].timestamp = new Date();
+        }
+        else{
+            let obj = {};
+            obj.url = req.params.url;
+            obj.qid=req.params.qid;
+            obj.lang = req.body.lang.substr(req.body.lang.length-2);
+            obj.sourceCode = req.body.sourceCode;
+            obj.timestamp = new Date();
+            req.session.lab.push(obj);
+        }
+    }
+    else{
+        let obj = {};
+        obj.url = req.params.url;
+        obj.qid=req.params.qid;
+        obj.lang = req.body.lang.substr(req.body.lang.length-2);
+        obj.sourceCode = req.body.sourceCode;
+        obj.timestamp = new Date();
+        req.session.lab = [];
+        req.session.lab.push(obj);
+    }
+
+    res.send('');
+});
+
+//individual student's source code
+router.get('/source/:url/:qid/:usn',authenticate,teacher,labAuth,async (req,res) =>{
+    
+    const lab = res.locals.lab;
+
+    if(!lab.questions.includes(req.params.qid)) return res.status(400).send("Invalid ID");
+    const question = await LabQ.findOne({qid:req.params.qid}).lean();
+    
+    const sourceCode = question.submissions.find(e => e.usn==req.params.usn).sourceCode;
+
+    res.send(sourceCode);
+});
+
+
 
 //landing page for lab
 router.get("/:url", authenticate, labAuth, async (req, res) => {
     const lab = res.locals.lab;
 
-    const questions = await LabQ.find({ qid: { $in: lab.questions } }).lean();
+    const questions = await LabQ.find({ qid: { $in: lab.questions },active:true }).lean();
 
     if (req.session.isTeacher) {
         res.render("teacher/lab/qdisplayLab", { lab: lab, questions });
     } else {
         res.render("qdisplayLab", { lab: lab, questions });
     }
+});
+
+//submissions pug
+router.get('/:url/:qid/submissions',authenticate,teacher,labAuth,async (req,res)=>{
+    const lab = res.locals.lab;
+
+    //fetching question
+    if(!lab.questions.includes(req.params.qid)) return res.status(404).end();
+    const question = await LabQ.findOne({qid:req.params.qid}).lean();
+
+    //render pug
+    return res.render('teacher/lab/submission',{lab,question});
+});
+
+//fetching submissions
+router.get('/:url/:qid/submissions/all',authenticate,teacher,labAuth, async (req,res) =>{
+    const lab = res.locals.lab;
+    //fetching question
+    if(!lab.questions.includes(req.params.qid)) return res.status(404).end();
+    const question = await LabQ.findOne({qid:req.params.qid}).lean();
+
+    let students = [];
+    for(i of question.submissions){
+        students.push(i.usn);
+    }
+    
+    let studentData = {};
+
+    let result = await Student.find({usn:{$in:students}}).select('usn fname lname -_id').lean();
+    if(!result) result = [];
+    else{
+        for (i of result)
+            studentData[i.usn] = i;
+    }
+
+    let SendData=[];
+    for(i of question.submissions){
+        let data={};
+        data.usn = i.usn;
+        data.name = studentData[i.usn].fname + " " + studentData[i.usn].lname;
+        data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+i.usn+'" data-qid="'+req.params.qid +'" href="#">View Code</a>';
+        data.time ={timestamp:moment(i.timestamp).format('x'),display:moment(i.timestamp).format('LLL')};
+        if(i.status == "Pending")
+            data.evaluate = `<a href="/lab/${lab.url}/${question.qid}/evaluate/${i.usn}" target="_blank">Evaluate</a>`;
+        else data.evaluate="";
+        data.status = i.status;
+        const l = lang(i.language_id);
+        data.lang = l.substr(0,l.length-2); 
+        SendData.push(data);
+    }
+    res.send(SendData);
+});
+
+
+//Evaluating submission
+router.get('/:url/:qid/evaluate/:usn',authenticate,teacher,labAuth,async (req,res)=>{
+    const lab = res.locals.lab;
+
+    //fetching question
+    if(!lab.questions.includes(req.params.qid)) return res.status(404).end();
+    const question = await LabQ.findOne({qid:req.params.qid}).lean();
+    
+    res.render('teacher/lab/evaluation',{lab,question});
+});
+
+//viewing question
+router.get('/:url/:qid',authenticate,labAuth,async (req,res)=>{
+    const lab = res.locals.lab;
+    
+    if(!lab.questions.includes(req.params.qid)){
+        return res.status(404).end();
+    }
+    let question = await LabQ.findOne({qid:req.params.qid,active:true}).lean();
+    if(!question)  return res.status(404).end();
+
+    
+    if(!(lab.createdBy == req.session.staff_id || req.session.isAdmin || question.timings.starts < new Date()))
+    return res.status(404).end();
+    
+    return res.render('editorLab',{question ,lab})
+
+});
+
+//submission route
+router.post('/:url/:qid',authenticate,labAuth,async (req,res)=>{
+    const lab = res.locals.lab;
+
+    //fetching question
+    if(!lab.questions.includes(req.params.qid)) return res.status(404).end();
+    
+    let question;
+    if(req.session.staff_id){
+        question = await LabQ.findOne({qid:req.params.qid}).lean();
+    }else{
+        question = await LabQ.findOne({qid:req.params.qid,active:true,'timings.ends':{$gt:new Date()}});
+    }
+    if(!question)  return res.status(404).end();
+
+
+    //Checking for unauthorized submissions
+    if(req.body.source.substr(req.body.source.length-18) == "undefinedundefined")
+    req.body.source = req.body.source.substr(0,req.body.source.length-18);
+    else
+    return res.status(401).send("Unauthorized");
+    if(!question.languages.includes(req.body.language.toString()))
+        return res.status(400).send("Not permitted to submit in this language!");
+
+    if(req.body.source.trim()=='')
+    return res.send("Source Code cannot be empty!");
+
+
+    //inserting a submission
+    function insertSubmission(submission){
+        const index = question.submissions.findIndex(item => {return item.usn == submission.usn});
+    
+        if(index!=-1){
+            question.submissions.splice(index,1);
+        }
+        question.submissions.push(submission);
+    }
+    
+    
+    //storing submission based on the settings
+    if(question.autoJudge){ //testcase judging by api
+        
+        let result = [];    
+        const testcase = question.test_cases;
+        let compiler_opt = null;
+        if (req.body.language == 50){
+            compiler_opt = "-lm";
+        }
+
+        for(let i=0;i<testcase.length;i++){
+            let options = { method: 'POST',
+            url: 'http://127.0.0.1:3000/submissions?base64_encoded=true&wait=true',
+            body: { "source_code": encode64(req.body.source), "language_id": req.body.language, "stdin":encode64(testcase[i].input),
+                    "expected_output":encode64(testcase[i].output) ,"compiler_options":compiler_opt},
+            json: true };
+
+            result.push(request(options));
+
+        }
+
+        Promise.all(result)
+            .then(async (data) => {
+                let desc= [];
+                wrong = false;
+                data.forEach(store);
+                function store(data,index){ let points=0;
+                    if(data.status.id != 3){
+                        wrong = true;
+                    }
+                    desc.push({id:data.status.id,description:data.status.description}); 
+                }
+
+                if(req.session.staff_id){
+                    return res.send(desc);
+                }
+
+                let submission = {};
+                submission.usn = req.session.usn;
+                submission.timestamp = new Date();
+                submission.language_id = req.body.language;
+                submission.sourceCode = req.body.source;
+
+                if(wrong){
+                    submission.status = "Wrong Answer";
+                }
+                else{
+                    submission.status = "Accepted";
+                }
+
+                insertSubmission(submission);
+                question.save();
+
+                return res.send(desc);
+            }).catch(err => {
+                winston.error(err);
+              res.send(err);
+            });
+
+    }
+    else if(question.autoApproval){ // by default accept
+
+        let submission = {};
+        submission.usn = req.session.usn;
+        submission.timestamp = new Date();
+        submission.language_id = req.body.language;
+        submission.sourceCode = req.body.source;
+        submission.status = "Accepted";
+
+        insertSubmission(submission);
+        question.save();
+        return res.send("Submitted");
+    }
+    else{ //manually approve
+
+        let submission = {};
+        submission.usn = req.session.usn;
+        submission.timestamp = new Date();
+        submission.language_id = req.body.language;
+        submission.sourceCode = req.body.source;
+        submission.status = "Pending";
+
+        insertSubmission(submission);
+        question.save();
+        return res.send("Submission made.");
+    }
+
 });
 
 

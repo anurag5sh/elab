@@ -96,7 +96,6 @@ const labQSchema = new mongoose.Schema({
             timestamp: { type: Date },
             language_id: { type: Number },
             usn: { type: String },
-            year: { type: String },
             sourceCode: { type: String },
             status: { type: String },
             _id: false,

@@ -15,11 +15,11 @@ function setup(){
 
     function source(lang){
         const pre = $("#lang").data('pre');
-        $.post(`/contest/source/${url}/${qid}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
+        $.post(`/lab/source/${url}/${qid}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
             $("#lang").data('pre', $("#lang").val());
 
             if(!lang) lang='';
-            $.get(`/contest/source/${url}/${qid}`,{lang:lang},function (data,status){
+            $.get(`/lab/source/${url}/${qid}`,{lang:lang},function (data,status){
                 if(lang){
                 editor.setValue(data[0].sourceCode);
                 
@@ -60,13 +60,13 @@ function setup(){
 
     setInterval(function(){
         const pre = $("#lang").data('pre');
-        $.post(`/contest/source/${url}/${qid}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
+        $.post(`/lab/source/${url}/${qid}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
             $("#lang").data('pre', $("#lang").val());});
     },60000*5);
 
     function save(){
         const pre = $("#lang").data('pre');
-        $.post(`/contest/source/${url}/${qid}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
+        $.post(`/lab/source/${url}/${qid}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
         $("#lang").data('pre', $("#lang").val());$("#save").prop('disabled',true);$("#save span").text("Saved");
         setTimeout(()=>{$("#save").prop('disabled',false);$("#save span").text("Save");},3000)}
         ).fail((err)=>{toastr.error("Could not save!")});
@@ -147,7 +147,7 @@ function setup(){
     //save
     
     const pre = $("#lang").data('pre');
-    $.post(`/contest/source/${url}/${qid}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
+    $.post(`/lab/source/${url}/${qid}`,{sourceCode:editor.getValue(),lang:pre},function (data,status){
     $("#lang").data('pre', $("#lang").val());});
     //spinner
     $("#button").prop('disabled', false);
@@ -318,7 +318,7 @@ function setup(){
     });
 
     $("#solution").on('show.bs.modal',function (e){
-        $.get('/contest/solution/'+url+'/'+qid,function (data,status){
+        $.get('/lab/solution/'+url+'/'+qid,function (data,status){
         if(data.sourceCode){
         $("#solutionLang").html("Language : "+ data.language);
         $("#solutionBody").html(he.escape(data.sourceCode));

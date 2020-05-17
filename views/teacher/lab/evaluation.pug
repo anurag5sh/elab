@@ -1,0 +1,47 @@
+extends ../nav
+
+block append head
+    link(rel="stylesheet", href="/css/dataTables.bootstrap4.min.css")
+    script(src="/js/jquery.dataTables.min.js")
+    script(src="/js/dataTables.bootstrap4.min.js")
+    link(href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap" rel="stylesheet")
+    link(rel="stylesheet", href="/css/lb_main.css")
+    script(src="/js/he.js")
+    script(src="/js/dataTables.hideEmptyColumns.min.js")
+    style.
+        th{
+            font-family: OpenSans-Regular;
+            font-size: 16px;
+            color: #fff;
+            line-height: 1.2;
+            font-weight: unset;
+        }
+    title Lab Evaluation
+
+        
+        
+block append content
+    .WRAPPER
+        nav(aria-label='breadcrumb' style="color:black;width:56.5%;")
+          ol.mb-0.breadcrumb(style="padding-left:20px;background-color:white")
+            li.breadcrumb-item
+              a(href='/lab') Labs
+            li.breadcrumb-item
+              a(href='/lab/'+lab.url)=lab.name
+            li.breadcrumb-item
+              a(href='/lab/'+lab.url+"/"+question.qid)=question.name
+            li.breadcrumb-item.active(aria-current='page') Evaluation
+        h1.text-center.m-3.lb_heading Evaluation
+        
+        br
+        .container
+            p Name
+
+
+        .push1
+        .push
+    //- footer.bg-dark(class="FOOTER")
+    //-     div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBKCE CSE DEPT. 2020
+    include ../../footer    
+    script.
+       

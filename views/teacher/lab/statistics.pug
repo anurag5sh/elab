@@ -1,6 +1,6 @@
 
 .container
-    p.fontStyle Total No. of submissions : #{lab.submissions.length}
+    p.fontStyle Total No. of submissions : #{totalNoOfSubs}
 
 .container
     table.table.table-striped
@@ -8,14 +8,14 @@
             tr
                 th Question Name
                 th Accepted
-                th Partially Accepted
+                th Pending
                 th Wrong Answer
         tbody
             each i in questionNo
                 tr
                     td=i.name
                     td=i.Accepted
-                    td=i.Partially_Accepted
+                    td=i.Pending
                     td=i.Wrong_Answer
 
 

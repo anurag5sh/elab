@@ -643,6 +643,49 @@ router.get("/:url", authenticate, labAuth, async (req, res) => {
     }
 });
 
+
+//execution for approval
+router.post('/:url/:qid/execute',authenticate,teacher,labAuth,async (req,res)=>{
+    const lab = res.locals.lab;
+
+    if(!req.body.usn) return res.status(400).end();
+    if(!req.body.input) req.body.input="";
+
+    //fetching question
+    if(!lab.questions.includes(req.params.qid)) return res.status(404).end();
+    const question = await LabQ.findOne({qid:req.params.qid}).lean();
+
+    const submission = question.submissions.find(e => e.usn == req.body.usn);
+    if(!submission) return res.status(400).send("No submissions yet!");
+
+    let compiler_opt = null;
+    if (req.body.language == 50){
+        compiler_opt = "-lm";
+    }
+
+    let options = { method: 'POST',
+    url: 'http://127.0.0.1:3000/submissions?base64_encoded=true&wait=true',
+    body: { "source_code": encode64(submission.sourceCode), "language_id": submission.language_id ,"stdin":encode64(req.body.input),
+        "expected_output":encode64("1"), "compiler_options":compiler_opt},
+
+    json: true };
+
+    request(options).then((response)=>{
+        let output="";
+        const json_res = JSON.parse(JSON.stringify(response));
+        
+        if(json_res.stdout!=null) output=json_res.stdout;
+        else if(json_res.stderr!=null) output=json_res.stderr;
+        else if(json_res.compile_output!=null) output=json_res.compile_output;
+        const r = {output:decode64(output),id:response.status.id,description:response.status.description};
+        
+        res.send(r);
+    }).catch((err)=>{
+        winston.error(err);
+        res.send("Something went wrong!");
+    });
+});
+
 //submissions pug
 router.get('/:url/:qid/submissions',authenticate,teacher,labAuth,async (req,res)=>{
     const lab = res.locals.lab;
@@ -683,7 +726,7 @@ router.get('/:url/:qid/submissions/all',authenticate,teacher,labAuth, async (req
         data.name = studentData[i.usn].fname + " " + studentData[i.usn].lname;
         data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+i.usn+'" data-qid="'+req.params.qid +'" href="#">View Code</a>';
         data.time ={timestamp:moment(i.timestamp).format('x'),display:moment(i.timestamp).format('LLL')};
-        if(i.status == "Pending")
+        if(i.status == "Pending" || i.status == "Wrong Answer")
             data.evaluate = `<a href="/lab/${lab.url}/${question.qid}/evaluate/${i.usn}" target="_blank">Evaluate</a>`;
         else data.evaluate="";
         data.status = i.status;
@@ -703,10 +746,39 @@ router.get('/:url/:qid/evaluate/:usn',authenticate,teacher,labAuth,async (req,re
     if(!lab.questions.includes(req.params.qid)) return res.status(404).end();
     const question = await LabQ.findOne({qid:req.params.qid}).lean();
 
+    if(question.autoApproval) return res.status(404).end();
+
+    let student = await Student.findOne({usn:req.params.usn}).select('usn fname lname -_id').lean();
+    if(!student) return res.status(404).end();
+
     const submission = question.submissions.find(e => e.usn == req.params.usn);
-    
-    res.render('teacher/lab/evaluation',{lab,question,submission});
+    submission.name = student.fname + " " + student.lname;
+
+    res.render('teacher/lab/evaluation',{lab,question,submission:submission});
 });
+
+//updating the submission status
+router.post('/:url/:qid/evaluate/:usn',authenticate,teacher,labAuth,async (req,res)=>{
+    const lab = res.locals.lab;
+    const status = req.body.status;
+    if(["Accepted","Wrong Answer"].indexOf(status) == -1) return res.status(400).send("Invalid Status");
+
+    //fetching question
+    if(!lab.questions.includes(req.params.qid)) return res.status(404).end();
+    const question = await LabQ.findOne({qid:req.params.qid});
+
+    let student = await Student.findOne({usn:req.params.usn}).select('usn fname lname -_id').lean();
+    if(!student) return res.status(404).end();
+
+    const index = question.submissions.findIndex(e => e.usn == req.params.usn);
+
+    question.submissions[index].status = status;
+    question.save();
+
+    res.send("Submission Evaluated");
+
+});
+
 
 //viewing question
 router.get('/:url/:qid',authenticate,labAuth,async (req,res)=>{

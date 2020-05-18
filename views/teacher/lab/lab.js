@@ -113,7 +113,7 @@ router.post("/create", authenticate, teacher,teacher, async (req, res) => {
 
 //allowing a group to participate in lab
 router.post("/group/allow/:url", authenticate, teacher,labAuth, async (req, res) => {
-    const lab = await Lab.findOne({url:req.params.url});
+    const lab = res.locals.lab;
 
     if (req.body.selectedList) {
         lab.customGroup = lab.customGroup.concat(req.body.selectedList);
@@ -124,7 +124,7 @@ router.post("/group/allow/:url", authenticate, teacher,labAuth, async (req, res)
 
 //removing a group from lab
 router.get("/group/remove/:url/:id", authenticate,teacher,labAuth,async (req, res) => {
-    const lab = await Lab.findOne({url:req.params.url});
+        const lab = res.locals.lab;
 
         const i = lab.customGroup.findIndex((i) => {
             return i.id == req.params.id;
@@ -643,57 +643,6 @@ router.get("/:url", authenticate, labAuth, async (req, res) => {
     }
 });
 
-//student report 
-router.get('/:url/studentReport',authenticate,teacher,labAuth,async (req,res)=>{
-    const lab = res.locals.lab;
- 
-    res.render('teacher/lab/studentReport',{lab});
-});
-
-//fetching studentReport data
-router.get('/:url/studentReport/all',authenticate,teacher,labAuth, async (req,res) =>{
-    const lab = res.locals.lab;
-
-    
-    const allSubmissions = await LabQ.find({qid:{$in:lab.questions}}).lean().select('submissions -_id');
-    if (allSubmissions.length == 0) return res.send([]);
-
-    const submissions = {};
-    let students = new Set();
-    for (i of allSubmissions){
-        students.add(i.submissions[0].usn);
-        if( i.submissions[0].usn in submissions)
-            submissions[i.submissions[0].usn].concat(i.submissions);
-        else
-            submissions[i.submissions[0].usn] = i.submissions;
-    }
-
-    console.log(submissions);
-    
-    let studentData = [];
-    studentData = await Student.find({usn:{$in:Array.from(students)}}).select('usn fname lname -_id').lean();
-       
-    let SendData=[];
-    
-    for(i of studentData){let data={};
-        const sub = submissions[i.usn];
-        data.usn = i.usn;
-        data.name = i.fname + " " + i.lname;
-        data.report = '<a data-toggle="modal" data-target="#report" data-usn="'+i.usn+'" href="#">View Report</a>';
-        data.questions = sub.length;
-        data.lang=new Set();
-        for(i of sub)
-            data.lang.add(lang(i.language_id));
-        data.lang = Array.from(data.lang).join();
-
-        SendData.push(data);
-    }
-
-    res.send(SendData);
-
-});
-
-
 
 //execution for approval
 router.post('/:url/:qid/execute',authenticate,teacher,labAuth,async (req,res)=>{
@@ -831,6 +780,17 @@ router.post('/:url/:qid/evaluate/:usn',authenticate,teacher,labAuth,async (req,r
 
     res.send("Submission Evaluated");
 
+});
+
+//student report 
+router.get('/:url/:qid/studentReport',authenticate,teacher,labAuth,async (req,res)=>{
+    const lab = res.locals.lab;
+
+    //fetching question
+    if(!lab.questions.includes(req.params.qid)) return res.status(404).end();
+    const question = await LabQ.findOne({qid:req.params.qid});
+ 
+    res.render('teacher/studentReport',{contest:contest});
 });
 
 

@@ -9,6 +9,7 @@ const fs = require("fs");
 const request = require("request-promise");
 const config = require("config");
 const path = require("path");
+const puppeteer = require('puppeteer'); 
 const winston = require("winston");
 const rimraf = require("rimraf");
 const { Lab, validateLab } = require("../models/lab");
@@ -654,21 +655,20 @@ router.get('/:url/studentReport',authenticate,teacher,labAuth,async (req,res)=>{
 router.get('/:url/studentReport/all',authenticate,teacher,labAuth, async (req,res) =>{
     const lab = res.locals.lab;
 
-    
     const allSubmissions = await LabQ.find({qid:{$in:lab.questions}}).lean().select('submissions -_id');
     if (allSubmissions.length == 0) return res.send([]);
 
     const submissions = {};
     let students = new Set();
     for (i of allSubmissions){
-        students.add(i.submissions[0].usn);
-        if( i.submissions[0].usn in submissions)
-            submissions[i.submissions[0].usn].concat(i.submissions);
-        else
-            submissions[i.submissions[0].usn] = i.submissions;
+        for(j of i.submissions){
+            students.add(j.usn);
+            if( j.usn in submissions)
+                submissions[j.usn].push(j);
+            else
+                submissions[j.usn] = [j];
+        }
     }
-
-    console.log(submissions);
     
     let studentData = [];
     studentData = await Student.find({usn:{$in:Array.from(students)}}).select('usn fname lname -_id').lean();
@@ -677,19 +677,115 @@ router.get('/:url/studentReport/all',authenticate,teacher,labAuth, async (req,re
     
     for(i of studentData){let data={};
         const sub = submissions[i.usn];
+        console.log(sub);
         data.usn = i.usn;
         data.name = i.fname + " " + i.lname;
         data.report = '<a data-toggle="modal" data-target="#report" data-usn="'+i.usn+'" href="#">View Report</a>';
         data.questions = sub.length;
         data.lang=new Set();
-        for(i of sub)
-            data.lang.add(lang(i.language_id));
+        for(i of sub){
+            const l = lang(i.language_id);
+            data.lang.add(l.substr(0,l.length-2));
+        }
         data.lang = Array.from(data.lang).join();
 
         SendData.push(data);
     }
 
     res.send(SendData);
+
+});
+
+router.get('/:url/studentReport/:usn',authenticate,teacher,labAuth, async (req,res) =>{
+    const lab = res.locals.lab;
+
+    //const allSubmissions = await LabQ.find({qid:{$in:lab.questions},submissions:{$elemMatch:{usn:req.params.usn}}}).lean().select('submissions name -_id');
+    const allSubmissions = await LabQ.aggregate([{$match:{qid:{$in:lab.questions}}},{$project:{submissions:{$filter:{input:"$submissions",as:"submission",cond:{$eq:["$$submission.usn",req.params.usn]}}},_id:0,name:1}}]);
+    if (allSubmissions.length == 0) return res.send([]);
+    let sendData = [];
+    for (i of allSubmissions){
+        let data={};
+        let sub = i.submissions[0];
+        if(!sub) continue;
+        data.name = i.name;
+        data.time = moment(sub.timestamp).format('LLL');
+        data.status = sub.status;
+        const l = lang(sub.language_id);
+        data.language = l.substr(0,l.length-2);
+        data.sourceCode = sub.sourceCode;
+
+        sendData.push(data);
+    }
+    
+    res.send(sendData);
+
+});
+
+router.get('/:url/studentReportDownload/:usn',authenticate,teacher,labAuth, async (req,res) =>{
+    const lab = res.locals.lab;
+
+    //const allSubmissions = await LabQ.find({qid:{$in:lab.questions},submissions:{$elemMatch:{usn:req.params.usn}}}).lean().select('submissions name -_id');
+    const allSubmissions = await LabQ.aggregate([{$match:{qid:{$in:lab.questions}}},{$project:{submissions:{$filter:{input:"$submissions",as:"submission",cond:{$eq:["$$submission.usn",req.params.usn]}}},_id:0,name:1}}]);
+    if (allSubmissions.length == 0) return res.status(404).end();
+
+    const student = await Student.findOne({usn:req.params.usn}).lean();
+    
+    if(!req.query.download){
+        return res.render('teacher/lab/studentReportPdf',{lab,student});
+    }
+    
+    
+    (async function() {
+        try {
+        // launch puppeteer API
+        const browser = await puppeteer.launch(); 
+        const page = await browser.newPage();
+        let host = 'localhost';
+        if (process.env.NODE_ENV != 'production') {
+            host='localhost:'+req.app.locals.port;
+           }
+        const elabIndex = req.headers.cookie.indexOf("elab");
+        await page.setCookie({name:"elab",value:req.headers.cookie.substr(elabIndex+5),domain:"localhost",path:"/"});   
+        await page.goto(`http://${host}/lab/${lab.url}/studentReportDownload/${req.params.usn}`,{waitUntil:'networkidle0'});
+        await page.pdf({
+            // name of your pdf file in directory
+			path: './reports/'+lab.url+'-report-'+req.params.usn+'.pdf', 
+            //  specifies the format
+			format: 'A4', 
+            // print background property
+            printBackground: true ,
+            margin: {top: '2cm', left: 0, right: 0, bottom: '2cm'}
+        });
+        // console message when conversion  is complete!
+        await browser.close();
+    } catch (e) {
+        winston.error(e);
+    }
+    })().then(()=>{
+        const uploadsDir = path.join(__dirname, '../reports/');
+        fs.readdir(uploadsDir, function(err, files) {
+            files.forEach(function(file, index) {
+              fs.stat(path.join(uploadsDir, file), function(err, stat) {
+                var endTime, now;
+                if (err) {
+                  return winston.error(err);
+                }
+                now = new Date().getTime();
+                endTime = new Date(stat.ctime).getTime() + 1800000;
+                if (now > endTime) {
+                  return rimraf(path.join(uploadsDir, file), function(err) {
+                    if (err) {
+                      winston.error(err);
+                    }
+                  });
+                }
+              });
+            });
+          });
+        res.set('Content-Type','application/pdf');
+        res.sendFile(uploadsDir+lab.url+'-report-'+req.params.usn+'.pdf');
+        //res.download('./public/reports/'+req.params.curl+'-report-'+req.params.id+'.pdf');
+    });
 
 });
 

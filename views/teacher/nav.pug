@@ -61,7 +61,7 @@ html(lang="en-US")
 
 
                 /* End for Footer*/
-            - let active={practice:"",contest:"",assignment:"",profile:""}
+            - let active={practice:"",contest:"",assignment:"",profile:"",lab:""}
             - let navStyle = "background-color:#1aa3ff;";
             - let navClass = "";
     body
@@ -82,7 +82,7 @@ html(lang="en-US")
                             li.nav-item(role='presentation')
                                 a.nav-link(href='/contest' class=active.contest) CONTEST
                             li.nav-item(role='presentation')
-                                a.nav-link(href='/lab' class=active.contest) LABORATORY
+                                a.nav-link(href='/lab' class=active.lab) LABORATORY
                             li.dropdown.nav-item
                                 a.dropdown-toggle.nav-link(data-toggle='dropdown', aria-expanded='false', href='#' class=active.assignment) ASSIGNMENT
                                 .dropdown-menu(role='menu')

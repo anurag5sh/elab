@@ -30,10 +30,6 @@ html
       .push,.push1 {
           height: 50px;
       }
--function two(x) {return ((x>9)?"":"0")+x}
--function three(x) {return ((x>99)?"":"0")+((x>9)?"":"0")+x}
-
--function time(ms) {var sec = Math.floor(ms/1000);  ms = ms % 1000;  t = three(ms);  var min = Math.floor(sec/60);  sec = sec % 60;  t = two(sec) + ":" + t;  var hr = Math.floor(min/60);  min = min % 60;  t = two(min) + ":" + t; var day = Math.floor(hr/60);  hr = hr % 60;  t = two(hr) + ":" + t;   return t;  }
 
   body
     br
@@ -45,28 +41,15 @@ html
       //-   .col-lg-4
         
       .row.w-100
-        .col-10.mx-auto
-          h2.lb_heading.text-left(style="padding-left:0px;") Contest Name: #{contest.name}
+        .col.mx-auto
+          h2.lb_heading.text-left(style="padding-left:0px;") Lab Name: #{lab.name}
+          p(style="font-weight:bold;color:#666666;margin:0px;padding-bottom:0px!important;padding-left:2px!important;") Lab Teacher : #{lab.createdByName}
       
-      - let startTime = (contest.timings.starts).toString()
-      - let G = startTime.indexOf("G")
-      - startTime = startTime.slice(0,G-1)
-      - let endTime = (contest.timings.ends).toString()
-      - G = endTime.indexOf("G")
-      - endTime = endTime.slice(0,G-1)
-      .row.w-100
-        .col-lg-10.mx-auto
-          p.p-2(style="font-weight:bold;color:#666666;padding-left:2px!important;") #{startTime} - #{endTime}
-
-      .row.w-100
-        .col-lg-10.mx-auto
-          p.p-2(style="font-weight:bold;color:#666666;margin:0px;padding-bottom:0px!important;padding-left:2px!important;") Name : #{user.fname + " " + user.lname}
-          -if(user.usn)
-            p.p-2(style="font-weight:bold;color:#666666;margin:0px;padding-bottom:0px!important;padding-left:2px!important;") USN : #{user.usn} 
-          -else
-            p.p-2(style="font-weight:bold;color:#666666;margin:0px;padding-bottom:0px!important;padding-left:2px!important;") STAFF ID : #{user.staff_id} 
-          -if(user.year)
-            p.p-2(style="font-weight:bold;color:#666666;margin:0px;padding-bottom:0px!important;padding-left:2px!important;") Year : #{user.year} 
+      .row.w-100.mt-3
+        .col-lg.mx-auto
+          p.p-2(style="font-weight:bold;color:#666666;margin:0px;padding-bottom:0px!important;padding-left:2px!important;") Name : #{student.fname + " " + student.lname}
+          p.p-2(style="font-weight:bold;color:#666666;margin:0px;padding-bottom:0px!important;padding-left:2px!important;") USN : #{student.usn} 
+          p.p-2(style="font-weight:bold;color:#666666;margin:0px;padding-bottom:0px!important;padding-left:2px!important;") Year : #{student.year} 
 
       h1.lb_heading.text-center.pb-4 Questions Answered
       .row.w-100
@@ -76,15 +59,14 @@ html
 
 
     script.
-      $.get('/contest/studentReport/!{contest.url}/#{user.usn || user.staff_id}',function(data,status){
+      $.get('/lab/!{lab.url}/studentReport/#{student.usn}',function(data,status){
         $("#sourceBody").empty();
         $.each(data,function (index,val){
             let html = (index+1)+")<br>";
             html += "<div class='row'><div class='col-8'><p><strong>Question Name : "+val.name +"</strong></p></div>";
             html += "<div class='col-4'><p class='float-right'>Status : "+val.status+"</p></div></div>";
             html += "<div class='row'><div class='col-8'><p>Language : "+val.language+"</p></div>";
-            html += "<div class='col-4'><p class='float-right'>Points : "+val.points+"</p></div></div>";
-            html += "<p>Time :  "+val.time+"</p>"
+            html += "<div class='col'> <p class='float-right'>Time :  "+val.time+"</p></div></div>"
             html += `<div style='font-family: "Source Code Pro" ;white-space: pre-wrap;background-color: #cfd8dc ; padding:7px;border-radius:5px;'>`+he.escape(val.sourceCode)+"</div>"
             html +="<br>"
             $("#sourceBody").append(html);

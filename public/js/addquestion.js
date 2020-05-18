@@ -82,6 +82,29 @@ $(document).ready(function() {
     
   });
 
+  $("#ques").validate({
+    ignore: ".ignore .ql-container *",
+    invalidHandler: function(e,validator){
+        if(validator.errorList.length){
+            element = validator.errorList[0].element;
+            $('.nav a[href="#' + $(element).closest(".tab-pane").attr('id') + '"]').tab('show');
+            setTimeout(()=>{
+                $(element).focus();
+            },400)
+        }
+        
+    },
+    submitHandler:submitFormAdd
+    });
+
+    $('.ques').click(function(evt) {
+        evt.preventDefault();
+        
+        $("#ques").submit();
+    
+    });
+
+
   function submitFormAdd(){ 
     if(!$("#lang1,#lang2,#lang3,#lang4,#lang5,#lang6").is(':checked')){
         alert("Select atleast one language");
@@ -291,6 +314,59 @@ $(document).ready(function() {
         options=['50','54','51','71','62','63'];
     });
 
+    //hiding the sample and testcases
+    $("#ques").find('input[type=radio][name=judging]').on('change',function(){
+        switch($(this).val()) {
+            case 'true' :
+                $("#approval").hide();
+                $("#samplecase").find("textarea").prop('required',true);
+                $("#testcase").find("textarea").prop('required',true);
+                break;
+            case 'false' :
+                $("#approval").show();
+                $("#samplecase").find("textarea").prop('required',false);
+                $("#testcase").find("textarea").prop('required',false);
+                break;
+        }      
+    });
+
+    $("#ques-edit").find('input[type=radio][name=judging]').on('change',function(){
+        switch($(this).val()) {
+            case 'true' :
+                $("#approval-e").hide();
+                $("#samplecase-e").find("textarea").prop('required',true);
+                $("#testcase-e").find("textarea").prop('required',true);
+                break;
+            case 'false' :
+                $("#approval-e").show();
+                $("#samplecase-e").find("textarea").prop('required',false);
+                $("#testcase-e").find("textarea").prop('required',false);
+                break;
+        }      
+    });
+
+
+$("#ques-edit").validate({
+    ignore: ".ignore .ql-container *",
+    invalidHandler: function(e,validator){
+        if(validator.errorList.length){
+            element = validator.errorList[0].element;
+            $('.nav a[href="#' + $(element).closest(".tab-pane").attr('id') + '"]').tab('show');
+            setTimeout(()=>{
+                $(element).focus();
+            },400)
+        }
+        
+    },
+    submitHandler:editForm
+    });
+
+$('.ques-edit').click(function(evt) {
+    evt.preventDefault();
+    
+    $("#ques-edit").submit();
+
+});
     
 });
 function editForm(){

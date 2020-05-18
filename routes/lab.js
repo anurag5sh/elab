@@ -186,18 +186,6 @@ router.get("/manage/:url", authenticate, teacher,labAuth, async (req, res) => {
 
     let questions = await LabQ.find({qid:{$in:lab.questions}}).lean();
 
-
-    // for (i of lab.questions) {
-    //     let points = 0;
-    //     let q = await LabQ.findOne({ qid: i }).lean();
-    //     for (i of q.test_cases) {
-    //         points += i.points;
-    //     }
-    //     q.totalPoints = points;
-    //     questions.push(q);
-    // }
-
-
     let questionNo = [];
     let totalNoOfSubs = 0;
     for (i of questions) {
@@ -291,13 +279,13 @@ router.post("/add/:url", authenticate,teacher ,labAuth, async (req, res) => {
         for (let i = 0; i < req.body.i_sample1.length; i++) {
             question.sample_cases.push({
                 input: req.body.i_sample1[i],
-                output: req.body.o_sample1[i],
+                output: req.body.o_sample1[i]
             });
         }
     } else {
         question.sample_cases.push({
             input: req.body.i_sample1,
-            output: req.body.o_sample1,
+            output: req.body.o_sample1
         });
     }
 
@@ -305,15 +293,13 @@ router.post("/add/:url", authenticate,teacher ,labAuth, async (req, res) => {
         for (let i = 0; i < req.body.i_testcase1.length; i++) {
             question.test_cases.push({
                 input: req.body.i_testcase1[i],
-                output: req.body.o_testcase1[i],
-                points: req.body.points[i],
+                output: req.body.o_testcase1[i]
             });
         }
     } else {
         question.test_cases.push({
             input: req.body.i_testcase1,
-            output: req.body.o_testcase1,
-            points: req.body.points,
+            output: req.body.o_testcase1
         });
     }
 
@@ -378,13 +364,13 @@ router.post("/edit/:url/:qid", authenticate, teacher, labAuth,async (req, res) =
         for (let i = 0; i < req.body.i_sample1.length; i++) {
             question.sample_cases.push({
                 input: req.body.i_sample1[i],
-                output: req.body.o_sample1[i],
+                output: req.body.o_sample1[i]
             });
         }
     } else {
         question.sample_cases.push({
             input: req.body.i_sample1,
-            output: req.body.o_sample1,
+            output: req.body.o_sample1
         });
     }
 
@@ -392,15 +378,13 @@ router.post("/edit/:url/:qid", authenticate, teacher, labAuth,async (req, res) =
         for (let i = 0; i < req.body.i_testcase1.length; i++) {
             question.test_cases.push({
                 input: req.body.i_testcase1[i],
-                output: req.body.o_testcase1[i],
-                points: req.body.points[i],
+                output: req.body.o_testcase1[i]
             });
         }
     } else {
         question.test_cases.push({
             input: req.body.i_testcase1,
-            output: req.body.o_testcase1,
-            points: req.body.points,
+            output: req.body.o_testcase1
         });
     }
 
@@ -1013,7 +997,7 @@ router.post('/:url/:qid',authenticate,labAuth,async (req,res)=>{
                 let desc= [];
                 wrong = false;
                 data.forEach(store);
-                function store(data,index){ let points=0;
+                function store(data,index){
                     if(data.status.id != 3){
                         wrong = true;
                     }

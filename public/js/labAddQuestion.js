@@ -334,36 +334,36 @@ $(document).ready(function() {
         options=['50','54','51','71','62','63'];
     });
 
-    //hiding the sample and testcases
-    $("#ques").find('input[type=radio][name=judging]').on('change',function(){
-        switch($(this).val()) {
-            case 'true' :
-                $("#approval").hide();
-                $("#samplecase").find("textarea").prop('required',true);
-                $("#testcase").find("textarea").prop('required',true);
-                break;
-            case 'false' :
-                $("#approval").show();
-                $("#samplecase").find("textarea").prop('required',false);
-                $("#testcase").find("textarea").prop('required',false);
-                break;
-        }      
-    });
+    // //hiding the sample and testcases
+    // $("#ques").find('input[type=radio][name=judging]').on('change',function(){
+    //     switch($(this).val()) {
+    //         case 'true' :
+    //             $("#approval").hide();
+    //             $("#samplecase").find("textarea").prop('required',true);
+    //             $("#testcase").find("textarea").prop('required',true);
+    //             break;
+    //         case 'false' :
+    //             $("#approval").show();
+    //             $("#samplecase").find("textarea").prop('required',false);
+    //             $("#testcase").find("textarea").prop('required',false);
+    //             break;
+    //     }      
+    // });
 
-    $("#ques-edit").find('input[type=radio][name=judging]').on('change',function(){
-        switch($(this).val()) {
-            case 'true' :
-                $("#approval-e").hide();
-                $("#samplecase-e").find("textarea").prop('required',true);
-                $("#testcase-e").find("textarea").prop('required',true);
-                break;
-            case 'false' :
-                $("#approval-e").show();
-                $("#samplecase-e").find("textarea").prop('required',false);
-                $("#testcase-e").find("textarea").prop('required',false);
-                break;
-        }      
-    });
+    // $("#ques-edit").find('input[type=radio][name=judging]').on('change',function(){
+    //     switch($(this).val()) {
+    //         case 'true' :
+    //             $("#approval-e").hide();
+    //             $("#samplecase-e").find("textarea").prop('required',true);
+    //             $("#testcase-e").find("textarea").prop('required',true);
+    //             break;
+    //         case 'false' :
+    //             $("#approval-e").show();
+    //             $("#samplecase-e").find("textarea").prop('required',false);
+    //             $("#testcase-e").find("textarea").prop('required',false);
+    //             break;
+    //     }      
+    // });
 
     
 });

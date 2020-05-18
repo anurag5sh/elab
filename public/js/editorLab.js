@@ -102,7 +102,7 @@ function setup(){
     function(data,status){ 
     if(document.getElementById("custom_i").checked == true){
         $(".custom").remove();  
-        $('#opbox').append('<div class="card custom" style="width:650px;;"><label><b>Custom TestCase</b></label><hr style="width:25%;margin-top:0rem;"><label><b>Input</b></label><textarea readonly="readonly" class="bg-col" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:auto;">'+ document.getElementById("custom_input").value+'</textarea ><br><label><b>Output</b></label><textarea readonly="readonly" class="bg-col" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:125px;">'+data[0].output+'</textarea>') 
+        $('#opbox').append('<div class="card custom" style="width:650px;"><label><b>Custom TestCase</b></label><hr style="width:25%;margin-top:0rem;"><label><b>Input</b></label><textarea readonly="readonly" class="bg-col" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:auto;">'+ document.getElementById("custom_input").value+'</textarea ><br><label><b>Output</b></label><textarea readonly="readonly" class="bg-col" style="font-family: Source Code Pro, monospace;width:100%;border:none;height:125px;">'+data[0].output+'</textarea>') 
         document.getElementById("loader").style.display="none";  
     }
     else{

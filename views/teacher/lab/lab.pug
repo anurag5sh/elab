@@ -6,6 +6,7 @@ block append head
     - active.lab="active";
     - navClass = "bg-fade trans";
     - navStyle = "";
+    title Lab
     link(rel="stylesheet", href="/fontawesome/all.min.css")
     script(src="/fontawesome/all.min.js")
     link(rel="stylesheet", href="/assets/css/n.css")
@@ -72,31 +73,35 @@ block append head
         }*/
 
 block content   
-    section.module.parallax.parallax-1(data-type='background' data-speed='10')
-      .parallax-container
-        h2.typewrite(href='' data-period='2000' data-type='[ "LAB" ]' style="font-family: 'ABeeZee';letter-spacing:3px;font-weight:bold")
-          span.wrap
-    .row.w-100
-        .col-lg-8
-        .col-lg-4
-            div(style="float:right;")
-                
-                a.btn.btn-success.m-2.font-weight-bold(style="border-radius:20px;" href="/lab/create")
-                    i.fad.fa-plus-square(style="")
-                    | &nbsp; 
-                    label.mb-0(style="") Create Lab
-                    //- | Create Lab
+    .WRAPPER
+        section.module.parallax.parallax-1(data-type='background' data-speed='10')
+            .parallax-container
+                h2.typewrite(href='' data-period='2000' data-type='[ "LAB" ]' style="font-family: 'ABeeZee';letter-spacing:3px;font-weight:bold")
+                    span.wrap
+        .row.w-100
+            .col-lg-8
+            .col-lg-4
+                div(style="float:right;")
+                    
+                    a.btn.btn-success.m-2.font-weight-bold(style="border-radius:20px;" href="/lab/create")
+                        i.fad.fa-plus-square(style="")
+                        | &nbsp; 
+                        label.mb-0(style="") Create Lab
+                        //- | Create Lab
 
-                a.btn.btn-success.m-2.font-weight-bold(style="border-radius:20px;" href="/lab/manage")
-                    i.fad.fa-cogs(style="")
-                    | &nbsp; 
-                    label.mb-0(style="") Manage Lab
-                    //- | Manage Lab
-        
-    br
-    each i in labs
-        .lab-list
-            span.lab-list-name #{i.name}
-            a.btn.font-weight-bold.lab-list-link(style="float:right;background:#FF4F87;color:#ffffff;" href="/lab/"+i.url) Select    
-        
-        //- a(href="/lab/"+i.url)=i.name
+                    a.btn.btn-success.m-2.font-weight-bold(style="border-radius:20px;" href="/lab/manage")
+                        i.fad.fa-cogs(style="")
+                        | &nbsp; 
+                        label.mb-0(style="") Manage Lab
+                        //- | Manage Lab
+            
+        br
+        each i in labs
+            .lab-list.shadow-sm
+                span.lab-list-name #{i.name}
+                a.btn.font-weight-bold.lab-list-link(style="float:right;background:#FF4F87;color:#ffffff;" href="/lab/"+i.url) Select    
+            
+            //- a(href="/lab/"+i.url)=i.name
+        .push1
+        .push
+    include ../../footer

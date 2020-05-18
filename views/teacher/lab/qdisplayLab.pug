@@ -3,6 +3,8 @@ extends ../nav
 block append head   
     - active.lab="active";
     title=lab.name
+    link(rel='stylesheet' href='/fontawesome/all.min.css')
+    script(src="/fontawesome/all.min.js")
     link(href='https://fonts.googleapis.com/css?family=Pompiere|Vast+Shadow&display=swap' rel='stylesheet')
     
 
@@ -19,7 +21,13 @@ block content
     .row(style="width:100%")
       .col-lg-7.pl-5.pr-4
         h1#labName(style="font-family: 'Palanquin Dark';color:#666666;letter-spacing:0.8px;font-size:43px")=lab.name
+        h6.text-secondary &nbsp;Lab teacher: #{lab.createdByName}
         hr#Line(style='float:left;width:100%;border: 1px solid red;')
+      .col-lg-3
+      .col.lg-2
+        a.btn.btn-success.font-weight-bold(style="margin-top:20px;" href="#") 
+          i.fad.fa-file-chart-line 
+          label.mb-0 &nbsp; Student Report 
     .row(style="width:100%")
         each i in questions
           .col-lg-4(style="color:#616161;")

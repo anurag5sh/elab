@@ -104,9 +104,6 @@ router.post("/create", authenticate, teacher,teacher, async (req, res) => {
     lab.timings.created = moment().format();
     lab.description = req.body.description;
     lab.createdByName = req.session.fname + " " + req.session.lname;
-    no_of_image = config.get("no_of_contest_images");
-    lab.image =
-        "/contestImage/" + Math.floor(Math.random() * no_of_image) + ".jpg";
 
     await lab.save();
     res.send(lab);

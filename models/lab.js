@@ -44,7 +44,6 @@ const labSchema = new mongoose.Schema({
     type:[String],
     default : []
   },
-  image:{type:String},
   rules:{
     type:String,
     default:''

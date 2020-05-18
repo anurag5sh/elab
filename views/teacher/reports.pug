@@ -42,14 +42,16 @@ style.
 //- Statistics
 .m-5
   .row.w-100
-    .col-lg-2
-      h2.text-left.lb_heading(style="color:black") ELAB
-    .col-lg-4
     -if(!query)
-      .col-lg-6
+      .col-6
+        h2.text-left.lb_heading(style="color:black") ELAB
+      .col-6
         a.btn.btn-success(href="/contest/"+curl+"/reportDownload?print=all" target="_blank") Download Report
         a.btn.btn-success.ml-4(href="/contest/"+curl+"/reportDownload?print=leaderboard" target="_blank") Download Leaderboard
         a.btn.btn-success.ml-4(href="/contest/"+curl+"/reportDownload?print=signedup" target="_blank") Download Signed up list
+    -else
+      .col
+        h2.text-center.lb_heading(style="color:black") ELAB
   br
   .row.w-100
     .col-8

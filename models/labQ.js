@@ -47,9 +47,6 @@ const labQSchema = new mongoose.Schema({
             output: {
                 type: String,
             },
-            points: {
-                type: Number,
-            },
             _id: false,
         },
     ],

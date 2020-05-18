@@ -3,6 +3,8 @@ link(rel="stylesheet", href="/css/dracula.css")
 link(href='https://fonts.googleapis.com/css?family=Pompiere|Vast+Shadow&display=swap' rel='stylesheet')
 link(rel="stylesheet", href="/css/nice-select.css")
 script(src="/js/jquery.nice-select.min.js")
+script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js")
+
 
 script.  
   hljs.configure({   
@@ -72,6 +74,10 @@ style.
         font-weight:bold;
         color:black;
       }
+      .error {
+      color:#FF0000;
+      font-size:14px;
+      }
 
   
 .container
@@ -84,7 +90,7 @@ style.
   .modal#myModal
     .modal-dialog.modal-xl
       .modal-content
-        form#ques(onsubmit="return submitFormAdd()")
+        form#ques
           .modal-header
             h4.modal-title New Question  
             button.close(type='button' data-dismiss='modal') ×
@@ -97,9 +103,9 @@ style.
                   li.nav-item
                     a.nav-link(data-toggle='tab' href = "#tab2") Constraints
                   li.nav-item
-                    a.nav-link(data-toggle='tab' href = "#tab3") Sample
+                    a#sampleTab.nav-link(data-toggle='tab' href = "#tab3") Sample
                   li.nav-item
-                    a.nav-link(data-toggle='tab' href = "#tab4") Testcases
+                    a#testTab.nav-link(data-toggle='tab' href = "#tab4") Testcases
                   li.nav-item
                     a.nav-link(data-toggle='tab' href = "#tab5") Settings
                 .tab-content
@@ -301,7 +307,7 @@ each i in ques
 .container
   .modal#edit
       .modal-dialog.modal-xl
-          form#ques-edit(onsubmit="return editForm()")
+          form#ques-edit
               .modal-content
                   .modal-header
                       h4.modal-title Edit Question  

@@ -672,7 +672,7 @@ router.get('/studentReportDownload/:curl/:id',authenticate,teacher, async (req,r
         await page.goto(`http://${host}/contest/studentReportDownload/${req.params.curl}/${req.params.id}`,{waitUntil:'networkidle0'});
         await page.pdf({
             // name of your pdf file in directory
-			path: './public/reports/'+req.params.curl+'-report-'+req.params.id+'.pdf', 
+			path: './reports/'+req.params.curl+'-report-'+req.params.id+'.pdf', 
             //  specifies the format
 			format: 'A4', 
             // print background property
@@ -685,7 +685,7 @@ router.get('/studentReportDownload/:curl/:id',authenticate,teacher, async (req,r
         winston.error(e);
     }
     })().then(()=>{
-        const uploadsDir = path.join(__dirname, '../public/reports/');
+        const uploadsDir = path.join(__dirname, '../reports/');
         fs.readdir(uploadsDir, function(err, files) {
             files.forEach(function(file, index) {
               fs.stat(path.join(uploadsDir, file), function(err, stat) {
@@ -707,7 +707,7 @@ router.get('/studentReportDownload/:curl/:id',authenticate,teacher, async (req,r
           });
         res.set('Content-Type','application/pdf');
         res.sendFile(uploadsDir+req.params.curl+'-report-'+req.params.id+'.pdf');
-        //res.download('./public/reports/'+req.params.curl+'-report-'+req.params.id+'.pdf');
+        //res.download('./reports/'+req.params.curl+'-report-'+req.params.id+'.pdf');
     });
 });
 //adding solution to a question in contest
@@ -1239,7 +1239,7 @@ router.get('/:curl/reportDownload',authenticate,teacher,async (req,res)=>{
         await page.goto(`http://${host}/contest/${req.params.curl}/report?print=${print}`,{waitUntil:'networkidle0'});
         await page.pdf({
             // name of your pdf file in directory
-			path: './public/reports/'+req.params.curl+'-report-'+print+'.pdf', 
+			path: './reports/'+req.params.curl+'-report-'+print+'.pdf', 
             //  specifies the format
 			format: 'A4', 
             // print background property
@@ -1252,7 +1252,7 @@ router.get('/:curl/reportDownload',authenticate,teacher,async (req,res)=>{
         winston.error(e);
     }
     })().then(()=>{
-        const uploadsDir = path.join(__dirname, '../public/reports/');
+        const uploadsDir = path.join(__dirname, '../reports/');
         fs.readdir(uploadsDir, function(err, files) {
             files.forEach(function(file, index) {
               fs.stat(path.join(uploadsDir, file), function(err, stat) {
@@ -1274,7 +1274,7 @@ router.get('/:curl/reportDownload',authenticate,teacher,async (req,res)=>{
           });
         res.set('Content-Type','application/pdf');
         res.sendFile(uploadsDir+req.params.curl+'-report-'+print+'.pdf');
-        //res.download('./public/reports/'+req.params.curl+'-report-'+print+'.pdf');
+        //res.download('./reports/'+req.params.curl+'-report-'+print+'.pdf');
     });
 
 });

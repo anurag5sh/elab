@@ -45,7 +45,7 @@ html
       //-   .col-lg-4
         
       .row.w-100
-        .col-10.mx-auto
+        .col.mx-auto
           h2.lb_heading.text-left(style="padding-left:0px;") Contest Name: #{contest.name}
       
       - let startTime = (contest.timings.starts).toString()
@@ -55,11 +55,11 @@ html
       - G = endTime.indexOf("G")
       - endTime = endTime.slice(0,G-1)
       .row.w-100
-        .col-lg-10.mx-auto
+        .col-lg.mx-auto
           p.p-2(style="font-weight:bold;color:#666666;padding-left:2px!important;") #{startTime} - #{endTime}
 
       .row.w-100
-        .col-lg-10.mx-auto
+        .col-lg.mx-auto
           p.p-2(style="font-weight:bold;color:#666666;margin:0px;padding-bottom:0px!important;padding-left:2px!important;") Name : #{user.fname + " " + user.lname}
           -if(user.usn)
             p.p-2(style="font-weight:bold;color:#666666;margin:0px;padding-bottom:0px!important;padding-left:2px!important;") USN : #{user.usn} 

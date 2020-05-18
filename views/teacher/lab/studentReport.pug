@@ -1,6 +1,7 @@
 extends ../nav
 
 block append head
+    - active.lab="active"
     link(rel="stylesheet", href="/css/dataTables.bootstrap4.min.css")
     script(src="/js/jquery.dataTables.min.js")
     script(src="/js/dataTables.bootstrap4.min.js")
@@ -90,15 +91,14 @@ block content
         
         $("#report").on('show.bs.modal',function (e){
             $("#reportBody").empty();
-            $("#pdf").attr('href',"/lab/studentReportDownload/!{lab.url}/"+$(e.relatedTarget).data('usn')+"?download=true")
-            $.get('/lab/studentReport/!{lab.url}/'+$(e.relatedTarget).data('usn'),function(data,status){
+            $("#pdf").attr('href',"/lab/!{lab.url}/studentReportDownload/"+$(e.relatedTarget).data('usn')+"?download=true")
+            $.get('/lab/!{lab.url}/studentReport/'+$(e.relatedTarget).data('usn'),function(data,status){
                 $.each(data,function (index,val){
                     let html = (index+1)+")<br>";
                     html += "<div class='row'><div class='col-8'><p><strong>Question Name : "+val.name +"</strong></p></div>";
-                    html += "<div class='col-4'><p class='float-right'>Status : "+val.status+"</p></div></div>";
+                    html += "<div class='col'><p class='float-right'>Status : "+val.status+"</p></div></div>";
                     html += "<div class='row'><div class='col-8'><p>Language : "+val.language+"</p></div>";
-                    html += "<div class='col-4'><p class='float-right'>Points : "+val.points+"</p></div></div>";
-                    html += "<p>Time :  "+val.time+"</p>"
+                    html += "<div class='col'> <p class='float-right'>Time :  "+val.time+"</p></div></div>"
                     html += `<div style='font-family: "Source Code Pro" ;white-space: pre-wrap;background-color: #cfd8dc ; padding:5px'>`+he.escape(val.sourceCode)+"</div>"
                     html +="<br>"
                     $("#reportBody").append(html);

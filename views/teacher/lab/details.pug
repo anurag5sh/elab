@@ -69,7 +69,9 @@ style.
       input.form-control.mwidth#descrip(type='text', name='description', placeholder='Description', required ,value = lab.description)
       br
       br
-      label.fontStyle.font-weight-bold(style = "margin-left:10px;") Status:&nbsp;&nbsp;&nbsp;
+      label.fontStyle.font-weight-bold(style = "margin-left:10px;") Status &nbsp;
+        i.fas.fa-question-circle(data-toggle="popover" data-content="Status Ready will make the lab accessible for students.")
+        |&nbsp;:&nbsp;
       input.fontStyle#status(type="checkbox" checked=lab.isReady data-toggle="toggle" data-on="Ready" data-off="Not Ready" data-onstyle="success" data-offstyle="danger" name ="status" data-width="120")
       br
       div(class="foot")

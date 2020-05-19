@@ -239,7 +239,9 @@ style.
                   #tab5.container.tab-pane.fade
                     div
                       div.m-3
-                        label.fontStyle.font-weight-bold(style = "margin-left:10px;") Judging:&nbsp;&nbsp;&nbsp;
+                        label.fontStyle.font-weight-bold(style = "margin-left:10px;" ) Judging &nbsp;
+                          i.fas.fa-question-circle(data-toggle="popover" data-content="Choose 'Auto' to let computer do the judging with proper test-cases, otherwise choose 'Manual'.")
+                          |&nbsp;:&nbsp;
                         .custom-control.custom-radio.custom-control-inline
                           input.custom-control-input(type='radio' name='judging' id='Auto' value="true")
                           label.custom-control-label(for='Auto') Auto
@@ -247,7 +249,9 @@ style.
                           input.custom-control-input(type='radio' name='judging' id='Manual' value="false" checked)
                           label.custom-control-label(for='Manual') Manual
                       div#approval.m-3
-                        label.fontStyle.font-weight-bold(style = "margin-left:10px;") Approval:&nbsp;&nbsp;&nbsp;
+                        label.fontStyle.font-weight-bold(style = "margin-left:10px;") Approval &nbsp;
+                          i.fas.fa-question-circle(data-toggle="popover" data-content="Accept by default = accepts all submissions without any checking. \n Manually approve = check every submission and evaluate them.(Ability to accept or reject a submission from view submissions page.)")
+                          |&nbsp;:&nbsp;
                         .custom-control.custom-radio.custom-control-inline
                           input.custom-control-input(type='radio' name='autoApproval' id='AutoApprove' value="true" checked)
                           label.custom-control-label(for='AutoApprove') Accept by default
@@ -255,7 +259,9 @@ style.
                           input.custom-control-input(type='radio' name='autoApproval' id='ManualApprove' value="false")
                           label.custom-control-label(for='ManualApprove') Manually approve
                       div.m-3
-                        label.fontStyle.font-weight-bold(style = "margin-left:10px;") Status:&nbsp;&nbsp;&nbsp;
+                        label.fontStyle.font-weight-bold(style = "margin-left:10px;") Status&nbsp;
+                          i.fas.fa-question-circle(data-toggle="popover" data-content="Question not visible to students unless set active")
+                          |&nbsp;:&nbsp;
                         input#qActive(type='checkbox' name="active" checked data-toggle="toggle" data-on="Active" data-off="InActive" data-onstyle="success" data-offstyle="danger" data-width="100")
                   textarea(name="statement" id="es" style="display:none;")
           .modal-footer
@@ -473,7 +479,9 @@ each i in ques
                               #e-tab5.container.tab-pane.fade
                                 div
                                   div.m-3
-                                    label.fontStyle.font-weight-bold(style = "margin-left:10px;") Judging:&nbsp;&nbsp;&nbsp;
+                                    label.fontStyle.font-weight-bold(style = "margin-left:10px;") Judging&nbsp;
+                                      i.fas.fa-question-circle(data-toggle="popover" data-content="Choose 'Auto' to let computer do the judging with proper test-cases, otherwise choose 'Manual'.")
+                                      |&nbsp;:&nbsp;
                                     .custom-control.custom-radio.custom-control-inline
                                       input.custom-control-input(type='radio' name='judging' id="Auto-e" value="true")
                                       label.custom-control-label(for='Auto-e') Auto
@@ -481,7 +489,9 @@ each i in ques
                                       input.custom-control-input(type='radio' name='judging' id="Manual-e" value="false")
                                       label.custom-control-label(for='Manual-e') Manual
                                   div#approval-e.m-3
-                                    label.fontStyle.font-weight-bold(style = "margin-left:10px;") Approval:&nbsp;&nbsp;&nbsp;
+                                    label.fontStyle.font-weight-bold(style = "margin-left:10px;") Approval&nbsp;
+                                      i.fas.fa-question-circle(data-toggle="popover" data-content="Accept by default = accepts all submissions without any checking. \n Manually approve = check every submission and evaluate them.(Ability to accept or reject a submission from view submissions page.)")
+                                      |&nbsp;:&nbsp;
                                     .custom-control.custom-radio.custom-control-inline
                                       input.custom-control-input(type='radio' name='autoApproval' id='AutoApprove-e' value="true")
                                       label.custom-control-label(for='AutoApprove-e') Accept by default
@@ -489,7 +499,9 @@ each i in ques
                                       input.custom-control-input(type='radio' name='autoApproval' id='ManualApprove-e' value="false")
                                       label.custom-control-label(for='ManualApprove-e') Manually approve
                                   div.m-3
-                                    label.fontStyle.font-weight-bold(style = "margin-left:10px;") Status:&nbsp;&nbsp;&nbsp;
+                                    label.fontStyle.font-weight-bold(style = "margin-left:10px;") Status&nbsp;
+                                      i.fas.fa-question-circle(data-toggle="popover" data-content="Question not visible to students unless set active")
+                                      |&nbsp;:&nbsp;
                                     input#qActive-e(type='checkbox' name="active" data-toggle="toggle" data-on="Active" data-off="InActive" data-onstyle="success" data-offstyle="danger" data-width="100")
                               textarea(name="statement" id="es_edit" style="display:none;")
                               input#qid(type="text", style="display:none;" value="")
@@ -561,6 +573,11 @@ script.
 
       hljs.configure({ languages: ['javascript', 'python','c','c++','c#']});
 
+      $('[data-toggle="popover"]').popover({
+        trigger: "hover",
+        delay: {show : 0, hide : 0}
+      });
+
   });
   //language select
   var options = [];
@@ -586,6 +603,7 @@ script.
     return false;
   });
   //end of language select
+ 
 
   const url = "!{lab.url}"
 script(src="/js/labAddQuestion.js")

@@ -81,7 +81,7 @@ router.post('/', authenticate,async (req,res)=>{
   else
   return res.status(400).send("Unauthorized");
   if(req.body.source.trim()=='')
-    return res.send("Source Code cannot be empty!");
+    return res.status(400).send("Source Code cannot be empty!");
 
   let result = [];
 
@@ -117,7 +117,7 @@ router.post('/', authenticate,async (req,res)=>{
       
     })
     .catch((err) => { winston.error(err);
-      res.send(err);
+      res.status(400).send("Unable to execute!");
     });
   
  

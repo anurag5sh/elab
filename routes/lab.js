@@ -939,7 +939,7 @@ router.post('/:url/:qid',authenticate,labAuth,async (req,res)=>{
     if(req.session.staff_id){
         question = await LabQ.findOne({qid:req.params.qid}).lean();
     }else{
-        question = await LabQ.findOne({qid:req.params.qid,active:true,'timings.ends':{$gt:new Date()}});
+        question = await LabQ.findOne({qid:req.params.qid,active:true});
     }
     if(!question)  return res.status(404).end();
 
@@ -953,7 +953,11 @@ router.post('/:url/:qid',authenticate,labAuth,async (req,res)=>{
         return res.status(400).send("Not permitted to submit in this language!");
 
     if(req.body.source.trim()=='')
-    return res.send("Source Code cannot be empty!");
+    return res.status(400).send("Source Code cannot be empty!");
+
+    if(question.timings.ends < new Date())
+        if(!question.autoJudge)
+            return res.status(400).send("Submissions Closed!");
 
 
     //inserting a submission
@@ -1000,7 +1004,7 @@ router.post('/:url/:qid',authenticate,labAuth,async (req,res)=>{
                     desc.push({id:data.status.id,description:data.status.description}); 
                 }
 
-                if(req.session.staff_id){
+                if(req.session.staff_id || question.timings.ends > new Date()){
                     return res.send(desc);
                 }
 
@@ -1018,7 +1022,8 @@ router.post('/:url/:qid',authenticate,labAuth,async (req,res)=>{
                 }
 
                 insertSubmission(submission);
-                question.save();
+                if(req.session.usn)
+                    question.save();
 
                 return res.send(desc);
             }).catch(err => {
@@ -1037,7 +1042,8 @@ router.post('/:url/:qid',authenticate,labAuth,async (req,res)=>{
         submission.status = "Accepted";
 
         insertSubmission(submission);
-        question.save();
+        if(req.session.usn)
+            question.save();
         return res.send("Submitted");
     }
     else{ //manually approve
@@ -1050,7 +1056,8 @@ router.post('/:url/:qid',authenticate,labAuth,async (req,res)=>{
         submission.status = "Pending";
 
         insertSubmission(submission);
-        question.save();
+        if(req.session.usn)
+            question.save();
         return res.send("Submission made.");
     }
 

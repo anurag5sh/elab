@@ -299,9 +299,18 @@ html
             //-     label.editor-right(style="font-size:18px") Correct Submmissions
 
             div.text-left.m-3.mb-2
-              p 
-                b Submit by : 
-                | #{moment(question.timings.ends).format('LLL')}
+              -if(question.timings.ends > new Date())
+                p.text-center
+                  b Submit by : 
+                  | #{moment(question.timings.ends).format('LLL')}
+              -else
+                p.text-center
+                  i.fad.fa-lock-alt.fa-2x.text-danger.mb-1(style="--fa-secondary-color: black;--fa-secondary-opacity: 1.0")
+                  br
+                  b Submissions closed on : 
+                  br
+                  | #{moment(question.timings.ends).format('LLL')}
+                  hr
             div.text-left.ml-3.mr-3.mb-2
               a.editor-right( href="") 
                 i.fas.fa-puzzle-piece(style="font-size:17px")
@@ -411,6 +420,15 @@ html
                   #solutionBody(style="font-family: 'Source Code Pro' ;white-space: pre-wrap;")
                 .modal-footer
                     button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+    .modal.fade#submission(tabindex ="-1" role="dialog" )
+        .modal-dialog.modal-sm
+            .modal-content
+                .modal-body.text-center
+                  button.close.mb-2(type='button' data-dismiss='modal') ×
+                  i.fas.fa-check-circle.fa-5x.mb-3(style="color:green;")
+                  h3 Submitted!
+                .modal-footer
+                    button.btn.btn-secondary.btn-sm(type='button' data-dismiss='modal') Close
 
 
 

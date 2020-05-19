@@ -256,7 +256,8 @@ function setup() {
       },
       function (data, status) {
         if (!Array.isArray(data)) {
-          toastr.info(data);
+          toastr.success(data);
+          $("#submission").modal('show');
           document.getElementById("loader").style.display = "none";
           //spinner
           submitButton.prop("disabled", false);

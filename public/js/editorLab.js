@@ -31,6 +31,7 @@ function setup() {
           } else {
             $("#sourceBody").empty();
             sourceArray = data;
+            if(data.length <  1) return;
             data.forEach((item, index) => {
               $("#sourceBody").append(
                 "<tr><td>" +
@@ -39,8 +40,6 @@ function setup() {
                   item.language_id.slice(0, -2) +
                   "</td><td>" +
                   item.status +
-                  "</td><td>" +
-                  item.points +
                   '</td><td><a href="javascript:setup().sourceInsert(' +
                   index +
                   ')">Select</a></td></tr>'
@@ -243,7 +242,8 @@ function setup() {
   function submission() {
     let l = document.getElementById("lang").value;
     l = l.slice(-2);
-    $("#button_submit")
+    const submitButton = $("#button_submit");
+    submitButton
       .prop("disabled", true)
       .append(
         '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>'
@@ -256,8 +256,11 @@ function setup() {
       },
       function (data, status) {
         if (!Array.isArray(data)) {
-          toastr.warning(data);
+          toastr.info(data);
           document.getElementById("loader").style.display = "none";
+          //spinner
+          submitButton.prop("disabled", false);
+          submitButton.find("span").remove();
           return;
         }
         //- $(".points").remove();
@@ -314,15 +317,15 @@ function setup() {
         document.getElementById("out").style.display = "block";
         window.location.href = "#opbox";
         //spinner
-        $("#button_submit").prop("disabled", false);
-        $("#button_submit").find("span").remove();
+        submitButton.prop("disabled", false);
+        submitButton.find("span").remove();
       }
     ).fail((err) => {
       toastr.error(err.responseText);
       document.getElementById("loader").style.display = "none";
       //spinner
-      $("#button_submit").prop("disabled", false);
-      $("#button_submit").find("span").remove();
+      submitButton.prop("disabled", false);
+      submitButton.find("span").remove();
     });
   }
   return {

@@ -230,9 +230,9 @@ html
               li.breadcrumb-item
                 a(href='/assignment') Assignment
               li.breadcrumb-item.active(aria-current='page') #{question.name}
-      
-      h1.q_name(style="margin-left:40px;font-size:35px;") #{question.name}
-      div(class="pre" style="margin-left:40px") #{question.description}
+      .col-9
+        h1.q_name(style="margin-left:40px;font-size:35px;") #{question.name}
+        div(class="pre" style="margin-left:40px") #{question.description}
       .row.w-100
         .col-lg-9.col-md-8.col-md-8
           .card#card(style="padding-left:25px;padding-right:25px;")

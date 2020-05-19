@@ -172,7 +172,7 @@ body
           br
           
           .shadow.p-3.rounded.w-100(class=i.difficulty,class=(solved_questions.includes(i.qid)?"solved":""))
-            h2.questions #{i.name} 
+            h2.questions #{i.name.substr(0,40)+(i.name.length>40?"...":"")} 
             .row
               .col-lg-10.col-md-10
                 p(style="font-family: 'Pompiere', cursive;color:white;font-size:24px;") #{i.description.substr(0,60)+(i.description.length>60?"...":"")}

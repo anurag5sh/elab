@@ -224,8 +224,9 @@ html(lang='en')
         //-   a.btn.btn-outline-success(style="border-radius:20px" href="/practice/"+question.qid+"/submissions") 
         //-     i.fas.fa-eye
         //-     | &nbsp; View Submissions
-      h1.q_name(style="margin-left:40px;font-size:35px;") #{question.name}
-      div(class="pre" style="margin-left:40px") #{question.description}
+      .col-9
+        h1.q_name(style="margin-left:40px;font-size:35px;") #{question.name}
+        div(class="pre" style="margin-left:40px") #{question.description}
       .row.w-100
         .col-lg-9.col-md-8.col-sm-8
           .card#card(style="padding-left:25px;padding-right:25px;")

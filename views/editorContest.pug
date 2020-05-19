@@ -248,9 +248,9 @@ html
               li.breadcrumb-item
                 a(href='/contest/'+contest.url)=contest.name
               li.breadcrumb-item.active(aria-current='page') #{question.name}
-      
-      h1.q_name(style="margin-left:40px;font-size:35px;") #{question.name}
-      div(class="pre" style="margin-left:40px") #{question.description}
+      .col-9
+        h1.q_name(style="margin-left:25px;font-size:35px;") #{question.name}
+        div(class="pre" style="margin-left:25px") #{question.description}
       |
       .row.w-100
         .col-lg-9.col-md-8.col-sm-8

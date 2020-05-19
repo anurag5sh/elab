@@ -1,14 +1,5 @@
 extends navbar
 
-//- block append head   
-//-     - active.lab="active";
-
- 
-//- block content
-//-     each i in questions
-//-         a(href="/lab/"+lab.url+"/"+i.qid)=i.name
-//-         br
-
 block append head   
     - active.lab="active";
     title=lab.name
@@ -22,7 +13,7 @@ block content
           nav(aria-label='breadcrumb' style="color:black;")
             ol.breadcrumb(style="padding-left:20px")
               li.breadcrumb-item
-                a(href='/lab') lab
+                a(href='/lab') Lab
               li.breadcrumb-item
                 a(href='/lab/'+lab.url)=lab.name
     .row(style="width:100%")
@@ -33,11 +24,11 @@ block content
     .row(style="width:100%")
         each i in questions
           .col-lg-4(style="color:#616161;")
-            .shadow.p-3.rounded.w-100(style="margin-left:13px;margin-right:12px;background-color:#ECEFF1;")
-                h3(style="font-family: 'Palanquin Dark';font-size:34px;letter-spacing:0.4px") #{i.name} 
+            .shadow.p-3.rounded.w-100.mb-5(style="margin-left:13px;margin-right:12px;background-color:#ECEFF1;")
+                h3(style="font-family: 'Palanquin Dark';font-size:34px;letter-spacing:0.4px") #{i.name.substr(0,20)+(i.name.length>20?"...":"")}  
                 .row
                     .col-lg-10.col-md-10(style="color:#616161")
-                        p(style="font-family: 'Pompiere', cursive;font-size:24px;") #{i.description.substr(0,60)+(i.description.length>60?"...":"")}
+                        p(style="font-family: 'Pompiere', cursive;font-size:24px;") #{i.description.substr(0,40)+(i.description.length>40?"...":"")}
                 .row
                     .col-lg-6.col-md-4(style="color:#616161;")
                         label(style="letter-spacing:0.5px;font-weight:bold" for='difficulty') Difficulty: 

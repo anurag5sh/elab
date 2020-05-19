@@ -551,8 +551,8 @@ router.get('/source/:url/:qid',authenticate,labAuth,async (req,res) =>{
         }
     }
     else{
-        let submission = question.submissions.find( sub => {return sub.usn == usn && sub.language_id == req.query.lang});
-        if(!submission) submission=[];
+        let submission = question.submissions.find( sub => {return sub.usn == usn});
+        if(!submission) return res.send([]);
         else submission.language_id = lang(submission.language_id);
         return res.send([submission]);
     }
@@ -658,7 +658,6 @@ router.get('/:url/studentReport/all',authenticate,teacher,labAuth, async (req,re
     
     for(i of studentData){let data={};
         const sub = submissions[i.usn];
-        console.log(sub);
         data.usn = i.usn;
         data.name = i.fname + " " + i.lname;
         data.report = '<a data-toggle="modal" data-target="#report" data-usn="'+i.usn+'" href="#">View Report</a>';

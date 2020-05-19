@@ -46,25 +46,30 @@ block append head
         .lab-list-link:hover{
             background:#F02767!important;
         }
-        span.lab-list-name{
+
+        div.lab-list-name{
             font-size:24px; 
-            font-weight:500; 
-            color:#444; 
-            float:left; 
-            line-height:48px; 
+            font-weight:500;          
+            padding:0 0 0 5px;
+            font-family: 'Palanquin Dark';
+            color:#666666!important; 
+        }
+    
+        div.lab-list-description{
+            font-size:16px; 
+            font-weight:350; 
+            color:#666666!important;
             padding:0 0 0 5px; 
-            display:inline-block; 
-            width:200px;
         }
 
         .lab-list{
             background:#fff; 
-            width:600px; 
+            width:630px; 
             margin:0 auto; 
             text-align:left; 
-            padding:20px; 
+            padding:15px; 
             box-shadow:1px 1px 1px rgba(0,0,0,0.05); 
-            height:80px; 
+            height:100px; 
             margin-bottom:10px; 
             border-radius:1px;
         }
@@ -98,8 +103,14 @@ block content
         br
         each i in labs
             .lab-list.shadow-sm
-                span.lab-list-name #{i.name}
-                a.btn.font-weight-bold.lab-list-link(style="float:right;background:#FF4F87;color:#ffffff;" href="/lab/"+i.url) View    
+                .row
+                    .col-lg-10
+                        div.lab-list-name #{i.name}
+                        div.lab-list-description.mt-2 #{i.description}
+                    .col-lg-2
+                        a.btn.font-weight-bold.lab-list-link.mt-3(style="float:right;background:#FF4F87;color:#ffffff;" href="/lab/"+i.url) View    
+                //- span.lab-list-name #{i.name}
+                //- a.btn.font-weight-bold.lab-list-link(style="float:right;background:#FF4F87;color:#ffffff;" href="/lab/"+i.url) View    
             
             //- a(href="/lab/"+i.url)=i.name
         .push1

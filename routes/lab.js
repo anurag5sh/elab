@@ -61,7 +61,7 @@ router.get("/create", authenticate, teacher, (req, res) => {
 });
 
 //Saving the Lab in db
-router.post("/create", authenticate, teacher,teacher, async (req, res) => {
+router.post("/create", authenticate, teacher, async (req, res) => {
     const { error } = validateLab(req.body);
     if (error) return res.status(400).send(error.message);
 

@@ -31,7 +31,7 @@ app.locals.port = port;
 fs.mkdir('./uploads', { recursive: true }, (err) => {
   if (err) throw err;
 });
-fs.mkdir('./public/reports', { recursive: true }, (err) => {
+fs.mkdir('./reports', { recursive: true }, (err) => {
   if (err) throw err;
 });
 fs.mkdir('./public/profileImage/new', { recursive: true }, (err) => {

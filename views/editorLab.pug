@@ -322,6 +322,11 @@ html
                     i.fad.fa-poll-people(style="font-size:17px")
                     | &nbsp; 
                     label.editor-right(style="font-size:18px") View Submissions
+                    |&nbsp;&nbsp;
+                    -const count = question.submissions.filter(e => e.status=="Pending").length 
+                      -if(count>0)
+                        span.badge.badge-pill.badge-primary.mr-2
+                          |#{count} New
             -if(question.timings.ends < new Date())
               div.text-left.ml-3.mr-3.mb-2
                 a.editor-right( href="" data-toggle="modal" data-target="#solution") 

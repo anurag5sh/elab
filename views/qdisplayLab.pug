@@ -4,7 +4,10 @@ block append head
     - active.lab="active";
     title=lab.name
     link(href='https://fonts.googleapis.com/css?family=Pompiere|Vast+Shadow&display=swap' rel='stylesheet')
-    
+    style.
+      .status{
+        font-size:14px;
+      }
 
 block content
     .row(style="width:100%")
@@ -27,18 +30,25 @@ block content
             .shadow.p-3.rounded.w-100.mb-5(style="margin-left:13px;margin-right:12px;background-color:#ECEFF1;")
                 h3(style="font-family: 'Palanquin Dark';font-size:34px;letter-spacing:0.4px") #{i.name.substr(0,20)+(i.name.length>20?"...":"")}  
                 .row
-                    .col-lg-10.col-md-10(style="color:#616161")
-                        p(style="font-family: 'Pompiere', cursive;font-size:24px;") #{i.description.substr(0,40)+(i.description.length>40?"...":"")}
+                  .col-10(style="color:#616161")
+                      p(style="font-family: 'Pompiere', cursive;font-size:24px;") #{i.description.substr(0,40)+(i.description.length>40?"...":"")}
                 .row
-                    .col-lg-6.col-md-4(style="color:#616161;")
-                        label(style="letter-spacing:0.5px;font-weight:bold" for='difficulty') Difficulty: 
-                        label(style="letter-spacing:0.5px;") #{i.difficulty}
-                    //-   .col-lg-3.col-md-3(style='color:white')
-                    //-     label(style="letter-spacing:0.5px;font-weight:bold" for='points') Points: 
-                    //-     label(style="letter-spacing:0.5px") #{totalPoints[j]}
-                    .col-lg-3
-                    .col-lg-2.col-md-2
-                        a.btn.btn-outline-secondary(style='font-weight:bold;border-radius:20px;' href="/lab/"+lab.url+"/"+i.qid) Solve
+                  .col-5(style="color:#616161;")
+                      label(style="letter-spacing:0.5px;font-weight:bold" for='difficulty') Difficulty: 
+                      label(style="letter-spacing:0.5px;") #{i.difficulty}
+
+                  .col
+                    .float-right
+                      -const sub = i.submissions.find(item => item.usn==session.usn)
+                      -if(sub)
+                        -const status = sub.status
+                        -if(status == "Accepted")
+                          span.mr-3.badge.badge-pill.badge-success.status Accepted
+                        -else if(status == "Wrong Answer")
+                          span.mr-2.badge.badge-pill.badge-danger.status Wrong
+                        -else
+                          span.mr-3.badge.badge-pill.badge-secondary.status Pending
+                      a.btn.btn-outline-secondary(style='font-weight:bold;border-radius:20px;' href="/lab/"+lab.url+"/"+i.qid) Solve
     //- each i in questions
 
     //-     a(href="/lab/"+lab.url+"/"+i.qid)=i.name

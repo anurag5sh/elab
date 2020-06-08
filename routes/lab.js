@@ -786,7 +786,7 @@ router.post('/:url/:qid/execute',authenticate,teacher,labAuth,async (req,res)=>{
     if(!submission) return res.status(400).send("No submissions yet!");
 
     let compiler_opt = null;
-    if (req.body.language == 50){
+    if (submission.language_id == 50){
         compiler_opt = "-lm";
     }
 
@@ -961,7 +961,7 @@ router.post('/:url/:qid',authenticate,labAuth,async (req,res)=>{
 
 
     //inserting a submission
-    function insertSubmission(submission){
+    async function insertSubmission(submission){
         const index = question.submissions.findIndex(item => {return item.usn == submission.usn});
     
         if(index!=-1){
@@ -1004,7 +1004,7 @@ router.post('/:url/:qid',authenticate,labAuth,async (req,res)=>{
                     desc.push({id:data.status.id,description:data.status.description}); 
                 }
 
-                if(req.session.staff_id || question.timings.ends > new Date()){
+                if(req.session.staff_id || question.timings.ends < new Date()){
                     return res.send(desc);
                 }
 
@@ -1022,10 +1022,21 @@ router.post('/:url/:qid',authenticate,labAuth,async (req,res)=>{
                 }
 
                 insertSubmission(submission);
-                if(req.session.usn)
-                    question.save();
 
-                return res.send(desc);
+                if(req.session.usn){
+                    await question.save(function(err){
+                        if(err){
+                            winston.error(err);
+                            return;
+                       }
+                 
+                       return res.send(desc);
+                    });
+                }
+                    
+                else{
+                    return res.send(desc);
+                }
             }).catch(err => {
                 winston.error(err);
               res.send(err);
@@ -1043,8 +1054,17 @@ router.post('/:url/:qid',authenticate,labAuth,async (req,res)=>{
 
         insertSubmission(submission);
         if(req.session.usn)
-            question.save();
+            await question.save(function(err){
+                if(err){
+                    winston.error(err);
+                    return;
+                }
+            
+                return res.send("Submitted");
+            });
+        else
         return res.send("Submitted");
+
     }
     else{ //manually approve
 
@@ -1057,8 +1077,16 @@ router.post('/:url/:qid',authenticate,labAuth,async (req,res)=>{
 
         insertSubmission(submission);
         if(req.session.usn)
-            question.save();
-        return res.send("Submission made.");
+            await question.save(function(err){
+                if(err){
+                    winston.error(err);
+                    return;
+                }
+            
+                return res.send("Submitted");
+            });
+        else
+        return res.send("Submitted");
     }
 
 });

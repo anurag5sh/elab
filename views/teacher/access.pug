@@ -116,6 +116,7 @@ body
     
     script.
         let selected = !{JSON.stringify(contest.custom_usn)}
+        let selectedTeacher = !{JSON.stringify(contest.custom_staff_id)}
         $('#year').change(function (){
             $("#studentTable").DataTable().destroy();
             $.get('/contest/students/'+$("#year").val(),{id:$('#contestid').val()},function(data,status){
@@ -159,7 +160,7 @@ body
             data:{studentListCustom:selected},
             success: function (data,status, jqXHR) {
                toastr.success(data);  
-                
+                selectedStudentsData();
             },
             error: function (e) {
                 toastr.error(e.responseText);
@@ -178,10 +179,10 @@ body
         $.ajax({
             type: "POST",
             url: "/contest/teachers/"+$('#contestid').val(),
-            data:{teacherListCustom:selected},
+            data:{teacherListCustom:selectedTeacher},
             success: function (data,status, jqXHR) {
                toastr.success(data);  
-                
+                selectedTeachersData();
             },
             error: function (e) {
                 toastr.error(e.responseText);
@@ -191,9 +192,8 @@ body
             });
     
          }
-
-
-        $("#collapseOne").on('show.bs.collapse',function (){$("#selectedStudents").empty();
+        
+        function selectedStudentsData(){$("#selectedStudents").empty();
            $.get('/contest/students/id/'+$('#contestid').val(),function (data,status){
                data.forEach((item,index)=>{
                    $("#selectedStudents").append('<tr><td>'+(index+1)+'</td><td>'+item.usn+'</td><td>'+item.fname+" "+item.lname+'</td><td>'+item.year+'</td></tr>');
@@ -202,9 +202,11 @@ body
            }).fail((err)=>{
                    toastr.error(err.responseText);
                });
-        });
+        }
 
-        $("#collapseTwo").on('show.bs.collapse',function (){$("#selectedTeachers").empty();
+        $("#collapseOne").on('show.bs.collapse',selectedStudentsData);
+
+        function selectedTeachersData(){$("#selectedTeachers").empty();
            $.get('/contest/teachers/id/'+$('#contestid').val(),function (data,status){
                data.forEach((item,index)=>{
                    $("#selectedTeachers").append('<tr><td>'+(index+1)+'</td><td>'+item.staff_id+'</td><td>'+item.fname+" "+item.lname+'</td></tr>');
@@ -213,7 +215,9 @@ body
            }).fail((err)=>{
                    toastr.error(err.responseText);
                });
-        });
+        }
+
+        $("#collapseTwo").on('show.bs.collapse',selectedTeachersData);
 
         $("#customTeacher").on('show.bs.modal',function (e){
             $("#teacherTable").DataTable().destroy();
@@ -226,7 +230,21 @@ body
                         { "data": "name" },
                     ],
                     "order": [[ 1, 'asc' ]],
-                    "columnDefs": [ {"searchable": false,"orderable": false,"targets": 0} ]
+                    "columnDefs": [ {"searchable": false,"orderable": false,"targets": 0} ],
+                    "drawCallback": function(settings, json) {
+                        $.each(selectedTeacher, function(i, val){
+                            $("input[value='" + val + "']").prop('checked', true);
+                        });
+                        $("input[name='teacherListCustom']").change(function() {
+                            if(this.checked) {
+                                selectedTeacher.push(this.value);
+                            }
+                            else{
+                                const index=selectedTeacher.findIndex(i =>{return i == this.value});
+                                selectedTeacher.splice(index,1);
+                            }
+                        });
+                    }
                 } );
             }).fail((err)=>{
                 toastr.error(err.responseText);

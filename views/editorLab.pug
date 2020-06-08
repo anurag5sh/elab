@@ -5,7 +5,7 @@
 html
   head
     title=question.name
-    -if(session.staff_id || session.year == 3 || question.timings.ends < new Date() )
+    -if(session.staff_id || question.timings.ends < new Date() )
       script(src='/src-min-noconflict/ace.js' charset='utf-8')
     -else
       script(src='/src-min-noconflict/ace_modified.js' charset='utf-8')

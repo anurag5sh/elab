@@ -70,18 +70,15 @@ body
     
     script.
         const labUrl = "#{lab.url}";
+        let selected = !{JSON.stringify(lab.custom_staff_id)}
         function customInsertTeacher(){
-            let selected =[];
-            $("input[name='teacherListCustom']:checked").each(function () {
-                selected.push(this.value);
-            });
             $.ajax({
                 type: "POST",
                 url: "/lab/teachers/"+labUrl,
                 data:{teacherListCustom:selected},
                 success: function (data,status, jqXHR) {
                 toastr.success(data);  
-                    
+                selectedTeachersData();
                 },
                 error: function (e) {
                     toastr.error(e.responseText);
@@ -91,17 +88,18 @@ body
                 });
     
          }
-
-        $("#collapseTwo").on('show.bs.collapse',function (){$("#selectedTeachers").empty();
+        function selectedTeachersData(){$("#selectedTeachers").empty();
            $.get('/lab/teachers/'+labUrl,function (data,status){
                data.forEach((item,index)=>{
                    $("#selectedTeachers").append('<tr><td>'+(index+1)+'</td><td>'+item.staff_id+'</td><td>'+item.fname+" "+item.lname+'</td></tr>');
-               })
+               });
                
-           }).fail((err)=>{
+            }).fail((err)=>{
                    toastr.error(err.responseText);
                });
-        });
+         }
+
+        $("#collapseTwo").on('show.bs.collapse',selectedTeachersData);
 
         $("#customTeacher").on('show.bs.modal',function (e){
             $("#teacherTable").DataTable().destroy();
@@ -114,7 +112,21 @@ body
                         { "data": "name" },
                     ],
                     "order": [[ 1, 'asc' ]],
-                    "columnDefs": [ {"searchable": false,"orderable": false,"targets": 0} ]
+                    "columnDefs": [ {"searchable": false,"orderable": false,"targets": 0} ],
+                    "drawCallback": function(settings, json) {
+                        $.each(selected, function(i, val){
+                            $("input[value='" + val + "']").prop('checked', true);
+                        });
+                        $("input[name='teacherListCustom']").change(function() {
+                            if(this.checked) {
+                                selected.push(this.value);
+                            }
+                            else{
+                                const index=selected.findIndex(i =>{return i == this.value});
+                                selected.splice(index,1);
+                            }
+                        });
+                    }
                 } );
             }).fail((err)=>{
                 toastr.error(err.responseText);

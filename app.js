@@ -22,6 +22,13 @@ const fs = require('fs');
 const rateLimiter = require('./middleware/rateLimiter');
 const assignmentVeri = require('./middleware/assignmentVeri');
 const lab = require('./routes/lab');
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+
+const osu = require('node-os-utils')
+const cpu = osu.cpu;
+const mem = osu.mem;
+const drive = osu.drive;
 
 //port config
 const port = process.argv[2] || 4000;
@@ -81,7 +88,9 @@ winston.configure({
 
 
 if (process.env.NODE_ENV != 'production') {
- winston.add(new winston.transports.Console)
+ winston.add(new winston.transports.Console({
+  format: winston.format.simple(),
+}));
 }
 
 winston.exceptions.handle(
@@ -117,23 +126,32 @@ app.use(mongoSanitize({
   replaceWith: '_'
 }));
 
+//Socket for stats
+io.on('connection', function(socket){
+
+  socket.on('getStats',()=>{
+    Promise.all([mem.info(),cpu.usage(),drive.info()]).then((data)=>{socket.emit('stats',data);});
+  });
+
+});
+
 app.use('/', login)
 app.use('/assignment', assignmentVeri,assignment);
 app.use('/contest', contest);
 app.use('/practice', practice);
 app.use('/lab', lab);
-app.use('/admin', admin);
+app.use('/admin',admin);
 app.use('/api',api);
 app.use('/register', register);
 app.use(errors);
 
 if (process.env.NODE_ENV == 'production') {
-  app.listen(port,'localhost',()=> {
+  http.listen(port,'localhost',()=> {
     console.log("Listening on port"+ port);
 });
  }
  else{
-  app.listen(port,()=> {
+  http.listen(port,()=> {
     console.log("Listening on port"+ port);
 });
  }

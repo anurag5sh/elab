@@ -1,23 +1,25 @@
 doctype html
 block code 
-  
-  script(src='/adminLTE/plugins/jquery/jquery.min.js')
-  script(src="/js/toastr.min.js")
-  link(rel="stylesheet", href="/css/toastr.min.css")
   - let active={dashboard:"",add:"",manage:"",edit:"",assignment:"",addAssignment:"",editAssignment:"",reports:"",academic:""}
   - let menu={manage:"",assignment:""}
 
 html(lang='en')
   head
     meta(charset='utf-8')
-    meta(name='viewport' content='width=device-width,initial-scale=1')
+    meta(name='viewport' content='width=1024')
     meta(http-equiv='x-ua-compatible' content='ie=edge')
     title ELAB Admin
+    script(src='/adminLTE/plugins/jquery/jquery.min.js')
+    script(src="/js/toastr.min.js")
+    script(src="/js/socket.io.js")
+    link(rel="stylesheet", href="/css/toastr.min.css")
     link(rel='stylesheet' href='/adminLTE/plugins/fontawesome-free/css/all.min.css')
     
     link(rel='stylesheet' href='/adminLTE/dist/css/adminlte.min.css')
     
     link(href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700' rel='stylesheet')
+    block head
+  
   body.hold-transition.sidebar-mini
     .wrapper
       //-  Navbar 

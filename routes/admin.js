@@ -17,6 +17,7 @@ const fs = require('fs');
 const Joi = require("@hapi/joi");
 const winston = require('winston');
 
+
 //------------------Accounts routes start-----------------//
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -37,7 +38,7 @@ let upload = multer({ storage: storage,
   } }).single('csv');
 
 router.get('/', admin, (req,res)=> {
-    res.render('admin/admin',{name:req.session.fname});
+    res.render('admin/admin');
 });
 
 //Logs

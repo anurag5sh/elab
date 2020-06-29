@@ -3,7 +3,191 @@ extends layout
 block append code
   - active.dashboard="active"
 
+block append head
+  script(src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js")
+  script(src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels ")
+
 block content
   .container-fluid
-    p Coming Soon
+    .row
+      .col-6
+        .card.card-primary
+          .card-header
+            h3.card-title CPU Usage
+          .card-body
+            .chart
+              canvas#cpu
+      .col-6
+        .card.card-info
+          .card-header
+            h3.card-title Memory Usage
+          .card-body
+            .chart
+              canvas#memory
+    
+    .row
+      .col-6
+        .card.card-danger
+          .card-header
+            h3.card-title Disk Usage
+          .card-body
+            .chart
+              canvas#disk
+
+  
+
+  script.
+    let socket = io();
+    let chartData = null;
+    socket.emit('getStats', {});
+    socket.on('stats',function(data) {
+      chartData = data;
+    });
+    Chart.plugins.unregister(ChartDataLabels);
+    const cpux = $("#cpu").get(0).getContext('2d');
+
+    var areaChartOptions = {
+      maintainAspectRatio : true,
+      responsive : true,
+      legend: {
+        display: false
+      },
+      scales: {
+        xAxes: [{
+          gridLines : {
+            display : true,
+          }
+        }],
+        yAxes: [{
+          gridLines : {
+            display : false,
+          },
+          ticks: {
+            beginAtZero: true,
+            min: 0,
+            max: 100,
+            stepSize: 20
+          }
+        }]
+      }
+    }
+    const cpuChart = new Chart(cpux,{
+      type:'line',
+      data:{
+        labels:['','','','','',''],
+        datasets:[{
+          data:[0,0,0,0,0,0],
+          label               : 'CPU Usage',
+          backgroundColor     : 'rgba(60,141,188,0.9)',
+          borderColor         : 'rgba(60,141,188,0.8)',
+          pointRadius          : false,
+          pointColor          : '#3b8bba',
+          pointStrokeColor    : 'rgba(60,141,188,1)',
+          pointHighlightFill  : '#fff',
+          pointHighlightStroke: 'rgba(60,141,188,1)',
+        }],
+      },
+      options:areaChartOptions
+    });
+
+
+    const memoryx = $("#memory").get(0).getContext('2d');
+
+    const memoryChartOptions = {
+      tooltips: {
+             enabled: true,
+             mode: 'label',
+             callbacks: {
+                label: function(tooltipItem, data) {
+                    var indice = tooltipItem.index;
+                    return data.datasets[0].data[indice] + ' Mb ' + data.labels[indice];
+                }
+             }
+         },
+         plugins: {
+            datalabels: {
+                formatter: function(value, context) {
+                    return value +"\nMb " + context.chart.data.labels[context.dataIndex];
+                },
+            }
+        }
+    }
+    
+    const memoryChart = new Chart(memoryx, {
+    type: 'doughnut',
+    plugins: [ChartDataLabels],
+    data: {
+    datasets: [{
+        data: [],
+        backgroundColor : ['#d13d3d', '#00a65a'],
+        datalabels: {color: '#FFF'}
+    }],
+    labels: [
+        'Used',
+        'Free',
+    ]
+    },
+    options: memoryChartOptions,
+    });
+
+    //Disk
+    var diskChartCanvas = $('#disk').get(0).getContext('2d')
+    var pieOptions = {
+      responsive : true,
+    }
+
+    var diskChart = new Chart(diskChartCanvas, {
+      type: 'pie',
+      plugins: [ChartDataLabels],
+      data: {
+        datasets: [{
+            data: [],
+            backgroundColor : ['#d13d3d', '#00a65a'],
+            datalabels: {color: '#FFF'}
+        }],
+        labels: [
+            'Used',
+            'Free',
+        ]
+    },
+      options: {
+        tooltips: {
+             enabled: true,
+             mode: 'label',
+             callbacks: {
+                label: function(tooltipItem, data) {
+                    var indice = tooltipItem.index;
+                    return data.datasets[0].data[indice] + ' Gb ' + data.labels[indice];
+                }
+             }
+         },
+         plugins: {
+            datalabels: {
+                formatter: function(value, context) {
+                    return value +" Gb " + context.chart.data.labels[context.dataIndex];
+                }
+            }
+        }
+      }  
+    })
+
+
+
+    //Updating Chart
+    function addData(chart,data) {
+      //chart.data.labels.push("CPU");
+      chart.data.datasets[0].data.shift();
+      chart.data.datasets[0].data.push(data);
+      chart.update();
+    }
+
+    setInterval(()=>{
+      socket.emit('getStats', {});
+      console.log(chartData);
+      addData(cpuChart,chartData[1]);
+      memoryChart.data.datasets[0].data = [chartData[0].usedMemMb,chartData[0].freeMemMb];
+      memoryChart.update();
+      diskChart.data.datasets[0].data = [chartData[2].usedGb,chartData[2].freeGb];
+      diskChart.update();
+    },3000);
                 

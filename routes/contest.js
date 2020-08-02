@@ -9,10 +9,8 @@ const {Contest,validateContest} = require('../models/contest');
 const {ContestQ,validateCQ} = require('../models/contestQ');
 const {Submission} = require('../models/submission');
 const {CustomGroup} = require('../models/customGroup');
-const crypto = require("crypto");
 const moment = require('moment');
 const _ = require('lodash');
-const request = require("request-promise");
 const config = require('config');
 const admin = require('../middleware/admin');
 const puppeteer = require('puppeteer'); 
@@ -22,43 +20,44 @@ const rimraf = require('rimraf');
 const fs = require('fs');
 const {Achievements} = require('../models/achievementJob');
 const achievements = require('../jobs/achivements');
+const {run} = require('../compiler/api');
 
 achievements.achievementsStartup();
 
 function encode64(string){ //encoding to base64
-    const b = new Buffer.from(string);
+    const b = new Buffer.from(string.replace(/\r\n/g, "\n"));
   return b.toString('base64');
-  }
+}
   
-  function decode64(string64){//decode to utf8
-    const b = new Buffer.from(string64, 'base64')
-  return b.toString();
-  }
+function decode64(string64){//decode to utf8
+const b = new Buffer.from(string64, 'base64')
+return b.toString();
+}
 
 
-  function two(x) {return ((x>9)?"":"0")+x}
-  function three(x) {return ((x>99)?"":"0")+((x>9)?"":"0")+x}
+function two(x) {return ((x>9)?"":"0")+x}
+function three(x) {return ((x>99)?"":"0")+((x>9)?"":"0")+x}
 
-  function time(ms) { //convert to dd:mm:hh:ss
-  var sec = Math.floor(ms/1000)
-  ms = ms % 1000
-  t = three(ms)
+function time(ms) { //convert to dd:mm:hh:ss
+var sec = Math.floor(ms/1000)
+ms = ms % 1000
+t = three(ms)
 
-  var min = Math.floor(sec/60)
-  sec = sec % 60
-  t = two(sec) + ":" + t
+var min = Math.floor(sec/60)
+sec = sec % 60
+t = two(sec) + ":" + t
 
-  var hr = Math.floor(min/60)
-  min = min % 60
-  t = two(min) + ":" + t
+var hr = Math.floor(min/60)
+min = min % 60
+t = two(min) + ":" + t
 
-  var day = Math.floor(hr/60)
-  hr = hr % 60
-  t = two(hr) + ":" + t
-  t = day + ":" + t
+var day = Math.floor(hr/60)
+hr = hr % 60
+t = two(hr) + ":" + t
+t = day + ":" + t
 
-  return t
-  }
+return t
+}
 
 function convertMS( milliseconds ) {
     var day, hour, minute, seconds;
@@ -394,6 +393,8 @@ router.post('/add/:cname',authenticate,teacher,async (req,res) => {
     question.output_format = req.body.o_format;
     question.description = req.body.description;
     question.difficulty = req.body.difficulty;
+    question.active = (req.body.active == "on"?true:false);
+    question.autoJudge = req.body.judging;
 
     if(Array.isArray(req.body.i_sample1)){
 
@@ -438,10 +439,7 @@ router.post('/add/:cname',authenticate,teacher,async (req,res) => {
 
 //fetching submissions
 router.get('/submissions/:curl',authenticate,contestAuth, async (req,res) =>{
-    const contest = await Contest.findOne({url:req.params.curl}).lean();
-    if(!contest) return res.status(400).send("Contest not found");
-
-    //function time_noDays(ms) {var sec = Math.floor(ms/1000);  ms = ms % 1000;  t = three(ms);  var min = Math.floor(sec/60);  sec = sec % 60;  t = two(sec) + ":" + t;  var hr = Math.floor(min/60);  min = min % 60;  t = two(min) + ":" + t; var day = Math.floor(hr/60);  hr = hr % 60;  t = two(hr) + ":" + t;   return t;  }
+    const contest = res.locals.contest;
     let student = false;
 
     //verification
@@ -454,8 +452,6 @@ router.get('/submissions/:curl',authenticate,contestAuth, async (req,res) =>{
         if(!(contest.timings.ends < new Date()))
             return res.status(401).end();
     }
-    
-
 
     let students = [];
     let teachers =[];
@@ -663,12 +659,10 @@ router.get('/studentReportDownload/:curl/:id',authenticate,teacher, async (req,r
         // launch puppeteer API
         const browser = await puppeteer.launch(); 
         const page = await browser.newPage();
-        let host = 'localhost';
-        if (process.env.NODE_ENV != 'production') {
-            host='localhost:'+req.app.locals.port;
-           }
-        const elabIndex = req.headers.cookie.indexOf("elab");
-        await page.setCookie({name:"elab",value:req.headers.cookie.substr(elabIndex+5),domain:"localhost",path:"/"});   
+        let host = 'localhost:'+req.app.locals.port;
+
+
+        await page.setCookie({name:"elab",value:req.cookies.elab,domain:"localhost",path:"/"});   
         await page.goto(`http://${host}/contest/studentReportDownload/${req.params.curl}/${req.params.id}`,{waitUntil:'networkidle0'});
         await page.pdf({
             // name of your pdf file in directory
@@ -776,6 +770,8 @@ router.post('/edit/:curl/:qid',authenticate,teacher,async (req,res)=>{
     question.output_format = req.body.o_format;
     question.description = req.body.description;
     question.difficulty = req.body.difficulty;
+    question.active = (req.body.active == "on"?true:false);
+    question.autoJudge = req.body.judging;
 
     question.sample_cases = [];
     question.test_cases =[];
@@ -953,8 +949,7 @@ router.post('/source/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
 
 //fetch source code
 router.get('/source/:curl/:usn/:qid',authenticate,contestAuth, async (req,res) =>{
-    const contest = await Contest.findOne({url:req.params.curl}).lean().select('custom_staff_id createdBy submissions timings -_id');
-    if(!contest) return res.status(400).send("Contest not found!");
+    const contest = res.locals.contest;
 
     if(req.session.staff_id){
         if(req.session.staff_id == contest.createdBy || new Date() > contest.timings.ends || req.session.isAdmin){
@@ -1055,12 +1050,10 @@ router.get('/teachers/id/:id',authenticate,teacher,async (req,res) =>{
 
 //landing page for contest
 router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
-    let contest = await Contest.findOne({url:req.params.curl}).lean();
-    if(!contest) return res.status(404).end();
+    const contest = res.locals.contest;
 
     const now = new Date();
     
-
     //teacher 
     if(req.session.staff_id){
         if(contest.createdBy == req.session.staff_id || req.session.isAdmin || contest.timings.ends < new Date())
@@ -1189,16 +1182,13 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
 
 //leaderboard route
 router.get('/:curl/leaderboard',authenticate,contestAuth,async (req,res) =>{
-    const contest =  await Contest.findOne({url:req.params.curl}).lean().select('leaderboard url name');
-    if(!contest) return res.send("Invalid ID");
-
+    const contest = res.locals.contest;
     res.render('leaderboard',{contest:contest});
 });
 
 //submissions pug
 router.get('/:curl/submissions',authenticate,contestAuth,async (req,res)=>{
-    const contest = await Contest.findOne({url:req.params.curl}).lean().select('url name createdBy timings -_id');
-    if(!contest) return res.status(400).send("Contest not found");
+    const contest = res.locals.contest;
 
     //teacher
     if(contest.createdBy == req.session.staff_id || req.session.isAdmin || req.session.staff_id && contest.timings.ends < new Date())
@@ -1365,8 +1355,7 @@ router.get('/:curl/notSigned',authenticate,teacher,async (req,res)=>{
 
 //viewing question
 router.get('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
-    let contest = await Contest.findOne({url:req.params.curl}).lean().select('questions name url timings createdBy');
-    if(!contest) return res.status(404).end();
+    const contest = res.locals.contest;
     
     if(!(contest.createdBy == req.session.staff_id || req.session.isAdmin || contest.timings.starts < new Date()))
     return res.status(404).end();
@@ -1387,8 +1376,7 @@ router.get('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
 
 //submission of contest
 router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
-    let contest = await Contest.findOne({url:req.params.curl}).select('questions submissions leaderboard timings custom_staff_id createdBy');
-    if(!contest) return res.status(404).end();
+    const contest = res.locals.contest;
 
     if(!contest.questions.includes(req.params.qid)){
         return res.status(404).end();
@@ -1428,21 +1416,15 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
   return res.send("Source Code cannot be empty!");
 
   let result = [];
-
-  let compiler_opt = null;
-  if (req.body.language == 50){
-    compiler_opt = "-lm";
-  }
-
   for(let i=0;i<testcase.length;i++){
-  let options = { method: 'POST',
-  url: 'http://127.0.0.1:3000/submissions?base64_encoded=true&wait=true',
-  body: { "source_code": encode64(req.body.source), "language_id": req.body.language, "stdin":encode64(testcase[i].input),
-          "expected_output":encode64(testcase[i].output) ,"compiler_options":compiler_opt},
-  json: true };
+    const data ={
+      language : req.body.language,
+      source : req.body.source,
+      input : testcase[i].input,
+      output : testcase[i].output
+    };
 
-  result.push(request(options));
-
+    result.push(run(data));
   }
 
   Promise.all(result)

@@ -2,8 +2,6 @@ link(href="https://fonts.googleapis.com/css?family=Crimson+Text&display=swap" re
 link(rel="stylesheet", href="/css/dracula.css")
 link(href='https://fonts.googleapis.com/css?family=Pompiere|Vast+Shadow&display=swap' rel='stylesheet')
 link(rel="stylesheet", href="/css/nice-select.css")
-script(src="/js/jquery.nice-select.min.js")
-script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js")
 
 
 script.  
@@ -106,7 +104,7 @@ style.
                     a#sampleTab.nav-link(data-toggle='tab' href = "#tab3") Sample
                   li.nav-item
                     a#testTab.nav-link(data-toggle='tab' href = "#tab4") Testcases
-                  li.nav-item.d-none
+                  li.nav-item
                     a.nav-link(data-toggle='tab' href = "#tab5") Settings
                 .tab-content
                   #tab1.container.tab-pane.active
@@ -217,7 +215,7 @@ style.
                           td(style="width:150px;")
                             label Output format:
                           td
-                            textarea.form-control#o_format(rows='5' name='o_format' cols='50' required)   
+                            textarea.form-control#o_format(rows='5' name='o_format' cols='50' required)
                   #tab3.container.tab-pane.fade
                     #samplecase.mt-3
                       label.tc Sample Testcases:
@@ -240,20 +238,29 @@ style.
                         textarea.form-control.input#i_testcase1(rows='5' name='i_testcase1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
                         textarea.form-control.input#o_testcase1(rows='5' name='o_testcase1' cols='50' required placeholder='Output')
                         p#p_no1 Points
-                        input.form-control(style="width:15%;" name="points" id="points1" type="text" placeholder="Ex: 10")
+                        input.form-control(style="width:15%;" name="points" id="points1" type="text" placeholder="Ex: 10" required)
                   #tab5.container.tab-pane.fade
                     div
                       div.m-3
                         label.fontStyle.font-weight-bold(style = "margin-left:10px;") Judging:&nbsp;&nbsp;&nbsp;
+                          i.fas.fa-question-circle(data-toggle="popover" data-content="Choose 'Auto' to let computer do the judging with proper test-cases, otherwise choose 'Manual' and evaluate submissions manually.")
+                          |&nbsp;:&nbsp;
                         .custom-control.custom-radio.custom-control-inline
-                          input.custom-control-input(type='radio' name='judging' id='Auto')
+                          input.custom-control-input(type='radio' name='judging' id='Auto' value="true" checked)
                           label.custom-control-label(for='Auto') Auto
                         .custom-control.custom-radio.custom-control-inline
-                          input.custom-control-input(type='radio' name='judging' id='Manual')
+                          input.custom-control-input(type='radio' name='judging' id='Manual' value="false")
                           label.custom-control-label(for='Manual') Manual
+                      div#totalPoints.m-3
+                        label.fontStyle.font-weight-bold(style = "margin-left:10px;") Total Points &nbsp;
+                          i.fas.fa-question-circle(data-toggle="popover" data-content="The total points for this question.")
+                          |&nbsp;:&nbsp;
+                        .custom-control.custom-control-inline
+                          input.form-control(type='text' name='totalPoints' placeholder="Ex: 10" style="width:50%;")
+                          
                       div.m-3
                         label.fontStyle.font-weight-bold(style = "margin-left:10px;") Status:&nbsp;&nbsp;&nbsp;
-                        input(type='checkbox' checked data-toggle="toggle" data-on="Active" data-off="InActive" data-onstyle="success" data-offstyle="danger" data-width="100")
+                        input#qActive(type='checkbox' checked name="active" data-toggle="toggle" data-on="Active" data-off="InActive" data-onstyle="success" data-offstyle="danger" data-width="100")
                   textarea(name="statement" id="es" style="display:none;")
           .modal-footer
             input.btn.btn-success(type='submit' value="Add")
@@ -325,7 +332,7 @@ each i in ques
                                 a.nav-link(data-toggle='tab' href = "#e-tab3") Sample
                               li.nav-item
                                 a.nav-link(data-toggle='tab' href = "#e-tab4") Testcases
-                              li.nav-item.d-none
+                              li.nav-item
                                 a.nav-link(data-toggle='tab' href = "#e-tab5") Settings
                             .tab-content
                               #e-tab1.container.tab-pane.active
@@ -444,10 +451,10 @@ each i in ques
                                     input#btSampleRemove_e.bt.btn.btn-danger.btn-sm(type='button' value='Remove Testcase')
                                     .t_case
                                         p Sample Testcase 1
-                                        textarea.form-control.input#ei_sample1(rows='5' name='i_sample1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
-                                        textarea.form-control.input#eo_sample1(rows='5' name='o_sample1' cols='50' required placeholder='Output')
+                                        textarea.form-control.input#ei_sample1(rows='5' name='i_sample1' cols='50'  placeholder='Input' style="margin-bottom:10px;")
+                                        textarea.form-control.input#eo_sample1(rows='5' name='o_sample1' cols='50'  placeholder='Output')
                                         p Explanation
-                                        textarea.form-control.ex_box#explanation_edit(name='explanation' rows='5' cols='107' style="margin-bottom:10px" required)
+                                        textarea.form-control.ex_box#explanation_edit(name='explanation' rows='5' cols='107' style="margin-bottom:10px" )
                           
                               #e-tab4.container.tab-pane.fade
                                 #testcase-e.mt-3
@@ -457,23 +464,32 @@ each i in ques
                                     br
                                     .t_case
                                         p Testcase 1
-                                        textarea.form-control.input#ei_testcase1(rows='5' name='i_testcase1' cols='50' required placeholder='Input' style="margin-bottom:10px;")
-                                        textarea.form-control.input#eo_testcase1(rows='5' name='o_testcase1' cols='50' required placeholder='Output')
+                                        textarea.form-control.input#ei_testcase1(rows='5' name='i_testcase1' cols='50'  placeholder='Input' style="margin-bottom:10px;")
+                                        textarea.form-control.input#eo_testcase1(rows='5' name='o_testcase1' cols='50'  placeholder='Output')
                                         p Points
-                                        input.form-control(style="width:15%;" name="points" id="epoints1" type="text" placeholder="Ex: 10" required)
+                                        input.form-control(style="width:15%;" name="points" id="epoints1" type="text" placeholder="Ex: 10" )
                               #e-tab5.container.tab-pane.fade
                                 div
                                   div.m-3
-                                    label.fontStyle.font-weight-bold(style = "margin-left:10px;") Judging:&nbsp;&nbsp;&nbsp;
+                                    label.fontStyle.font-weight-bold(style = "margin-left:10px;") Judging&nbsp;
+                                      i.fas.fa-question-circle(data-toggle="popover" data-content="Choose 'Auto' to let computer do the judging with proper test-cases, otherwise choose 'Manual' and evaluate submissions manually.")
+                                      |&nbsp;:&nbsp;
                                     .custom-control.custom-radio.custom-control-inline
-                                      input.custom-control-input(type='radio' name='judging' id='Auto')
-                                      label.custom-control-label(for='Auto') Auto
+                                      input.custom-control-input(type='radio' name='judging'  value="true" id='Auto-e')
+                                      label.custom-control-label(for='Auto-e') Auto
                                     .custom-control.custom-radio.custom-control-inline
-                                      input.custom-control-input(type='radio' name='judging' id='Manual')
-                                      label.custom-control-label(for='Manual') Manual
+                                      input.custom-control-input(type='radio' name='judging' value="false" id='Manual-e')
+                                      label.custom-control-label(for='Manual-e') Manual
+                                  div#totalPoints-e.m-3
+                                    label.fontStyle.font-weight-bold(style = "margin-left:10px;") Total Points &nbsp;
+                                      i.fas.fa-question-circle(data-toggle="popover" data-content="The total points for this question.")
+                                      |&nbsp;:&nbsp;
+                                    .custom-control.custom-control-inline
+                                      input.form-control(type='text' name='totalPoints' placeholder="Ex: 10" style="width:50%;")
+                                  
                                   div.m-3
                                     label.fontStyle.font-weight-bold(style = "margin-left:10px;") Status:&nbsp;&nbsp;&nbsp;
-                                    input(type='checkbox' checked data-toggle="toggle" data-on="Active" data-off="InActive" data-onstyle="success" data-offstyle="danger" data-width="100")
+                                    input#qActive-e(type='checkbox' name="active" data-toggle="toggle" data-on="Active" data-off="InActive" data-onstyle="success" data-offstyle="danger" data-width="100")
                               textarea(name="statement" id="es_edit" style="display:none;")
                               input#qid(type="text", style="display:none;" value="")
                       
@@ -521,6 +537,8 @@ each i in ques
                 input.btn.btn-success(type='submit' value="Save")
                 button.btn.btn-secondary(type='button' data-dismiss='modal') Close
 
+script(src="/js/jquery.nice-select.min.js")
+script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js")
 script.
   function auto_grow(element) {
       element = document.getElementById("solutionCode");

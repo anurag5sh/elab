@@ -14,7 +14,7 @@ const {Student} = require('../models/student');
 const winston = require('winston');
 
 function encode64(string){ //encoding to base64
-    const b = new Buffer.from(string);
+    const b = new Buffer.from(string.replace(/\r\n/g, "\n"));
   return b.toString('base64');
   }
   

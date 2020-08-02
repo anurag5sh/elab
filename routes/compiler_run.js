@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-const request = require("request-promise");
 const {Practice,validatePractise} = require('../models/practice');
 const {ContestQ} = require('../models/contestQ');
 const {AssignmentQ} = require('../models/assignmentQ');
@@ -8,15 +7,11 @@ const {LabQ} = require('../models/labQ');
 const Joi = require('@hapi/joi');
 const authenticate = require('../middleware/auth');
 const winston = require('winston');
-
-function encode64(string){ //encoding to base64
-  const b = new Buffer.from(string);
-return b.toString('base64');
-}
+const {run} = require('../compiler/api');
 
 function decode64(string64){//decode to utf8
   const b = new Buffer.from(string64, 'base64')
-return b.toString();
+return b.toString('ascii');
 }
 
 router.post('/', authenticate,async (req,res)=>{ 
@@ -85,45 +80,36 @@ router.post('/', authenticate,async (req,res)=>{
 
   let result = [];
 
-  let compiler_opt = null;
-  if (req.body.language == 50){
-    compiler_opt = "-lm";
-  }
-
   for(let i=0;i<sample.length;i++){
-  let options = { method: 'POST',
-  url: 'http://127.0.0.1:3000/submissions?base64_encoded=true&wait=true',
-  body: { "source_code": encode64(req.body.source), "language_id": req.body.language ,"stdin":encode64(sample[i].input),
-      "expected_output":encode64(sample[i].output), "compiler_options":compiler_opt},
-
-  json: true };
-
-  result.push(request(options));
+    const data={
+      language : req.body.language,
+      source : req.body.source,
+      input : sample[i].input,
+      output : sample[i].output
+    };
+    
+    result.push(run(data));
   }
-    Promise.all(result)
+
+  Promise.all(result)
     .then((response) => { 
-      let r=[];
+      let responses=[];
       for(let i=0;i<response.length;i++){
         let output="";
-      const json_res = JSON.parse(JSON.stringify(response[i]));
-      
-      if(json_res.stdout!=null) output=json_res.stdout;
-      else if(json_res.stderr!=null) output=json_res.stderr;
-      else if(json_res.compile_output!=null) output=json_res.compile_output;
-      r.push({output:decode64(output),id:response[i].status.id,description:response[i].status.description})
+        const json_res = JSON.parse(JSON.stringify(response[i]));
+        
+        if(json_res.stdout!=null) output=json_res.stdout;
+        else if(json_res.stderr!=null) output=json_res.stderr;
+        else if(json_res.compile_output!=null) output=json_res.compile_output;
+        responses.push({output:decode64(output),id:response[i].status.id,description:response[i].status.description})
       }
       
-      res.send(r);
+      res.send(responses);
       
     })
     .catch((err) => { winston.error(err);
       res.status(400).send("Unable to execute!");
     });
-  
- 
-  
 }); 
  
-
-
-  module.exports = router;
+module.exports = router;

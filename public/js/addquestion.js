@@ -265,6 +265,17 @@ $(document).ready(function() {
         $("#epoints1").val(data.test_cases[0].points);
         $("#difficult-e").val(data.difficulty);
         $('#difficult-e').niceSelect('update');
+        if (data.active) $("#qActive-e").bootstrapToggle("on");
+        else $("#qActive-e").bootstrapToggle("off");
+        if (data.autoJudge) {
+            $("#Auto-e").prop("checked", true);
+            $("#totalPoints-e").find("input").prop('required',false);
+            $("#totalPoints-e").hide();
+        } else {
+            $("#Manual-e").prop("checked", true);
+            $("#totalPoints-e").find("input").prop('required',true);
+            $("#totalPoints-e").show();
+        }
 
         for(let i=1;i<data.sample_cases.length;i++){
             sampleAdd();
@@ -314,36 +325,40 @@ $(document).ready(function() {
         options=['50','54','51','71','62','63'];
     });
 
-    // //hiding the sample and testcases
-    // $("#ques").find('input[type=radio][name=judging]').on('change',function(){
-    //     switch($(this).val()) {
-    //         case 'true' :
-    //             $("#approval").hide();
-    //             $("#samplecase").find("textarea").prop('required',true);
-    //             $("#testcase").find("textarea").prop('required',true);
-    //             break;
-    //         case 'false' :
-    //             $("#approval").show();
-    //             $("#samplecase").find("textarea").prop('required',false);
-    //             $("#testcase").find("textarea").prop('required',false);
-    //             break;
-    //     }      
-    // });
+    //hiding the sample and testcases
+    $("#ques").find('input[type=radio][name=judging]').on('change',function(){
+        switch($(this).val()) {
+            case 'true' :
+                $("#totalPoints").hide();
+                $("#totalPoints").find("input").prop('required',false);
+                $("#samplecase").find("textarea").prop('required',true);
+                $("#testcase").find("textarea,input").prop('required',true);
+                break;
+            case 'false' :
+                $("#totalPoints").show();
+                $("#totalPoints").find("input").prop('required',true);
+                $("#samplecase").find("textarea").prop('required',false);
+                $("#testcase").find("textarea,input").prop('required',false);
+                break;
+        }      
+    });
 
-    // $("#ques-edit").find('input[type=radio][name=judging]').on('change',function(){
-    //     switch($(this).val()) {
-    //         case 'true' :
-    //             $("#approval-e").hide();
-    //             $("#samplecase-e").find("textarea").prop('required',true);
-    //             $("#testcase-e").find("textarea").prop('required',true);
-    //             break;
-    //         case 'false' :
-    //             $("#approval-e").show();
-    //             $("#samplecase-e").find("textarea").prop('required',false);
-    //             $("#testcase-e").find("textarea").prop('required',false);
-    //             break;
-    //     }      
-    // });
+    $("#ques-edit").find('input[type=radio][name=judging]').on('change',function(){
+        switch($(this).val()) {
+            case 'true' :
+                $("#totalPoints-e").hide();
+                $("#totalPoints-e").find("input").prop('required',false);
+                $("#samplecase-e").find("textarea").prop('required',true);
+                $("#testcase-e").find("textarea,input").prop('required',true);
+                break;
+            case 'false' :
+                $("#totalPoints-e").show();
+                $("#totalPoints-e").find("input").prop('required',true);
+                $("#samplecase-e").find("textarea").prop('required',false);
+                $("#testcase-e").find("textarea,input").prop('required',false);
+                break;
+        }      
+    });
 
 
 $("#ques-edit").validate({
@@ -366,6 +381,11 @@ $('.ques-edit').click(function(evt) {
     
     $("#ques-edit").submit();
 
+});
+
+$("#myModal").on('show.bs.modal',()=>{
+    if($("#Auto").is(":checked"))
+    $("#totalPoints").hide();
 });
     
 });

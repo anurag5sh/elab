@@ -19,7 +19,7 @@ const { CustomGroup } = require("../models/customGroup");
 const labAuth = require("../middleware/labAuth");
 
 function encode64(string){ //encoding to base64
-    const b = new Buffer.from(string);
+    const b = new Buffer.from(string.replace(/\r\n/g, "\n"));
   return b.toString('base64');
   }
   
@@ -720,12 +720,8 @@ router.get('/:url/studentReportDownload/:usn',authenticate,teacher,labAuth, asyn
         // launch puppeteer API
         const browser = await puppeteer.launch(); 
         const page = await browser.newPage();
-        let host = 'localhost';
-        if (process.env.NODE_ENV != 'production') {
-            host='localhost:'+req.app.locals.port;
-           }
-        const elabIndex = req.headers.cookie.indexOf("elab");
-        await page.setCookie({name:"elab",value:req.headers.cookie.substr(elabIndex+5),domain:"localhost",path:"/"});   
+        let host = 'localhost:'+req.app.locals.port;
+        await page.setCookie({name:"elab",value:req.cookies.elab,domain:"localhost",path:"/"});   
         await page.goto(`http://${host}/lab/${lab.url}/studentReportDownload/${req.params.usn}`,{waitUntil:'networkidle0'});
         await page.pdf({
             // name of your pdf file in directory

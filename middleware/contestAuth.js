@@ -2,8 +2,9 @@ const {Contest} = require('../models/contest');
 const {CustomGroup} = require('../models/customGroup');
 
 module.exports = async function(req,res,next){
-    let contest = await Contest.findOne({url:req.params.curl}).lean().select('year custom_usn customGroup');
+    let contest = await Contest.findOne({url:req.params.curl});
     if(!contest) return res.status(404).end();
+    res.locals.contest = contest;
 
     const groups = await CustomGroup.find({id:{$in: contest.customGroup}}).limit().select({usn:1,_id:0});
     let grp_usn = [];

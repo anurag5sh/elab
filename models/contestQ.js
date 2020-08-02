@@ -2,8 +2,6 @@ const Joi = require('@hapi/joi');
 const mongoose = require('mongoose');
 const moment = require('moment');
 
-
-
 const contestQSchema = new mongoose.Schema({
     name:{
         type: String,
@@ -12,6 +10,10 @@ const contestQSchema = new mongoose.Schema({
     qid:{
         type:String,
         default: moment().format('DDMMYY')
+    },
+    active:{
+        type:Boolean,
+        default : true
     },
     statement:{
         type: String,
@@ -73,6 +75,14 @@ const contestQSchema = new mongoose.Schema({
     languages:{
         type:[String],
         default:[]
+    },
+    autoJudge: {
+        type: Boolean,
+        default: false,
+    },
+    totalPoints:{
+        type:Number,
+        default:0
     }
 });
 
@@ -86,15 +96,18 @@ function validateCQ(question)
         constraints: Joi.string().allow(''),
         i_format: Joi.string().required(),
         o_format: Joi.string().required(),
-        i_sample1: [Joi.string(),Joi.array().items(Joi.string())],
-        o_sample1: [Joi.string(),Joi.array().items(Joi.string())],
-        i_testcase1: [Joi.string(),Joi.array().items(Joi.string())],
-        o_testcase1: [Joi.string(),Joi.array().items(Joi.string())],
-        explanation: Joi.string().required(),
-        points : [Joi.number(),Joi.array().items(Joi.number())],
+        judging: Joi.string().valid("true", "false").required(),
+        i_sample1: [Joi.string().when('judging', { is: 'false', then: Joi.allow('') }), Joi.array().items(Joi.string())],
+        o_sample1: [Joi.string().when('judging', { is: 'false', then: Joi.allow('') }), Joi.array().items(Joi.string())],
+        i_testcase1: [Joi.string().when('judging', { is: 'false', then: Joi.allow('') }), Joi.array().items(Joi.string())],
+        o_testcase1: [Joi.string().when('judging', { is: 'false', then: Joi.allow('') }), Joi.array().items(Joi.string())],
+        explanation: Joi.string().when('judging', { is: 'false', then: Joi.allow('') }),
+        points: [Joi.number().when('judging', { is: 'false', then: Joi.allow('') }), Joi.array().items(Joi.number())],
+        totalPoints : Joi.number().when('judging', { is: 'true', then: Joi.allow('') }),
         difficulty:Joi.string().valid('Easy','Medium','Hard').required(),
         description:Joi.string().required(),
-        languages:[Joi.string(),Joi.array().items(Joi.string())]
+        languages:[Joi.string(),Joi.array().items(Joi.string())],
+        active: Joi.string().valid("on", "off").allow('')
         
     });
 

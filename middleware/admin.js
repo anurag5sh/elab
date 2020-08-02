@@ -17,9 +17,8 @@ module.exports= async function (req, res, next) {
         }
     } 
     else {
-      var err = new Error('You must be logged in to view this page.');
-      err.status = 401;
-      return res.send(err.message);
+        req.session.redirectTO = req.originalUrl;
+        return res.redirect('/');
     }
         
         

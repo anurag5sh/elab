@@ -11,7 +11,7 @@ module.exports = async function(req,res,next){
     for(i of groups){
         grp_usn = grp_usn.concat(i.usn);
     }
-    if(contest.year.includes(req.session.year) || contest.custom_usn.includes(req.session.usn) || grp_usn.includes(req.session.usn))
+    if(contest.batch.includes(req.session.batch) || contest.custom_usn.includes(req.session.usn) || grp_usn.includes(req.session.usn))
         return next();
 
     else if(req.session.staff_id ) next();

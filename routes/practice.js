@@ -210,7 +210,7 @@ router.get('/:qid/submissions/list',authenticate,async (req,res)=>{
     let student = studentData[question.submissions[i].usn];
     data.usn = question.submissions[i].usn;
     data.name = student.fname + " " + student.lname;
-    data.time = {timestamp:moment(i.timestamp).format('x'),display:moment(i.timestamp).format('LLL')};
+    data.time = {timestamp:moment(question.submissions[i].timestamp).format('x'),display:moment(question.submissions[i].timestamp).format('LLL')};
     data.points = question.submissions[i].points;
     data.status = question.submissions[i].status;
     data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+question.submissions[i].usn+'"  href="#">View Code</a>';

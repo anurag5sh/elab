@@ -12,6 +12,17 @@ const admin = require('../middleware/admin');
 //   res.send(Student);
 // });
 
+function getBatch(year){
+  month=new Date().getMonth()+1;
+  const currYear=new Date().getFullYear();
+  if(month>=8){
+      return currYear-year+1;
+  }
+  else{
+      return currYear-year;
+  }
+}
+
 router.post('/',admin, async (req, res) => {
 
   if(req.body.type === "student"){
@@ -25,6 +36,7 @@ router.post('/',admin, async (req, res) => {
   if(!req.body.lname) req.body.lname=" ";
 
   student = new Student(_.pick(req.body, ['fname', 'lname', 'email', 'password','year','usn']));
+  student.batch = getBatch(req.body.year);
   const salt = await bcrypt.genSalt(10);
   student.password = await bcrypt.hash(student.password, salt);
   student.profile_image = '/profileImage/'+student.usn.toUpperCase()+'.jpg';

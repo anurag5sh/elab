@@ -38,25 +38,15 @@ return b.toString();
 function two(x) {return ((x>9)?"":"0")+x}
 function three(x) {return ((x>99)?"":"0")+((x>9)?"":"0")+x}
 
-function time(ms) { //convert to dd:mm:hh:ss
-var sec = Math.floor(ms/1000)
-ms = ms % 1000
-t = three(ms)
-
-var min = Math.floor(sec/60)
-sec = sec % 60
-t = two(sec) + ":" + t
-
-var hr = Math.floor(min/60)
-min = min % 60
-t = two(min) + ":" + t
-
-var day = Math.floor(hr/60)
-hr = hr % 60
-t = two(hr) + ":" + t
-t = day + ":" + t
-
-return t
+function getBatch(year){
+    month=new Date().getMonth()+1;
+    const currYear=new Date().getFullYear();
+    if(month>=8){
+        return currYear-year+1;
+    }
+    else{
+        return currYear-year;
+    }
 }
 
 function convertMS( milliseconds ) {
@@ -117,10 +107,10 @@ router.get('/',authenticate, async (req,res)=> {
             const grp = await CustomGroup.find({'usn':req.session.usn}).lean().select({id:1,_id:0});
             let gid=[];
             for(i of grp) gid.push(i.id);
-            let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}}).select('name url description questions timings image').lean().sort({'timings.starts':1}).skip((page-1)*12).limit(12);
+            let contest = await Contest.find({$or:[{'batch' : req.session.batch},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}}).select('name url description questions timings image').lean().sort({'timings.starts':1}).skip((page-1)*12).limit(12);
             //-contest = contest.concat(await Contest.find({customGroup:{$in:gid},isReady:true,'timings.ends':{$gt:new Date()}}).lean().select('name url description questions timings')).sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
             if(contest.length <=0) return res.render('contest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
-            count = await Contest.countDocuments({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}});
+            count = await Contest.countDocuments({$or:[{'batch' : req.session.batch},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}});
             res.render('contest',{contest:contest,count:count,type:"ongoing",page:page});
         }
         else{
@@ -131,20 +121,20 @@ router.get('/',authenticate, async (req,res)=> {
                 const grp = await CustomGroup.find({'usn':req.session.usn}).lean().select({id:1,_id:0});
                 let gid=[];
                 for(i of grp) gid.push(i.id);
-                let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$lt:new Date()}}).select('name url description questions timings image').lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
+                let contest = await Contest.find({$or:[{'batch' : req.session.batch},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$lt:new Date()}}).select('name url description questions timings image').lean().sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
                 //contest = contest.concat(await Contest.find({customGroup:{$in:gid},isReady:true,'timings.ends':{$lt:new Date()}}).lean().select('name url description questions timings')).sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
                 if(contest.length <=0) return res.render('contest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
-                count = await Contest.countDocuments({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$lt:new Date()}});
+                count = await Contest.countDocuments({$or:[{'batch' : req.session.batch},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$lt:new Date()}});
                 res.render('contest',{contest:contest,count:count,type:"past",page:page});
             }
             else{ //query l exists but invalid value
                 const grp = await CustomGroup.find({'usn':req.session.usn}).lean().select({id:1,_id:0});
                 let gid=[];
                 for(i of grp) gid.push(i.id);
-                let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}}).select('name url description questions timings image').lean().sort({'timings.starts':1}).skip((page-1)*12).limit(12);
+                let contest = await Contest.find({$or:[{'batch' : req.session.batch},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}}).select('name url description questions timings image').lean().sort({'timings.starts':1}).skip((page-1)*12).limit(12);
                 //contest = contest.concat(await Contest.find({customGroup:{$in:gid},isReady:true,'timings.ends':{$gt:new Date()}}).lean().select('name url description questions timings')).sort({'timings.starts':-1}).skip((page-1)*12).limit(12);
                 if(contest.length <=0) return res.render('contest',{contest:[],count:0,msg:"No ongoing or upcoming contests available."});
-                count = await Contest.countDocuments({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}});
+                count = await Contest.countDocuments({$or:[{'batch' : req.session.batch},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true,'timings.ends':{$gt:new Date()}});
                 res.render('contest',{contest:contest,count:count,type:"ongoing",page:page});
 
             }
@@ -188,6 +178,16 @@ router.post('/create',authenticate,teacher, async (req,res)=>{
     } 
     }
     let contest = new Contest({createdBy:createdBy,id:id,name:req.body.name.trim(),url:url});
+    if(req.body.year){
+        if(!Array.isArray(req.body.year)){
+            contest.batch=[getBatch(req.body.year)];
+        }
+        else{
+            contest.batch=req.body.year.map(getBatch);
+        }
+    }   
+    else contest.batch =[];
+
     if(req.body.year) contest.year =req.body.year;
     else contest.year =[];
     
@@ -219,7 +219,7 @@ router.get('/manage',authenticate,teacher, async (req,res) => {
     let count=0;
     if(req.session.isAdmin){
         const contest = await Contest.find().lean().sort({_id:-1}).skip((page-1)*12).limit(12);
-        count=await Contest.estimatedDocumentCount();
+        count=await Contest.countDocuments();
         return res.render('teacher/manage',{contests:contest,count:count,page:page}); 
     }
 
@@ -271,13 +271,15 @@ router.get('/manage/:name',authenticate,teacher, async (req,res) => {
     if(!custom) custom=[];
 
     let questions = [];
-    for(i of contest.questions){ let points=0;
-        let q = await ContestQ.findOne({qid:i}).lean();
-        for(i of q.test_cases){
-            points+=i.points;
+    const allQuestions = await ContestQ.find({qid:{$in:contest.questions}}).lean();
+    for(i of allQuestions){ let points=0;
+        if(i.autoJudge){
+            for(j of i.test_cases){
+                points+=j.points;
+            }
+            i.totalPoints = points;
         }
-        q.totalPoints = points;
-        questions.push(q);
+        questions.push(i);
     }
     let signed_up =[0,0,0,0,0];
     for(i of contest.signedUp){
@@ -342,6 +344,15 @@ router.post('/manage/:name',authenticate,teacher,async (req,res) =>{
     contest.timings.ends = ends;
     contest.timings.starts = starts;
     contest.description = req.body.description;
+    if(req.body.year){
+        if(!Array.isArray(req.body.year)){
+            contest.batch=[getBatch(req.body.year)];
+        }
+        else{
+            contest.batch=req.body.year.map(getBatch);
+        }
+    }   
+    else contest.batch =[];
     contest.year = req.body.year || [];
     contest.isReady = (req.body.status == "on"?true:false);
 
@@ -395,6 +406,7 @@ router.post('/add/:cname',authenticate,teacher,async (req,res) => {
     question.difficulty = req.body.difficulty;
     question.active = (req.body.active == "on"?true:false);
     question.autoJudge = req.body.judging;
+    question.totalPoints = req.body.totalPoints;
 
     if(Array.isArray(req.body.i_sample1)){
 
@@ -506,6 +518,155 @@ router.get('/submissions/:curl',authenticate,contestAuth, async (req,res) =>{
         data.points =contest.submissions[i].points;
         data.status = contest.submissions[i].status;
         const l = lang(contest.submissions[i].language_id);
+        data.lang = l.substr(0,l.length-2); 
+
+        SendData.push(data);
+    }
+
+    res.send(SendData);
+
+});
+
+
+//fetching manual submissions
+router.get('/manualSubmissions/:curl',authenticate,teacher, async (req,res) =>{
+    const contest = await Contest.findOne({url:req.params.curl}).lean();
+    if(!contest) return res.status(404).end();
+
+    //verification
+    if(req.session.staff_id){
+        if(!(contest.createdBy == req.session.staff_id || req.session.isAdmin || req.session.staff_id && contest.timings.ends < new Date()))
+            return res.status(401).end();
+        
+    }
+
+    let students = [];
+    let teachers =[];
+    for(i=0;i<contest.submissions.length;i++){
+        if(contest.submissions[i].year != '-')
+        students.push(contest.submissions[i].usn);
+        else
+        teachers.push(contest.submissions[i].usn);
+
+    }
+    let studentData={},teacherData={},questions = {};
+    let studentResult = await Student.find({usn:{$in:students}}).select('usn fname lname -_id').lean();
+    if(!studentResult) studentResult = [];
+    else{
+        for( i of studentResult)
+            studentData[i.usn] = i;
+    }
+
+    let teacherResult = await Teacher.find({staff_id:{$in:teachers}}).select('staff_id fname lname -_id').lean();
+    if(!teacherResult) teacherResult = [];
+    else{
+        for( i of teacherResult)
+            teacherData[i.staff_id] = i;
+    }
+
+    let questionsResult = await ContestQ.find({qid:{$in:contest.questions},autoJudge:false}).lean().select('qid name -_id');
+    if(!questionsResult) questionsResult=[];
+    else{
+        for(i of questionsResult)
+            questions[i.qid]=i;
+    }
+
+    const submissions = await Submission.find({qid:{$in:contest.questions},status:"Pending"}).lean();
+
+    let SendData=[];
+    for(i=0;i<submissions.length;i++){ let data={};
+        const qid = submissions[i].qid;
+        if(submissions[i].year != '-' ){
+            const student = studentData[submissions[i].usn];
+            data.usn = student.usn;
+            data.name = student.fname + " " + student.lname;
+            data.code = '<a data-toggle="modal" data-target="#sourceManual" data-usn="'+student.usn+'" data-qid="'+qid +'" data-objid="'+submissions[i]._id +'" href="#">View Code</a>';
+        }
+        else{
+            const teacher = teacherData[submissions[i].usn];
+            data.usn = teacher.staff_id;
+            data.name = teacher.fname + " " + teacher.lname;
+            data.code = '<a data-toggle="modal" data-target="#sourceManual" data-usn="'+teacher.staff_id+'" data-qid="'+qid +'" data-objid="'+submissions[i]._id +'" href="#">View Code</a>';
+        }
+        data.qname = questions[qid].name;
+        data.time = convertMS(submissions[i].timestamp - contest.timings.starts);
+        data.status = `<a href="/contest/${contest.url}/${qid}/evaluate/${data.usn}/${submissions[i]._id}" target="_blank">Evaluate</a>`;
+        const l = lang(submissions[i].language_id);
+        data.lang = l.substr(0,l.length-2); 
+
+        SendData.push(data);
+    }
+
+    res.send(SendData);
+
+});
+
+//fetching all manual evaluated submissions
+router.get('/allManualSubmissions/:curl',authenticate,teacher, async (req,res) =>{
+    const contest = await Contest.findOne({url:req.params.curl}).lean();
+    if(!contest) return res.status(404).end();
+
+    //verification
+    if(req.session.staff_id){
+        if(!(contest.createdBy == req.session.staff_id || req.session.isAdmin || req.session.staff_id && contest.timings.ends < new Date()))
+            return res.status(401).end();
+        
+    }
+
+    let students = [];
+    let teachers =[];
+    for(i=0;i<contest.submissions.length;i++){
+        if(contest.submissions[i].year != '-')
+        students.push(contest.submissions[i].usn);
+        else
+        teachers.push(contest.submissions[i].usn);
+
+    }
+    let studentData={},teacherData={},questions = {};
+    let studentResult = await Student.find({usn:{$in:students}}).select('usn fname lname -_id').lean();
+    if(!studentResult) studentResult = [];
+    else{
+        for( i of studentResult)
+            studentData[i.usn] = i;
+    }
+
+    let teacherResult = await Teacher.find({staff_id:{$in:teachers}}).select('staff_id fname lname -_id').lean();
+    if(!teacherResult) teacherResult = [];
+    else{
+        for( i of teacherResult)
+            teacherData[i.staff_id] = i;
+    }
+
+    let questionsResult = await ContestQ.find({qid:{$in:contest.questions},autoJudge:false}).lean().select('qid name -_id');
+    if(!questionsResult) questionsResult=[];
+    else{
+        for(i of questionsResult)
+            questions[i.qid]=i;
+    }
+
+    const submissions = await Submission.find({qid:{$in:contest.questions},status:{$ne:"Pending"}}).lean();
+
+    let SendData=[];
+    for(i=0;i<submissions.length;i++){ let data={};
+        const qid = submissions[i].qid;
+        if(submissions[i].year != '-' ){
+            const student = studentData[submissions[i].usn];
+            data.usn = student.usn;
+            data.name = student.fname + " " + student.lname;
+            data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+student.usn+'" data-qid="'+qid +'" data-objid="'+submissions[i]._id +'" href="#">View Code</a>';
+        }
+        else{
+            const teacher = teacherData[submissions[i].usn];
+            data.usn = teacher.staff_id;
+            data.name = teacher.fname + " " + teacher.lname;
+            data.code = '<a data-toggle="modal" data-target="#source" data-usn="'+teacher.staff_id+'" data-qid="'+qid +'" href="#">View Code</a>';
+        }
+        data.qname = questions[qid].name;
+        data.time = convertMS(submissions[i].timestamp - contest.timings.starts);
+        data.status = submissions[i].status;
+        data.evaluate = `<a href="/contest/${contest.url}/${qid}/evaluate/${data.usn}/${submissions[i]._id}" target="_blank">Re-Evaluate</a>`;
+        data.points =submissions[i].points;
+        const l = lang(submissions[i].language_id);
         data.lang = l.substr(0,l.length-2); 
 
         SendData.push(data);
@@ -773,6 +934,9 @@ router.post('/edit/:curl/:qid',authenticate,teacher,async (req,res)=>{
     question.active = (req.body.active == "on"?true:false);
     question.autoJudge = req.body.judging;
 
+    if (Date.now()<contest.timings.starts)
+    question.totalPoints = req.body.totalPoints;
+
     question.sample_cases = [];
     question.test_cases =[];
 
@@ -953,6 +1117,11 @@ router.get('/source/:curl/:usn/:qid',authenticate,contestAuth, async (req,res) =
 
     if(req.session.staff_id){
         if(req.session.staff_id == contest.createdBy || new Date() > contest.timings.ends || req.session.isAdmin){
+            if(req.query.manual){
+                const sub = await Submission.findOne({_id:req.query.manual}).lean();
+                return res.send(sub.sourceCode);
+            }
+            else
             res.send(contest.submissions.find(i => i.usn == req.params.usn && i.qid == req.params.qid).sourceCode);
         }
         else return res.end();
@@ -1058,15 +1227,20 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
     if(req.session.staff_id){
         if(contest.createdBy == req.session.staff_id || req.session.isAdmin || contest.timings.ends < new Date())
         {
-        let questions = await ContestQ.find({qid:{$in:contest.questions}}).select('name difficulty qid description _id test_cases')
+        let questions = await ContestQ.find({qid:{$in:contest.questions}});
         let totalPoints = [];
         if(!questions) questions=[];
         else
         {
             questions.forEach((item,index)=>{ let total=0;
-                item.test_cases.forEach((itemp)=>{
-                    total+=itemp.points;
-                })
+                if(item.autoJudge){
+                    item.test_cases.forEach((itemp)=>{
+                        total+=itemp.points;
+                    })
+                }
+                else{
+                    total=item.totalPoints;
+                }
                 totalPoints.push(total);
             });
         }
@@ -1079,15 +1253,20 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
                 if(!contest.signedUp.find(({usn}) => usn == req.session.staff_id)){
                     return res.render("timer" , {attempt:"/contest/sign/"+req.params.curl,time:false,contest:contest,rules:contest.rules});
                 }
-                let questions = await ContestQ.find({qid:{$in:contest.questions}}).select('name difficulty qid description _id test_cases')
+                let questions = await ContestQ.find({qid:{$in:contest.questions}});
                 let totalPoints = [];
                 if(!questions) questions=[];
                 else
                 {
                     questions.forEach((item,index)=>{ let total=0;
-                        item.test_cases.forEach((itemp)=>{
-                            total+=itemp.points;
-                        })
+                        if(item.autoJudge){
+                            item.test_cases.forEach((itemp)=>{
+                                total+=itemp.points;
+                            })
+                        }
+                        else{
+                            total=item.totalPoints;
+                        }
                         totalPoints.push(total);
                     });
                 }
@@ -1119,15 +1298,20 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
                    return res.render("timer" , {attempt:"/contest/sign/"+req.params.curl,time:false,contest:contest,rules:contest.rules});
                 }
         
-                let questions = await ContestQ.find({qid:{$in:contest.questions}}).select('name difficulty qid description _id test_cases')
+                let questions = await ContestQ.find({qid:{$in:contest.questions}});
                 let totalPoints = [];
                 if(!questions) questions=[];
                 else
                 {
                     questions.forEach((item,index)=>{ let total=0;
-                        item.test_cases.forEach((itemp)=>{
-                            total+=itemp.points;
-                        })
+                        if(item.autoJudge){
+                            item.test_cases.forEach((itemp)=>{
+                                total+=itemp.points;
+                            })
+                        }
+                        else{
+                            total=item.totalPoints;
+                        }
                         totalPoints.push(total);
                     });
                 }
@@ -1149,15 +1333,20 @@ router.get('/:curl',authenticate,contestAuth, async (req,res) =>{
         
                 if(now > contest.timings.ends) //after contest
                 {
-                    let questions = await ContestQ.find({qid:{$in:contest.questions}}).select('name difficulty qid description _id test_cases')
+                    let questions = await ContestQ.find({qid:{$in:contest.questions}});
                     let totalPoints = [];
                     if(!questions) questions=[];
                     else
                     {
                         questions.forEach((item,index)=>{ let total=0;
-                            item.test_cases.forEach((itemp)=>{
-                                total+=itemp.points;
-                            })
+                            if(item.autoJudge){
+                                item.test_cases.forEach((itemp)=>{
+                                    total+=itemp.points;
+                                })
+                            }
+                            else{
+                                total=item.totalPoints;
+                            }
                             totalPoints.push(total);
                         });
                     }
@@ -1189,13 +1378,39 @@ router.get('/:curl/leaderboard',authenticate,contestAuth,async (req,res) =>{
 //submissions pug
 router.get('/:curl/submissions',authenticate,contestAuth,async (req,res)=>{
     const contest = res.locals.contest;
-
+    const manual = await ContestQ.aggregate([{$match:{qid:{$in:contest.questions}}},{$project:{autoJudge:1,_id:0}}]);
+    let manualSubmission=false;
+    for (i of manual){
+        if(!i.autoJudge)
+            manualSubmission=true;
+    }
     //teacher
     if(contest.createdBy == req.session.staff_id || req.session.isAdmin || req.session.staff_id && contest.timings.ends < new Date())
-    return res.render('teacher/submission',{contest:contest});
+    return res.render('teacher/submission',{contest:contest,manualSubmission});
     else{ //student
         return res.render('submission',{contest:contest});
     }
+});
+
+//oldManualSubmissions pug
+router.get('/:curl/oldManualSubmissions',authenticate,teacher,async (req,res)=>{
+    const contest = await Contest.findOne({url:req.params.curl}).lean().select('url name createdBy timings -_id');
+    if(!contest) return res.status(400).send("Contest not found");
+
+    return res.render('teacher/oldManualSubmissions',{contest});
+
+    // const manual = await ContestQ.aggregate([{$match:{qid:{$in:contest.questions}}},{$project:{autoJudge:1,_id:0}}]);
+    // let manualSubmission=false;
+    // for (i of manual){
+    //     if(!i.autoJudge)
+    //         manualSubmission=true;
+    // }
+    // //teacher
+    // if(contest.createdBy == req.session.staff_id || req.session.isAdmin || req.session.staff_id && contest.timings.ends < new Date())
+    // return res.render('teacher/submission',{contest:contest,manualSubmission});
+    // else{ //student
+    //     return res.render('submission',{contest:contest});
+    // }
 });
 
 //student report 
@@ -1331,8 +1546,8 @@ router.get('/:curl/notSigned',authenticate,teacher,async (req,res)=>{
         signedUSN.add(i.usn);
     }
 
-    for(i of contest.year){
-        const list = await Student.find({year:i}).select('fname lname year usn -_id').lean();
+    for(i of contest.batch){
+        const list = await Student.find({batch:i}).select('fname lname year usn -_id').lean();
         students=students.concat(list);
     };
 
@@ -1372,7 +1587,17 @@ router.get('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
 
 });
 
-
+function leaderboardSort(contest){
+    contest.leaderboard.sort((a,b) =>{
+        if(a.points > b.points) return -1;
+        else if(a.points < b.points) return 1;
+        else if(a.points == b.points){
+            if(a.timestamp<b.timestamp) return -1;
+            else if(a.timestamp>b.timestamp) return 1;
+            else return 0;
+        }
+    });
+}
 
 //submission of contest
 router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
@@ -1382,7 +1607,7 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
         return res.status(404).end();
     }
 
-    const question = await ContestQ.findOne({qid:req.params.qid}).select('test_cases languages').lean().catch(err => {
+    const question = await ContestQ.findOne({qid:req.params.qid}).lean().catch(err => {
         res.status(404).end();
     });
 
@@ -1415,6 +1640,52 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
   if(req.body.source.trim()=='')
   return res.send("Source Code cannot be empty!");
 
+  const usn = req.session.usn || req.session.staff_id.toString();
+  const year = req.session.year || '-';
+
+  if(!question.autoJudge){ //Manual Submission
+    if(contest.timings.ends < new Date()){ //if contest has ended
+        return res.status(400).send("Submission cannot be evaluated.");
+    }
+
+    // const user_submission = contest.submissions.find(i => i.usn == usn && i.qid == req.params.qid);
+
+    // if(!user_submission){ 
+    //     let obj ={};
+    //     obj.qid = req.params.qid;
+    //     obj.timestamp = new Date();
+    //     obj.usn = usn;
+    //     obj.year = year;
+    //     obj.sourceCode = req.body.source;
+    //     obj.points = 0;
+    //     obj.language_id = req.body.language;
+    //     obj.status = "Pending";
+    //     contest.submissions.push(obj);
+    //     await contest.save();
+    //     return res.send("Submission Made.");
+    // }
+    // else{
+        let sub = new Submission();
+        const subCount = await Submission.countDocuments({usn:usn,qid:req.params.qid});
+        console.log(subCount);
+        if(subCount == 20){
+            sub = await Submission.findOne({usn:usn,qid:req.params.qid}).sort({timestamp:1});
+        }
+        sub.qid = req.params.qid;
+        sub.timestamp = new Date();
+        sub.usn = usn;
+        sub.year = year;
+        sub.sourceCode = req.body.source;
+        sub.status = "Pending";
+        sub.points = 0;
+        sub.language_id = req.body.language;
+
+        await sub.save();
+        return res.send("Submission Made.");
+    //}
+
+  }
+
   let result = [];
   for(let i=0;i<testcase.length;i++){
     const data ={
@@ -1439,8 +1710,6 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
         desc.push({id:data.status.id,description:data.status.description,points:points}); 
       }
     
-    const usn = req.session.usn || req.session.staff_id.toString();
-    const year = req.session.year || '-';
 
     //if(req.session.code == req.body.source+req.params.qid) return res.send(desc);
     //req.session.code = req.body.source + req.params.qid;
@@ -1461,7 +1730,7 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
         else{
 
             let sub = new Submission();
-            const subCount = await Submission.estimatedDocumentCount({usn:usn,qid:req.params.qid});
+            const subCount = await Submission.countDocuments({usn:usn,qid:req.params.qid});
             if(subCount == 20){
                 sub = await Submission.findOne({usn:usn,qid:req.params.qid}).sort({timestamp:1});
             }
@@ -1531,14 +1800,14 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
                 contest.leaderboard[index].points += total_points;
                 contest.leaderboard[index].timestamp = new Date()- contest.timings.starts;
             }
-            leaderboardSort();
+            leaderboardSort(contest);
         }
         await contest.save();
         return res.send(desc);
     }
     else{
         let sub = new Submission();
-        const subCount = await Submission.estimatedDocumentCount({usn:usn,qid:req.params.qid});
+        const subCount = await Submission.countDocuments({usn:usn,qid:req.params.qid});
         if(subCount == 20){
             sub = await Submission.findOne({usn:usn,qid:req.params.qid}).sort({timestamp:1});
         }
@@ -1592,7 +1861,7 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
                 contest.leaderboard[index].points += total_points - old_points;
                 contest.leaderboard[index].timestamp = new Date()- contest.timings.starts;
             }
-            leaderboardSort();
+            leaderboardSort(contest);
             await contest.save();
             return res.send(desc);
         }
@@ -1641,7 +1910,7 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
                 contest.leaderboard[index].timestamp = new Date()- contest.timings.starts;
             }
 
-            leaderboardSort();
+            leaderboardSort(contest);
             await contest.save();
             return res.send(desc);
         }
@@ -1671,19 +1940,6 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
         }
     }
 
-    function leaderboardSort(){
-        contest.leaderboard.sort((a,b) =>{
-            if(a.points > b.points) return -1;
-            else if(a.points < b.points) return 1;
-            else if(a.points == b.points){
-                if(a.timestamp<b.timestamp) return -1;
-                else if(a.timestamp>b.timestamp) return 1;
-                else return 0;
-            }
-        });
-    }
-    
-    
     }).catch(err => {
         winston.error(err);
       res.send(err);
@@ -1693,6 +1949,206 @@ router.post('/:curl/:qid',authenticate,contestAuth,async (req,res)=>{
 
 });
 
+//execution for approval
+router.post('/:curl/:qid/execute',authenticate,teacher,async (req,res)=>{
+    if(!req.body.usn || !req.body.id) return res.status(400).end();
+    if(!req.body.input) req.body.input="";
 
+    let contest = await Contest.findOne({url:req.params.curl}).lean();
+    if(!contest)    return res.status(404).end();
+
+    //fetching question
+    if(!contest.questions.includes(req.params.qid)) return res.status(404).end();
+    const question = await ContestQ.findOne({qid:req.params.qid}).lean();
+
+    let submission = contest.submissions.find(e => e.usn == req.body.usn);
+    if(!submission) return res.status(400).send("No submissions yet!");
+
+    if (submission._id != req.body.id){
+        submission = await Submission.findOne({_id:req.body.id}).lean();
+    }
+
+    const data ={
+        language : submission.language_id,
+        source : submission.sourceCode,
+        input : req.body.input,
+        output : "1"
+      };
+
+    run(data).then((response)=>{
+        let output="";
+        const json_res = JSON.parse(JSON.stringify(response));
+        
+        if(json_res.stdout!=null) output=json_res.stdout;
+        else if(json_res.stderr!=null) output=json_res.stderr;
+        else if(json_res.compile_output!=null) output=json_res.compile_output;
+        const r = {output:decode64(output),id:response.status.id,description:response.status.description};
+        
+        res.send(r);
+    }).catch((err)=>{
+        winston.error(err);
+        res.send("Something went wrong!");
+    });
+});
+
+//Evaluating submission
+router.get('/:curl/:qid/evaluate/:usn/:id',authenticate,teacher,async (req,res)=>{
+    let contest = await Contest.findOne({url:req.params.curl}).lean();
+    if(!contest)    return res.status(404).end();
+
+    //fetching question
+    if(!contest.questions.includes(req.params.qid)) return res.status(404).end();
+    const question = await ContestQ.findOne({qid:req.params.qid}).lean();
+
+    if(question.autoJudge) return res.status(404).end();
+
+    const student = await Student.findOne({usn:req.params.usn}).select('usn fname lname -_id').lean();
+    if(!student) return res.status(404).end();
+
+    submission=await Submission.findOne({_id:req.params.id}).lean();
+    if(!submission) return res.status(404).end();
+    submission.name = student.fname + " " + student.lname;
+
+    res.render('teacher/evaluation',{contest,question,submission:submission});
+});
+
+//updating the submission status
+router.post('/:curl/:qid/evaluate/:usn/:id',authenticate,teacher,async (req,res)=>{
+    const status = req.body.status;
+    if(["Accepted","Wrong Answer"].indexOf(status) == -1) return res.status(400).send("Invalid Status");
+
+    let contest = await Contest.findOne({url:req.params.curl});
+    if(!contest)    return res.status(404).end();
+
+    //fetching question
+    if(!contest.questions.includes(req.params.qid)) return res.status(404).end();
+    const question = await ContestQ.findOne({qid:req.params.qid}).lean();
+
+    if(question.autoJudge) return res.status(404).end();
+
+    let student = await Student.findOne({usn:req.params.usn}).select('usn fname lname -_id').lean();
+    if(!student) return res.status(404).end();
+
+    const contest_submission_index = contest.submissions.findIndex(e => e.usn == req.params.usn && e.qid==req.params.qid);
+    let submission = await Submission.findOne({_id:req.params.id});
+    if(!submission) return res.status(404).end();
+    
+    let new_points=0;
+    if(status=="Accepted"){
+        new_points = question.totalPoints;
+    }
+    else{
+        new_points= 0;
+    }
+
+    if(contest_submission_index==-1){
+        let obj ={};
+        obj.qid = submission.qid;
+        obj.timestamp = submission.timestamp;
+        obj.usn = submission.usn;
+        obj.year = submission.year;
+        obj.sourceCode = submission.sourceCode;
+        obj.status=status;
+        obj.language_id = submission.language_id;
+        obj.points=new_points;
+        contest.submissions.push(obj);
+    }
+    else{
+        const i = contest_submission_index;
+        if(status=="Accepted" && contest.submissions[i].status!="Accepted"){
+            contest.submissions[i].timestamp=submission.timestamp;
+            contest.submissions[i].sourceCode=submission.sourceCode;
+            contest.submissions[i].language_id=submission.language_id;
+            contest.submissions[i].status=status;
+            contest.submissions[i].points=question.totalPoints;
+        }
+        else{
+            if(status=="Accepted"){
+                if(contest.submissions[i].timestamp > submission.timestamp){
+                    const index = contest.leaderboard.findIndex(item=>{
+                        return item.usn == student.usn;
+                    });
+                    const time = contest.submissions[i].timestamp.valueOf() - submission.timestamp.valueOf();
+                    contest.leaderboard[index].timestamp = contest.leaderboard[index].timestamp.valueOf() - time;
+                    contest.submissions[i].timestamp = submission.timestamp;
+                    contest.submissions[i].sourceCode=submission.sourceCode;
+                    contest.submissions[i].language_id=submission.language_id;
+                    leaderboardSort(contest);
+                    
+                    await contest.save();
+
+                    submission.status=status;
+                    submission.points=new_points;
+                    await submission.save();
+
+                }
+                return res.send("Submission Evaluated");
+            }
+        }
+
+    }
+
+    const accepted_sub= await Submission.find({usn:req.params.usn,qid:req.params.qid,status:"Accepted"}).sort({timestamp:1}).lean();
+    let flag = false;
+    if (accepted_sub.length>0)
+        flag = accepted_sub[0]._id == req.params.id;
+
+
+    //leaderboard
+    if(status=="Accepted" || (status!="Accepted"&&flag)){
+        const index = contest.leaderboard.findIndex(item=>{
+            return item.usn == student.usn;
+        });
+        if(index == -1){
+            let leadObj = {};
+            leadObj.usn = student.usn;
+            leadObj.timestamp = submission.timestamp- contest.timings.starts;
+            leadObj.name = student.fname + " " + student.lname;
+            leadObj.year = submission.year;
+            leadObj.points = new_points; 
+            contest.leaderboard.push(leadObj);
+        }
+        else
+        {   if(new_points!=0){
+                contest.leaderboard[index].points += new_points;
+                contest.leaderboard[index].timestamp =  Math.max(contest.leaderboard[index].timestamp,submission.timestamp- contest.timings.starts);
+            }
+            else{
+                    if(accepted_sub.length==1){
+                        contest.leaderboard[index].points -= question.totalPoints;
+                        contest.submissions[contest_submission_index].status=status;
+                        contest.submissions[contest_submission_index].points=new_points;
+
+                        
+                        let last = contest.submissions.filter(item=>{return item.usn==student.usn && item.status=="Accepted" && item.qid!=submission.qid});
+                        last.sort((a,b)=>{if(a.timestamp>b.timestamp) return -1});
+
+                        if(last.length==0){
+                            contest.leaderboard.splice(index,1);
+                        }
+                        else{
+                            contest.leaderboard[index].timestamp = last[0].timestamp - contest.timings.starts;
+                        }
+                    }
+                    else{
+                        contest.submissions[contest_submission_index].timestamp=accepted_sub[1].timestamp;
+                        contest.submissions[contest_submission_index].sourceCode=accepted_sub[1].sourceCode;
+                        contest.submissions[contest_submission_index].language_id=accepted_sub[1].language_id;
+                        
+                        contest.leaderboard[index].timestamp = contest.leaderboard[index].timestamp.valueOf() + accepted_sub[1].timestamp.valueOf() - accepted_sub[0].timestamp.valueOf();
+                    }
+            }
+        }
+        leaderboardSort(contest);
+    }
+    await contest.save();
+
+    submission.status=status;
+    submission.points=new_points;
+    await submission.save();
+
+    res.send("Submission Evaluated");
+
+});
 
 module.exports = router;

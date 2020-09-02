@@ -17,6 +17,16 @@ const fs = require('fs');
 const Joi = require("@hapi/joi");
 const winston = require('winston');
 
+function getBatch(year){
+  month=new Date().getMonth()+1;
+  const currYear=new Date().getFullYear();
+  if(month>=8){
+      return currYear-year+1;
+  }
+  else{
+      return currYear-year;
+  }
+}
 
 //------------------Accounts routes start-----------------//
 let storage = multer.diskStorage({
@@ -280,6 +290,7 @@ router.post('/add', admin,async (req, res, next) => {
         const salt = await bcrypt.genSalt(10);
         student.password = await bcrypt.hash(student.password, salt);
         student.profile_image = '/profileImage/'+student.usn.toUpperCase()+'.jpg';
+        student.batch=getBatch(student.year);
         studentArray.push(student);
       }
     

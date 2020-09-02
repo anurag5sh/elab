@@ -179,10 +179,10 @@ body
             .row
               .col-lg-3.col-md-3(style='color:white')
                 label(style="letter-spacing:0.5px;font-weight:bold" for='difficulty') Difficulty: 
-                label(style="letter-spacing:0.5px;") #{i.difficulty}
+                label(style="letter-spacing:0.5px;margin-left:2px;") #{i.difficulty}
               .col-lg-3.col-md-3(style='color:white')
                 label(style="letter-spacing:0.5px;font-weight:bold" for='points') Points: 
-                label(style="letter-spacing:0.5px") #{totalPoints[j]}
+                label(style="letter-spacing:0.5px;margin-left:2px;") #{totalPoints[j]}
               .col-lg-4
               .col-lg-2.col-md-2
                 a.btn.btn-outline-light.hovering(style='font-weight:bold;border-radius:20px;' href="/contest/"+contest.url+"/"+i.qid) Solve

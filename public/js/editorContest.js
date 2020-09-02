@@ -174,7 +174,15 @@ function setup(){
     language: l
     },
     function(data,status){
-        if(!Array.isArray(data)){
+        if(!Array.isArray(data)&&status=="success"){
+        toastr.success(data);
+        document.getElementById("loader").style.display="none";
+        //spinner
+        submitButton.prop('disabled', false);
+        submitButton.find('span').remove();
+        return;
+        }
+        if(!Array.isArray(data)&&status!="success"){
         toastr.warning(data);
         document.getElementById("loader").style.display="none";
         return;

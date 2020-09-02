@@ -30,11 +30,16 @@ const contestSchema = new mongoose.Schema({
     starts:{type: Date},
     ends:{type:Date}
   },
-  year:[{
-    type:Number,
+  batch:{
+    type:[Number],
     required:true,
     default : []
-  }],
+  },
+  year:{
+    type:[Number],
+    required:true,
+    default : []
+  },
   custom_usn : {
     type:[String],
     default : []
@@ -70,8 +75,7 @@ const contestSchema = new mongoose.Schema({
     year:{type:String},
     sourceCode:{type:String},
     status:{type:String},
-    points:{type: Number,default:0},
-    _id : false
+    points:{type: Number,default:0}
   }],
   leaderboard:[{
     name:{type:String},

@@ -79,7 +79,7 @@ style.
 
   
 .container
-  p Add,Edit or Delete questions for contest.
+  p Add, Edit or Delete questions for this contest.
   //  Button to Open the Modal 
   button.btn.btn-primary.ml-2.mb-4.font-weight-bold(type='button' data-toggle='modal' data-target='#myModal').
     Add Question
@@ -253,7 +253,7 @@ style.
                           label.custom-control-label(for='Manual') Manual
                       div#totalPoints.m-3
                         label.fontStyle.font-weight-bold(style = "margin-left:10px;") Total Points &nbsp;
-                          i.fas.fa-question-circle(data-toggle="popover" data-content="The total points for this question.")
+                          i.fas.fa-question-circle(data-toggle="popover" data-content="The total points for this question. Cannot be changed after contest starts.")
                           |&nbsp;:&nbsp;
                         .custom-control.custom-control-inline
                           input.form-control(type='text' name='totalPoints' placeholder="Ex: 10" style="width:50%;")
@@ -482,10 +482,10 @@ each i in ques
                                       label.custom-control-label(for='Manual-e') Manual
                                   div#totalPoints-e.m-3
                                     label.fontStyle.font-weight-bold(style = "margin-left:10px;") Total Points &nbsp;
-                                      i.fas.fa-question-circle(data-toggle="popover" data-content="The total points for this question.")
+                                      i.fas.fa-question-circle(data-toggle="popover" data-content="The total points for this question. Cannot be changed after contest starts.")
                                       |&nbsp;:&nbsp;
                                     .custom-control.custom-control-inline
-                                      input.form-control(type='text' name='totalPoints' placeholder="Ex: 10" style="width:50%;")
+                                      input#totalPointsValue.form-control(type='text' name='totalPoints' placeholder="Ex: 10" style="width:50%;")
                                   
                                   div.m-3
                                     label.fontStyle.font-weight-bold(style = "margin-left:10px;") Status:&nbsp;&nbsp;&nbsp;

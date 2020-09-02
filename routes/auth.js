@@ -140,7 +140,7 @@ router.get('/dashboard', authenticate,async (req,res)=> {
     const grp = await CustomGroup.find({'usn':req.session.usn}).lean().select({id:1,_id:0});
     let gid=[];
     for(i of grp) gid.push(i.id);
-    let contest = await Contest.find({$or:[{'year' : req.session.year},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true}).select('name url description image').lean().sort({_id:-1}).limit(2);
+    let contest = await Contest.find({$or:[{'batch' : req.session.batch},{'custom_usn':req.session.usn},{customGroup:{$in:gid}}],isReady:true}).select('name url description image').lean().sort({_id:-1}).limit(2);
 
     if(!req.session.staff_id)
     res.render('dashboard', {q:q,contest:contest});
@@ -408,7 +408,7 @@ router.post('/', async (req, res) => {
 
   res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
 
-  let student = await Student.findOne({ $or : [{email: req.body.id},{usn:req.body.id}] }).select('fname lname password usn year active lastLogin recovery_email ');
+  let student = await Student.findOne({ $or : [{email: req.body.id},{usn:req.body.id}] }).select('fname lname password usn year active lastLogin recovery_email batch');
   if (student){
     const validPassword = await bcrypt.compare(req.body.password, student.password);
     if (!validPassword) return res.status(400).send("Invalid Email or Password.");
@@ -419,6 +419,7 @@ router.post('/', async (req, res) => {
     req.session.lname = student.lname;
     req.session.usn = student.usn;
     req.session.year = student.year;
+    req.session.batch=student.batch;
     if(student.recovery_email == null){ req.session.incomplete = true;
       if(student.lastLogin == null){
         return res.send('/first');

@@ -276,6 +276,7 @@ $(document).ready(function() {
             $("#totalPoints-e").find("input").prop('required',true);
             $("#totalPoints-e").show();
         }
+        $("#totalPointsValue").val(data.totalPoints);
 
         for(let i=1;i<data.sample_cases.length;i++){
             sampleAdd();

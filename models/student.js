@@ -67,7 +67,10 @@ const studentSchema = new mongoose.Schema({
     position : {type:Number},
     id :{type:String},
     _id:false
-  }]
+  }],
+  batch :{
+    type:Number
+  }
 
 });
 

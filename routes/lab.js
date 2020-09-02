@@ -17,6 +17,7 @@ const { LabQ, validateLQ } = require("../models/labQ");
 const moment = require("moment");
 const { CustomGroup } = require("../models/customGroup");
 const labAuth = require("../middleware/labAuth");
+const {run} = require('../compiler/api');
 
 function encode64(string){ //encoding to base64
     const b = new Buffer.from(string.replace(/\r\n/g, "\n"));
@@ -781,19 +782,14 @@ router.post('/:url/:qid/execute',authenticate,teacher,labAuth,async (req,res)=>{
     const submission = question.submissions.find(e => e.usn == req.body.usn);
     if(!submission) return res.status(400).send("No submissions yet!");
 
-    let compiler_opt = null;
-    if (submission.language_id == 50){
-        compiler_opt = "-lm";
-    }
+    const data ={
+        language : submission.language_id,
+        source : submission.sourceCode,
+        input : req.body.input,
+        output : "1"
+      };
 
-    let options = { method: 'POST',
-    url: 'http://127.0.0.1:3000/submissions?base64_encoded=true&wait=true',
-    body: { "source_code": encode64(submission.sourceCode), "language_id": submission.language_id ,"stdin":encode64(req.body.input),
-        "expected_output":encode64("1"), "compiler_options":compiler_opt},
-
-    json: true };
-
-    request(options).then((response)=>{
+    run(data).then((response)=>{
         let output="";
         const json_res = JSON.parse(JSON.stringify(response));
         

@@ -1,0 +1,194 @@
+extends nav
+
+block append head
+    - active.contest="active"
+    link(rel="stylesheet", href="/css/dataTables.bootstrap4.min.css")
+    script(src="/js/jquery.dataTables.min.js")
+    script(src="/js/dataTables.bootstrap4.min.js")
+    link(href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap" rel="stylesheet")
+    link(rel="stylesheet", href="/css/lb_main.css")
+    script(src="/js/he.js")
+    script(src="/js/dataTables.hideEmptyColumns.min.js")
+    style.
+        th{
+            font-family: OpenSans-Regular;
+            font-size: 16px;
+            color: #fff;
+            line-height: 1.2;
+            font-weight: unset;
+        }
+        .pre{
+            font-family: 'Source Code Pro';
+            font-size:16px;
+            padding:5px;
+            padding-left:12px;
+            white-space:pre-wrap;
+        }
+        .bg-col{
+            background-color:#e0e0d1;
+            padding:5px;
+            border-radius:4px;
+            font-family: 'Source Code Pro', monospace;
+        }
+    title Contest Evaluation
+
+        
+        
+block append content
+    .WRAPPER
+        nav(aria-label='breadcrumb' style="color:black;width:56.5%;")
+          ol.mb-0.breadcrumb(style="padding-left:20px;background-color:white")
+            li.breadcrumb-item
+              a(href='/contest') Contest
+            li.breadcrumb-item
+              a(href='/contest/'+contest.url)=contest.name
+            li.breadcrumb-item
+              a(href='/contest/'+contest.url+"/"+question.qid)=question.name
+            li.breadcrumb-item.active(aria-current='page') Evaluation
+        h1.text-center.m-3.lb_heading Evaluation
+        
+        br
+        .container
+            .card
+                .card-body
+                    .row
+                        .col-2
+                            p.font-weight-bold Name :
+                        .col-4
+                            p=submission.name
+                        .col-1
+                            p.font-weight-bold USN :
+                        .col
+                            p=submission.usn
+                    .row
+                        .col-2
+                            p.font-weight-bold Question Name :
+                        .col
+                            p=question.name
+                    .row
+                        .col-2
+                            p.font-weight-bold Timestamp
+                        .col-4
+                            p=moment(submission.timestamp).format('LLL')
+                        .col-1
+                            p.font-weight-bold Status :
+                        .col
+                            p#submissionStatus=submission.status
+            
+            .card.mt-5
+                .card-body
+                    h4.card-title.font-weight-bold.mb-5.text-center Source Code
+
+                    .card-text
+                        pre.pre #{submission.sourceCode}
+            
+            .card.mt-5
+                .card-body
+                    .row
+                        .col-5
+                            label.control-label.font-weight-bold(for='custom_input' ) Program Inputs
+                            textarea.form-control(rows="5" id="custom_input" placeholder="Give some inputs to program if necessary.")
+                        .col-2.ml-3
+                            label.control-label.font-weight-bold Run the program
+                            button#execute.btn.btn-success Execute
+                        .col.text-center
+                            label.control-label.font-weight-bold Evaluation
+                            br
+                            label.control-label.mr-3 Accept this submission :
+                            button#accept.btn.btn-success Accept
+                            br
+                            label.control-label.mr-3.mt-4 Reject this submission :
+                            button#wrong.btn.btn-danger Wrong Answer
+            
+            #opbox.mt-5(style="display:none;")
+                .card.custom(style='width:650px;')
+                    .card-body
+                        .card-title
+                            b Program Execution
+                        hr(style='width:auto;margin-top:0rem;')
+                        label
+                            b Input
+                        textarea#executeInput.bg-col(readonly='readonly' style='font-family: Source Code Pro, monospace;width:100%;border:none;height:auto;')
+                        br
+                        label
+                            b Output
+                        textarea#executeOutput.bg-col(readonly='readonly' style='font-family: Source Code Pro, monospace;width:100%;border:none;height:125px;')
+
+        .push1
+        .push
+    //- footer.bg-dark(class="FOOTER")
+    //-     div.text-center.text-light.font-weight-bold.pt-3 ELAB @ HKBKCE CSE DEPT. 2020
+    include ../footer    
+    script.
+        $("#execute").click(()=>{
+            const executeButton = $("#execute");
+            executeButton.prop('disabled', true).append('<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>');
+            $("#opbox").hide();
+            const input = $("#custom_input").val();
+            $.post("/contest/!{contest.url}/#{question.qid}/execute",
+            {
+                input: input,
+                usn : "#{submission.usn}",
+                id : "#{submission._id}"
+            },
+            function(data,status){ 
+                $("#executeOutput").html(he.escape(data.output));
+                $("#executeInput").html(he.escape(input));
+                $("#opbox").show();
+                //spinner
+                executeButton.prop('disabled', false);
+                executeButton.find('span').remove();
+                $('html, body').animate({
+                    scrollTop: $("#opbox").offset().top
+                }, 1000);
+            })
+            .fail((err)=>{
+                toastr.error(err.responseText);
+                //spinner
+                executeButton.prop('disabled', false);
+                executeButton.find('span').remove();
+            });
+        });
+
+        $("#accept").click(()=>{
+            const acceptButton = $("#accept");
+            acceptButton.prop('disabled', true).append('<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>');
+            $.post('/contest/!{contest.url}/#{question.qid}/evaluate/#{submission.usn}/#{submission._id}',
+            {
+                status : "Accepted"
+            },function(data,status){
+                toastr.success(data);
+                $("#submissionStatus").text("Accepted");
+                //spinner
+                acceptButton.prop('disabled', false);
+                acceptButton.find('span').remove();
+            })
+            .fail((err)=>{
+                toastr.error(err.responseText);
+                //spinner
+                acceptButton.prop('disabled', false);
+                acceptButton.find('span').remove();
+            })
+        });
+
+        $("#wrong").click(()=>{
+            const rejectButton = $("#wrong");
+            rejectButton.prop('disabled', true).append('<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>');
+            $.post('/contest/!{contest.url}/#{question.qid}/evaluate/#{submission.usn}/#{submission._id}',
+            {
+                status : "Wrong Answer"
+            },function(data,status){
+                toastr.success(data);
+                $("#submissionStatus").text("Wrong Answer");
+                //spinner
+                rejectButton.prop('disabled', false);
+                rejectButton.find('span').remove();
+            })
+            .fail((err)=>{
+                toastr.error(err.responseText);
+                //spinner
+                rejectButton.prop('disabled', false);
+                rejectButton.find('span').remove();
+            })
+        });
+       

@@ -11,7 +11,8 @@ const contestSchema = new mongoose.Schema({
     default: ''
   },
   id:{
-    type:Number
+    type:Number,
+    unique:true
   },
   name:{
       type:String,

@@ -186,6 +186,7 @@ router.get('/source/:id/:usn/:qid',authenticate,teacher,async (req,res) =>{
     res.send(assignment.submissions.find(i => i.usn == req.params.usn && i.qid == req.params.qid).sourceCode);
 });
 
+//fetches the list of questions of an assignment
 router.get('/get/:id',authenticate,teacher,async (req,res) =>{
     let page=1;
     if(Number.isNaN(req.query.page) || !req.query.page || req.query.page < 1) page=1;
@@ -309,7 +310,7 @@ router.post('/source/:qid',authenticate,async (req,res) =>{
     res.send('');
 });
 
-//teacher editing details
+//teacher editing assignment details
 router.post('/',authenticate,async (req,res) => {
     let ready = false;
   if(req.body.isReady) ready = true;

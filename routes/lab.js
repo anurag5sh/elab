@@ -151,7 +151,7 @@ router.get("/manage", authenticate, teacher, async (req, res) => {
             .sort({ _id: -1 })
             .skip((page - 1) * 12)
             .limit(12);
-        count = await Lab.estimatedDocumentCount();
+        count = await Lab.countDocuments();
         return res.render("teacher/lab/manageList", {
             lab: lab,
             count: count,
@@ -221,7 +221,7 @@ router.get("/manage/:url", authenticate, teacher,labAuth, async (req, res) => {
     });
 });
 
-//teacher editing existing contest
+//teacher editing existing lab
 router.post("/manage/:url", authenticate,teacher ,labAuth, async (req, res) => {
     const { error } = validateLab(req.body);
     if (error) return res.status(400).send(error.message);
@@ -702,6 +702,7 @@ router.get('/:url/studentReport/:usn',authenticate,teacher,labAuth, async (req,r
 
 });
 
+//displays student report and also downloads the report if requested
 router.get('/:url/studentReportDownload/:usn',authenticate,teacher,labAuth, async (req,res) =>{
     const lab = res.locals.lab;
 

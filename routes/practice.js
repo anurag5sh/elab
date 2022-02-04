@@ -220,6 +220,7 @@ router.get('/:qid/submissions/list',authenticate,async (req,res)=>{
   res.send(SendData);
 });
 
+//create a submission for a question
 router.post('/:qid',authenticate,async (req,res) => {
   const question = await Practice.findOne({qid: req.params.qid});
   if(!question) return res.send("Question not found!!");

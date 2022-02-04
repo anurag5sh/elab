@@ -4,7 +4,7 @@ const studentSchema = new mongoose.Schema({
   fname: {
     type: String,
     required: true,
-    minlength: 3,
+    minlength: 1,
     maxlength: 25
   },
   lname: {
@@ -60,6 +60,14 @@ const studentSchema = new mongoose.Schema({
   lastLogin :{
     type: Date,
     default : null
+  },
+  achievements:[{
+    position : {type:Number},
+    id :{type:String},
+    _id:false
+  }],
+  batch :{
+    type:Number
   }
 
 });

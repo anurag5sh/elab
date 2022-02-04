@@ -1040,6 +1040,8 @@ function lang(l){
         case 71 : return "Python71";
     }   
 }
+
+//auto saving the source code from editor
 router.get('/source/:curl/:qid',authenticate,contestAuth,async (req,res) =>{
     let source=[];
     const usn = req.session.usn || req.session.staff_id;
@@ -1381,8 +1383,8 @@ router.get('/:curl/submissions',authenticate,contestAuth,async (req,res)=>{
     const manual = await ContestQ.aggregate([{$match:{qid:{$in:contest.questions}}},{$project:{autoJudge:1,_id:0}}]);
     let manualSubmission=false;
     for (i of manual){
-        if(!i.autoJudge)
-            manualSubmission=true;
+        if(!i.autoJudge){
+            manualSubmission=true;break;}
     }
     //teacher
     if(contest.createdBy == req.session.staff_id || req.session.isAdmin || req.session.staff_id && contest.timings.ends < new Date())
@@ -1439,8 +1441,9 @@ router.get('/:curl/reportDownload',authenticate,teacher,async (req,res)=>{
         if (process.env.NODE_ENV != 'production') {
             host='localhost:'+req.app.locals.port;
            }
-        const elabIndex = req.headers.cookie.indexOf("elab");
-        await page.setCookie({name:"elab",value:req.headers.cookie.substr(elabIndex+5),domain:"localhost",path:"/"});   
+        // const elabIndex = req.headers.cookie.indexOf("elab");
+        // console.log(elabIndex);
+        await page.setCookie({name:"elab",value:req.cookies.elab,domain:"localhost",path:"/"});   
         await page.goto(`http://${host}/contest/${req.params.curl}/report?print=${print}`,{waitUntil:'networkidle0'});
         await page.pdf({
             // name of your pdf file in directory
@@ -1484,7 +1487,7 @@ router.get('/:curl/reportDownload',authenticate,teacher,async (req,res)=>{
 
 });
 
-
+//contest report
 router.get('/:curl/report',authenticate,teacher,async (req,res)=>{
     let contest = await Contest.findOne({url:req.params.curl}).lean();
     if(!contest)    return res.status(404).end();
@@ -1541,28 +1544,25 @@ router.get('/:curl/notSigned',authenticate,teacher,async (req,res)=>{
     if(!contest) return res.status(404).end();
 
     let students = [];
-    let signedUSN=new Set();
+    let signedUSN={}
     for(i of contest.signedUp){
-        signedUSN.add(i.usn);
+        signedUSN[i.usn]=true;
     }
 
-    for(i of contest.batch){
-        const list = await Student.find({batch:i}).select('fname lname year usn -_id').lean();
-        students=students.concat(list);
-    };
+    students=await Student.find({batch:{$in:contest.batch}}).lean();
 
-    const groups = await CustomGroup.find({id:{$in: contest.customGroup}}).limit().select({usn:1,_id:0});
-    let grp_usn = [];
-    for(i of groups)
-        grp_usn = grp_usn.concat(i.usn);
+    const groups = await CustomGroup.aggregate([{$match:{id:{$in: contest.customGroup}}},{$group:{_id:null,usn:{$addToSet:"$usn"}}}]);
+    let grp_usn=[];
+    if(groups.length>0)
+        grp_usn = groups[0].usn[0];
 
     const custom = await Student.find({usn:{$in:contest.custom_usn.concat(grp_usn)}}).select('fname lname year usn -_id').lean();
     const studentSet = new Set(students.concat(custom));
 
     const custom_staff = new Set(await Teacher.find({staff_id:{$in:contest.custom_staff_id}}).lean().select('fname lname staff_id -_id'));
 
-    let notSigned = new Set([...studentSet].filter(x => !signedUSN.has(x.usn)));
-    let notSignedStaff = new Set([...custom_staff].filter(x => !signedUSN.has(String(x.staff_id))));
+    let notSigned = new Set([...studentSet].filter(x => !signedUSN[x.usn]));
+    let notSignedStaff = new Set([...custom_staff].filter(x => !signedUSN[String(x.staff_id)]));
     notSigned = [...notSigned].sort((a,b)=> (a.year > b.year)?1:(a.year === b.year) ? ((a.usn > b.usn) ? 1 : -1) : -1 );
     res.send([...notSignedStaff].concat(notSigned));
 });

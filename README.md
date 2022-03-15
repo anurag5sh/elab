@@ -1,5 +1,5 @@
 # elab
-Server running on port 4000
+Server running on port 9292
 
 # Folders
 - middleware - contains some middleware functions which will be used to check each request.
